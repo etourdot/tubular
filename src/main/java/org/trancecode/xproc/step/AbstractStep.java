@@ -449,11 +449,17 @@ public abstract class AbstractStep extends AbstractHasLocation
 	}
 
 
-	public void withParam(final Parameter parameter)
+	public void withParam(final QName name, final String select, final String value, final Location location)
 	{
-		assert !parameters.containsKey(parameter.getName());
+		assert !parameters.containsKey(name);
 
-		parameters.put(parameter.getName(), parameter);
+		final Parameter parameter = new Parameter(name, select, location);
+		if (value != null)
+		{
+			parameter.setValue(value);
+		}
+
+		parameters.put(name, parameter);
 	}
 
 

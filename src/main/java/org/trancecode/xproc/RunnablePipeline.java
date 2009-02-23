@@ -72,9 +72,7 @@ public class RunnablePipeline implements LoggerHelpers
 	public void withParam(final QName name, final String value)
 	{
 		log.trace("%s = %s", name, value);
-		final Parameter parameter = new Parameter(name, null, getUnderlyingPipeline().getLocation());
-		parameter.setValue(value);
-		getUnderlyingPipeline().withParam(parameter);
+		getUnderlyingPipeline().withParam(name, null, value, getUnderlyingPipeline().getLocation());
 	}
 
 

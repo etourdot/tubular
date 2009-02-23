@@ -20,7 +20,6 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.xml.Location;
-import org.trancecode.xproc.Parameter;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
@@ -110,9 +109,9 @@ public class InvokeStep extends AbstractCompoundStep
 
 
 	@Override
-	public void withParam(final Parameter parameter)
+	public void withParam(final QName name, final String select, final String value, final Location location)
 	{
-		step.withParam(parameter);
+		step.withParam(name, select, value, location);
 	}
 
 

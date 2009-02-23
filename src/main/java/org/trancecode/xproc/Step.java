@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.xml.Location;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -52,7 +54,7 @@ public interface Step extends HasLocation
 	void withOptionValue(QName name, String value);
 
 
-	void withParam(Parameter parameter);
+	void withParam(QName name, String select, String value, Location location);
 
 
 	Environment run(Environment environment);
