@@ -63,6 +63,6 @@ public class Otherwise extends When
 	@Override
 	public QName getType()
 	{
-		return XProcSteps.STEP_OTHERWISE;
+		return XProcSteps.OTHERWISE;
 	}
 }

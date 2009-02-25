@@ -59,7 +59,7 @@ public class ForEach extends AbstractCompoundStep
 
 	public QName getType()
 	{
-		return XProcSteps.STEP_FOR_EACH;
+		return XProcSteps.FOR_EACH;
 	}
 
 

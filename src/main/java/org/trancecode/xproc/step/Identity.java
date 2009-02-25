@@ -55,7 +55,7 @@ public class Identity extends AbstractStep
 
 	public QName getType()
 	{
-		return XProcSteps.STEP_IDENTITY;
+		return XProcSteps.IDENTITY;
 	}
 
 

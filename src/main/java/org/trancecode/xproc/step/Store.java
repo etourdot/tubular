@@ -92,7 +92,7 @@ public class Store extends AbstractStep
 
 	public QName getType()
 	{
-		return XProcSteps.STEP_STORE;
+		return XProcSteps.STORE;
 	}
 
 

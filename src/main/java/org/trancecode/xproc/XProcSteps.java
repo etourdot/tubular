@@ -30,29 +30,29 @@ import net.sf.saxon.s9api.QName;
  */
 public interface XProcSteps extends XProcNamespaces
 {
-	QName STEP_CHOOSE = NAMESPACE_XPROC.newSaxonQName("choose");
+	QName CHOOSE = NAMESPACE_XPROC.newSaxonQName("choose");
 
-	QName STEP_COUNT = NAMESPACE_XPROC.newSaxonQName("count");
+	QName COUNT = NAMESPACE_XPROC.newSaxonQName("count");
 
-	QName STEP_FOR_EACH = NAMESPACE_XPROC.newSaxonQName("for-each");
+	QName FOR_EACH = NAMESPACE_XPROC.newSaxonQName("for-each");
 
-	QName STEP_GROUP = NAMESPACE_XPROC.newSaxonQName("group");
+	QName GROUP = NAMESPACE_XPROC.newSaxonQName("group");
 
-	QName STEP_IDENTITY = NAMESPACE_XPROC.newSaxonQName("identity");
+	QName IDENTITY = NAMESPACE_XPROC.newSaxonQName("identity");
 
-	QName STEP_LOAD = NAMESPACE_XPROC.newSaxonQName("load");
+	QName LOAD = NAMESPACE_XPROC.newSaxonQName("load");
 
-	QName STEP_OTHERWISE = NAMESPACE_XPROC.newSaxonQName("otherwise");
+	QName OTHERWISE = NAMESPACE_XPROC.newSaxonQName("otherwise");
 
-	QName STEP_PIPELINE = NAMESPACE_XPROC.newSaxonQName("pipeline");
+	QName PIPELINE = NAMESPACE_XPROC.newSaxonQName("pipeline");
 
-	QName STEP_STORE = NAMESPACE_XPROC.newSaxonQName("store");
+	QName STORE = NAMESPACE_XPROC.newSaxonQName("store");
 
-	QName STEP_TRY = NAMESPACE_XPROC.newSaxonQName("try");
+	QName TRY = NAMESPACE_XPROC.newSaxonQName("try");
 
-	QName STEP_WHEN = NAMESPACE_XPROC.newSaxonQName("when");
+	QName WHEN = NAMESPACE_XPROC.newSaxonQName("when");
 
-	QName STEP_XSL_FORMATTER = NAMESPACE_XPROC.newSaxonQName("xsl-formatter");
+	QName XSL_FORMATTER = NAMESPACE_XPROC.newSaxonQName("xsl-formatter");
 
-	QName STEP_XSLT = NAMESPACE_XPROC.newSaxonQName("xslt");
+	QName XSLT = NAMESPACE_XPROC.newSaxonQName("xslt");
 }

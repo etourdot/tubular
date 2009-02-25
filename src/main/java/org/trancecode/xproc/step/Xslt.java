@@ -86,7 +86,7 @@ public class Xslt extends AbstractStep
 
 	public QName getType()
 	{
-		return XProcSteps.STEP_XSLT;
+		return XProcSteps.XSLT;
 	}
 
 

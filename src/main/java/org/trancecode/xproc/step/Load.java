@@ -61,7 +61,7 @@ public class Load extends AbstractStep
 
 	public QName getType()
 	{
-		return XProcSteps.STEP_LOAD;
+		return XProcSteps.LOAD;
 	}
 
 

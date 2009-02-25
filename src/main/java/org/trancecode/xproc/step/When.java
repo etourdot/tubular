@@ -109,6 +109,6 @@ public class When extends AbstractCompoundStep
 	@Override
 	public QName getType()
 	{
-		return XProcSteps.STEP_WHEN;
+		return XProcSteps.WHEN;
 	}
 }

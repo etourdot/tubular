@@ -77,6 +77,6 @@ public class Count extends AbstractStep
 	@Override
 	public QName getType()
 	{
-		return XProcSteps.STEP_COUNT;
+		return XProcSteps.COUNT;
 	}
 }

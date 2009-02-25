@@ -87,6 +87,6 @@ public class Choose extends AbstractCompoundStep
 	@Override
 	public QName getType()
 	{
-		return XProcSteps.STEP_CHOOSE;
+		return XProcSteps.CHOOSE;
 	}
 }
