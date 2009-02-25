@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.annotation.Stateless;
 import org.trancecode.xml.Location;
 
 
@@ -37,7 +38,8 @@ public abstract class AbstractHasLocation implements HasLocation
 	}
 
 
-	public Location getLocation()
+	@Stateless
+	public final Location getLocation()
 	{
 		return location;
 	}

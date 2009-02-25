@@ -19,6 +19,8 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.annotation.Immutable;
+
 import net.sf.saxon.s9api.XdmNode;
 
 
@@ -26,6 +28,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @author Herve Quiroz
  * @version $Revision$
  */
+@Immutable
 public class SaxonLocation implements Location
 {
 	public final XdmNode node;

@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.binding;
 
+import org.trancecode.annotation.Immutable;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
@@ -33,6 +34,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @author Herve Quiroz
  * @version $Revision$
  */
+@Immutable
 public class EmptyPortBinding extends AbstractPortBinding implements PortBinding
 {
 	public EmptyPortBinding(final Location location)

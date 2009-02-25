@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.binding;
 
+import org.trancecode.annotation.Immutable;
 import org.trancecode.log.Logger;
 import org.trancecode.log.LoggerHelpers;
 import org.trancecode.log.LoggerManager;
@@ -37,6 +38,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @author Herve Quiroz
  * @version $Revision$
  */
+@Immutable
 public class InlinePortBinding extends AbstractPortBinding implements PortBinding, LoggerHelpers
 {
 	private final Logger log = LoggerManager.getLogger(this);
