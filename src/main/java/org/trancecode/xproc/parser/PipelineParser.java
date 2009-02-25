@@ -195,12 +195,12 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 		if (portNode.getNodeName().equals(ELEMENT_ITERATION_SOURCE))
 		{
-			return XProcPorts.PORT_ITERATION_SOURCE;
+			return XProcPorts.ITERATION_SOURCE;
 		}
 
 		if (portNode.getNodeName().equals(ELEMENT_XPATH_CONTEXT))
 		{
-			return XProcPorts.PORT_XPATH_CONTEXT;
+			return XProcPorts.XPATH_CONTEXT;
 		}
 
 		throw new IllegalStateException(portNode.getNodeName().toString());
@@ -561,7 +561,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 		if (xpathContextNode != null)
 		{
-			final Port port = step.getPort(XProcPorts.PORT_XPATH_CONTEXT);
+			final Port port = step.getPort(XProcPorts.XPATH_CONTEXT);
 			parseSelect(xpathContextNode, port);
 			parsePortBindings(xpathContextNode, port);
 			if (defaultXPathContext != null && port.getPortBindings().isEmpty())

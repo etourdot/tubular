@@ -49,8 +49,8 @@ public class Identity extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_SOURCE, location, false, true);
-		declareOutputPort(XProcPorts.PORT_RESULT, location, false, true);
+		declareInputPort(XProcPorts.SOURCE, location, false, true);
+		declareOutputPort(XProcPorts.RESULT, location, false, true);
 	}
 
 
@@ -65,9 +65,9 @@ public class Identity extends AbstractStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		for (final XdmNode node : readNodes(XProcPorts.PORT_SOURCE, environment))
+		for (final XdmNode node : readNodes(XProcPorts.SOURCE, environment))
 		{
-			writeNodes(XProcPorts.PORT_RESULT, environment, node);
+			writeNodes(XProcPorts.RESULT, environment, node);
 		}
 	}
 }

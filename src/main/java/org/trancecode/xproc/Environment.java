@@ -267,7 +267,7 @@ public class Environment implements LoggerHelpers
 			}
 
 			final XdmNode contextNode = contextNodes.next();
-			if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.PORT_XPATH_CONTEXT))
+			if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
 			{
 				// TODO XProc error
 				assert !contextNodes.hasNext();

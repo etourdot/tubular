@@ -89,12 +89,12 @@ public class Pipeline extends AbstractCompoundStep
 	{
 		if (Iterables.isEmpty(getInputPorts()))
 		{
-			declareInputPort(XProcPorts.PORT_SOURCE, location, true, true);
+			declareInputPort(XProcPorts.SOURCE, location, true, true);
 		}
 
 		if (Iterables.isEmpty(getOutputPorts()))
 		{
-			declareOutputPort(XProcPorts.PORT_RESULT, location, true, true);
+			declareOutputPort(XProcPorts.RESULT, location, true, true);
 		}
 	}
 }

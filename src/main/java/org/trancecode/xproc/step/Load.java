@@ -54,7 +54,7 @@ public class Load extends AbstractStep
 	{
 		super(name, location);
 
-		declareOutputPort(XProcPorts.PORT_RESULT, location, false, false);
+		declareOutputPort(XProcPorts.RESULT, location, false, false);
 		declareOption(OPTION_HREF, null, true, location);
 		declareOption(OPTION_DTD_VALIDATE, "'false'", false, location);
 	}
@@ -103,6 +103,6 @@ public class Load extends AbstractStep
 			XmlUtil.closeQuietly(source, log);
 		}
 
-		writeNodes(XProcPorts.PORT_RESULT, environment, document);
+		writeNodes(XProcPorts.RESULT, environment, document);
 	}
 }

@@ -51,8 +51,8 @@ public class Count extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_SOURCE, location, false, true);
-		declareOutputPort(XProcPorts.PORT_RESULT, location, false, false);
+		declareInputPort(XProcPorts.SOURCE, location, false, true);
+		declareOutputPort(XProcPorts.RESULT, location, false, false);
 
 		declareOption(XProcOptions.OPTION_LIMIT, "0", false, location);
 	}
@@ -62,14 +62,14 @@ public class Count extends AbstractStep
 	protected void doRun(final Environment environment)
 	{
 		// TODO improve performance with "limit" option
-		final int count = Iterables.size(readNodes(XProcPorts.PORT_SOURCE, environment));
+		final int count = Iterables.size(readNodes(XProcPorts.SOURCE, environment));
 		log.trace("count = %s", count);
 		final int limit = Integer.parseInt(environment.getVariable(XProcOptions.OPTION_LIMIT));
 		log.trace("limit = %s", limit);
 		final int result = (limit > 0 ? Math.min(count, limit) : count);
 		log.trace("result = %s", result);
 
-		writeNodes(XProcPorts.PORT_RESULT, environment, newResultElement(Integer.toString(result), environment
+		writeNodes(XProcPorts.RESULT, environment, newResultElement(Integer.toString(result), environment
 			.getProcessor()));
 	}
 

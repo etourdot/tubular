@@ -27,19 +27,19 @@ package org.trancecode.xproc;
  */
 public interface XProcPorts
 {
-	String PORT_ITERATION_NODE = "iteration-node";
+	String ITERATION_NODE = "iteration-node";
 
-	String PORT_ITERATION_SOURCE = "iteration-source";
+	String ITERATION_SOURCE = "iteration-source";
 
-	String PORT_SOURCE = "source";
+	String SOURCE = "source";
 
-	String PORT_RESULT = "result";
+	String RESULT = "result";
 
-	String PORT_PARAMETERS = "parameters";
+	String PARAMETERS = "parameters";
 
-	String PORT_SECONDARY = "secondary";
+	String SECONDARY = "secondary";
 
-	String PORT_STYLESHEET = "stylesheet";
+	String STYLESHEET = "stylesheet";
 
-	String PORT_XPATH_CONTEXT = "xpath-context";
+	String XPATH_CONTEXT = "xpath-context";
 }

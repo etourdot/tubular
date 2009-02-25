@@ -70,8 +70,8 @@ public class Store extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_SOURCE, location, false, false);
-		declareOutputPort(XProcPorts.PORT_RESULT, location, false, false);
+		declareInputPort(XProcPorts.SOURCE, location, false, false);
+		declareOutputPort(XProcPorts.RESULT, location, false, false);
 		declareOption(OPTION_HREF, null, true, location);
 		declareOption(OPTION_BYTE_ORDER_MARK, null, false, location);
 		declareOption(OPTION_CDATA_SECTION_ELEMENTS, "''", false, location);
@@ -102,7 +102,7 @@ public class Store extends AbstractStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		final XdmNode node = readNode(XProcPorts.PORT_SOURCE, environment);
+		final XdmNode node = readNode(XProcPorts.SOURCE, environment);
 		assert node != null;
 
 		final URI baseUri = environment.getBaseUri();
@@ -179,6 +179,6 @@ public class Store extends AbstractStep
 		}
 
 		final XdmNode resultNode = newResultElement(outputUri.toString(), environment.getProcessor());
-		writeNodes(XProcPorts.PORT_RESULT, environment, resultNode);
+		writeNodes(XProcPorts.RESULT, environment, resultNode);
 	}
 }

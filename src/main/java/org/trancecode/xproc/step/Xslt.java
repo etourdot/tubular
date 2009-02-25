@@ -72,11 +72,11 @@ public class Xslt extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_SOURCE, location, true, true);
-		declareInputPort(XProcPorts.PORT_STYLESHEET, location, false, false);
-		declareParameterPort(XProcPorts.PORT_PARAMETERS, location, false, false);
-		declareOutputPort(XProcPorts.PORT_RESULT, location, true, false);
-		declareOutputPort(XProcPorts.PORT_SECONDARY, location, false, true);
+		declareInputPort(XProcPorts.SOURCE, location, true, true);
+		declareInputPort(XProcPorts.STYLESHEET, location, false, false);
+		declareParameterPort(XProcPorts.PARAMETERS, location, false, false);
+		declareOutputPort(XProcPorts.RESULT, location, true, false);
+		declareOutputPort(XProcPorts.SECONDARY, location, false, true);
 
 		declareOption(OPTION_INITIAL_MODE, null, false, location);
 		declareOption(OPTION_TEMPLATE_NAME, null, false, location);
@@ -96,7 +96,7 @@ public class Xslt extends AbstractStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		final XdmNode sourceDocument = readNode(XProcPorts.PORT_SOURCE, environment);
+		final XdmNode sourceDocument = readNode(XProcPorts.SOURCE, environment);
 		assert sourceDocument != null;
 
 		final String providedOutputBaseUri = environment.getVariable(OPTION_OUTPUT_BASE_URI);
@@ -121,7 +121,7 @@ public class Xslt extends AbstractStep
 		{
 			throw XProcExceptions.xs0038(getLocation(), version);
 		}
-		final XdmNode stylesheet = readNode(XProcPorts.PORT_STYLESHEET, environment);
+		final XdmNode stylesheet = readNode(XProcPorts.STYLESHEET, environment);
 		assert stylesheet != null;
 
 		final Processor processor = environment.getProcessor();
@@ -150,7 +150,7 @@ public class Xslt extends AbstractStep
 					assert destinations.containsKey(uri);
 					final XdmDestination xdmResult = destinations.get(uri);
 					log.trace("result base URI = %s", xdmResult.getXdmNode().getBaseURI());
-					writeNodes(XProcPorts.PORT_SECONDARY, environment, xdmResult.getXdmNode());
+					writeNodes(XProcPorts.SECONDARY, environment, xdmResult.getXdmNode());
 				}
 
 
@@ -184,7 +184,7 @@ public class Xslt extends AbstractStep
 				transformer.setInitialMode(new QName(initialMode));
 			}
 
-			final Map<QName, String> parameters = readParameters(XProcPorts.PORT_PARAMETERS, environment);
+			final Map<QName, String> parameters = readParameters(XProcPorts.PARAMETERS, environment);
 			log.debug("parameters = %s", parameters);
 			for (final Map.Entry<QName, String> parameter : parameters.entrySet())
 			{
@@ -193,7 +193,7 @@ public class Xslt extends AbstractStep
 
 			transformer.transform();
 
-			writeNodes(XProcPorts.PORT_RESULT, environment, result.getXdmNode());
+			writeNodes(XProcPorts.RESULT, environment, result.getXdmNode());
 		}
 		catch (final Exception e)
 		{

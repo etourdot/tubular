@@ -243,7 +243,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 				environment.setDefaultReadablePort(environmentPort);
 			}
 
-			if (declaredPort.getPortName().equals(XProcPorts.PORT_XPATH_CONTEXT))
+			if (declaredPort.getPortName().equals(XProcPorts.XPATH_CONTEXT))
 			{
 				if (declaredPort.getPortBindings().isEmpty())
 				{
@@ -277,14 +277,14 @@ public abstract class AbstractStep extends AbstractHasLocation
 	{
 		if (port.isInput())
 		{
-			if (port.getPortName().equals(XProcPorts.PORT_XPATH_CONTEXT))
+			if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT))
 			{
 				return true;
 			}
 
 			if (isPrimary(port))
 			{
-				return !ports.containsKey(XProcPorts.PORT_XPATH_CONTEXT);
+				return !ports.containsKey(XProcPorts.XPATH_CONTEXT);
 			}
 		}
 

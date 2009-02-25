@@ -52,10 +52,10 @@ public class When extends AbstractCompoundStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_SOURCE, location, true, true);
-		declareInputPort(XProcPorts.PORT_XPATH_CONTEXT, location, false, false);
+		declareInputPort(XProcPorts.SOURCE, location, true, true);
+		declareInputPort(XProcPorts.XPATH_CONTEXT, location, false, false);
 
-		declareOutputPort(XProcPorts.PORT_RESULT, location, true, true);
+		declareOutputPort(XProcPorts.RESULT, location, true, true);
 
 		declareOption(OPTION_TEST, null, false, location);
 	}
@@ -73,7 +73,7 @@ public class When extends AbstractCompoundStep
 	private boolean doTest(final Environment environment)
 	{
 		final Environment resultEnvironment = environment.newChildStepEnvironment();
-		getEnvironmentPort(XProcPorts.PORT_XPATH_CONTEXT, resultEnvironment);
+		getEnvironmentPort(XProcPorts.XPATH_CONTEXT, resultEnvironment);
 		final String test = variables.get(OPTION_TEST).getValue();
 		log.trace("test = %s", test);
 		final XdmValue result = evaluateXPath(test, resultEnvironment);

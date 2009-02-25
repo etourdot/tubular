@@ -49,9 +49,9 @@ public class Choose extends AbstractCompoundStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_SOURCE, location, true, true);
-		declareInputPort(XProcPorts.PORT_XPATH_CONTEXT, location, false, false);
-		declareOutputPort(XProcPorts.PORT_RESULT, location, true, true);
+		declareInputPort(XProcPorts.SOURCE, location, true, true);
+		declareInputPort(XProcPorts.XPATH_CONTEXT, location, false, false);
+		declareOutputPort(XProcPorts.RESULT, location, true, true);
 	}
 
 

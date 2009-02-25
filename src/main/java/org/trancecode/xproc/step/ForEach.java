@@ -53,8 +53,8 @@ public class ForEach extends AbstractCompoundStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.PORT_ITERATION_SOURCE, location, true, true);
-		declareOutputPort(XProcPorts.PORT_RESULT, location, true, true);
+		declareInputPort(XProcPorts.ITERATION_SOURCE, location, true, true);
+		declareOutputPort(XProcPorts.RESULT, location, true, true);
 	}
 
 
@@ -66,7 +66,7 @@ public class ForEach extends AbstractCompoundStep
 
 	private Port newIterationPort(final XdmNode node)
 	{
-		final Port port = new Port(name, XProcPorts.PORT_ITERATION_NODE, getLocation(), Type.INPUT, false, false);
+		final Port port = new Port(name, XProcPorts.ITERATION_NODE, getLocation(), Type.INPUT, false, false);
 		port.getPortBindings().add(new InlinePortBinding(node, getLocation()));
 		return port;
 	}
@@ -77,7 +77,7 @@ public class ForEach extends AbstractCompoundStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		for (final XdmNode node : readNodes(XProcPorts.PORT_ITERATION_SOURCE, environment))
+		for (final XdmNode node : readNodes(XProcPorts.ITERATION_SOURCE, environment))
 		{
 			log.trace("new iteration: %s", node);
 			final Environment iterationEnvironment = environment.newChildStepEnvironment();
@@ -85,7 +85,7 @@ public class ForEach extends AbstractCompoundStep
 			iterationEnvironment.setDefaultReadablePort(environmentPort);
 
 			final Environment resultEnvironment = runSteps(steps, iterationEnvironment);
-			getOutputEnvironmentPort(XProcPorts.PORT_RESULT, environment).pipe(
+			getOutputEnvironmentPort(XProcPorts.RESULT, environment).pipe(
 				resultEnvironment.getDefaultReadablePort());
 		}
 	}
