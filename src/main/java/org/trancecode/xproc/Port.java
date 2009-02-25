@@ -86,6 +86,12 @@ public class Port extends AbstractHasLocation
 	}
 
 
+	public boolean isParameter()
+	{
+		return type == Type.PARAMETER;
+	}
+
+
 	public Type getType()
 	{
 		return type;
