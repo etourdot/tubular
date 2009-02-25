@@ -45,12 +45,6 @@ public class Load extends AbstractStep
 		{
 			return new Load(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_LOAD;
-		}
 	}
 
 

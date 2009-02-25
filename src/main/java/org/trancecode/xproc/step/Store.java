@@ -61,12 +61,6 @@ public class Store extends AbstractStep
 		{
 			return new Store(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_STORE;
-		}
 	}
 
 

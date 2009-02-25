@@ -51,12 +51,6 @@ public class InvokeStep extends AbstractCompoundStep
 		}
 
 
-		protected QName getStepType()
-		{
-			return step.getType();
-		}
-
-
 		@Override
 		public Step newStep(final String name, final Location location)
 		{

@@ -44,12 +44,6 @@ public class ForEach extends AbstractCompoundStep
 		{
 			return new ForEach(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_FOR_EACH;
-		}
 	}
 
 

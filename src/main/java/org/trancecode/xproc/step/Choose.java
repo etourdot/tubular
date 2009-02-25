@@ -40,12 +40,6 @@ public class Choose extends AbstractCompoundStep
 		{
 			return new Choose(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_CHOOSE;
-		}
 	}
 
 

@@ -64,12 +64,6 @@ public class Xslt extends AbstractStep
 		{
 			return new Xslt(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_XSLT;
-		}
 	}
 
 

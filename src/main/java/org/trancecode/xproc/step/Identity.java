@@ -40,12 +40,6 @@ public class Identity extends AbstractStep
 		{
 			return new Identity(name, null, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_IDENTITY;
-		}
 	}
 
 

@@ -44,12 +44,6 @@ public class Count extends AbstractStep
 		{
 			return new Count(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return XProcSteps.STEP_COUNT;
-		}
 	}
 
 

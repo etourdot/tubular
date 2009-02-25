@@ -43,12 +43,6 @@ public class When extends AbstractCompoundStep
 		{
 			return new When(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_WHEN;
-		}
 	}
 
 

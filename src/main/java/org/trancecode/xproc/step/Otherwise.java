@@ -39,12 +39,6 @@ public class Otherwise extends When
 		{
 			return new Otherwise(name, location);
 		}
-
-
-		public QName getStepType()
-		{
-			return STEP_OTHERWISE;
-		}
 	}
 
 
