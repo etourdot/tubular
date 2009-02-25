@@ -42,6 +42,12 @@ public final class XProcExceptions
 	}
 
 
+	public static XProcException xs0038(final Location location, final Object... args)
+	{
+		return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", args);
+	}
+
+
 	private static XProcException newXProcException(
 		final Type type, final int code, final Location location, final String message, final Object... parameters)
 	{

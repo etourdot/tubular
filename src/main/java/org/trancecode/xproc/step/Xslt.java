@@ -25,8 +25,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.XProcException.Type;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.parser.StepFactory;
 
 import java.net.URI;
@@ -118,7 +117,7 @@ public class Xslt extends AbstractStep
 
 		if (!SUPPORTED_VERSIONS.contains(version))
 		{
-			throw new XProcException(Type.STEP, 38, getLocation(), "XSLT version %s not supported", version);
+			throw XProcExceptions.xs0038(getLocation(), version);
 		}
 		final XdmNode stylesheet = readNode(PORT_STYLESHEET, environment);
 		assert stylesheet != null;
