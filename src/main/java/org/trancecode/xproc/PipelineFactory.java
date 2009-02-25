@@ -118,14 +118,55 @@ public class PipelineFactory implements LoggerHelpers
 		library.put(XProcSteps.CHOOSE, new Choose.Factory());
 		library.put(XProcSteps.COUNT, new Count.Factory());
 		library.put(XProcSteps.FOR_EACH, new ForEach.Factory());
-		addUnsupportedStepFactory(XProcSteps.GROUP, library);
 		library.put(XProcSteps.IDENTITY, new Identity.Factory());
 		library.put(XProcSteps.LOAD, new Load.Factory());
 		library.put(XProcSteps.OTHERWISE, new Otherwise.Factory());
 		library.put(XProcSteps.STORE, new Store.Factory());
-		addUnsupportedStepFactory(XProcSteps.TRY, library);
 		library.put(XProcSteps.WHEN, new When.Factory());
 		library.put(XProcSteps.XSLT, new Xslt.Factory());
+
+		// Unsupported core steps
+		addUnsupportedStepFactory(XProcSteps.GROUP, library);
+		addUnsupportedStepFactory(XProcSteps.TRY, library);
+
+		// Unsupported required steps
+		addUnsupportedStepFactory(XProcSteps.ADD_ATTRIBUTE, library);
+		addUnsupportedStepFactory(XProcSteps.ADD_XML_BASE, library);
+		addUnsupportedStepFactory(XProcSteps.COMPARE, library);
+		addUnsupportedStepFactory(XProcSteps.DELETE, library);
+		addUnsupportedStepFactory(XProcSteps.DIRECTORY_LIST, library);
+		addUnsupportedStepFactory(XProcSteps.ERROR, library);
+		addUnsupportedStepFactory(XProcSteps.ESCAPE_MARKUP, library);
+		addUnsupportedStepFactory(XProcSteps.FILTER, library);
+		addUnsupportedStepFactory(XProcSteps.HTTP_REQUEST, library);
+		addUnsupportedStepFactory(XProcSteps.INSERT, library);
+		addUnsupportedStepFactory(XProcSteps.LABEL_ELEMENT, library);
+		addUnsupportedStepFactory(XProcSteps.MAKE_ABSOLUTE_URIS, library);
+		addUnsupportedStepFactory(XProcSteps.NAMESPACE_RENAME, library);
+		addUnsupportedStepFactory(XProcSteps.PACK, library);
+		addUnsupportedStepFactory(XProcSteps.PARAMETERS, library);
+		addUnsupportedStepFactory(XProcSteps.RENAME, library);
+		addUnsupportedStepFactory(XProcSteps.REPLACE, library);
+		addUnsupportedStepFactory(XProcSteps.SET_ATTRIBUTES, library);
+		addUnsupportedStepFactory(XProcSteps.SINK, library);
+		addUnsupportedStepFactory(XProcSteps.SPLIT_SEQUENCE, library);
+		addUnsupportedStepFactory(XProcSteps.STRING_REPLACE, library);
+		addUnsupportedStepFactory(XProcSteps.UNESCAPE_MARKUP, library);
+		addUnsupportedStepFactory(XProcSteps.UNWRAP, library);
+		addUnsupportedStepFactory(XProcSteps.WRAP, library);
+		addUnsupportedStepFactory(XProcSteps.XINXLUDE, library);
+
+		// Unsupported optional steps
+		addUnsupportedStepFactory(XProcSteps.EXEC, library);
+		addUnsupportedStepFactory(XProcSteps.HASH, library);
+		addUnsupportedStepFactory(XProcSteps.UUID, library);
+		addUnsupportedStepFactory(XProcSteps.VALIDATE_WITH_RELANXNG, library);
+		addUnsupportedStepFactory(XProcSteps.VALIDATE_WITH_SCHEMATRON, library);
+		addUnsupportedStepFactory(XProcSteps.VALIDATE_WITH_SCHEMA, library);
+		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_DECODE, library);
+		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_ENCODE, library);
+		addUnsupportedStepFactory(XProcSteps.XQUERY, library);
+
 		return library;
 	}
 
