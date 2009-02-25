@@ -36,7 +36,11 @@ import com.google.common.collect.Sets;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
 
 
 /**
@@ -277,5 +281,51 @@ public class Environment implements LoggerHelpers
 		}
 
 		return null;
+	}
+
+
+	public XdmValue evaluateXPath(final String select)
+	{
+		assert select != null;
+		LOG.trace("%s select = %s", METHOD_NAME, select);
+
+		try
+		{
+			final XPathCompiler xpathCompiler = getProcessor().newXPathCompiler();
+			final String pipelineSystemId = getPipeline().getLocation().getSystemId();
+			if (pipelineSystemId != null)
+			{
+				xpathCompiler.setBaseURI(URI.create(pipelineSystemId));
+			}
+			for (final Map.Entry<QName, String> variableEntry : getVariables().entrySet())
+			{
+				if (variableEntry.getValue() != null)
+				{
+					xpathCompiler.declareVariable(variableEntry.getKey());
+				}
+			}
+
+			final XPathSelector selector = xpathCompiler.compile(select).load();
+			final XdmNode xpathContextNode = getXPathContextNode();
+			if (xpathContextNode != null)
+			{
+				LOG.trace("xpathContextNode = %s", xpathContextNode);
+				selector.setContextItem(xpathContextNode);
+			}
+
+			for (final Map.Entry<QName, String> variableEntry : getVariables().entrySet())
+			{
+				if (variableEntry.getValue() != null)
+				{
+					selector.setVariable(variableEntry.getKey(), new XdmAtomicValue(variableEntry.getValue()));
+				}
+			}
+
+			return selector.evaluate();
+		}
+		catch (final Exception e)
+		{
+			throw new PipelineException(e, "error while evaluating XPath query: %s", select);
+		}
 	}
 }

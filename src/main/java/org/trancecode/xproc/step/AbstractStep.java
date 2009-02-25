@@ -40,7 +40,6 @@ import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.Port.Type;
 
 import java.io.StringReader;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -57,9 +56,7 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
-import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmValue;
 
 
 /**
@@ -571,7 +568,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 				{
 					try
 					{
-						value = evaluateXPath(select, environment).toString();
+						value = environment.evaluateXPath(select).toString();
 					}
 					catch (final Exception e)
 					{
@@ -595,53 +592,6 @@ public abstract class AbstractStep extends AbstractHasLocation
 			{
 				environment.setLocalVariable(variable.getName(), value);
 			}
-		}
-	}
-
-
-	protected XdmValue evaluateXPath(final String select, final Environment environment)
-	{
-		assert select != null;
-		assert environment != null;
-		log.trace("%s select = %s", METHOD_NAME, select);
-
-		try
-		{
-			final XPathCompiler xpathCompiler = environment.getProcessor().newXPathCompiler();
-			final String pipelineSystemId = environment.getPipeline().getLocation().getSystemId();
-			if (pipelineSystemId != null)
-			{
-				xpathCompiler.setBaseURI(URI.create(pipelineSystemId));
-			}
-			for (final Map.Entry<QName, String> variableEntry : environment.getVariables().entrySet())
-			{
-				if (variableEntry.getValue() != null)
-				{
-					xpathCompiler.declareVariable(variableEntry.getKey());
-				}
-			}
-
-			final XPathSelector selector = xpathCompiler.compile(select).load();
-			final XdmNode xpathContextNode = environment.getXPathContextNode();
-			if (xpathContextNode != null)
-			{
-				log.trace("xpathContextNode = %s", xpathContextNode);
-				selector.setContextItem(xpathContextNode);
-			}
-
-			for (final Map.Entry<QName, String> variableEntry : environment.getVariables().entrySet())
-			{
-				if (variableEntry.getValue() != null)
-				{
-					selector.setVariable(variableEntry.getKey(), new XdmAtomicValue(variableEntry.getValue()));
-				}
-			}
-
-			return selector.evaluate();
-		}
-		catch (final Exception e)
-		{
-			throw new PipelineException(e, "error while evaluating XPath query: %s", select);
 		}
 	}
 

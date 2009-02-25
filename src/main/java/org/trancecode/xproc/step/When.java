@@ -76,7 +76,7 @@ public class When extends AbstractCompoundStep
 		getEnvironmentPort(XProcPorts.XPATH_CONTEXT, resultEnvironment);
 		final String test = variables.get(OPTION_TEST).getValue();
 		log.trace("test = %s", test);
-		final XdmValue result = evaluateXPath(test, resultEnvironment);
+		final XdmValue result = resultEnvironment.evaluateXPath(test);
 		log.trace("result = %s", result);
 
 		if (result.size() == 0)
