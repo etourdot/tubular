@@ -179,8 +179,8 @@ public class PipelineParser implements XProcXmlModel, XProcPorts, XProcSteps, Lo
 	{
 		final String name = getPortName(portNode);
 		final Port port = step.getPort(name);
-		assert port.getType().equals(Type.PARAMETER) || port.getType().equals(getPortType(portNode)) : "port = "
-			+ port.getType() + " ; with-port = " + getPortType(portNode);
+		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
+			+ " ; with-port = " + getPortType(portNode);
 
 		parseSelect(portNode, port);
 		parsePortBindings(portNode, port);

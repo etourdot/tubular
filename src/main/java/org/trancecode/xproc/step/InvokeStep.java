@@ -23,7 +23,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.parser.StepFactory;
 
@@ -71,7 +70,7 @@ public class InvokeStep extends AbstractCompoundStep
 			final Port localPort = declarePort(port);
 			localPort.getPortBindings().addAll(port.getPortBindings());
 
-			if (port.getType().equals(Type.INPUT) || port.getType().equals(Type.PARAMETER))
+			if (port.isInput() || port.isParameter())
 			{
 				if (port.getPortBindings().isEmpty())
 				{

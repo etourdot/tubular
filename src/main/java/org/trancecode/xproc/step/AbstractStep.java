@@ -50,6 +50,7 @@ import java.util.NoSuchElementException;
 
 import javax.xml.transform.stream.StreamSource;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import net.sf.saxon.s9api.Processor;
@@ -72,6 +73,33 @@ public abstract class AbstractStep extends AbstractHasLocation
 	public static final QName ELEMENT_PARAMETER = NAMESPACE_XPROC.newSaxonQName("parameter");
 	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");
 	public static final QName ATTRIBUTE_PARAMETER_VALUE = new QName("value");
+
+	private static final Predicate<Port> PREDICATE_IS_INPUT_PORT = new Predicate<Port>()
+	{
+		@Override
+		public boolean apply(final Port port)
+		{
+			return port.isInput();
+		}
+	};
+
+	private static final Predicate<Port> PREDICATE_IS_OUTPUT_PORT = new Predicate<Port>()
+	{
+		@Override
+		public boolean apply(final Port port)
+		{
+			return port.isOutput();
+		}
+	};
+
+	private static final Predicate<Port> PREDICATE_IS_PARAMETER_PORT = new Predicate<Port>()
+	{
+		@Override
+		public boolean apply(final Port port)
+		{
+			return port.isParameter();
+		}
+	};
 
 	protected Logger log = LoggerManager.getLogger(this);
 
@@ -201,7 +229,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 		if (!environment.getPorts().containsKey(declaredPort.getPortReference()))
 		{
 			final EnvironmentPort environmentPort = environment.addEnvironmentPort(declaredPort);
-			if (isInput(declaredPort) && isPrimary(declaredPort))
+			if (declaredPort.isInput() && isPrimary(declaredPort))
 			{
 				if (declaredPort.getPortBindings().isEmpty())
 				{ // Set a pipe binding to default readable port if no binding on primary input port
@@ -233,7 +261,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 				environment.setXPathContextPort(environmentPort);
 			}
 
-			assert !(!declaredPort.getPortBindings().isEmpty() && isOutput(declaredPort)) : "port is already bound: "
+			assert !(!declaredPort.getPortBindings().isEmpty() && declaredPort.isOutput()) : "port is already bound: "
 				+ declaredPort;
 
 			return environmentPort;
@@ -248,7 +276,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	private boolean isXPathContextPort(final Port port)
 	{
-		if (isInput(port))
+		if (port.isInput())
 		{
 			if (port.getPortName().equals(PORT_XPATH_CONTEXT))
 			{
@@ -268,7 +296,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 	protected EnvironmentPort getInputEnvironmentPort(final String name, final Environment environment)
 	{
 		final EnvironmentPort port = getEnvironmentPort(name, environment);
-		assert isInput(port.getDeclaredPort());
+		assert port.getDeclaredPort().isInput();
 		return port;
 	}
 
@@ -276,7 +304,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 	protected EnvironmentPort getOutputEnvironmentPort(final String name, final Environment environment)
 	{
 		final EnvironmentPort port = getEnvironmentPort(name, environment);
-		assert isOutput(port.getDeclaredPort());
+		assert port.getDeclaredPort().isOutput();
 		return port;
 	}
 
@@ -300,7 +328,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 	{
 		log.trace("%s", METHOD_NAME);
 
-		for (final Port port : Iterables.concat(getPorts(Type.INPUT), getPorts(Type.PARAMETER)))
+		for (final Port port : Iterables.concat(getInputPorts(), getParameterPorts()))
 		{
 			getEnvironmentPort(port.getPortName(), environment);
 		}
@@ -315,7 +343,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	protected void bindOutputEnvironmentPorts(final Environment sourceEnvironment, final Environment resultEnvironment)
 	{
-		for (final Port port : getPorts(Type.OUTPUT))
+		for (final Port port : getOutputPorts())
 		{
 			log.trace("%s port = %s", METHOD_NAME, port);
 			final EnvironmentPort environmentPort = getEnvironmentPort(port.getPortName(), resultEnvironment);
@@ -387,31 +415,13 @@ public abstract class AbstractStep extends AbstractHasLocation
 	{
 		for (final Port port : ports.values())
 		{
-			if (port.getType() == Type.OUTPUT && isPrimary(port))
+			if (port.isOutput() && isPrimary(port))
 			{
 				return port;
 			}
 		}
 
 		return null;
-	}
-
-
-	private static boolean isOutput(final Port port)
-	{
-		return port.getType().equals(Type.OUTPUT);
-	}
-
-
-	private static boolean isInput(final Port port)
-	{
-		return port.getType().equals(Type.INPUT);
-	}
-
-
-	private static boolean isParameter(final Port port)
-	{
-		return port.getType().equals(Type.PARAMETER);
 	}
 
 
@@ -442,6 +452,24 @@ public abstract class AbstractStep extends AbstractHasLocation
 		}
 
 		return false;
+	}
+
+
+	protected Iterable<Port> getInputPorts()
+	{
+		return Iterables.filter(ports.values(), PREDICATE_IS_INPUT_PORT);
+	}
+
+
+	protected Iterable<Port> getOutputPorts()
+	{
+		return Iterables.filter(ports.values(), PREDICATE_IS_OUTPUT_PORT);
+	}
+
+
+	protected Iterable<Port> getParameterPorts()
+	{
+		return Iterables.filter(ports.values(), PREDICATE_IS_PARAMETER_PORT);
 	}
 
 

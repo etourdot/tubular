@@ -23,8 +23,9 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
-import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.parser.StepFactory;
+
+import com.google.common.collect.Iterables;
 
 import net.sf.saxon.s9api.QName;
 
@@ -85,13 +86,12 @@ public class Pipeline extends AbstractCompoundStep
 
 	public void addImplicitPorts()
 	{
-
-		if (getPorts(Type.INPUT).isEmpty())
+		if (Iterables.isEmpty(getInputPorts()))
 		{
 			declareInputPort(PORT_SOURCE, location, true, true);
 		}
 
-		if (getPorts(Type.OUTPUT).isEmpty())
+		if (Iterables.isEmpty(getOutputPorts()))
 		{
 			declareOutputPort(PORT_RESULT, location, true, true);
 		}
