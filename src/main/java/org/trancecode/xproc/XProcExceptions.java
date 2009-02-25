@@ -37,7 +37,18 @@ public final class XProcExceptions
 
 	public static XProcException xd0004(final Location location, final Object... args)
 	{
-		return new XProcException(Type.DYNAMIC, 4, location,
-			"no subpipeline is selected by the p:choose and no default is provided", args);
+		return newXProcException(
+			Type.DYNAMIC, 4, location, "no subpipeline is selected by the p:choose and no default is provided", args);
+	}
+
+
+	private static XProcException newXProcException(
+		final Type type, final int code, final Location location, final String message, final Object... parameters)
+	{
+		final XProcException exception = new XProcException(type, code, location, message, parameters);
+		final StackTraceElement[] stackTrace = new StackTraceElement[exception.getStackTrace().length - 1];
+		System.arraycopy(exception.getStackTrace(), 1, stackTrace, 0, stackTrace.length);
+		exception.setStackTrace(stackTrace);
+		return exception;
 	}
 }
