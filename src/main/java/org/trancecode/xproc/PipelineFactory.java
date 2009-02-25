@@ -22,6 +22,7 @@ package org.trancecode.xproc;
 import org.trancecode.log.Logger;
 import org.trancecode.log.LoggerHelpers;
 import org.trancecode.log.LoggerManager;
+import org.trancecode.xml.Location;
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.parser.StepFactory;
 import org.trancecode.xproc.step.Choose;
@@ -90,16 +91,39 @@ public class PipelineFactory implements LoggerHelpers, XProcSteps
 	}
 
 
+	private static StepFactory newUnsupportedStepFactory(final QName stepType)
+	{
+		return new StepFactory()
+		{
+			@Override
+			public Step newStep(final String name, final Location location)
+			{
+				throw new UnsupportedOperationException("step type = " + stepType + " ; name = " + name
+					+ " ; location = " + location);
+			}
+		};
+	}
+
+
+	private static void addUnsupportedStepFactory(final QName stepType, final Map<QName, StepFactory> library)
+	{
+		assert !library.containsKey(stepType);
+		library.put(stepType, newUnsupportedStepFactory(stepType));
+	}
+
+
 	public static Map<QName, StepFactory> getDefaultLibrary()
 	{
 		final Map<QName, StepFactory> library = Maps.newHashMap();
 		library.put(STEP_CHOOSE, new Choose.Factory());
 		library.put(STEP_COUNT, new Count.Factory());
 		library.put(STEP_FOR_EACH, new ForEach.Factory());
+		addUnsupportedStepFactory(STEP_GROUP, library);
 		library.put(STEP_IDENTITY, new Identity.Factory());
 		library.put(STEP_LOAD, new Load.Factory());
 		library.put(STEP_OTHERWISE, new Otherwise.Factory());
 		library.put(STEP_STORE, new Store.Factory());
+		addUnsupportedStepFactory(STEP_TRY, library);
 		library.put(STEP_WHEN, new When.Factory());
 		library.put(STEP_XSLT, new Xslt.Factory());
 		return library;
