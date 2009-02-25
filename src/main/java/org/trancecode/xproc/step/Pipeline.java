@@ -57,7 +57,7 @@ public class Pipeline extends AbstractCompoundStep
 
 		for (final Port port : ports.values())
 		{
-			pipeline.addPort(port);
+			pipeline.declarePort(port);
 		}
 
 		// TODO parameters?

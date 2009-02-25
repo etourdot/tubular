@@ -68,9 +68,7 @@ public class InvokeStep extends AbstractCompoundStep
 
 		for (final Port port : step.getPorts().values())
 		{
-			final Port localPort =
-				new Port(name, port.getPortName(), location, port.getType(), port.isPrimary(), port.isSequence());
-			addPort(localPort);
+			final Port localPort = declarePort(port);
 			localPort.getPortBindings().addAll(port.getPortBindings());
 
 			if (port.getType().equals(Type.INPUT) || port.getType().equals(Type.PARAMETER))
