@@ -91,6 +91,36 @@ public class Variable extends AbstractHasLocation implements LoggerHelpers
 	}
 
 
+	public String evaluate(final Environment environment)
+	{
+		if (value != null)
+		{
+			return value;
+		}
+
+		if (select == null)
+		{
+			if (isRequired())
+			{
+				throw new PipelineException("Unbound variable %s @ %s", getName(), getLocation());
+			}
+
+			return null;
+		}
+		else
+		{
+			try
+			{
+				return environment.evaluateXPath(select).toString();
+			}
+			catch (final Exception e)
+			{
+				throw new PipelineException(e, "error while evaluating variable $%s ; select = %s", getName(), select);
+			}
+		}
+	}
+
+
 	@Override
 	public String toString()
 	{

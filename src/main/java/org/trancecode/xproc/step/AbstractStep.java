@@ -544,38 +544,14 @@ public abstract class AbstractStep extends AbstractHasLocation
 		for (final Variable variable : variables)
 		{
 			final String value;
-			if (variable.getValue() != null)
+			try
 			{
-				value = variable.getValue();
+				value = variable.evaluate(environment);
 			}
-			else
+			catch (final Exception e)
 			{
-				final String select = variable.getSelect();
-				log.trace(
-					"%s step = %s ; variable = %s ; select = %s", METHOD_NAME, getName(), variable.getName(), select);
-
-				if (select == null)
-				{
-					if (variable.isRequired())
-					{
-						throw new PipelineException("Unbound variable %s in step %s of type %s @ %s", variable
-							.getName(), getName(), getType(), getLocation());
-					}
-
-					value = null;
-				}
-				else
-				{
-					try
-					{
-						value = environment.evaluateXPath(select).toString();
-					}
-					catch (final Exception e)
-					{
-						throw new PipelineException(e, "error while evaluating variable $%s ; select = %s", getName(),
-							select);
-					}
-				}
+				throw new PipelineException(e, "error while evaluating variable $%s in step %s of type %s @ %s",
+					getName(), getName(), getType(), getLocation());
 			}
 
 			log.trace("%s = %s", variable.getName(), value);
