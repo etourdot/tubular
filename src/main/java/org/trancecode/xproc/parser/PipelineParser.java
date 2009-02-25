@@ -282,9 +282,22 @@ public class PipelineParser implements XProcXmlModel, XProcPorts, XProcSteps, Lo
 		final boolean sequence =
 			getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_SEQUENCE)), false);
 
+		final Location location = getLocation(node);
 		final Port port = new Port(step.getName(), portName, getLocation(node), type, primary, sequence);
 		log.trace("new port: %s", port);
-		step.addPort(port);
+		if (type == Type.INPUT)
+		{
+			step.declareInputPort(portName, location, primary, sequence);
+		}
+		else if (type == Type.OUTPUT)
+		{
+			step.declareOutputPort(portName, location, primary, sequence);
+		}
+		else
+		{
+			assert type == Type.PARAMETER;
+			step.declareParameterPort(portName, location, primary, sequence);
+		}
 
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
 		if (select != null)
@@ -441,12 +454,7 @@ public class PipelineParser implements XProcXmlModel, XProcPorts, XProcSteps, Lo
 			parsePort(portNode, parsedPipeline);
 		}
 
-		// add implicit ports
-		if (parsedPipeline.getPorts().isEmpty())
-		{
-			parsedPipeline.addPort(new Port(name, PORT_SOURCE, getLocation(node), Type.INPUT, true, true));
-			parsedPipeline.addPort(new Port(name, PORT_RESULT, getLocation(node), Type.OUTPUT, true, true));
-		}
+		parsedPipeline.addImplicitPorts();
 
 		for (final XdmNode optionNode : SaxonUtil.getElements(node, ELEMENT_OPTION))
 		{

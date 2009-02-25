@@ -39,6 +39,15 @@ public interface Step extends HasLocation
 	QName getType();
 
 
+	Port declareInputPort(String portName, Location location, boolean primary, boolean sequence);
+
+
+	Port declareOutputPort(String portName, Location location, boolean primary, boolean sequence);
+
+
+	Port declareParameterPort(String portName, Location location, boolean primary, boolean sequence);
+
+
 	boolean hasOptionDeclared(QName name);
 
 
@@ -58,9 +67,6 @@ public interface Step extends HasLocation
 
 
 	Environment run(Environment environment);
-
-
-	void addPort(Port port);
 
 
 	Port getPort(String name);

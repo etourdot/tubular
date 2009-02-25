@@ -154,7 +154,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 	}
 
 
-	public void addPort(final Port port)
+	protected void addPort(final Port port)
 	{
 		ports.put(port.getPortName(), port);
 	}

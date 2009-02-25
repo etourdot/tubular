@@ -85,14 +85,15 @@ public class Pipeline extends AbstractCompoundStep
 
 	public void addImplicitPorts()
 	{
+
 		if (getPorts(Type.INPUT).isEmpty())
 		{
-			addPort(new Port(name, PORT_SOURCE, location, Type.INPUT, true, true));
+			declareInputPort(PORT_SOURCE, location, true, true);
 		}
 
 		if (getPorts(Type.OUTPUT).isEmpty())
 		{
-			addPort(new Port(name, PORT_RESULT, location, Type.OUTPUT, true, true));
+			declareOutputPort(PORT_RESULT, location, true, true);
 		}
 	}
 }
