@@ -24,6 +24,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.InlinePortBinding;
@@ -52,8 +53,8 @@ public class ForEach extends AbstractCompoundStep
 	{
 		super(name, location);
 
-		declareInputPort(PORT_ITERATION_SOURCE, location, true, true);
-		declareOutputPort(PORT_RESULT, location, true, true);
+		declareInputPort(XProcPorts.PORT_ITERATION_SOURCE, location, true, true);
+		declareOutputPort(XProcPorts.PORT_RESULT, location, true, true);
 	}
 
 
@@ -65,7 +66,7 @@ public class ForEach extends AbstractCompoundStep
 
 	private Port newIterationPort(final XdmNode node)
 	{
-		final Port port = new Port(name, PORT_ITERATION_NODE, getLocation(), Type.INPUT, false, false);
+		final Port port = new Port(name, XProcPorts.PORT_ITERATION_NODE, getLocation(), Type.INPUT, false, false);
 		port.getPortBindings().add(new InlinePortBinding(node, getLocation()));
 		return port;
 	}
@@ -76,7 +77,7 @@ public class ForEach extends AbstractCompoundStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		for (final XdmNode node : readNodes(PORT_ITERATION_SOURCE, environment))
+		for (final XdmNode node : readNodes(XProcPorts.PORT_ITERATION_SOURCE, environment))
 		{
 			log.trace("new iteration: %s", node);
 			final Environment iterationEnvironment = environment.newChildStepEnvironment();
@@ -84,7 +85,8 @@ public class ForEach extends AbstractCompoundStep
 			iterationEnvironment.setDefaultReadablePort(environmentPort);
 
 			final Environment resultEnvironment = runSteps(steps, iterationEnvironment);
-			getOutputEnvironmentPort(PORT_RESULT, environment).pipe(resultEnvironment.getDefaultReadablePort());
+			getOutputEnvironmentPort(XProcPorts.PORT_RESULT, environment).pipe(
+				resultEnvironment.getDefaultReadablePort());
 		}
 	}
 }

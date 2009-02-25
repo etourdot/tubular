@@ -23,6 +23,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
@@ -48,9 +49,9 @@ public class Choose extends AbstractCompoundStep
 	{
 		super(name, location);
 
-		declareInputPort(PORT_SOURCE, location, true, true);
-		declareInputPort(PORT_XPATH_CONTEXT, location, false, false);
-		declareOutputPort(PORT_RESULT, location, true, true);
+		declareInputPort(XProcPorts.PORT_SOURCE, location, true, true);
+		declareInputPort(XProcPorts.PORT_XPATH_CONTEXT, location, false, false);
+		declareOutputPort(XProcPorts.PORT_RESULT, location, true, true);
 	}
 
 

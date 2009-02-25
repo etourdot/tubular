@@ -67,7 +67,7 @@ import net.sf.saxon.s9api.XdmValue;
  * @version $Revision$
  */
 public abstract class AbstractStep extends AbstractHasLocation
-	implements Step, XProcPorts, XProcOptions, XProcNamespaces, LoggerHelpers
+	implements Step, XProcOptions, XProcNamespaces, LoggerHelpers
 {
 	public static final QName ELEMENT_PARAMETER = NAMESPACE_XPROC.newSaxonQName("parameter");
 	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");
@@ -243,7 +243,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 				environment.setDefaultReadablePort(environmentPort);
 			}
 
-			if (declaredPort.getPortName().equals(PORT_XPATH_CONTEXT))
+			if (declaredPort.getPortName().equals(XProcPorts.PORT_XPATH_CONTEXT))
 			{
 				if (declaredPort.getPortBindings().isEmpty())
 				{
@@ -277,14 +277,14 @@ public abstract class AbstractStep extends AbstractHasLocation
 	{
 		if (port.isInput())
 		{
-			if (port.getPortName().equals(PORT_XPATH_CONTEXT))
+			if (port.getPortName().equals(XProcPorts.PORT_XPATH_CONTEXT))
 			{
 				return true;
 			}
 
 			if (isPrimary(port))
 			{
-				return !ports.containsKey(PORT_XPATH_CONTEXT);
+				return !ports.containsKey(XProcPorts.PORT_XPATH_CONTEXT);
 			}
 		}
 

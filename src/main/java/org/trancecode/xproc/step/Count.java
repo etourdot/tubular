@@ -51,8 +51,8 @@ public class Count extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(PORT_SOURCE, location, false, true);
-		declareOutputPort(PORT_RESULT, location, false, false);
+		declareInputPort(XProcPorts.PORT_SOURCE, location, false, true);
+		declareOutputPort(XProcPorts.PORT_RESULT, location, false, false);
 
 		declareOption(XProcOptions.OPTION_LIMIT, "0", false, location);
 	}

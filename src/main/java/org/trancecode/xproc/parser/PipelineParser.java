@@ -65,7 +65,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class PipelineParser implements XProcXmlModel, XProcPorts, LoggerHelpers
+public class PipelineParser implements XProcXmlModel, LoggerHelpers
 {
 	private final PipelineFactory pipelineFactory;
 	private final Source source;
@@ -195,12 +195,12 @@ public class PipelineParser implements XProcXmlModel, XProcPorts, LoggerHelpers
 
 		if (portNode.getNodeName().equals(ELEMENT_ITERATION_SOURCE))
 		{
-			return PORT_ITERATION_SOURCE;
+			return XProcPorts.PORT_ITERATION_SOURCE;
 		}
 
 		if (portNode.getNodeName().equals(ELEMENT_XPATH_CONTEXT))
 		{
-			return PORT_XPATH_CONTEXT;
+			return XProcPorts.PORT_XPATH_CONTEXT;
 		}
 
 		throw new IllegalStateException(portNode.getNodeName().toString());
@@ -561,7 +561,7 @@ public class PipelineParser implements XProcXmlModel, XProcPorts, LoggerHelpers
 
 		if (xpathContextNode != null)
 		{
-			final Port port = step.getPort(PORT_XPATH_CONTEXT);
+			final Port port = step.getPort(XProcPorts.PORT_XPATH_CONTEXT);
 			parseSelect(xpathContextNode, port);
 			parsePortBindings(xpathContextNode, port);
 			if (defaultXPathContext != null && port.getPortBindings().isEmpty())

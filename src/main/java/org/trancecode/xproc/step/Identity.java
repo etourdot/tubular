@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
@@ -48,8 +49,8 @@ public class Identity extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(PORT_SOURCE, location, false, true);
-		declareOutputPort(PORT_RESULT, location, false, true);
+		declareInputPort(XProcPorts.PORT_SOURCE, location, false, true);
+		declareOutputPort(XProcPorts.PORT_RESULT, location, false, true);
 	}
 
 
@@ -64,9 +65,9 @@ public class Identity extends AbstractStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		for (final XdmNode node : readNodes(PORT_SOURCE, environment))
+		for (final XdmNode node : readNodes(XProcPorts.PORT_SOURCE, environment))
 		{
-			writeNodes(PORT_RESULT, environment, node);
+			writeNodes(XProcPorts.PORT_RESULT, environment, node);
 		}
 	}
 }

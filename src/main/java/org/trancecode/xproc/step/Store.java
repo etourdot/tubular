@@ -25,6 +25,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
@@ -69,8 +70,8 @@ public class Store extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(PORT_SOURCE, location, false, false);
-		declareOutputPort(PORT_RESULT, location, false, false);
+		declareInputPort(XProcPorts.PORT_SOURCE, location, false, false);
+		declareOutputPort(XProcPorts.PORT_RESULT, location, false, false);
 		declareOption(OPTION_HREF, null, true, location);
 		declareOption(OPTION_BYTE_ORDER_MARK, null, false, location);
 		declareOption(OPTION_CDATA_SECTION_ELEMENTS, "''", false, location);
@@ -101,7 +102,7 @@ public class Store extends AbstractStep
 	{
 		log.trace("%s", METHOD_NAME);
 
-		final XdmNode node = readNode(PORT_SOURCE, environment);
+		final XdmNode node = readNode(XProcPorts.PORT_SOURCE, environment);
 		assert node != null;
 
 		final URI baseUri = environment.getBaseUri();
@@ -178,6 +179,6 @@ public class Store extends AbstractStep
 		}
 
 		final XdmNode resultNode = newResultElement(outputUri.toString(), environment.getProcessor());
-		writeNodes(PORT_RESULT, environment, resultNode);
+		writeNodes(XProcPorts.PORT_RESULT, environment, resultNode);
 	}
 }
