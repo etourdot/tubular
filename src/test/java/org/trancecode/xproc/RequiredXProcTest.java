@@ -267,16 +267,9 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
-	public void parameter001() throws Exception
+	public void parameters001() throws Exception
 	{
-		test("required/parameter-001.xml");
-	}
-
-
-	@Test
-	public void parameter002() throws Exception
-	{
-		test("required/parameter-002.xml");
+		test("required/parameters-001.xml");
 	}
 
 
