@@ -145,6 +145,24 @@ public abstract class AbstractStep extends AbstractHasLocation
 	}
 
 
+	public final Port declarePort(final Port port)
+	{
+		if (port.isInput())
+		{
+			return declareInputPort(port.getPortName(), port.getLocation(), port.isPrimary(), port.isSequence());
+		}
+		else if (port.isOutput())
+		{
+			return declareOutputPort(port.getPortName(), port.getLocation(), port.isPrimary(), port.isSequence());
+		}
+		else
+		{
+			assert port.isParameter();
+			return declareParameterPort(port.getPortName(), port.getLocation(), port.isPrimary(), port.isSequence());
+		}
+	}
+
+
 	public final Option declareOption(
 		final QName optionName, final String select, final boolean required, final Location location)
 	{

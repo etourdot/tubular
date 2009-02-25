@@ -39,6 +39,9 @@ public interface Step extends HasLocation
 	QName getType();
 
 
+	Port declarePort(Port port);
+
+
 	Port declareInputPort(String portName, Location location, boolean primary, boolean sequence);
 
 
