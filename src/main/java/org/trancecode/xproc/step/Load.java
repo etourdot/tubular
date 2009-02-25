@@ -24,6 +24,7 @@ import org.trancecode.xml.XmlUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
 import javax.xml.transform.Source;
@@ -60,7 +61,7 @@ public class Load extends AbstractStep
 
 	public QName getType()
 	{
-		return STEP_LOAD;
+		return XProcSteps.STEP_LOAD;
 	}
 
 

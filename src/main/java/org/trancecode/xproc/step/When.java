@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
 import net.sf.saxon.s9api.QName;
@@ -108,6 +109,6 @@ public class When extends AbstractCompoundStep
 	@Override
 	public QName getType()
 	{
-		return STEP_WHEN;
+		return XProcSteps.STEP_WHEN;
 	}
 }

@@ -24,6 +24,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.parser.StepFactory;
@@ -58,7 +59,7 @@ public class ForEach extends AbstractCompoundStep
 
 	public QName getType()
 	{
-		return STEP_FOR_EACH;
+		return XProcSteps.STEP_FOR_EACH;
 	}
 
 

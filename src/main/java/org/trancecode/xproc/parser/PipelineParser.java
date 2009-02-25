@@ -34,7 +34,6 @@ import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
@@ -66,7 +65,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class PipelineParser implements XProcXmlModel, XProcPorts, XProcSteps, LoggerHelpers
+public class PipelineParser implements XProcXmlModel, XProcPorts, LoggerHelpers
 {
 	private final PipelineFactory pipelineFactory;
 	private final Source source;

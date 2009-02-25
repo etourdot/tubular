@@ -26,6 +26,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
 import java.net.URI;
@@ -85,7 +86,7 @@ public class Xslt extends AbstractStep
 
 	public QName getType()
 	{
-		return STEP_XSLT;
+		return XProcSteps.STEP_XSLT;
 	}
 
 

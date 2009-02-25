@@ -37,7 +37,6 @@ import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcNamespaces;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.Port.Type;
 
 import java.io.StringReader;
@@ -68,7 +67,7 @@ import net.sf.saxon.s9api.XdmValue;
  * @version $Revision$
  */
 public abstract class AbstractStep extends AbstractHasLocation
-	implements Step, XProcSteps, XProcPorts, XProcOptions, XProcNamespaces, LoggerHelpers
+	implements Step, XProcPorts, XProcOptions, XProcNamespaces, LoggerHelpers
 {
 	public static final QName ELEMENT_PARAMETER = NAMESPACE_XPROC.newSaxonQName("parameter");
 	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");

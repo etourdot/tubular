@@ -25,6 +25,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
 import java.io.OutputStream;
@@ -91,7 +92,7 @@ public class Store extends AbstractStep
 
 	public QName getType()
 	{
-		return STEP_STORE;
+		return XProcSteps.STEP_STORE;
 	}
 
 

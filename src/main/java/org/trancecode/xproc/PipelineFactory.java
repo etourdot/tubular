@@ -50,7 +50,7 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class PipelineFactory implements LoggerHelpers, XProcSteps
+public class PipelineFactory implements LoggerHelpers
 {
 	private final Logger log = LoggerManager.getLogger(this);
 	private Processor processor = new Processor(false);
@@ -115,17 +115,17 @@ public class PipelineFactory implements LoggerHelpers, XProcSteps
 	public static Map<QName, StepFactory> getDefaultLibrary()
 	{
 		final Map<QName, StepFactory> library = Maps.newHashMap();
-		library.put(STEP_CHOOSE, new Choose.Factory());
-		library.put(STEP_COUNT, new Count.Factory());
-		library.put(STEP_FOR_EACH, new ForEach.Factory());
-		addUnsupportedStepFactory(STEP_GROUP, library);
-		library.put(STEP_IDENTITY, new Identity.Factory());
-		library.put(STEP_LOAD, new Load.Factory());
-		library.put(STEP_OTHERWISE, new Otherwise.Factory());
-		library.put(STEP_STORE, new Store.Factory());
-		addUnsupportedStepFactory(STEP_TRY, library);
-		library.put(STEP_WHEN, new When.Factory());
-		library.put(STEP_XSLT, new Xslt.Factory());
+		library.put(XProcSteps.STEP_CHOOSE, new Choose.Factory());
+		library.put(XProcSteps.STEP_COUNT, new Count.Factory());
+		library.put(XProcSteps.STEP_FOR_EACH, new ForEach.Factory());
+		addUnsupportedStepFactory(XProcSteps.STEP_GROUP, library);
+		library.put(XProcSteps.STEP_IDENTITY, new Identity.Factory());
+		library.put(XProcSteps.STEP_LOAD, new Load.Factory());
+		library.put(XProcSteps.STEP_OTHERWISE, new Otherwise.Factory());
+		library.put(XProcSteps.STEP_STORE, new Store.Factory());
+		addUnsupportedStepFactory(XProcSteps.STEP_TRY, library);
+		library.put(XProcSteps.STEP_WHEN, new When.Factory());
+		library.put(XProcSteps.STEP_XSLT, new Xslt.Factory());
 		return library;
 	}
 
