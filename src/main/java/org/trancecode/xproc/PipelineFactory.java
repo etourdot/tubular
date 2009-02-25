@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import net.sf.saxon.s9api.Processor;
@@ -52,6 +53,8 @@ import net.sf.saxon.s9api.QName;
  */
 public class PipelineFactory implements LoggerHelpers
 {
+	public static final Map<QName, StepFactory> DEFAULT_LIBRARY = newDefaultLibrary();
+
 	private final Logger log = LoggerManager.getLogger(this);
 	private Processor processor = new Processor(false);
 	private URIResolver uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
@@ -114,15 +117,25 @@ public class PipelineFactory implements LoggerHelpers
 
 	public static Map<QName, StepFactory> getDefaultLibrary()
 	{
+		return DEFAULT_LIBRARY;
+	}
+
+
+	private static Map<QName, StepFactory> newDefaultLibrary()
+	{
 		final Map<QName, StepFactory> library = Maps.newHashMap();
+
+		// Core steps
 		library.put(XProcSteps.CHOOSE, new Choose.Factory());
-		library.put(XProcSteps.COUNT, new Count.Factory());
 		library.put(XProcSteps.FOR_EACH, new ForEach.Factory());
+		library.put(XProcSteps.OTHERWISE, new Otherwise.Factory());
+		library.put(XProcSteps.WHEN, new When.Factory());
+
+		// Required steps
+		library.put(XProcSteps.COUNT, new Count.Factory());
 		library.put(XProcSteps.IDENTITY, new Identity.Factory());
 		library.put(XProcSteps.LOAD, new Load.Factory());
-		library.put(XProcSteps.OTHERWISE, new Otherwise.Factory());
 		library.put(XProcSteps.STORE, new Store.Factory());
-		library.put(XProcSteps.WHEN, new When.Factory());
 		library.put(XProcSteps.XSLT, new Xslt.Factory());
 
 		// Unsupported core steps
@@ -167,7 +180,7 @@ public class PipelineFactory implements LoggerHelpers
 		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_ENCODE, library);
 		addUnsupportedStepFactory(XProcSteps.XQUERY, library);
 
-		return library;
+		return ImmutableMap.copyOf(library);
 	}
 
 
