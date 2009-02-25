@@ -31,14 +31,10 @@ import org.trancecode.xml.Namespace;
 public interface XProcNamespaces
 {
 	String NAMESPACE_XPROC_URI = "http://www.w3.org/ns/xproc";
-
 	String NAMESPACE_XPROC_PREFIX = "p";
-
 	Namespace NAMESPACE_XPROC = new Namespace(NAMESPACE_XPROC_URI, NAMESPACE_XPROC_PREFIX);
 
 	String NAMESPACE_XPROC_STEP_URI = "http://www.w3.org/ns/xproc-step";
-
 	String NAMESPACE_XPROC_STEP_PREFIX = "c";
-
 	Namespace NAMESPACE_XPROC_STEP = new Namespace(NAMESPACE_XPROC_STEP_URI, NAMESPACE_XPROC_STEP_PREFIX);
 }

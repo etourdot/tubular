@@ -31,28 +31,16 @@ import net.sf.saxon.s9api.QName;
 public interface XProcSteps extends XProcNamespaces
 {
 	QName CHOOSE = NAMESPACE_XPROC.newSaxonQName("choose");
-
 	QName COUNT = NAMESPACE_XPROC.newSaxonQName("count");
-
 	QName FOR_EACH = NAMESPACE_XPROC.newSaxonQName("for-each");
-
 	QName GROUP = NAMESPACE_XPROC.newSaxonQName("group");
-
 	QName IDENTITY = NAMESPACE_XPROC.newSaxonQName("identity");
-
 	QName LOAD = NAMESPACE_XPROC.newSaxonQName("load");
-
 	QName OTHERWISE = NAMESPACE_XPROC.newSaxonQName("otherwise");
-
 	QName PIPELINE = NAMESPACE_XPROC.newSaxonQName("pipeline");
-
 	QName STORE = NAMESPACE_XPROC.newSaxonQName("store");
-
 	QName TRY = NAMESPACE_XPROC.newSaxonQName("try");
-
 	QName WHEN = NAMESPACE_XPROC.newSaxonQName("when");
-
 	QName XSL_FORMATTER = NAMESPACE_XPROC.newSaxonQName("xsl-formatter");
-
 	QName XSLT = NAMESPACE_XPROC.newSaxonQName("xslt");
 }
