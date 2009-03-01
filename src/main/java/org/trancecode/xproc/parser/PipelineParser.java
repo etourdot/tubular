@@ -502,7 +502,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 		parser.parse();
 		final Map<QName, StepFactory> newLibrary = parser.getLibrary();
 		log.trace("new steps = %s", newLibrary.keySet());
-		importedLibrary.putAll(newLibrary);
+		localLibrary.putAll(newLibrary);
 	}
 
 
