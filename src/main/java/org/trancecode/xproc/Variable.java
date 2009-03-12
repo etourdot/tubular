@@ -19,7 +19,6 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.log.LoggerHelpers;
 import org.trancecode.xml.Location;
 
 import net.sf.saxon.s9api.QName;
@@ -29,7 +28,7 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Variable extends AbstractHasLocation implements LoggerHelpers
+public class Variable extends AbstractHasLocation
 {
 	private final QName name;
 	private String select;

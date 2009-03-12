@@ -20,9 +20,6 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.core.CollectionUtil;
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonUtil;
 import org.trancecode.xproc.AbstractHasLocation;
@@ -58,13 +55,15 @@ import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public abstract class AbstractStep extends AbstractHasLocation
-	implements Step, XProcOptions, XProcNamespaces, LoggerHelpers
+public abstract class AbstractStep extends AbstractHasLocation implements Step, XProcOptions, XProcNamespaces
 {
 	public static final QName ELEMENT_PARAMETER = NAMESPACE_XPROC.newSaxonQName("parameter");
 	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");
@@ -97,7 +96,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 		}
 	};
 
-	protected Logger log = LoggerManager.getLogger(this);
+	protected XLogger log = XLoggerFactory.getXLogger(getClass());
 
 	protected final Map<QName, Parameter> parameters = CollectionUtil.newSmallWriteOnceMap();
 	protected final Map<QName, Variable> variables = CollectionUtil.newSmallWriteOnceMap();
@@ -113,8 +112,6 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 		assert name != null : getClass().getName();
 		this.name = name;
-
-		log = log.getChildLogger(name);
 	}
 
 
@@ -217,7 +214,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	protected EnvironmentPort getEnvironmentPort(final String name, final Environment environment)
 	{
-		log.trace("%s name = %s", METHOD_NAME, name);
+		log.entry(name);
 
 		final Port declaredPort = ports.get(name);
 		assert declaredPort != null : "name = " + name + " ; ports = " + ports;
@@ -236,7 +233,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 					}
 				}
 
-				log.trace("bindings = %s", declaredPort.getPortBindings());
+				log.trace("bindings = {}", declaredPort.getPortBindings());
 				environment.setDefaultReadablePort(environmentPort);
 			}
 
@@ -307,9 +304,9 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	protected Iterable<XdmNode> readNodes(final String name, final Environment environment)
 	{
-		log.trace("%s name = %s", METHOD_NAME, name);
+		log.entry(name);
 		final Iterable<XdmNode> nodes = getInputEnvironmentPort(name, environment).readNodes();
-		log.trace("nodes = %s", SaxonUtil.nodesToString(nodes));
+		log.trace("nodes = {}", SaxonUtil.nodesToString(nodes));
 		return nodes;
 	}
 
@@ -322,7 +319,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	private void setupInputEnvironmentPorts(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		for (final Port port : Iterables.concat(getInputPorts(), getParameterPorts()))
 		{
@@ -339,15 +336,17 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	protected void bindOutputEnvironmentPorts(final Environment sourceEnvironment, final Environment resultEnvironment)
 	{
+		log.entry();
+
 		for (final Port port : getOutputPorts())
 		{
-			log.trace("%s port = %s", METHOD_NAME, port);
+			log.trace("port = {}", port);
 			final EnvironmentPort environmentPort = getEnvironmentPort(port.getPortName(), resultEnvironment);
 
-			log.trace("primary port = %s", isPrimary(port));
+			log.trace("primary port = {}", isPrimary(port));
 			if (isPrimary(port))
 			{
-				log.trace("port bindings = %s", port.getPortBindings());
+				log.trace("port bindings = {}", port.getPortBindings());
 				// Set a pipe binding to default readable port if no binding on primary port
 				if (port.getPortBindings().isEmpty() && sourceEnvironment != resultEnvironment)
 				{
@@ -370,7 +369,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 		final Environment resultEnvironment = environment.newFollowingStepEnvironment();
 
 		setupInputEnvironmentPorts(resultEnvironment);
-		setLocalVariables(resultEnvironment, Iterables.concat(variables.values(), parameters.values()), log);
+		setLocalVariables(resultEnvironment, Iterables.concat(variables.values(), parameters.values()));
 
 		return resultEnvironment;
 	}
@@ -381,9 +380,9 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	public Environment run(final Environment environment)
 	{
-		log.trace("%s stepType = %s ; stepName = %s", METHOD_NAME, getType(), getName());
-		log.trace("variables = %s", environment.getVariables());
-		log.trace("declared variables = %s", variables);
+		log.entry(getType(), getName());
+		log.trace("variables = {}", environment.getVariables());
+		log.trace("declared variables = {}", variables);
 
 		final Environment resultEnvironment = newResultEnvironment(environment);
 
@@ -399,7 +398,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 		final Port primaryOutputPort = getPrimaryOutputPort();
 		if (primaryOutputPort != null)
 		{
-			log.trace("new default readable port: %s", primaryOutputPort.getPortName());
+			log.trace("new default readable port: {}", primaryOutputPort.getPortName());
 			final EnvironmentPort environmentPort = environment.getEnvironmentPort(primaryOutputPort);
 			assert environmentPort != null : "step = " + getName() + " ; port = " + primaryOutputPort.toString();
 			environment.setDefaultReadablePort(environmentPort);
@@ -532,9 +531,9 @@ public abstract class AbstractStep extends AbstractHasLocation
 	}
 
 
-	private void setLocalVariables(final Environment environment, final Iterable<Variable> variables, final Logger log)
+	private void setLocalVariables(final Environment environment, final Iterable<Variable> variables)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		if (Iterables.isEmpty(variables))
 		{
@@ -554,7 +553,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 					getName(), getName(), getType(), getLocation());
 			}
 
-			log.trace("%s = %s", variable.getName(), value);
+			log.trace("{} = {}", variable.getName(), value);
 
 			if (variable instanceof Parameter)
 			{
@@ -587,8 +586,7 @@ public abstract class AbstractStep extends AbstractHasLocation
 
 	protected void writeNodes(final String portName, final Environment environment, final XdmNode... nodes)
 	{
-		log.trace("%s portName = %s ; %s nodes = %s", METHOD_NAME, portName, nodes.length, SaxonUtil
-			.nodesToString(nodes));
+		log.entry(portName, nodes.length, SaxonUtil.nodesToString(nodes));
 		getEnvironmentPort(portName, environment).writeNodes(nodes);
 	}
 

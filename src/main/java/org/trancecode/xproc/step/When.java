@@ -63,9 +63,9 @@ public class When extends AbstractCompoundStep
 
 	public boolean test(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 		final boolean result = doTest(environment);
-		log.trace("result = %s", result);
+		log.trace("result = {}", result);
 		return result;
 	}
 
@@ -75,9 +75,9 @@ public class When extends AbstractCompoundStep
 		final Environment resultEnvironment = environment.newChildStepEnvironment();
 		getEnvironmentPort(XProcPorts.XPATH_CONTEXT, resultEnvironment);
 		final String test = variables.get(OPTION_TEST).getValue();
-		log.trace("test = %s", test);
+		log.trace("test = {}", test);
 		final XdmValue result = resultEnvironment.evaluateXPath(test);
-		log.trace("result = %s", result);
+		log.trace("result = {}", result);
 
 		if (result.size() == 0)
 		{

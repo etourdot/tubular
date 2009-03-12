@@ -60,7 +60,8 @@ public abstract class AbstractCompoundStep extends AbstractStep implements Compo
 	@Override
 	protected void doRun(final Environment environment)
 	{
-		log.trace("%s steps = %s", METHOD_NAME, steps);
+		log.entry();
+		log.trace("steps = {}", steps);
 
 		Environment currentEnvironment = environment.newChildStepEnvironment();
 		for (final Step step : steps)
@@ -74,7 +75,8 @@ public abstract class AbstractCompoundStep extends AbstractStep implements Compo
 
 	protected Environment runSteps(final List<Step> steps, final Environment environment)
 	{
-		log.trace("%s steps = %s", METHOD_NAME, steps);
+		log.entry();
+		log.trace("steps = {}", steps);
 
 		Environment currentEnvironment = environment;
 		for (final Step step : steps)

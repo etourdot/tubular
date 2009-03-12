@@ -19,9 +19,6 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.parser.StepFactory;
@@ -46,16 +43,19 @@ import com.google.common.collect.Maps;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class PipelineFactory implements LoggerHelpers
+public class PipelineFactory
 {
 	public static final Map<QName, StepFactory> DEFAULT_LIBRARY = newDefaultLibrary();
 
-	private final Logger log = LoggerManager.getLogger(this);
+	private final XLogger log = XLoggerFactory.getXLogger(getClass());
 	private Processor processor = new Processor(false);
 	private URIResolver uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
 	private Map<QName, StepFactory> library = getDefaultLibrary();
@@ -63,8 +63,8 @@ public class PipelineFactory implements LoggerHelpers
 
 	public Pipeline newPipeline(final Source source)
 	{
+		log.entry(source);
 		assert source != null;
-		log.trace("%s pipelineSource = %s", METHOD_NAME, source);
 
 		if (processor == null)
 		{

@@ -19,10 +19,10 @@
  */
 package org.trancecode.io;
 
-import org.trancecode.log.Logger;
-
 import java.io.Closeable;
 import java.io.IOException;
+
+import org.slf4j.Logger;
 
 
 /**
@@ -67,7 +67,7 @@ public final class IOUtil
 		{
 			if (logger != null)
 			{
-				logger.warn(e);
+				logger.warn(e.toString(), e);
 			}
 		}
 	}

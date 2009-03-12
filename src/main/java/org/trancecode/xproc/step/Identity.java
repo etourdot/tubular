@@ -63,7 +63,7 @@ public class Identity extends AbstractStep
 	@Override
 	protected void doRun(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		for (final XdmNode node : readNodes(XProcPorts.SOURCE, environment))
 		{

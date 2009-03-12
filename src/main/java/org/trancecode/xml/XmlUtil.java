@@ -20,12 +20,13 @@
 package org.trancecode.xml;
 
 import org.trancecode.io.IOUtil;
-import org.trancecode.log.Logger;
 
 import java.io.IOException;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
 
 
 /**
@@ -62,7 +63,7 @@ public final class XmlUtil
 			{
 				if (logger != null)
 				{
-					logger.warn(e);
+					logger.warn(e.toString(), e);
 				}
 			}
 		}

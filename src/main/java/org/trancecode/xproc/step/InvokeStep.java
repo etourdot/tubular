@@ -75,7 +75,7 @@ public class InvokeStep extends AbstractCompoundStep
 				if (port.getPortBindings().isEmpty())
 				{
 					final PortReference localPortReference = new PortReference(name, port.getPortName());
-					log.trace("%s -> %s", localPortReference, port.getPortReference());
+					log.trace("{} -> {}", localPortReference, port.getPortReference());
 					port.getPortBindings().add(new PipePortBinding(localPortReference, location));
 				}
 			}

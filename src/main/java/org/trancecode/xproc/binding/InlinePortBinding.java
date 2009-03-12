@@ -20,9 +20,6 @@
 package org.trancecode.xproc.binding;
 
 import org.trancecode.annotation.Immutable;
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonUtil;
 import org.trancecode.xproc.Environment;
@@ -33,15 +30,18 @@ import java.util.Collections;
 
 import net.sf.saxon.s9api.XdmNode;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 @Immutable
-public class InlinePortBinding extends AbstractPortBinding implements PortBinding, LoggerHelpers
+public class InlinePortBinding extends AbstractPortBinding implements PortBinding
 {
-	private final Logger log = LoggerManager.getLogger(this);
+	private final XLogger log = XLoggerFactory.getXLogger(getClass());
 	private final XdmNode node;
 
 
@@ -61,8 +61,9 @@ public class InlinePortBinding extends AbstractPortBinding implements PortBindin
 		{
 			public Iterable<XdmNode> readNodes()
 			{
-				log.trace("%s node = %s", METHOD_NAME, SaxonUtil.nodesToString(node));
-				log.trace("%s node = %s", METHOD_NAME, node);
+				log.entry();
+				log.trace("node = {}", SaxonUtil.nodesToString(node));
+				log.trace("node = {}", node);
 				return Collections.singletonList(node);
 			}
 		};

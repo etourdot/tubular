@@ -100,7 +100,7 @@ public class Store extends AbstractStep
 	@Override
 	protected void doRun(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		final XdmNode node = readNode(XProcPorts.SOURCE, environment);
 		assert node != null;
@@ -135,8 +135,8 @@ public class Store extends AbstractStep
 		final boolean indent = Boolean.parseBoolean(environment.getVariable(OPTION_INDENT));
 
 		log.debug(
-			"Storing document to: %s ; mime-type: %s ; encoding: %s ; doctype-public = %s ; doctype-system = %s", href,
-			mimeType, encoding, doctypePublicId, doctypeSystemId);
+			"Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
+			new Object[] { href, mimeType, encoding, doctypePublicId, doctypeSystemId });
 
 		assert environment.getConfiguration().getOutputResolver() != null;
 		final OutputStream targetOutputStream =
@@ -156,7 +156,7 @@ public class Store extends AbstractStep
 		serializer.setOutputProperty(Property.DOCTYPE_SYSTEM, doctypeSystemId);
 		if (method != null)
 		{
-			log.debug("method = %s", method);
+			log.debug("method = {}", method);
 			serializer.setOutputProperty(Property.METHOD, method);
 		}
 		serializer.setOutputProperty(Property.ENCODING, encoding);

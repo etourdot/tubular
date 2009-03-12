@@ -20,9 +20,6 @@
 package org.trancecode.xproc;
 
 import org.trancecode.io.OutputResolver;
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xproc.binding.InlinePortBinding;
 
 import java.util.Arrays;
@@ -34,17 +31,20 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class RunnablePipeline implements LoggerHelpers
+public class RunnablePipeline
 {
 	private URIResolver uriResolver;
 	private OutputResolver outputResolver;
 	private final Pipeline pipeline;
-	private final Logger log = LoggerManager.getLogger(this);
+	private final XLogger log = XLoggerFactory.getXLogger(getClass());
 
 
 	protected RunnablePipeline(final Pipeline pipeline)
@@ -56,7 +56,7 @@ public class RunnablePipeline implements LoggerHelpers
 
 	public PipelineResult run()
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		final Configuration configuration = new Configuration(pipeline.getProcessor());
 		configuration.setOutputResolver(outputResolver);
@@ -71,14 +71,14 @@ public class RunnablePipeline implements LoggerHelpers
 
 	public void withParam(final QName name, final String value)
 	{
-		log.trace("%s = %s", name, value);
+		log.entry(name, value);
 		getUnderlyingPipeline().withParam(name, null, value, getUnderlyingPipeline().getLocation());
 	}
 
 
 	public void withOption(final QName name, final String value)
 	{
-		log.trace("%s = %s", name, value);
+		log.entry(name, value);
 		getUnderlyingPipeline().withOptionValue(name, value);
 	}
 

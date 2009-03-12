@@ -54,7 +54,7 @@ public class Otherwise extends When
 	@Override
 	public boolean test(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		return true;
 	}

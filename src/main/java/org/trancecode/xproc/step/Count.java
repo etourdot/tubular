@@ -63,11 +63,11 @@ public class Count extends AbstractStep
 	{
 		// TODO improve performance with "limit" option
 		final int count = Iterables.size(readNodes(XProcPorts.SOURCE, environment));
-		log.trace("count = %s", count);
+		log.trace("count = {}", count);
 		final int limit = Integer.parseInt(environment.getVariable(XProcOptions.OPTION_LIMIT));
-		log.trace("limit = %s", limit);
+		log.trace("limit = {}", limit);
 		final int result = (limit > 0 ? Math.min(count, limit) : count);
-		log.trace("result = %s", result);
+		log.trace("result = {}", result);
 
 		writeNodes(XProcPorts.RESULT, environment, newResultElement(Integer.toString(result), environment
 			.getProcessor()));

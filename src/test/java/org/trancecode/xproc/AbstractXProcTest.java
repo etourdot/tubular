@@ -52,7 +52,7 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 	@BeforeClass
 	public static void setupLoggingLevel()
 	{
-		setLoggingLevel("org.trancecode.xproc", TRACE);
+		// setLoggingLevel("org.trancecode.xproc", TRACE);
 	}
 
 

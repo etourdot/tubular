@@ -19,9 +19,6 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xproc.binding.AbstractBoundPortBinding;
 
 import java.util.ArrayList;
@@ -37,14 +34,17 @@ import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class EnvironmentPort implements LoggerHelpers
+public class EnvironmentPort
 {
-	private static final Logger LOG = LoggerManager.getLogger(EnvironmentPort.class);
+	private static final XLogger LOG = XLoggerFactory.getXLogger(EnvironmentPort.class);
 
 	private final Port declaredPort;
 	protected final List<EnvironmentPortBinding> portBindings = new ArrayList<EnvironmentPortBinding>();
@@ -91,7 +91,7 @@ public class EnvironmentPort implements LoggerHelpers
 
 	public Iterable<XdmNode> readNodes()
 	{
-		LOG.trace("%s port = %s", METHOD_NAME, declaredPort);
+		LOG.entry(declaredPort);
 
 		// TODO improve this by returning a true Iterable
 		final List<XdmNode> nodes = Lists.newArrayList();
@@ -143,15 +143,17 @@ public class EnvironmentPort implements LoggerHelpers
 
 	public void pipe(final EnvironmentPort port)
 	{
+		LOG.entry();
 		assert port != null : getDeclaredPort();
 		assert port != this : getDeclaredPort();
-		LOG.trace("%s %s -> %s", METHOD_NAME, port.getDeclaredPort(), getDeclaredPort());
+		LOG.trace("{} -> {}", port.getDeclaredPort(), getDeclaredPort());
 
 		portBindings.add(new AbstractBoundPortBinding()
 		{
 			public Iterable<XdmNode> readNodes()
 			{
-				LOG.trace("%s from %s", METHOD_NAME, port);
+				LOG.entry();
+				LOG.trace("from {}", port);
 				return port.readNodes();
 			}
 		});

@@ -94,7 +94,7 @@ public class Xslt extends AbstractStep
 	@Override
 	protected void doRun(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		final XdmNode sourceDocument = readNode(XProcPorts.SOURCE, environment);
 		assert sourceDocument != null;
@@ -149,7 +149,7 @@ public class Xslt extends AbstractStep
 					final URI uri = URI.create(result.getSystemId());
 					assert destinations.containsKey(uri);
 					final XdmDestination xdmResult = destinations.get(uri);
-					log.trace("result base URI = %s", xdmResult.getXdmNode().getBaseURI());
+					log.trace("result base URI = {}", xdmResult.getXdmNode().getBaseURI());
 					writeNodes(XProcPorts.SECONDARY, environment, xdmResult.getXdmNode());
 				}
 
@@ -158,7 +158,7 @@ public class Xslt extends AbstractStep
 				{
 					final URI uri = UriUtil.resolve(href, base);
 					assert uri != null;
-					log.debug("new result document: %s", uri);
+					log.debug("new result document: {}", uri);
 
 					try
 					{
@@ -185,7 +185,7 @@ public class Xslt extends AbstractStep
 			}
 
 			final Map<QName, String> parameters = readParameters(XProcPorts.PARAMETERS, environment);
-			log.debug("parameters = %s", parameters);
+			log.debug("parameters = {}", parameters);
 			for (final Map.Entry<QName, String> parameter : parameters.entrySet())
 			{
 				transformer.setParameter(parameter.getKey(), new XdmAtomicValue(parameter.getValue()));

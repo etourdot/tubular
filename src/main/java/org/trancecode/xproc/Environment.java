@@ -20,9 +20,6 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xproc.step.Pipeline;
 
 import java.net.URI;
@@ -42,14 +39,17 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Environment implements LoggerHelpers
+public class Environment
 {
-	private static final Logger LOG = LoggerManager.getLogger(Environment.class);
+	private static final XLogger LOG = XLoggerFactory.getXLogger(Environment.class);
 
 	private EnvironmentPort defaultReadablePort;
 	private final Map<QName, String> variables = Maps.newLinkedHashMap();
@@ -157,7 +157,7 @@ public class Environment implements LoggerHelpers
 
 	public void setXPathContextPort(final EnvironmentPort xpathContextPort)
 	{
-		LOG.trace("%s xpathContextPort = %s", METHOD_NAME, xpathContextPort);
+		LOG.entry(xpathContextPort);
 		this.xpathContextPort = xpathContextPort;
 	}
 
@@ -185,7 +185,7 @@ public class Environment implements LoggerHelpers
 	{
 		assert port != null;
 		assert ports.containsValue(port);
-		LOG.trace("%s port = %s", METHOD_NAME, port);
+		LOG.entry(port);
 
 		defaultReadablePort = port;
 	}
@@ -212,7 +212,7 @@ public class Environment implements LoggerHelpers
 
 	public EnvironmentPort addEnvironmentPort(final Port port)
 	{
-		LOG.trace("%s port = %s", METHOD_NAME, port);
+		LOG.entry(port);
 		return addEnvironmentPort(port.getPortReference(), port);
 	}
 
@@ -287,7 +287,7 @@ public class Environment implements LoggerHelpers
 	public XdmValue evaluateXPath(final String select)
 	{
 		assert select != null;
-		LOG.trace("%s select = %s", METHOD_NAME, select);
+		LOG.entry(select);
 
 		try
 		{
@@ -309,7 +309,7 @@ public class Environment implements LoggerHelpers
 			final XdmNode xpathContextNode = getXPathContextNode();
 			if (xpathContextNode != null)
 			{
-				LOG.trace("xpathContextNode = %s", xpathContextNode);
+				LOG.trace("xpathContextNode = {}", xpathContextNode);
 				selector.setContextItem(xpathContextNode);
 			}
 

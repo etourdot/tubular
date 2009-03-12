@@ -19,15 +19,11 @@
  */
 package org.trancecode;
 
-import org.trancecode.log.Log4jLogger;
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerManager;
-import org.trancecode.log.NullLogger;
-
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
+import ch.qos.logback.classic.BasicConfigurator;
 
 import org.junit.BeforeClass;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 
 /**
@@ -38,41 +34,22 @@ public abstract class AbstractTest
 {
 	public static final String PROPERTY_QUIET = AbstractTest.class.getName() + ".QUIET";
 
-	public static final Level TRACE = Level.TRACE;
-	public static final Level DEBUG = Level.DEBUG;
-	public static final Level INFO = Level.INFO;
-	public static final Level WARN = Level.WARN;
-	public static final Level ERROR = Level.ERROR;
-	public static final Level FATAL = Level.FATAL;
-
 	public static final boolean QUIET = Boolean.getBoolean(PROPERTY_QUIET);
 
-	protected final Logger log = LoggerManager.getLogger(this);
+	protected final XLogger log = XLoggerFactory.getXLogger(getClass());
 
 
 	@BeforeClass
 	public static void setupLogging()
 	{
+		BasicConfigurator.configureDefaultContext();
 		if (QUIET)
 		{
-			LoggerManager.setRootLogger(NullLogger.INSTANCE);
+			// TODO
 		}
 		else
 		{
-			BasicConfigurator.configure();
-			LoggerManager.setRootLogger(Log4jLogger.ROOT_LOGGER);
+			// TODO
 		}
-	}
-
-
-	protected static void setLoggingLevel(final String loggerName, final Level level)
-	{
-		org.apache.log4j.Logger.getLogger(loggerName).setLevel(level);
-	}
-
-
-	protected static void setLoggingLevel(final Class<?> c, final Level level)
-	{
-		org.apache.log4j.Logger.getLogger(c).setLevel(level);
 	}
 }

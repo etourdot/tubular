@@ -19,9 +19,6 @@
  */
 package org.trancecode.xproc.parser;
 
-import org.trancecode.log.Logger;
-import org.trancecode.log.LoggerHelpers;
-import org.trancecode.log.LoggerManager;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonLocation;
 import org.trancecode.xml.SaxonUtil;
@@ -60,19 +57,22 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class PipelineParser implements XProcXmlModel, LoggerHelpers
+public class PipelineParser implements XProcXmlModel
 {
 	private final PipelineFactory pipelineFactory;
 	private final Source source;
 	private final Map<QName, StepFactory> importedLibrary;
 	private final Map<QName, StepFactory> localLibrary = Maps.newHashMap();
 
-	private final Logger log = LoggerManager.getLogger(this);
+	private final XLogger log = XLoggerFactory.getXLogger(getClass());
 
 	private Pipeline pipeline;
 	private Pipeline currentPipeline;
@@ -95,7 +95,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 	public void parse()
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 		try
 		{
 			if (pipelineFactory.getUriResolver() != null)
@@ -167,7 +167,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 			final String value = attribute.getValue();
 			if (name.getNamespaceURI().isEmpty() && !name.equals(ATTRIBUTE_NAME) && !name.equals(ATTRIBUTE_TYPE))
 			{
-				log.trace("%s = %s", name, value);
+				log.trace("{} = {}", name, value);
 				step.withOptionValue(name, value);
 			}
 		}
@@ -221,7 +221,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 		final String select = portNode.getAttributeValue(ATTRIBUTE_SELECT);
 		if (select != null)
 		{
-			log.trace("select = %s", select);
+			log.trace("select = {}", select);
 			port.setSelect(select);
 		}
 	}
@@ -283,7 +283,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 		final Location location = getLocation(node);
 		final Port port = new Port(step.getName(), portName, getLocation(node), type, primary, sequence);
-		log.trace("new port: %s", port);
+		log.trace("new port: {}", port);
 		if (type == Type.INPUT)
 		{
 			step.declareInputPort(portName, location, primary, sequence);
@@ -301,7 +301,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
 		if (select != null)
 		{
-			log.trace("select = %s", select);
+			log.trace("select = {}", select);
 			port.setSelect(select);
 		}
 
@@ -359,7 +359,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 		}
 		else
 		{
-			throw new PipelineException("not supported: %s", node.getNodeName());
+			throw new PipelineException("not supported: {}", node.getNodeName());
 		}
 	}
 
@@ -434,7 +434,7 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 	private Pipeline parsePipeline(final XdmNode node)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		final String name = intern(getStepName(node));
 		final QName type = SaxonUtil.getAttributeAsQName(node, ATTRIBUTE_TYPE);
@@ -486,9 +486,10 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 	private void parseImport(final XdmNode node)
 	{
+		log.entry();
 		final String href = node.getAttributeValue(ATTRIBUTE_HREF);
 		assert href != null;
-		log.trace("%s href = %s", METHOD_NAME, href);
+		log.trace("href = {}", href);
 		final Source librarySource;
 		try
 		{
@@ -501,25 +502,26 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 		final PipelineParser parser = new PipelineParser(pipelineFactory, librarySource, pipelineFactory.getLibrary());
 		parser.parse();
 		final Map<QName, StepFactory> newLibrary = parser.getLibrary();
-		log.trace("new steps = %s", newLibrary.keySet());
+		log.trace("new steps = {}", newLibrary.keySet());
 		localLibrary.putAll(newLibrary);
 	}
 
 
 	private Collection<QName> getSupportedStepTypes()
 	{
+		log.entry();
 		// TODO improve performance
 		final Collection<QName> types = new ArrayList<QName>();
 		types.addAll(localLibrary.keySet());
 		types.addAll(importedLibrary.keySet());
-		log.trace("%s types = %s", METHOD_NAME, types);
+		log.trace("types = {}", types);
 		return types;
 	}
 
 
 	private void parseSteps(final XdmNode node, final CompoundStep compoundStep)
 	{
-		log.trace("%s compountStep = %s", METHOD_NAME, compoundStep);
+		log.entry(compoundStep);
 
 		for (final XdmNode stepElement : SaxonUtil.getElements(node, getSupportedStepTypes()))
 		{
@@ -530,16 +532,17 @@ public class PipelineParser implements XProcXmlModel, LoggerHelpers
 
 	private Step parseInstanceStep(final XdmNode node)
 	{
+		log.entry();
 		final String name = getStepName(node).intern();
 		final QName type = node.getNodeName();
-		log.trace("%s name = %s ; type = %s", METHOD_NAME, name, type);
+		log.trace("name = {} ; type = {}", name, type);
 
 		final StepFactory stepFactory = getStepFactory(type);
 		if (stepFactory != null)
 		{
 			final Step step = stepFactory.newStep(name, getLocation(node));
 			parseInstanceStepBindings(node, step);
-			log.trace("new instance step: %s", step);
+			log.trace("new instance step: {}", step);
 
 			if (step instanceof CompoundStep)
 			{

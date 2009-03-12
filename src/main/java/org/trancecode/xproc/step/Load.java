@@ -69,14 +69,14 @@ public class Load extends AbstractStep
 	@Override
 	protected void doRun(final Environment environment)
 	{
-		log.trace("%s", METHOD_NAME);
+		log.entry();
 
 		final String href = environment.getVariable(OPTION_HREF);
 		assert href != null;
-		log.trace("href = %s", href);
+		log.trace("href = {}", href);
 
 		final boolean validate = Boolean.parseBoolean(environment.getVariable(OPTION_VALIDATE));
-		log.trace("validate = %s", validate);
+		log.trace("validate = {}", validate);
 
 		final Source source;
 		try
