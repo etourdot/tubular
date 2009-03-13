@@ -19,7 +19,9 @@
  */
 package org.trancecode;
 
-import ch.qos.logback.classic.BasicConfigurator;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import org.junit.BeforeClass;
 import org.slf4j.ext.XLogger;
@@ -42,14 +44,14 @@ public abstract class AbstractTest
 	@BeforeClass
 	public static void setupLogging()
 	{
-		BasicConfigurator.configureDefaultContext();
+		BasicConfigurator.configure();
 		if (QUIET)
 		{
-			// TODO
+			Logger.getRootLogger().removeAllAppenders();
 		}
 		else
 		{
-			// TODO
+			Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
 		}
 	}
 }
