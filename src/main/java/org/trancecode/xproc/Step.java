@@ -21,7 +21,6 @@ package org.trancecode.xproc;
 
 import org.trancecode.xml.Location;
 
-import java.util.Collection;
 import java.util.Map;
 
 import net.sf.saxon.s9api.QName;
@@ -76,7 +75,4 @@ public interface Step extends HasLocation
 
 
 	Map<String, Port> getPorts();
-
-
-	Collection<Port> getPorts(Port.Type type);
 }
