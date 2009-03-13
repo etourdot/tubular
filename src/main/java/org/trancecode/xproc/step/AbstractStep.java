@@ -422,14 +422,14 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step, 
 
 	private boolean isPrimary(final Port port)
 	{
-		if (port.isInput())
-		{
-			return isPrimary(port, getInputPorts());
-		}
-
 		if (port.isParameter())
 		{
 			return isPrimary(port, getParameterPorts());
+		}
+
+		if (port.isInput())
+		{
+			return isPrimary(port, getInputPorts());
 		}
 
 		assert port.isOutput();
