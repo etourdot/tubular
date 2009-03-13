@@ -37,9 +37,7 @@ import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.Port.Type;
 
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -470,21 +468,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step, 
 	protected Iterable<Port> getParameterPorts()
 	{
 		return Iterables.filter(ports.values(), PREDICATE_IS_PARAMETER_PORT);
-	}
-
-
-	public Collection<Port> getPorts(final Type type)
-	{
-		final Collection<Port> selectedPorts = new LinkedHashSet<Port>(ports.size());
-		for (final Port port : ports.values())
-		{
-			if (port.getType() == type)
-			{
-				selectedPorts.add(port);
-			}
-		}
-
-		return selectedPorts;
 	}
 
 
