@@ -48,6 +48,8 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -521,12 +523,26 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseSteps(final XdmNode node, final CompoundStep compoundStep)
 	{
-		log.entry(compoundStep);
-
-		for (final XdmNode stepElement : SaxonUtil.getElements(node, getSupportedStepTypes()))
+		for (final Step step : parseInnerSteps(node))
 		{
-			compoundStep.addStep(parseInstanceStep(stepElement));
+			compoundStep.addStep(step);
 		}
+	}
+
+
+	private List<Step> parseInnerSteps(final XdmNode node)
+	{
+		log.entry();
+
+		return ImmutableList.copyOf(Iterables.transform(
+			SaxonUtil.getElements(node, getSupportedStepTypes()), new Function<XdmNode, Step>()
+			{
+				@Override
+				public Step apply(final XdmNode stepElement)
+				{
+					return parseInstanceStep(stepElement);
+				}
+			}));
 	}
 
 
