@@ -192,7 +192,7 @@ public class PipelineParser implements XProcXmlModel
 	{
 		if (ELEMENTS_STANDARD_PORTS.contains(portNode.getNodeName()))
 		{
-			return portNode.getAttributeValue(ATTRIBUTE_PORT).intern();
+			return portNode.getAttributeValue(ATTRIBUTE_PORT);
 		}
 
 		if (portNode.getNodeName().equals(ELEMENT_ITERATION_SOURCE))
@@ -276,7 +276,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parsePort(final XdmNode node, final Step step)
 	{
-		final String portName = node.getAttributeValue(ATTRIBUTE_PORT).intern();
+		final String portName = node.getAttributeValue(ATTRIBUTE_PORT);
 		final Port.Type type = getPortType(node);
 
 		final boolean primary = getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_PRIMARY)), false);
@@ -341,8 +341,8 @@ public class PipelineParser implements XProcXmlModel
 	{
 		if (node.getNodeName().equals(ELEMENT_PIPE))
 		{
-			final String stepName = node.getAttributeValue(ATTRIBUTE_STEP).intern();
-			final String portName = node.getAttributeValue(ATTRIBUTE_PORT).intern();
+			final String stepName = node.getAttributeValue(ATTRIBUTE_STEP);
+			final String portName = node.getAttributeValue(ATTRIBUTE_PORT);
 			port.getPortBindings().add(new PipePortBinding(new PortReference(stepName, portName), getLocation(node)));
 		}
 		else if (node.getNodeName().equals(ELEMENT_EMPTY))
@@ -423,22 +423,11 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private String intern(final String string)
-	{
-		if (string != null)
-		{
-			return string.intern();
-		}
-
-		return null;
-	}
-
-
 	private Pipeline parsePipeline(final XdmNode node)
 	{
 		log.entry();
 
-		final String name = intern(getStepName(node));
+		final String name = getStepName(node);
 		final QName type = SaxonUtil.getAttributeAsQName(node, ATTRIBUTE_TYPE);
 
 		final Pipeline parsedPipeline = new Pipeline(name, getLocation(node), type);
@@ -549,7 +538,7 @@ public class PipelineParser implements XProcXmlModel
 	private Step parseInstanceStep(final XdmNode node)
 	{
 		log.entry();
-		final String name = getStepName(node).intern();
+		final String name = getStepName(node);
 		final QName type = node.getNodeName();
 		log.trace("name = {} ; type = {}", name, type);
 
