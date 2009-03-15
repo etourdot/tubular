@@ -62,7 +62,7 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public abstract class AbstractStep extends AbstractHasLocation implements Step
 {
-	public static final QName ELEMENT_PARAMETER = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("parameter");
+	public static final QName ELEMENT_PARAMETER = XProcNamespaces.XPROC.newSaxonQName("parameter");
 	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");
 	public static final QName ATTRIBUTE_PARAMETER_VALUE = new QName("value");
 
@@ -589,7 +589,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		// TODO use s9api directly
 		final String document =
-			String.format("<c:result xmlns:c=\"%s\">%s</c:result>", XProcNamespaces.NAMESPACE_XPROC_STEP_URI, value);
+			String.format("<c:result xmlns:c=\"%s\">%s</c:result>", XProcNamespaces.URI_XPROC_STEP, value);
 		try
 		{
 			return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));

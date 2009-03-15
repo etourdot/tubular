@@ -62,45 +62,45 @@ public interface XProcXmlModel extends XmlModel
 
 	QName ATTRIBUTE_VALUE = new QName("value");
 
-	QName ELEMENT_CHOOSE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("choose");
+	QName ELEMENT_CHOOSE = XProcNamespaces.XPROC.newSaxonQName("choose");
 
-	QName ELEMENT_DECLARE_STEP = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("declare-step");
+	QName ELEMENT_DECLARE_STEP = XProcNamespaces.XPROC.newSaxonQName("declare-step");
 
-	QName ELEMENT_DOCUMENT = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("document");
+	QName ELEMENT_DOCUMENT = XProcNamespaces.XPROC.newSaxonQName("document");
 
-	QName ELEMENT_EMPTY = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("empty");
+	QName ELEMENT_EMPTY = XProcNamespaces.XPROC.newSaxonQName("empty");
 
-	QName ELEMENT_FOR_EACH = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("for-each");
+	QName ELEMENT_FOR_EACH = XProcNamespaces.XPROC.newSaxonQName("for-each");
 
-	QName ELEMENT_IMPORT = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("import");
+	QName ELEMENT_IMPORT = XProcNamespaces.XPROC.newSaxonQName("import");
 
-	QName ELEMENT_INLINE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("inline");
+	QName ELEMENT_INLINE = XProcNamespaces.XPROC.newSaxonQName("inline");
 
-	QName ELEMENT_INPUT = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("input");
+	QName ELEMENT_INPUT = XProcNamespaces.XPROC.newSaxonQName("input");
 
-	QName ELEMENT_ITERATION_SOURCE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("iteration-source");
+	QName ELEMENT_ITERATION_SOURCE = XProcNamespaces.XPROC.newSaxonQName("iteration-source");
 
-	QName ELEMENT_LIBRARY = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("library");
+	QName ELEMENT_LIBRARY = XProcNamespaces.XPROC.newSaxonQName("library");
 
-	QName ELEMENT_OPTION = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("option");
+	QName ELEMENT_OPTION = XProcNamespaces.XPROC.newSaxonQName("option");
 
-	QName ELEMENT_OTHERWISE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("otherwise");
+	QName ELEMENT_OTHERWISE = XProcNamespaces.XPROC.newSaxonQName("otherwise");
 
-	QName ELEMENT_OUTPUT = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("output");
+	QName ELEMENT_OUTPUT = XProcNamespaces.XPROC.newSaxonQName("output");
 
-	QName ELEMENT_PIPE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("pipe");
+	QName ELEMENT_PIPE = XProcNamespaces.XPROC.newSaxonQName("pipe");
 
-	QName ELEMENT_PIPELINE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("pipeline");
+	QName ELEMENT_PIPELINE = XProcNamespaces.XPROC.newSaxonQName("pipeline");
 
-	QName ELEMENT_VARIABLE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("variable");
+	QName ELEMENT_VARIABLE = XProcNamespaces.XPROC.newSaxonQName("variable");
 
-	QName ELEMENT_WHEN = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("when");
+	QName ELEMENT_WHEN = XProcNamespaces.XPROC.newSaxonQName("when");
 
-	QName ELEMENT_WITH_OPTION = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("with-option");
+	QName ELEMENT_WITH_OPTION = XProcNamespaces.XPROC.newSaxonQName("with-option");
 
-	QName ELEMENT_WITH_PARAM = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("with-param");
+	QName ELEMENT_WITH_PARAM = XProcNamespaces.XPROC.newSaxonQName("with-param");
 
-	QName ELEMENT_XPATH_CONTEXT = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("xpath-context");
+	QName ELEMENT_XPATH_CONTEXT = XProcNamespaces.XPROC.newSaxonQName("xpath-context");
 
 	Set<QName> ELEMENTS_CORE_STEPS = ImmutableSet.of(ELEMENT_FOR_EACH, ELEMENT_CHOOSE);
 
@@ -124,5 +124,5 @@ public interface XProcXmlModel extends XmlModel
 
 	Set<QName> ELEMENTS_WHEN_OTHERWISE = ImmutableSet.of(ELEMENT_WHEN, ELEMENT_OTHERWISE);
 
-	QName TYPE_PIPELINE = XProcNamespaces.NAMESPACE_XPROC.newSaxonQName("pipeline");
+	QName TYPE_PIPELINE = XProcNamespaces.XPROC.newSaxonQName("pipeline");
 }
