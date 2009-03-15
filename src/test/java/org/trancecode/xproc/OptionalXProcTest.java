@@ -29,6 +29,13 @@ import org.junit.Test;
 public class OptionalXProcTest extends AbstractXProcTest implements XProcTestSuiteXmlModel
 {
 	@Test
+	public void xslFormatter001() throws Exception
+	{
+		test("optional/xsl-formatter-001.xml");
+	}
+
+
+	@Test
 	public void xslt2001() throws Exception
 	{
 		test("optional/xslt2-001.xml");

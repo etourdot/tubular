@@ -179,6 +179,7 @@ public class PipelineFactory
 		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_DECODE, library);
 		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_ENCODE, library);
 		addUnsupportedStepFactory(XProcSteps.XQUERY, library);
+		addUnsupportedStepFactory(XProcSteps.XSL_FORMATTER, library);
 
 		return ImmutableMap.copyOf(library);
 	}
