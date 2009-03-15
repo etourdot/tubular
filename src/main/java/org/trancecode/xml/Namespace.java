@@ -19,6 +19,8 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.annotation.Immutable;
+
 import net.sf.saxon.s9api.QName;
 
 
@@ -26,7 +28,8 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Namespace
+@Immutable
+public final class Namespace
 {
 	public final String uri;
 	public final String prefix;
