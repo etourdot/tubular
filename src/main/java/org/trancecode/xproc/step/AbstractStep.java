@@ -32,7 +32,6 @@ import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcNamespaces;
-import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.Port.Type;
 
@@ -61,7 +60,7 @@ import org.slf4j.ext.XLoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public abstract class AbstractStep extends AbstractHasLocation implements Step, XProcOptions, XProcNamespaces
+public abstract class AbstractStep extends AbstractHasLocation implements Step, XProcNamespaces
 {
 	public static final QName ELEMENT_PARAMETER = NAMESPACE_XPROC.newSaxonQName("parameter");
 	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");

@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
@@ -47,7 +48,7 @@ public class Otherwise extends When
 	{
 		super(name, location);
 
-		withOption(OPTION_TEST, "'true'");
+		withOption(XProcOptions.TEST, "'true'");
 	}
 
 

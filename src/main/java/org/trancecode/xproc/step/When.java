@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
@@ -57,7 +58,7 @@ public class When extends AbstractCompoundStep
 
 		declareOutputPort(XProcPorts.RESULT, location, true, true);
 
-		declareOption(OPTION_TEST, null, false, location);
+		declareOption(XProcOptions.TEST, null, false, location);
 	}
 
 
@@ -74,7 +75,7 @@ public class When extends AbstractCompoundStep
 	{
 		final Environment resultEnvironment = environment.newChildStepEnvironment();
 		getEnvironmentPort(XProcPorts.XPATH_CONTEXT, resultEnvironment);
-		final String test = variables.get(OPTION_TEST).getValue();
+		final String test = variables.get(XProcOptions.TEST).getValue();
 		log.trace("test = {}", test);
 		final XdmValue result = resultEnvironment.evaluateXPath(test);
 		log.trace("result = {}", result);

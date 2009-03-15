@@ -25,6 +25,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
@@ -71,22 +72,22 @@ public class Store extends AbstractStep
 
 		declareInputPort(XProcPorts.SOURCE, location, false, false);
 		declareOutputPort(XProcPorts.RESULT, location, false, false);
-		declareOption(OPTION_HREF, null, true, location);
-		declareOption(OPTION_BYTE_ORDER_MARK, null, false, location);
-		declareOption(OPTION_CDATA_SECTION_ELEMENTS, "''", false, location);
-		declareOption(OPTION_DOCTYPE_PUBLIC, null, false, location);
-		declareOption(OPTION_DOCTYPE_SYSTEM, null, false, location);
-		declareOption(OPTION_ENCODING, null, false, location);
-		declareOption(OPTION_ESCAPE_URI_ATTRIBUTES, "'false'", false, location);
-		declareOption(OPTION_INCLUDE_CONTENT_TYPE, "'true'", false, location);
-		declareOption(OPTION_INDENT, "'false'", false, location);
-		declareOption(OPTION_MEDIA_TYPE, null, false, location);
-		declareOption(OPTION_METHOD, "'xml'", false, location);
-		declareOption(OPTION_NORMALIZATION_FORM, "'none'", false, location);
-		declareOption(OPTION_OMIT_XML_DECLARATION, "'true'", false, location);
-		declareOption(OPTION_STANDALONE, "'omit'", false, location);
-		declareOption(OPTION_UNDECLARE_PREFIXES, null, false, location);
-		declareOption(OPTION_VERSION, "'1.0'", false, location);
+		declareOption(XProcOptions.HREF, null, true, location);
+		declareOption(XProcOptions.BYTE_ORDER_MARK, null, false, location);
+		declareOption(XProcOptions.CDATA_SECTION_ELEMENTS, "''", false, location);
+		declareOption(XProcOptions.DOCTYPE_PUBLIC, null, false, location);
+		declareOption(XProcOptions.DOCTYPE_SYSTEM, null, false, location);
+		declareOption(XProcOptions.ENCODING, null, false, location);
+		declareOption(XProcOptions.ESCAPE_URI_ATTRIBUTES, "'false'", false, location);
+		declareOption(XProcOptions.INCLUDE_CONTENT_TYPE, "'true'", false, location);
+		declareOption(XProcOptions.INDENT, "'false'", false, location);
+		declareOption(XProcOptions.MEDIA_TYPE, null, false, location);
+		declareOption(XProcOptions.METHOD, "'xml'", false, location);
+		declareOption(XProcOptions.NORMALIZATION_FORM, "'none'", false, location);
+		declareOption(XProcOptions.OMIT_XML_DECLARATION, "'true'", false, location);
+		declareOption(XProcOptions.STANDALONE, "'omit'", false, location);
+		declareOption(XProcOptions.UNDECLARE_PREFIXES, null, false, location);
+		declareOption(XProcOptions.VERSION, "'1.0'", false, location);
 	}
 
 
@@ -105,7 +106,7 @@ public class Store extends AbstractStep
 		assert node != null;
 
 		final URI baseUri = environment.getBaseUri();
-		final String providedHref = environment.getVariable(OPTION_HREF);
+		final String providedHref = environment.getVariable(XProcOptions.HREF);
 		final String href;
 		if (providedHref != null)
 		{
@@ -118,20 +119,20 @@ public class Store extends AbstractStep
 
 		final URI outputUri = baseUri.resolve(href);
 
-		final String mimeType = getVariable(OPTION_MEDIA_TYPE, environment, DEFAULT_MIMETYPE);
+		final String mimeType = getVariable(XProcOptions.MEDIA_TYPE, environment, DEFAULT_MIMETYPE);
 
-		final String encoding = getVariable(OPTION_ENCODING, environment, DEFAULT_ENCODING);
+		final String encoding = getVariable(XProcOptions.ENCODING, environment, DEFAULT_ENCODING);
 
 		final String omitXmlDeclaration =
-			getVariable(OPTION_OMIT_XML_DECLARATION, environment, DEFAULT_OMIT_XML_DECLARATION);
+			getVariable(XProcOptions.OMIT_XML_DECLARATION, environment, DEFAULT_OMIT_XML_DECLARATION);
 
-		final String doctypePublicId = getVariable(OPTION_DOCTYPE_PUBLIC, environment, DEFAULT_DOCTYPE_PUBLIC);
+		final String doctypePublicId = getVariable(XProcOptions.DOCTYPE_PUBLIC, environment, DEFAULT_DOCTYPE_PUBLIC);
 
-		final String doctypeSystemId = getVariable(OPTION_DOCTYPE_SYSTEM, environment, DEFAULT_DOCTYPE_SYSTEM);
+		final String doctypeSystemId = getVariable(XProcOptions.DOCTYPE_SYSTEM, environment, DEFAULT_DOCTYPE_SYSTEM);
 
-		final String method = getVariable(OPTION_METHOD, environment, DEFAULT_METHOD);
+		final String method = getVariable(XProcOptions.METHOD, environment, DEFAULT_METHOD);
 
-		final boolean indent = Boolean.parseBoolean(environment.getVariable(OPTION_INDENT));
+		final boolean indent = Boolean.parseBoolean(environment.getVariable(XProcOptions.INDENT));
 
 		log.debug(
 			"Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",

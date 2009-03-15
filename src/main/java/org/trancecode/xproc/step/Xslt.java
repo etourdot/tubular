@@ -26,6 +26,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
@@ -77,10 +78,10 @@ public class Xslt extends AbstractStep
 		declareOutputPort(XProcPorts.RESULT, location, true, false);
 		declareOutputPort(XProcPorts.SECONDARY, location, false, true);
 
-		declareOption(OPTION_INITIAL_MODE, null, false, location);
-		declareOption(OPTION_TEMPLATE_NAME, null, false, location);
-		declareOption(OPTION_OUTPUT_BASE_URI, null, false, location);
-		declareOption(OPTION_VERSION, null, false, location);
+		declareOption(XProcOptions.INITIAL_MODE, null, false, location);
+		declareOption(XProcOptions.TEMPLATE_NAME, null, false, location);
+		declareOption(XProcOptions.OUTPUT_BASE_URI, null, false, location);
+		declareOption(XProcOptions.VERSION, null, false, location);
 	}
 
 
@@ -98,7 +99,7 @@ public class Xslt extends AbstractStep
 		final XdmNode sourceDocument = readNode(XProcPorts.SOURCE, environment);
 		assert sourceDocument != null;
 
-		final String providedOutputBaseUri = environment.getVariable(OPTION_OUTPUT_BASE_URI);
+		final String providedOutputBaseUri = environment.getVariable(XProcOptions.OUTPUT_BASE_URI);
 		final URI outputBaseUri;
 		if (providedOutputBaseUri != null && providedOutputBaseUri.length() > 0)
 		{
@@ -114,7 +115,7 @@ public class Xslt extends AbstractStep
 		}
 		assert outputBaseUri != null;
 
-		final String version = getVariable(OPTION_VERSION, environment, DEFAULT_VERSION);
+		final String version = getVariable(XProcOptions.VERSION, environment, DEFAULT_VERSION);
 
 		if (!SUPPORTED_VERSIONS.contains(version))
 		{
@@ -176,7 +177,7 @@ public class Xslt extends AbstractStep
 				}
 			});
 
-			final String initialMode = getVariable(OPTION_INITIAL_MODE, environment, null);
+			final String initialMode = getVariable(XProcOptions.INITIAL_MODE, environment, null);
 			if (initialMode != null)
 			{
 				// FIXME does not handle namespaces

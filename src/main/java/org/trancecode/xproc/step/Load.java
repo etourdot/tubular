@@ -24,6 +24,7 @@ import org.trancecode.xml.XmlUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
@@ -55,8 +56,8 @@ public class Load extends AbstractStep
 		super(name, location);
 
 		declareOutputPort(XProcPorts.RESULT, location, false, false);
-		declareOption(OPTION_HREF, null, true, location);
-		declareOption(OPTION_DTD_VALIDATE, "'false'", false, location);
+		declareOption(XProcOptions.HREF, null, true, location);
+		declareOption(XProcOptions.DTD_VALIDATE, "'false'", false, location);
 	}
 
 
@@ -71,11 +72,11 @@ public class Load extends AbstractStep
 	{
 		log.entry();
 
-		final String href = environment.getVariable(OPTION_HREF);
+		final String href = environment.getVariable(XProcOptions.HREF);
 		assert href != null;
 		log.trace("href = {}", href);
 
-		final boolean validate = Boolean.parseBoolean(environment.getVariable(OPTION_VALIDATE));
+		final boolean validate = Boolean.parseBoolean(environment.getVariable(XProcOptions.VALIDATE));
 		log.trace("validate = {}", validate);
 
 		final Source source;
