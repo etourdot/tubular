@@ -41,13 +41,13 @@ import net.sf.saxon.s9api.XdmNode;
  */
 public class Load extends AbstractStep
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Load(name, location);
 		}
-	}
+	};
 
 
 	private Load(final String name, final Location location)

@@ -126,17 +126,17 @@ public class PipelineFactory
 		final Map<QName, StepFactory> library = Maps.newHashMap();
 
 		// Core steps
-		library.put(XProcSteps.CHOOSE, new Choose.Factory());
-		library.put(XProcSteps.FOR_EACH, new ForEach.Factory());
-		library.put(XProcSteps.OTHERWISE, new Otherwise.Factory());
-		library.put(XProcSteps.WHEN, new When.Factory());
+		library.put(XProcSteps.CHOOSE, Choose.FACTORY);
+		library.put(XProcSteps.FOR_EACH, ForEach.FACTORY);
+		library.put(XProcSteps.OTHERWISE, Otherwise.FACTORY);
+		library.put(XProcSteps.WHEN, When.FACTORY);
 
 		// Required steps
-		library.put(XProcSteps.COUNT, new Count.Factory());
-		library.put(XProcSteps.IDENTITY, new Identity.Factory());
-		library.put(XProcSteps.LOAD, new Load.Factory());
-		library.put(XProcSteps.STORE, new Store.Factory());
-		library.put(XProcSteps.XSLT, new Xslt.Factory());
+		library.put(XProcSteps.COUNT, Count.FACTORY);
+		library.put(XProcSteps.IDENTITY, Identity.FACTORY);
+		library.put(XProcSteps.LOAD, Load.FACTORY);
+		library.put(XProcSteps.STORE, Store.FACTORY);
+		library.put(XProcSteps.XSLT, Xslt.FACTORY);
 
 		// Unsupported core steps
 		addUnsupportedStepFactory(XProcSteps.GROUP, library);

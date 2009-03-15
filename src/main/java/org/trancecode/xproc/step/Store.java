@@ -56,14 +56,13 @@ public class Store extends AbstractStep
 
 	public static final String DEFAULT_MIMETYPE = MediaTypes.MEDIA_TYPE_XML;
 
-
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Store(name, location);
 		}
-	}
+	};
 
 
 	private Store(final String name, final Location location)

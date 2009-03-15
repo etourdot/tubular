@@ -58,14 +58,13 @@ public class Xslt extends AbstractStep
 	public static final String DEFAULT_VERSION = "2.0";
 	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList("2.0");
 
-
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Xslt(name, location);
 		}
-	}
+	};
 
 
 	private Xslt(final String name, final Location location)

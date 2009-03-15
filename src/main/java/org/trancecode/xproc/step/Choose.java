@@ -36,13 +36,13 @@ import net.sf.saxon.s9api.QName;
  */
 public class Choose extends AbstractCompoundStep
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Choose(name, location);
 		}
-	}
+	};
 
 
 	public Choose(final String name, final Location location)

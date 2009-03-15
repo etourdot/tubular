@@ -36,13 +36,13 @@ import net.sf.saxon.s9api.XdmNode;
  */
 public class Identity extends AbstractStep
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Identity(name, null, location);
 		}
-	}
+	};
 
 
 	private Identity(final String name, final String libraryName, final Location location)

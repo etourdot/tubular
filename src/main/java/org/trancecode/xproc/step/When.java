@@ -39,13 +39,13 @@ import net.sf.saxon.s9api.XdmValue;
  */
 public class When extends AbstractCompoundStep
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new When(name, location);
 		}
-	}
+	};
 
 
 	public When(final String name, final Location location)

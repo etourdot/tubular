@@ -34,13 +34,13 @@ import net.sf.saxon.s9api.QName;
  */
 public class Otherwise extends When
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Otherwise(name, location);
 		}
-	}
+	};
 
 
 	public Otherwise(final String name, final Location location)

@@ -38,13 +38,13 @@ import net.sf.saxon.s9api.QName;
  */
 public class Count extends AbstractStep
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new Count(name, location);
 		}
-	}
+	};
 
 
 	private Count(final String name, final Location location)

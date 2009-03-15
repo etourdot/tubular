@@ -40,13 +40,13 @@ import net.sf.saxon.s9api.XdmNode;
  */
 public class ForEach extends AbstractCompoundStep
 {
-	public static class Factory implements StepFactory
+	public static StepFactory FACTORY = new StepFactory()
 	{
 		public Step newStep(final String name, final Location location)
 		{
 			return new ForEach(name, location);
 		}
-	}
+	};
 
 
 	public ForEach(final String name, final Location location)
