@@ -48,7 +48,7 @@ public class When extends AbstractCompoundStep
 	};
 
 
-	public When(final String name, final Location location)
+	protected When(final String name, final Location location)
 	{
 		super(name, location);
 

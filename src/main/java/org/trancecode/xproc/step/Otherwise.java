@@ -43,7 +43,7 @@ public class Otherwise extends When
 	};
 
 
-	public Otherwise(final String name, final Location location)
+	private Otherwise(final String name, final Location location)
 	{
 		super(name, location);
 

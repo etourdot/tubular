@@ -45,7 +45,7 @@ public class Choose extends AbstractCompoundStep
 	};
 
 
-	public Choose(final String name, final Location location)
+	private Choose(final String name, final Location location)
 	{
 		super(name, location);
 

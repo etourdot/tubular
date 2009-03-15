@@ -49,7 +49,7 @@ public class ForEach extends AbstractCompoundStep
 	};
 
 
-	public ForEach(final String name, final Location location)
+	private ForEach(final String name, final Location location)
 	{
 		super(name, location);
 
