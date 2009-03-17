@@ -36,6 +36,7 @@ public interface XProcOptions
 	Map<QName, Object> EMPTY_OPTIONS_MAP = Collections.emptyMap();
 	QName BYTE_ORDER_MARK = new QName("byte-order-mark");
 	QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
+	QName CONTENT_TYPE = new QName("content-type");
 	QName DOCTYPE_PUBLIC = new QName("doctype-public");
 	QName DOCTYPE_SYSTEM = new QName("doctype-system");
 	QName DTD_VALIDATE = new QName("dtd-validate");
