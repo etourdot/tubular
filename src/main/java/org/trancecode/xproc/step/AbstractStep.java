@@ -372,7 +372,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected abstract void doRun(final Environment environment);
+	protected abstract void doRun(final Environment environment) throws Exception;
 
 
 	public Environment run(final Environment environment)
@@ -383,7 +383,15 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 		final Environment resultEnvironment = newResultEnvironment(environment);
 
-		doRun(resultEnvironment);
+		try
+		{
+			doRun(resultEnvironment);
+		}
+		catch (final Exception e)
+		{
+			// TODO handle exception
+			throw new IllegalStateException(e);
+		}
 		bindOutputEnvironmentPorts(resultEnvironment);
 
 		return resultEnvironment;
