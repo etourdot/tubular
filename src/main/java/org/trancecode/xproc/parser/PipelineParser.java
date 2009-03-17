@@ -274,18 +274,20 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parsePort(final XdmNode node, final Step step)
+	private void parsePort(final XdmNode portNode, final Step step)
 	{
-		final String portName = node.getAttributeValue(ATTRIBUTE_PORT);
-		final Port.Type type = getPortType(node);
+		final String portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
+		final Port.Type type = getPortType(portNode);
 
-		final boolean primary = getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_PRIMARY)), false);
+		final boolean primary =
+			getFirstNonNull(Boolean.parseBoolean(portNode.getAttributeValue(ATTRIBUTE_PRIMARY)), false);
 		final boolean sequence =
-			getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_SEQUENCE)), false);
+			getFirstNonNull(Boolean.parseBoolean(portNode.getAttributeValue(ATTRIBUTE_SEQUENCE)), false);
 
-		final Location location = getLocation(node);
+		final Location location = getLocation(portNode);
 		final Port port =
-			Port.newPort(step.getName(), portName, getLocation(node), type).setPrimary(primary).setSequence(sequence);
+			Port.newPort(step.getName(), portName, getLocation(portNode), type).setPrimary(primary).setSequence(
+				sequence);
 		log.trace("new port: {}", port);
 		if (type == Type.INPUT)
 		{
@@ -301,17 +303,14 @@ public class PipelineParser implements XProcXmlModel
 			step.declareParameterPort(portName, location, primary, sequence);
 		}
 
-		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
+		final String select = portNode.getAttributeValue(ATTRIBUTE_SELECT);
 		if (select != null)
 		{
 			log.trace("select = {}", select);
 			port.setSelect(select);
 		}
 
-		for (final XdmNode portBindingNode : SaxonUtil.getElements(node, ELEMENTS_PORT_BINDINGS))
-		{
-			parsePortBinding(portBindingNode, port);
-		}
+		parsePortBindings(portNode, port);
 	}
 
 
