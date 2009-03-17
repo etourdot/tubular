@@ -20,6 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.io.DefaultInputResolver;
+import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
 
@@ -39,7 +40,7 @@ public class Configuration
 
 	private boolean temporaryNodesCachingEnabled = Boolean.parseBoolean(PROPERTY_TEMPORARY_NODES_CACHING_ENABLED);
 	private URIResolver uriResolver;
-	private OutputResolver outputResolver;
+	private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
 	private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
 	private final Processor processor;
 
