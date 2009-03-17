@@ -19,9 +19,10 @@
  */
 package org.trancecode;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 import org.junit.BeforeClass;
 import org.slf4j.ext.XLogger;
@@ -44,13 +45,10 @@ public abstract class AbstractTest
 	@BeforeClass
 	public static void setupLogging()
 	{
-		BasicConfigurator.configure();
-		if (QUIET)
+		Logger.getRootLogger().removeAllAppenders();
+		if (!QUIET)
 		{
-			Logger.getRootLogger().removeAllAppenders();
-		}
-		else
-		{
+			Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%-5p %30.30c{2} %-30M %m%n")));
 			Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
 		}
 	}
