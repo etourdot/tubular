@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.io.DefaultInputResolver;
+import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
 
 import javax.xml.transform.URIResolver;
@@ -38,6 +40,7 @@ public class Configuration
 	private boolean temporaryNodesCachingEnabled = Boolean.parseBoolean(PROPERTY_TEMPORARY_NODES_CACHING_ENABLED);
 	private URIResolver uriResolver;
 	private OutputResolver outputResolver;
+	private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
 	private final Processor processor;
 
 
@@ -47,6 +50,18 @@ public class Configuration
 		this.processor = processor;
 
 		uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
+	}
+
+
+	public InputResolver getInputResolver()
+	{
+		return this.inputResolver;
+	}
+
+
+	public void setInputResolver(final InputResolver inputResolver)
+	{
+		this.inputResolver = inputResolver;
 	}
 
 
