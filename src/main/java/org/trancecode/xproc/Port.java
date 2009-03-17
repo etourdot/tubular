@@ -35,8 +35,6 @@ public class Port extends AbstractHasLocation
 	private final boolean primary;
 	private final boolean sequence;
 	protected final List<PortBinding> portBindings = new ArrayList<PortBinding>();
-	private final String portName;
-	private final String stepName;
 	private String select;
 	private final PortReference portReference;
 
@@ -47,24 +45,54 @@ public class Port extends AbstractHasLocation
 	}
 
 
-	public Port(
+	public static Port newInputPort(final String stepName, final String portName, final Location location)
+	{
+		return newPort(stepName, portName, location, Type.INPUT);
+	}
+
+
+	public static Port newParameterPort(final String stepName, final String portName, final Location location)
+	{
+		return newPort(stepName, portName, location, Type.PARAMETER);
+	}
+
+
+	public static Port newOutputPort(final String stepName, final String portName, final Location location)
+	{
+		return newPort(stepName, portName, location, Type.OUTPUT);
+	}
+
+
+	public static Port newPort(final String stepName, final String portName, final Location location, final Type type)
+	{
+		return new Port(stepName, portName, location, type, false, false);
+	}
+
+
+	private Port(
 		final String stepName, final String portName, final Location location, final Type type, final boolean primary,
+		final boolean sequence)
+	{
+		this(new PortReference(stepName, portName), location, type, primary, sequence);
+	}
+
+
+	public Port(
+		final PortReference portReference, final Location location, final Type type, final boolean primary,
 		final boolean sequence)
 	{
 		super(location);
 
-		this.stepName = stepName;
 		this.type = type;
 		this.primary = primary;
 		this.sequence = sequence;
-		this.portName = portName;
-		portReference = new PortReference(stepName, portName);
+		this.portReference = portReference;
 	}
 
 
 	public String getStepName()
 	{
-		return stepName;
+		return portReference.stepName;
 	}
 
 
@@ -106,7 +134,7 @@ public class Port extends AbstractHasLocation
 
 	public String getPortName()
 	{
-		return portName;
+		return portReference.portName;
 	}
 
 
@@ -137,6 +165,19 @@ public class Port extends AbstractHasLocation
 	@Override
 	public String toString()
 	{
-		return String.format("%s[%s][%s/%s]", getClass().getSimpleName(), type, stepName, portName);
+		return String.format(
+			"%s[%s][%s/%s]", getClass().getSimpleName(), type, portReference.stepName, portReference.portName);
+	}
+
+
+	public Port setPrimary(final boolean primary)
+	{
+		return new Port(portReference, location, type, primary, sequence);
+	}
+
+
+	public Port setSequence(final boolean sequence)
+	{
+		return new Port(portReference, location, type, primary, sequence);
 	}
 }

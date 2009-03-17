@@ -26,7 +26,6 @@ import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.parser.StepFactory;
 
@@ -66,7 +65,8 @@ public class ForEach extends AbstractCompoundStep
 
 	private Port newIterationPort(final XdmNode node)
 	{
-		final Port port = new Port(name, XProcPorts.ITERATION_NODE, getLocation(), Type.INPUT, false, false);
+		final Port port =
+			Port.newInputPort(name, XProcPorts.ITERATION_NODE, getLocation()).setPrimary(false).setSequence(false);
 		port.getPortBindings().add(new InlinePortBinding(node, getLocation()));
 		return port;
 	}

@@ -284,7 +284,8 @@ public class PipelineParser implements XProcXmlModel
 			getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_SEQUENCE)), false);
 
 		final Location location = getLocation(node);
-		final Port port = new Port(step.getName(), portName, getLocation(node), type, primary, sequence);
+		final Port port =
+			Port.newPort(step.getName(), portName, getLocation(node), type).setPrimary(primary).setSequence(sequence);
 		log.trace("new port: {}", port);
 		if (type == Type.INPUT)
 		{

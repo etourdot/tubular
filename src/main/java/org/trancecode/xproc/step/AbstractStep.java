@@ -157,7 +157,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 		final String portName, final Location location, final Type type, final boolean primary, final boolean sequence)
 	{
 		// FIXME what of port that are explictly set to "not primary"?
-		final Port port = new Port(getName(), portName, location, type, primary, sequence);
+		final Port port = Port.newPort(getName(), portName, location, type).setPrimary(primary).setSequence(sequence);
 		addPort(port);
 		return port;
 	}
