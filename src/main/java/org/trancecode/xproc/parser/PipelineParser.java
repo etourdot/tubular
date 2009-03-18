@@ -337,31 +337,32 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parsePortBinding(final XdmNode node, final Port port)
+	private void parsePortBinding(final XdmNode portBindingNode, final Port port)
 	{
-		if (node.getNodeName().equals(ELEMENT_PIPE))
+		if (portBindingNode.getNodeName().equals(ELEMENT_PIPE))
 		{
-			final String stepName = node.getAttributeValue(ATTRIBUTE_STEP);
-			final String portName = node.getAttributeValue(ATTRIBUTE_PORT);
-			port.getPortBindings().add(new PipePortBinding(new PortReference(stepName, portName), getLocation(node)));
+			final String stepName = portBindingNode.getAttributeValue(ATTRIBUTE_STEP);
+			final String portName = portBindingNode.getAttributeValue(ATTRIBUTE_PORT);
+			port.getPortBindings().add(
+				new PipePortBinding(new PortReference(stepName, portName), getLocation(portBindingNode)));
 		}
-		else if (node.getNodeName().equals(ELEMENT_EMPTY))
+		else if (portBindingNode.getNodeName().equals(ELEMENT_EMPTY))
 		{
-			port.getPortBindings().add(new EmptyPortBinding(getLocation(node)));
+			port.getPortBindings().add(new EmptyPortBinding(getLocation(portBindingNode)));
 		}
-		else if (node.getNodeName().equals(ELEMENT_DOCUMENT))
+		else if (portBindingNode.getNodeName().equals(ELEMENT_DOCUMENT))
 		{
-			final String href = node.getAttributeValue(ATTRIBUTE_HREF);
-			port.getPortBindings().add(new DocumentPortBinding(href, getLocation(node)));
+			final String href = portBindingNode.getAttributeValue(ATTRIBUTE_HREF);
+			port.getPortBindings().add(new DocumentPortBinding(href, getLocation(portBindingNode)));
 		}
-		else if (node.getNodeName().equals(ELEMENT_INLINE))
+		else if (portBindingNode.getNodeName().equals(ELEMENT_INLINE))
 		{
-			final XdmNode inlineNode = SaxonUtil.getElement(node);
-			port.getPortBindings().add(new InlinePortBinding(inlineNode, getLocation(node)));
+			final XdmNode inlineNode = SaxonUtil.getElement(portBindingNode);
+			port.getPortBindings().add(new InlinePortBinding(inlineNode, getLocation(portBindingNode)));
 		}
 		else
 		{
-			throw new PipelineException("not supported: {}", node.getNodeName());
+			throw new PipelineException("not supported: {}", portBindingNode.getNodeName());
 		}
 	}
 
