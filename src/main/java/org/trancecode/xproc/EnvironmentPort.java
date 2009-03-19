@@ -22,9 +22,9 @@ package org.trancecode.xproc;
 import org.trancecode.xproc.binding.AbstractBoundPortBinding;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.Processor;
@@ -134,16 +134,14 @@ public class EnvironmentPort
 
 	public void writeNodes(final XdmNode... nodes)
 	{
-		for (final XdmNode node : nodes)
+		final List<XdmNode> nodeList = ImmutableList.of(nodes);
+		portBindings.add(new AbstractBoundPortBinding()
 		{
-			portBindings.add(new AbstractBoundPortBinding()
+			public Iterable<XdmNode> readNodes()
 			{
-				public Iterable<XdmNode> readNodes()
-				{
-					return Collections.singletonList(node);
-				}
-			});
-		}
+				return nodeList;
+			}
+		});
 	}
 
 
