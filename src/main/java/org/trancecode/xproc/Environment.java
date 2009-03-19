@@ -213,15 +213,10 @@ public class Environment
 	public EnvironmentPort addEnvironmentPort(final Port port)
 	{
 		LOG.entry(port);
-		return addEnvironmentPort(port.getPortReference(), port);
-	}
-
-
-	public EnvironmentPort addEnvironmentPort(final PortReference portReference, final Port port)
-	{
-		assert !ports.containsKey(portReference);
+		assert port.getPortReference().equals(port.getPortReference());
+		assert !ports.containsKey(port.getPortReference());
 		final EnvironmentPort environmentPort = new EnvironmentPort(port, this);
-		ports.put(portReference, environmentPort);
+		ports.put(port.getPortReference(), environmentPort);
 		return environmentPort;
 	}
 
