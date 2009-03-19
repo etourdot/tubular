@@ -75,4 +75,10 @@ public interface Step extends HasLocation
 
 
 	Map<String, Port> getPorts();
+
+
+	void setPortBindings(String portName, PortBinding... portBindings);
+
+
+	void withPort(Port port);
 }

@@ -21,8 +21,9 @@ package org.trancecode.xproc;
 
 import org.trancecode.xml.Location;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 
 /**
@@ -31,11 +32,12 @@ import java.util.List;
  */
 public class Port extends AbstractHasLocation
 {
+	private static final List<PortBinding> EMPTY_PORT_BINDING_LIST = ImmutableList.of();
 	private final Type type;
-	private final boolean primary;
-	private final boolean sequence;
-	protected final List<PortBinding> portBindings = new ArrayList<PortBinding>();
-	private String select;
+	private final Boolean primary;
+	private final Boolean sequence;
+	protected final List<PortBinding> portBindings;
+	private final String select;
 	private final PortReference portReference;
 
 
@@ -65,28 +67,28 @@ public class Port extends AbstractHasLocation
 
 	public static Port newPort(final String stepName, final String portName, final Location location, final Type type)
 	{
-		return new Port(stepName, portName, location, type, false, false);
+		return new Port(stepName, portName, location, type);
+	}
+
+
+	private Port(final String stepName, final String portName, final Location location, final Type type)
+	{
+		this(new PortReference(stepName, portName), location, type, null, null, null, EMPTY_PORT_BINDING_LIST);
 	}
 
 
 	private Port(
-		final String stepName, final String portName, final Location location, final Type type, final boolean primary,
-		final boolean sequence)
-	{
-		this(new PortReference(stepName, portName), location, type, primary, sequence);
-	}
-
-
-	public Port(
-		final PortReference portReference, final Location location, final Type type, final boolean primary,
-		final boolean sequence)
+		final PortReference portReference, final Location location, final Type type, final Boolean primary,
+		final Boolean sequence, final String select, final Iterable<PortBinding> portBindings)
 	{
 		super(location);
 
+		this.portReference = portReference;
 		this.type = type;
 		this.primary = primary;
 		this.sequence = sequence;
-		this.portReference = portReference;
+		this.select = select;
+		this.portBindings = ImmutableList.copyOf(portBindings);
 	}
 
 
@@ -140,13 +142,13 @@ public class Port extends AbstractHasLocation
 
 	public boolean isPrimary()
 	{
-		return primary;
+		return primary != null && primary;
 	}
 
 
 	public boolean isSequence()
 	{
-		return sequence;
+		return sequence != null && sequence;
 	}
 
 
@@ -156,9 +158,9 @@ public class Port extends AbstractHasLocation
 	}
 
 
-	public void setSelect(final String select)
+	public Port setSelect(final String select)
 	{
-		this.select = select;
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
@@ -172,12 +174,24 @@ public class Port extends AbstractHasLocation
 
 	public Port setPrimary(final boolean primary)
 	{
-		return new Port(portReference, location, type, primary, sequence);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
 	public Port setSequence(final boolean sequence)
 	{
-		return new Port(portReference, location, type, primary, sequence);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
+	}
+
+
+	public Port setPortBindings(final PortBinding... portBindings)
+	{
+		return setPortBindings(ImmutableList.of(portBindings));
+	}
+
+
+	public Port setPortBindings(final Iterable<PortBinding> portBindings)
+	{
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 }

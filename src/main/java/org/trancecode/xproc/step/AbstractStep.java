@@ -29,8 +29,10 @@ import org.trancecode.xproc.Option;
 import org.trancecode.xproc.Parameter;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
+import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcNamespaces;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.Port.Type;
@@ -252,7 +254,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 			}
 
 			assert !(!declaredPort.getPortBindings().isEmpty() && declaredPort.isOutput()) : "port is already bound: "
-				+ declaredPort;
+				+ declaredPort + " ; bindings = " + declaredPort.getPortBindings();
 
 			return environmentPort;
 		}
@@ -365,6 +367,12 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 		// create result environment and import from given environment
 		final Environment resultEnvironment = environment.newFollowingStepEnvironment();
 
+		log.trace("ports = {}", ports);
+		for (final Port port : ports.values())
+		{
+			log.trace("{} bindings = {}", port, port.getPortBindings());
+		}
+
 		setupInputEnvironmentPorts(resultEnvironment);
 		setLocalVariables(resultEnvironment, Iterables.concat(variables.values(), parameters.values()));
 
@@ -386,6 +394,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 		try
 		{
 			doRun(resultEnvironment);
+		}
+		catch (final XProcException e)
+		{
+			throw (XProcException)e.fillInStackTrace();
 		}
 		catch (final Exception e)
 		{
@@ -643,5 +655,18 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		return String.format(
 			"%s name = %s ; ports = %s ; variables = %s", getClass().getSimpleName(), name, ports, variables);
+	}
+
+
+	public void setPortBindings(final String portName, final PortBinding... portBindings)
+	{
+		withPort(getPort(portName).setPortBindings(portBindings));
+	}
+
+
+	public void withPort(final Port port)
+	{
+		assert ports.containsKey(port.getPortName());
+		ports.put(port.getPortName(), port);
 	}
 }

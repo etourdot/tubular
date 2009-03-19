@@ -65,10 +65,8 @@ public class ForEach extends AbstractCompoundStep
 
 	private Port newIterationPort(final XdmNode node)
 	{
-		final Port port =
-			Port.newInputPort(name, XProcPorts.ITERATION_NODE, getLocation()).setPrimary(false).setSequence(false);
-		port.getPortBindings().add(new InlinePortBinding(node, getLocation()));
-		return port;
+		return Port.newInputPort(name, XProcPorts.ITERATION_NODE, getLocation()).setPrimary(false).setSequence(false)
+			.setPortBindings(new InlinePortBinding(node, getLocation()));
 	}
 
 

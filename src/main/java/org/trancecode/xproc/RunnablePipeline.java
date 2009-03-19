@@ -91,14 +91,12 @@ public class RunnablePipeline
 
 	public void setPortBinding(final String portName, final Iterable<Source> bindings)
 	{
-		final Port port = getUnderlyingPipeline().getPort(portName);
-		port.getPortBindings().clear();
 		for (final Source binding : bindings)
 		{
 			try
 			{
 				final XdmNode node = getPipeline().getProcessor().newDocumentBuilder().build(binding);
-				port.getPortBindings().add(new InlinePortBinding(node, null));
+				getUnderlyingPipeline().setPortBindings(portName, new InlinePortBinding(node, null));
 			}
 			catch (final SaxonApiException e)
 			{

@@ -21,10 +21,13 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.parser.StepFactory;
+
+import java.util.Collections;
 
 import net.sf.saxon.s9api.QName;
 
@@ -67,18 +70,19 @@ public class InvokeStep extends AbstractCompoundStep
 
 		for (final Port port : step.getPorts().values())
 		{
-			final Port localPort = declarePort(port);
-			localPort.getPortBindings().addAll(port.getPortBindings());
-
-			if (port.isInput() || port.isParameter())
+			final Iterable<PortBinding> portBindings;
+			if (port.getPortBindings().isEmpty() && (port.isInput() || port.isParameter()))
 			{
-				if (port.getPortBindings().isEmpty())
-				{
-					final PortReference localPortReference = new PortReference(name, port.getPortName());
-					log.trace("{} -> {}", localPortReference, port.getPortReference());
-					port.getPortBindings().add(new PipePortBinding(localPortReference, location));
-				}
+				final PortReference localPortReference = new PortReference(name, port.getPortName());
+				log.trace("{} -> {}", localPortReference, port.getPortReference());
+				portBindings = Collections.singleton((PortBinding)new PipePortBinding(localPortReference, location));
 			}
+			else
+			{
+				portBindings = port.getPortBindings();
+			}
+
+			addPort(Port.newPort(name, port.getPortName(), location, port.getType()).setPortBindings(portBindings));
 		}
 
 		addStep(step);

@@ -27,6 +27,7 @@ import org.trancecode.xproc.Option;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.PipelineFactory;
 import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
@@ -183,8 +184,8 @@ public class PipelineParser implements XProcXmlModel
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
 			+ " ; with-port = " + getPortType(portNode);
 
-		parseSelect(portNode, port);
-		parsePortBindings(portNode, port);
+		final Port configuredPort = parsePortBindings(portNode, parseSelect(portNode, port));
+		step.withPort(configuredPort);
 	}
 
 
@@ -209,23 +210,28 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parsePortBindings(final XdmNode portNode, final Port port)
+	private Port parsePortBindings(final XdmNode portNode, final Port port)
 	{
-		for (final XdmNode portBindingNode : SaxonUtil.getElements(portNode, ELEMENTS_PORT_BINDINGS))
-		{
-			parsePortBinding(portBindingNode, port);
-		}
+		final Iterable<PortBinding> portBindings =
+			Iterables.transform(
+				SaxonUtil.getElements(portNode, ELEMENTS_PORT_BINDINGS), new Function<XdmNode, PortBinding>()
+				{
+					@Override
+					public PortBinding apply(final XdmNode node)
+					{
+						return parsePortBinding(node);
+					}
+				});
+
+		return port.setPortBindings(portBindings);
 	}
 
 
-	private void parseSelect(final XdmNode portNode, final Port port)
+	private Port parseSelect(final XdmNode portNode, final Port port)
 	{
 		final String select = portNode.getAttributeValue(ATTRIBUTE_SELECT);
-		if (select != null)
-		{
-			log.trace("select = {}", select);
-			port.setSelect(select);
-		}
+		log.trace("select = {}", select);
+		return port.setSelect(select);
 	}
 
 
@@ -337,28 +343,27 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parsePortBinding(final XdmNode portBindingNode, final Port port)
+	private PortBinding parsePortBinding(final XdmNode portBindingNode)
 	{
 		if (portBindingNode.getNodeName().equals(ELEMENT_PIPE))
 		{
 			final String stepName = portBindingNode.getAttributeValue(ATTRIBUTE_STEP);
 			final String portName = portBindingNode.getAttributeValue(ATTRIBUTE_PORT);
-			port.getPortBindings().add(
-				new PipePortBinding(new PortReference(stepName, portName), getLocation(portBindingNode)));
+			return new PipePortBinding(new PortReference(stepName, portName), getLocation(portBindingNode));
 		}
 		else if (portBindingNode.getNodeName().equals(ELEMENT_EMPTY))
 		{
-			port.getPortBindings().add(new EmptyPortBinding(getLocation(portBindingNode)));
+			return new EmptyPortBinding(getLocation(portBindingNode));
 		}
 		else if (portBindingNode.getNodeName().equals(ELEMENT_DOCUMENT))
 		{
 			final String href = portBindingNode.getAttributeValue(ATTRIBUTE_HREF);
-			port.getPortBindings().add(new DocumentPortBinding(href, getLocation(portBindingNode)));
+			return new DocumentPortBinding(href, getLocation(portBindingNode));
 		}
 		else if (portBindingNode.getNodeName().equals(ELEMENT_INLINE))
 		{
 			final XdmNode inlineNode = SaxonUtil.getElement(portBindingNode);
-			port.getPortBindings().add(new InlinePortBinding(inlineNode, getLocation(portBindingNode)));
+			return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
 		}
 		else
 		{
@@ -571,7 +576,7 @@ public class PipelineParser implements XProcXmlModel
 		if (xpathContextNode != null)
 		{
 			final Port port = step.getPort(XProcPorts.XPATH_CONTEXT);
-			parseSelect(xpathContextNode, port);
+			// FIXME parseSelect(xpathContextNode, port);
 			parsePortBindings(xpathContextNode, port);
 			if (defaultXPathContext != null && port.getPortBindings().isEmpty())
 			{

@@ -179,7 +179,7 @@ public class SaxonUtil implements XmlModel
 				{
 					if (node.getNodeKind() == XdmNodeKind.DOCUMENT)
 					{
-						qnames.add(SaxonUtil.getElement(node).getNodeName());
+						qnames.add(new QName("document"));
 					}
 					else
 					{
