@@ -215,7 +215,7 @@ public class Environment
 		LOG.entry(port);
 		assert port.getPortReference().equals(port.getPortReference());
 		assert !ports.containsKey(port.getPortReference());
-		final EnvironmentPort environmentPort = new EnvironmentPort(port, this);
+		final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
 		ports.put(port.getPortReference(), environmentPort);
 		return environmentPort;
 	}

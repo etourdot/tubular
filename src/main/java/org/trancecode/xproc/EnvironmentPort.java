@@ -52,7 +52,13 @@ public class EnvironmentPort
 	private final XPathExecutable select;
 
 
-	public EnvironmentPort(final Port declaredPort, final Environment environment)
+	public static EnvironmentPort newEnvironmentPort(final Port declaredPort, final Environment environment)
+	{
+		return new EnvironmentPort(declaredPort, environment);
+	}
+
+
+	private EnvironmentPort(final Port declaredPort, final Environment environment)
 	{
 		assert declaredPort != null;
 		this.declaredPort = declaredPort;
