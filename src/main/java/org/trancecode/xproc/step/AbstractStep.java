@@ -386,7 +386,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	public Environment run(final Environment environment)
 	{
 		log.entry(getType(), getName());
-		log.trace("variables = {}", environment.getVariables());
 		log.trace("declared variables = {}", variables);
 
 		final Environment resultEnvironment = newResultEnvironment(environment);
