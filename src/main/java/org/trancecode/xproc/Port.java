@@ -106,7 +106,7 @@ public class Port extends AbstractHasLocation
 
 	public boolean isInput()
 	{
-		return type == Type.INPUT;
+		return type == Type.INPUT || type == Type.PARAMETER;
 	}
 
 
@@ -143,6 +143,12 @@ public class Port extends AbstractHasLocation
 	public boolean isPrimary()
 	{
 		return primary != null && primary;
+	}
+
+
+	public boolean isNotPrimary()
+	{
+		return primary != null && !primary;
 	}
 
 
