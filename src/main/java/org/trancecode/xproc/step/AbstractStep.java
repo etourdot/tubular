@@ -471,19 +471,19 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected Iterable<Port> getInputPorts()
+	public Iterable<Port> getInputPorts()
 	{
 		return Iterables.filter(ports.values(), PREDICATE_IS_INPUT_PORT);
 	}
 
 
-	protected Iterable<Port> getOutputPorts()
+	public Iterable<Port> getOutputPorts()
 	{
 		return Iterables.filter(ports.values(), PREDICATE_IS_OUTPUT_PORT);
 	}
 
 
-	protected Iterable<Port> getParameterPorts()
+	public Iterable<Port> getParameterPorts()
 	{
 		return Iterables.filter(ports.values(), PREDICATE_IS_PARAMETER_PORT);
 	}

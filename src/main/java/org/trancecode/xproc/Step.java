@@ -81,4 +81,13 @@ public interface Step extends HasLocation
 
 
 	void withPort(Port port);
+
+
+	Iterable<Port> getInputPorts();
+
+
+	Iterable<Port> getParameterPorts();
+
+
+	Iterable<Port> getOutputPorts();
 }
