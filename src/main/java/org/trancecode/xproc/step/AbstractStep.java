@@ -567,7 +567,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 				final EnvironmentPort parametersPort = environment.getDefaultParametersPort();
 				assert parametersPort != null;
 				final XdmNode parameterNode =
-					newParameterElement(variable.getName(), value, environment.getProcessor());
+					newParameterElement(variable.getName(), value, environment.getConfiguration().getProcessor());
 				parametersPort.writeNodes(parameterNode);
 			}
 			else
@@ -628,7 +628,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 		final Map<QName, String> parameters = CollectionUtil.newSmallWriteOnceMap();
 		for (final XdmNode parameterNode : port.readNodes())
 		{
-			final XPathCompiler xpathCompiler = environment.getProcessor().newXPathCompiler();
+			final XPathCompiler xpathCompiler = environment.getConfiguration().getProcessor().newXPathCompiler();
 			try
 			{
 				final XPathSelector nameSelector = xpathCompiler.compile("string(//@name)").load();

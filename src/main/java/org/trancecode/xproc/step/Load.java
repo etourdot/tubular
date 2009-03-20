@@ -93,7 +93,7 @@ public class Load extends AbstractStep
 		final XdmNode document;
 		try
 		{
-			document = environment.getProcessor().newDocumentBuilder().build(source);
+			document = environment.getConfiguration().getProcessor().newDocumentBuilder().build(source);
 		}
 		catch (final SaxonApiException e)
 		{

@@ -70,7 +70,7 @@ public class Count extends AbstractStep
 		log.trace("result = {}", result);
 
 		writeNodes(XProcPorts.RESULT, environment, newResultElement(Integer.toString(result), environment
-			.getProcessor()));
+			.getConfiguration().getProcessor()));
 	}
 
 

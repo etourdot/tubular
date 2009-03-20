@@ -166,7 +166,7 @@ public class Store extends AbstractStep
 
 		try
 		{
-			environment.getProcessor().writeXdmValue(node, serializer);
+			environment.getConfiguration().getProcessor().writeXdmValue(node, serializer);
 		}
 		catch (final Exception e)
 		{
@@ -178,7 +178,8 @@ public class Store extends AbstractStep
 			IOUtil.closeQuietly(targetOutputStream);
 		}
 
-		final XdmNode resultNode = newResultElement(outputUri.toString(), environment.getProcessor());
+		final XdmNode resultNode =
+			newResultElement(outputUri.toString(), environment.getConfiguration().getProcessor());
 		writeNodes(XProcPorts.RESULT, environment, resultNode);
 	}
 }

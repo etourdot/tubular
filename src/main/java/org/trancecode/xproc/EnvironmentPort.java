@@ -62,7 +62,7 @@ public class EnvironmentPort
 	{
 		assert declaredPort != null;
 		this.declaredPort = declaredPort;
-		this.processor = environment.getProcessor();
+		this.processor = environment.getConfiguration().getProcessor();
 
 		for (final PortBinding portBinding : declaredPort.getPortBindings())
 		{

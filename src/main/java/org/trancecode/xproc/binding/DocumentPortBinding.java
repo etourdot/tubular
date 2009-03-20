@@ -71,7 +71,8 @@ public class DocumentPortBinding extends AbstractPortBinding implements PortBind
 					final Source source =
 						environment.getConfiguration().getUriResolver().resolve(href, location.getSystemId());
 
-					return Collections.singletonList(environment.getProcessor().newDocumentBuilder().build(source));
+					return Collections.singletonList(environment.getConfiguration().getProcessor().newDocumentBuilder()
+						.build(source));
 				}
 				catch (final Exception e)
 				{
