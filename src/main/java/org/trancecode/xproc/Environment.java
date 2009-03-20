@@ -63,7 +63,13 @@ public class Environment
 	private EnvironmentPort xpathContextPort;
 
 
-	public Environment(final Pipeline pipeline, final Configuration configuration)
+	public static Environment newEnvironment(final Pipeline pipeline, final Configuration configuration)
+	{
+		return new Environment(pipeline, configuration);
+	}
+
+
+	private Environment(final Pipeline pipeline, final Configuration configuration)
 	{
 		assert pipeline != null;
 		this.pipeline = pipeline;

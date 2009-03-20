@@ -61,7 +61,7 @@ public class RunnablePipeline
 		final Configuration configuration = new Configuration(pipeline.getProcessor());
 		configuration.setOutputResolver(outputResolver);
 		configuration.setUriResolver(uriResolver);
-		final Environment environment = new Environment(getUnderlyingPipeline(), configuration);
+		final Environment environment = Environment.newEnvironment(getUnderlyingPipeline(), configuration);
 
 		final Environment resultEnvironment = getUnderlyingPipeline().run(environment);
 
