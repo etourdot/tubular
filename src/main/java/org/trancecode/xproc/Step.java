@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.xml.Location;
 
 import java.util.Map;
@@ -90,4 +91,12 @@ public interface Step extends HasLocation
 
 
 	Iterable<Port> getOutputPorts();
+
+
+	@ReturnsNullable
+	Port getPrimaryInputPort();
+
+
+	@ReturnsNullable
+	Port getPrimaryParameterPort();
 }

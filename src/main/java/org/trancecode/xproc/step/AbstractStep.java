@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.CollectionUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonUtil;
@@ -422,6 +423,36 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
+	@ReturnsNullable
+	public Port getPrimaryInputPort()
+	{
+		for (final Port port : ports.values())
+		{
+			if (port.isInput() && !port.isParameter() && isPrimary(port))
+			{
+				return port;
+			}
+		}
+
+		return null;
+	}
+
+
+	@ReturnsNullable
+	public Port getPrimaryParameterPort()
+	{
+		for (final Port port : ports.values())
+		{
+			if (port.isParameter() && isPrimary(port))
+			{
+				return port;
+			}
+		}
+
+		return null;
+	}
+
+
 	protected Port getPrimaryOutputPort()
 	{
 		for (final Port port : ports.values())
@@ -456,6 +487,11 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	private static boolean isPrimary(final Port port, final Iterable<Port> ports)
 	{
 		assert port != null;
+
+		if (port.isNotPrimary())
+		{
+			return false;
+		}
 
 		if (port.isPrimary())
 		{
