@@ -9,7 +9,7 @@
   <version>0.1-SNAPSHOT</version>
   <artifactId>tubular</artifactId>
   <packaging>jar</packaging>
-  <name>${project.artifactId}-${project.version}</name>
+  <name>${project.artifactId}</name>
   <description>TranceCode XProc pipeline processor</description>
 
   <!-- ===================================================================== -->
