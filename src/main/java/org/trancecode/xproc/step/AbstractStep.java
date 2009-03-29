@@ -720,4 +720,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		return Iterables.getOnlyElement(Iterables.filter(getInputPorts(), PREDICATE_IS_XPATH_CONTEXT_PORT), null);
 	}
+
+
+	public Iterable<Variable> getVariables()
+	{
+		return variables.values();
+	}
 }

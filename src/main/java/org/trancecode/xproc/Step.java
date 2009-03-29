@@ -103,4 +103,7 @@ public interface Step extends HasLocation
 
 	@ReturnsNullable
 	Port getPrimaryParameterPort();
+
+
+	Iterable<Variable> getVariables();
 }
