@@ -94,6 +94,10 @@ public interface Step extends HasLocation
 
 
 	@ReturnsNullable
+	Port getXPathContextPort();
+
+
+	@ReturnsNullable
 	Port getPrimaryInputPort();
 
 

@@ -96,6 +96,15 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 		}
 	};
 
+	private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
+	{
+		@Override
+		public boolean apply(final Port port)
+		{
+			return isXPathContextPort(port);
+		}
+	};
+
 	protected XLogger log = XLoggerFactory.getXLogger(getClass());
 
 	protected final Map<QName, Parameter> parameters = CollectionUtil.newSmallWriteOnceMap();
@@ -703,5 +712,12 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		assert ports.containsKey(port.getPortName());
 		ports.put(port.getPortName(), port);
+	}
+
+
+	@ReturnsNullable
+	public Port getXPathContextPort()
+	{
+		return Iterables.getOnlyElement(Iterables.filter(getInputPorts(), PREDICATE_IS_XPATH_CONTEXT_PORT), null);
 	}
 }
