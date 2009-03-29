@@ -42,6 +42,13 @@ public final class XProcExceptions
 	}
 
 
+	public static XProcException xd0023(final Location location, final String select, final String errorMessage)
+	{
+		return newXProcException(
+			Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select, errorMessage);
+	}
+
+
 	public static XProcException xs0038(final Location location, final Object... args)
 	{
 		return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", args);
