@@ -145,7 +145,6 @@ public class EnvironmentPort
 
 	public void pipe(final EnvironmentPort port)
 	{
-		LOG.entry();
 		assert port != null : getDeclaredPort();
 		assert port != this : getDeclaredPort();
 		LOG.trace("{} -> {}", port.getDeclaredPort(), getDeclaredPort());
