@@ -21,7 +21,6 @@ package org.trancecode.xproc;
 
 import org.trancecode.xproc.binding.AbstractBoundPortBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -47,7 +46,7 @@ public class EnvironmentPort
 	private static final XLogger LOG = XLoggerFactory.getXLogger(EnvironmentPort.class);
 
 	private final Port declaredPort;
-	protected final List<EnvironmentPortBinding> portBindings = new ArrayList<EnvironmentPortBinding>();
+	protected final List<EnvironmentPortBinding> portBindings = Lists.newArrayList();
 	private final Processor processor;
 	private final XPathExecutable select;
 
@@ -129,7 +128,8 @@ public class EnvironmentPort
 			}
 		}
 
-		return nodes;
+		// defensive programming
+		return ImmutableList.copyOf(nodes);
 	}
 
 
