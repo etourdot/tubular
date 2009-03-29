@@ -26,7 +26,6 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathExecutable;
 import net.sf.saxon.s9api.XPathSelector;
@@ -47,7 +46,6 @@ public class EnvironmentPort
 
 	private final Port declaredPort;
 	protected final List<EnvironmentPortBinding> portBindings = Lists.newArrayList();
-	private final Processor processor;
 	private final XPathExecutable select;
 
 
@@ -61,7 +59,6 @@ public class EnvironmentPort
 	{
 		assert declaredPort != null;
 		this.declaredPort = declaredPort;
-		this.processor = environment.getConfiguration().getProcessor();
 
 		for (final PortBinding portBinding : declaredPort.getPortBindings())
 		{
@@ -73,7 +70,7 @@ public class EnvironmentPort
 		{
 			try
 			{
-				this.select = processor.newXPathCompiler().compile(select);
+				this.select = environment.getConfiguration().getProcessor().newXPathCompiler().compile(select);
 			}
 			catch (final SaxonApiException e)
 			{
