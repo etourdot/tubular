@@ -118,7 +118,8 @@ public class EnvironmentPort
 					}
 					catch (final SaxonApiException e)
 					{
-						throw new PipelineException(e, "error while compiling @select: %s", declaredPort.getSelect());
+						throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(), e
+							.getMessage());
 					}
 				}
 				else
