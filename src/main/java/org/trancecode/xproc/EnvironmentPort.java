@@ -23,7 +23,9 @@ import org.trancecode.xproc.binding.AbstractBoundPortBinding;
 
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.SaxonApiException;
@@ -45,43 +47,54 @@ public class EnvironmentPort
 	private static final XLogger LOG = XLoggerFactory.getXLogger(EnvironmentPort.class);
 
 	private final Port declaredPort;
-	protected final List<EnvironmentPortBinding> portBindings = Lists.newArrayList();
+	protected final List<EnvironmentPortBinding> portBindings;
 	private final XPathExecutable select;
 
 
 	public static EnvironmentPort newEnvironmentPort(final Port declaredPort, final Environment environment)
 	{
-		return new EnvironmentPort(declaredPort, environment);
-	}
-
-
-	private EnvironmentPort(final Port declaredPort, final Environment environment)
-	{
 		assert declaredPort != null;
-		this.declaredPort = declaredPort;
+		assert environment != null;
 
-		for (final PortBinding portBinding : declaredPort.getPortBindings())
-		{
-			portBindings.add(portBinding.newEnvironmentPortBinding(environment));
-		}
+		final List<EnvironmentPortBinding> portBindings =
+			ImmutableList.copyOf(Iterables.transform(
+				declaredPort.getPortBindings(), new Function<PortBinding, EnvironmentPortBinding>()
+				{
+					@Override
+					public EnvironmentPortBinding apply(final PortBinding portBinding)
+					{
+						return portBinding.newEnvironmentPortBinding(environment);
+					}
+				}));
 
-		final String select = declaredPort.getSelect();
-		if (select != null)
+		final String declaredPortSelect = declaredPort.getSelect();
+		final XPathExecutable select;
+		if (declaredPortSelect != null)
 		{
 			try
 			{
-				this.select = environment.getConfiguration().getProcessor().newXPathCompiler().compile(select);
+				select = environment.getConfiguration().getProcessor().newXPathCompiler().compile(declaredPortSelect);
 			}
 			catch (final SaxonApiException e)
 			{
-				throw new PipelineException(e, "error while compiling @select: %s", select);
+				throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPortSelect, e.getMessage());
 			}
 		}
 		else
 		{
-			this.select = null;
+			select = null;
 		}
 
+		return new EnvironmentPort(declaredPort, portBindings, select);
+	}
+
+
+	private EnvironmentPort(
+		final Port declaredPort, final Iterable<EnvironmentPortBinding> portBindings, final XPathExecutable select)
+	{
+		this.declaredPort = declaredPort;
+		this.portBindings = Lists.newArrayList(portBindings);
+		this.select = select;
 	}
 
 
