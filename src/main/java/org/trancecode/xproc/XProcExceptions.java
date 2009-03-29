@@ -35,10 +35,10 @@ public final class XProcExceptions
 	}
 
 
-	public static XProcException xd0004(final Location location, final Object... args)
+	public static XProcException xd0004(final Location location)
 	{
 		return newXProcException(
-			Type.DYNAMIC, 4, location, "no subpipeline is selected by the p:choose and no default is provided", args);
+			Type.DYNAMIC, 4, location, "no subpipeline is selected by the p:choose and no default is provided");
 	}
 
 
@@ -49,9 +49,9 @@ public final class XProcExceptions
 	}
 
 
-	public static XProcException xs0038(final Location location, final Object... args)
+	public static XProcException xs0038(final Location location, final String version)
 	{
-		return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", args);
+		return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
 	}
 
 
