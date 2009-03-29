@@ -19,6 +19,8 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.xproc.XProcExceptions;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,11 +39,17 @@ import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.DOMDestination;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
+import net.sf.saxon.s9api.XdmValue;
 import net.sf.saxon.s9api.XsltTransformer;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 import org.w3c.dom.Document;
 
 
@@ -51,6 +59,9 @@ import org.w3c.dom.Document;
  */
 public class SaxonUtil implements XmlModel
 {
+	private static final XLogger LOG = XLoggerFactory.getXLogger(SaxonUtil.class);
+
+
 	private SaxonUtil()
 	{
 		// To prevent instantiation
@@ -190,5 +201,46 @@ public class SaxonUtil implements XmlModel
 				return qnames.toString();
 			}
 		};
+	}
+
+
+	public XdmValue evaluateXPath(
+		final String select, final Processor processor, final XdmNode xpathContextNode,
+		final Map<QName, String> variables, final Location location)
+	{
+		LOG.trace("select = {} ; variables = {}", select, variables);
+
+		try
+		{
+			final XPathCompiler xpathCompiler = processor.newXPathCompiler();
+			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
+			{
+				if (variableEntry.getValue() != null)
+				{
+					xpathCompiler.declareVariable(variableEntry.getKey());
+				}
+			}
+
+			final XPathSelector selector = xpathCompiler.compile(select).load();
+			if (xpathContextNode != null)
+			{
+				LOG.trace("xpathContextNode = {}", xpathContextNode);
+				selector.setContextItem(xpathContextNode);
+			}
+
+			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
+			{
+				if (variableEntry.getValue() != null)
+				{
+					selector.setVariable(variableEntry.getKey(), new XdmAtomicValue(variableEntry.getValue()));
+				}
+			}
+
+			return selector.evaluate();
+		}
+		catch (final Exception e)
+		{
+			throw XProcExceptions.xd0023(location, select, e.getMessage());
+		}
 	}
 }
