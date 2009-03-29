@@ -204,7 +204,7 @@ public class SaxonUtil implements XmlModel
 	}
 
 
-	public XdmValue evaluateXPath(
+	public static XdmValue evaluateXPath(
 		final String select, final Processor processor, final XdmNode xpathContextNode,
 		final Map<QName, String> variables, final Location location)
 	{
