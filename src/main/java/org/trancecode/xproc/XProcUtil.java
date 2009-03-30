@@ -19,8 +19,13 @@
  */
 package org.trancecode.xproc;
 
+import java.io.StringReader;
+
+import javax.xml.transform.stream.StreamSource;
+
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
 
@@ -40,5 +45,21 @@ public final class XProcUtil
 	{
 		// TODO
 		return null;
+	}
+
+
+	public static XdmNode newResultElement(final String value, final Processor processor)
+	{
+		// TODO use s9api directly
+		final String document =
+			String.format("<c:result xmlns:c=\"%s\">%s</c:result>", XProcNamespaces.URI_XPROC_STEP, value);
+		try
+		{
+			return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new IllegalStateException(e);
+		}
 	}
 }
