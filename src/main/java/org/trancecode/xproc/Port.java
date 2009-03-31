@@ -179,7 +179,7 @@ public class Port extends AbstractHasLocation
 	{
 		if (value == null)
 		{
-			return null;
+			return "";
 		}
 
 		if (value)
