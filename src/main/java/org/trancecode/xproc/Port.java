@@ -170,11 +170,28 @@ public class Port extends AbstractHasLocation
 	}
 
 
+	private String getTag(final Boolean value, final String whenTrue, final String whenFalse)
+	{
+		if (value == null)
+		{
+			return null;
+		}
+
+		if (value)
+		{
+			return whenTrue;
+		}
+
+		return whenFalse;
+	}
+
+
 	@Override
 	public String toString()
 	{
 		return String.format(
-			"%s[%s][%s/%s]", getClass().getSimpleName(), type, portReference.stepName, portReference.portName);
+			"%s[%s][%s/%s]%s%s", getClass().getSimpleName(), type, portReference.stepName, portReference.portName,
+			getTag(primary, "[primary]", "[not primary]"), getTag(sequence, "[sequence]", "[not sequence]"));
 	}
 
 
