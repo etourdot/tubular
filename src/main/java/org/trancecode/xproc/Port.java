@@ -25,6 +25,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 
 /**
  * @author Herve Quiroz
@@ -32,7 +35,9 @@ import com.google.common.collect.ImmutableList;
  */
 public class Port extends AbstractHasLocation
 {
+	private static final XLogger LOG = XLoggerFactory.getXLogger(Port.class);
 	private static final List<PortBinding> EMPTY_PORT_BINDING_LIST = ImmutableList.of();
+
 	private final Type type;
 	private final Boolean primary;
 	private final Boolean sequence;
@@ -197,6 +202,8 @@ public class Port extends AbstractHasLocation
 
 	public Port setPrimary(final String primary)
 	{
+		LOG.trace("port = {} ; primary = {}", portReference, primary);
+
 		if (primary == null)
 		{
 			return this;
@@ -210,12 +217,17 @@ public class Port extends AbstractHasLocation
 
 	public Port setPrimary(final boolean primary)
 	{
+		LOG.trace("port = {}", portReference);
+		LOG.trace("{} -> {}", this.primary, primary);
+
 		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
 	public Port setSequence(final String sequence)
 	{
+		LOG.trace("port = {} ; sequence = {}", portReference, sequence);
+
 		if (sequence == null)
 		{
 			return this;
@@ -229,6 +241,9 @@ public class Port extends AbstractHasLocation
 
 	public Port setSequence(final boolean sequence)
 	{
+		LOG.trace("port = {}", portReference);
+		LOG.trace("{} -> {}", this.sequence, sequence);
+
 		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
