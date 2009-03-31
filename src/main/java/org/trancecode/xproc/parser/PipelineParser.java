@@ -184,7 +184,9 @@ public class PipelineParser implements XProcXmlModel
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
 			+ " ; with-port = " + getPortType(portNode);
 
-		final Port configuredPort = parsePortBindings(portNode, parseSelect(portNode, port));
+		final Port configuredPort =
+			port.setSelect(portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT)).setPortBindings(
+				parsePortBindings(portNode));
 		step.withPort(configuredPort);
 	}
 
@@ -210,28 +212,17 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private Port parsePortBindings(final XdmNode portNode, final Port port)
+	private Iterable<PortBinding> parsePortBindings(final XdmNode portNode)
 	{
-		final Iterable<PortBinding> portBindings =
-			Iterables.transform(
-				SaxonUtil.getElements(portNode, ELEMENTS_PORT_BINDINGS), new Function<XdmNode, PortBinding>()
+		return Iterables.transform(
+			SaxonUtil.getElements(portNode, ELEMENTS_PORT_BINDINGS), new Function<XdmNode, PortBinding>()
+			{
+				@Override
+				public PortBinding apply(final XdmNode node)
 				{
-					@Override
-					public PortBinding apply(final XdmNode node)
-					{
-						return parsePortBinding(node);
-					}
-				});
-
-		return port.setPortBindings(portBindings);
-	}
-
-
-	private Port parseSelect(final XdmNode portNode, final Port port)
-	{
-		final String select = portNode.getAttributeValue(ATTRIBUTE_SELECT);
-		log.trace("select = {}", select);
-		return port.setSelect(select);
+					return parsePortBinding(node);
+				}
+			});
 	}
 
 
@@ -285,38 +276,14 @@ public class PipelineParser implements XProcXmlModel
 		final String portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
 		final Port.Type type = getPortType(portNode);
 
-		final boolean primary =
-			getFirstNonNull(Boolean.parseBoolean(portNode.getAttributeValue(ATTRIBUTE_PRIMARY)), false);
-		final boolean sequence =
-			getFirstNonNull(Boolean.parseBoolean(portNode.getAttributeValue(ATTRIBUTE_SEQUENCE)), false);
-
-		final Location location = getLocation(portNode);
 		final Port port =
-			Port.newPort(step.getName(), portName, getLocation(portNode), type).setPrimary(primary).setSequence(
-				sequence);
+			Port.newPort(step.getName(), portName, getLocation(portNode), type).setPrimary(
+				portNode.getAttributeValue(ATTRIBUTE_PRIMARY)).setSequence(
+				portNode.getAttributeValue(ATTRIBUTE_SEQUENCE)).setSelect(portNode.getAttributeValue(ATTRIBUTE_SELECT))
+				.setPortBindings(parsePortBindings(portNode));
 		log.trace("new port: {}", port);
-		if (type == Type.INPUT)
-		{
-			step.declareInputPort(portName, location, primary, sequence);
-		}
-		else if (type == Type.OUTPUT)
-		{
-			step.declareOutputPort(portName, location, primary, sequence);
-		}
-		else
-		{
-			assert type == Type.PARAMETER;
-			step.declareParameterPort(portName, location, primary, sequence);
-		}
 
-		final String select = portNode.getAttributeValue(ATTRIBUTE_SELECT);
-		if (select != null)
-		{
-			log.trace("select = {}", select);
-			port.setSelect(select);
-		}
-
-		parsePortBindings(portNode, port);
+		step.declarePort(port);
 	}
 
 
@@ -565,30 +532,6 @@ public class PipelineParser implements XProcXmlModel
 
 		throw new UnsupportedOperationException("node = " + node.getNodeName() + " ; library = "
 			+ getSupportedStepTypes());
-	}
-
-
-	private void parseXPathContextNode(final XdmNode stepNode, final Step step, final PortReference defaultXPathContext)
-	{
-		final XdmNode xpathContextNode =
-			Iterables.getOnlyElement(SaxonUtil.getElements(stepNode, ELEMENT_XPATH_CONTEXT), null);
-
-		if (xpathContextNode != null)
-		{
-			final Port port = step.getPort(XProcPorts.XPATH_CONTEXT);
-			// FIXME parseSelect(xpathContextNode, port);
-			parsePortBindings(xpathContextNode, port);
-			if (defaultXPathContext != null && port.getPortBindings().isEmpty())
-			{
-				// pipe xpath-context from p:choose if empty
-				port.getPortBindings().add(new PipePortBinding(defaultXPathContext, getLocation(xpathContextNode)));
-			}
-			if (port.getPortBindings().size() > 1)
-			{
-				// TODO use XProc error
-				throw new IllegalStateException();
-			}
-		}
 	}
 
 
