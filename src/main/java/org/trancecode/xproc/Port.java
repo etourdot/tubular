@@ -195,9 +195,35 @@ public class Port extends AbstractHasLocation
 	}
 
 
+	public Port setPrimary(final String primary)
+	{
+		if (primary == null)
+		{
+			return this;
+		}
+
+		assert primary.equals(Boolean.TRUE.toString()) || primary.equals(Boolean.FALSE.toString()) : primary;
+
+		return setPrimary(Boolean.parseBoolean(primary));
+	}
+
+
 	public Port setPrimary(final boolean primary)
 	{
 		return new Port(portReference, location, type, primary, sequence, select, portBindings);
+	}
+
+
+	public Port setSequence(final String sequence)
+	{
+		if (sequence == null)
+		{
+			return this;
+		}
+
+		assert sequence.equals(Boolean.TRUE.toString()) || sequence.equals(Boolean.FALSE.toString()) : sequence;
+
+		return setSequence(Boolean.parseBoolean(sequence));
 	}
 
 
