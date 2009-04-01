@@ -118,7 +118,7 @@ public class Xslt extends AbstractStep
 		}
 		assert outputBaseUri != null;
 
-		final String version = getVariable(XProcOptions.VERSION, environment, DEFAULT_VERSION);
+		final String version = environment.getVariable(XProcOptions.VERSION, DEFAULT_VERSION);
 
 		if (!SUPPORTED_VERSIONS.contains(version))
 		{
@@ -178,7 +178,7 @@ public class Xslt extends AbstractStep
 			}
 		});
 
-		final String initialMode = getVariable(XProcOptions.INITIAL_MODE, environment, null);
+		final String initialMode = environment.getVariable(XProcOptions.INITIAL_MODE, null);
 		if (initialMode != null)
 		{
 			// FIXME does not handle namespaces

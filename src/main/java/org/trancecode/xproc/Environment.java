@@ -377,6 +377,21 @@ public class Environment
 	}
 
 
+	public String getVariable(final QName name, final String defaultValue)
+	{
+		assert name != null;
+		LOG.trace("name = {} ; defaultValue = {}", name, defaultValue);
+
+		final String value = getVariable(name);
+		if (value != null)
+		{
+			return value;
+		}
+
+		return defaultValue;
+	}
+
+
 	public String getVariable(final QName name)
 	{
 		assert name != null;

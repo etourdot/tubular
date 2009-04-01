@@ -407,18 +407,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected static String getVariable(final QName name, final Environment environment, final String defaultValue)
-	{
-		final String value = environment.getVariable(name);
-		if (value != null)
-		{
-			return value;
-		}
-
-		return defaultValue;
-	}
-
-
 	protected static XdmNode readNode(final EnvironmentPort port)
 	{
 		try

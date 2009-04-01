@@ -123,18 +123,18 @@ public class Store extends AbstractStep
 
 		final URI outputUri = baseUri.resolve(href);
 
-		final String mimeType = getVariable(XProcOptions.MEDIA_TYPE, environment, DEFAULT_MIMETYPE);
+		final String mimeType = environment.getVariable(XProcOptions.MEDIA_TYPE, DEFAULT_MIMETYPE);
 
-		final String encoding = getVariable(XProcOptions.ENCODING, environment, DEFAULT_ENCODING);
+		final String encoding = environment.getVariable(XProcOptions.ENCODING, DEFAULT_ENCODING);
 
 		final String omitXmlDeclaration =
-			getVariable(XProcOptions.OMIT_XML_DECLARATION, environment, DEFAULT_OMIT_XML_DECLARATION);
+			environment.getVariable(XProcOptions.OMIT_XML_DECLARATION, DEFAULT_OMIT_XML_DECLARATION);
 
-		final String doctypePublicId = getVariable(XProcOptions.DOCTYPE_PUBLIC, environment, DEFAULT_DOCTYPE_PUBLIC);
+		final String doctypePublicId = environment.getVariable(XProcOptions.DOCTYPE_PUBLIC, DEFAULT_DOCTYPE_PUBLIC);
 
-		final String doctypeSystemId = getVariable(XProcOptions.DOCTYPE_SYSTEM, environment, DEFAULT_DOCTYPE_SYSTEM);
+		final String doctypeSystemId = environment.getVariable(XProcOptions.DOCTYPE_SYSTEM, DEFAULT_DOCTYPE_SYSTEM);
 
-		final String method = getVariable(XProcOptions.METHOD, environment, DEFAULT_METHOD);
+		final String method = environment.getVariable(XProcOptions.METHOD, DEFAULT_METHOD);
 
 		final boolean indent = Boolean.parseBoolean(environment.getVariable(XProcOptions.INDENT));
 

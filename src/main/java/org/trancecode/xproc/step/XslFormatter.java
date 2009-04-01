@@ -89,13 +89,13 @@ public class XslFormatter extends AbstractStep
 
 		final XdmNode source = readNode(XProcPorts.SOURCE, environment);
 
-		final String href = getVariable(XProcOptions.CONTENT_TYPE, environment, null);
+		final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);
 		assert href != null;
 		final OutputStream resultOutputStream =
 			environment.getConfiguration().getOutputResolver()
 				.resolveOutputStream(href, source.getBaseURI().toString());
 
-		final String contentType = getVariable(XProcOptions.CONTENT_TYPE, environment, DEFAULT_CONTENT_TYPE);
+		final String contentType = environment.getVariable(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
 		final FopFactory fopFactory = FopFactory.newInstance();
 		final Fop fop = fopFactory.newFop(contentType, resultOutputStream);
 		fop.getUserAgent().setURIResolver(new URIResolver()
