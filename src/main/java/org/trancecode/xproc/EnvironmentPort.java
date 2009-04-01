@@ -111,8 +111,6 @@ public class EnvironmentPort
 	{
 		LOG.entry(declaredPort);
 
-		assert !portBindings.isEmpty() : toString();
-
 		// TODO improve this by returning a true Iterable
 		final List<XdmNode> nodes = Lists.newArrayList();
 		for (final EnvironmentPortBinding portBinding : portBindings)
