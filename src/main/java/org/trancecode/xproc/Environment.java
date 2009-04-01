@@ -20,18 +20,23 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.core.CollectionUtil;
+import org.trancecode.xml.SaxonUtil;
 import org.trancecode.xproc.step.Pipeline;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
@@ -50,102 +55,297 @@ import org.slf4j.ext.XLoggerFactory;
 public class Environment
 {
 	private static final XLogger LOG = XLoggerFactory.getXLogger(Environment.class);
+	private static final Map<QName, String> EMPTY_VARIABLES_MAP = Collections.emptyMap();
+	private static final Map<PortReference, EnvironmentPort> EMPTY_PORTS_MAP = Collections.emptyMap();
+	private static final Iterable<EnvironmentPort> EMPTY_PORTS_LIST = Collections.emptyList();
 
-	private EnvironmentPort defaultReadablePort;
-	private final Map<QName, String> variables = Maps.newLinkedHashMap();
-	private final Map<QName, String> inheritedVariables = Maps.newLinkedHashMap();
-	private final Map<QName, String> localVariables = Maps.newLinkedHashMap();
+	private static final Function<EnvironmentPort, PortReference> FUNCTION_GET_PORT_REFERENCE =
+		new Function<EnvironmentPort, PortReference>()
+		{
+			@Override
+			public PortReference apply(final EnvironmentPort environmentPort)
+			{
+				return environmentPort.getDeclaredPort().getPortReference();
+			}
+		};
+
+	private static final Predicate<Port> PREDICATE_HAS_PORT_BINDINGS = new Predicate<Port>()
+	{
+		@Override
+		public boolean apply(final Port port)
+		{
+			return !port.getPortBindings().isEmpty();
+		}
+	};
+
+	private final EnvironmentPort defaultReadablePort;
+	private final Map<QName, String> inheritedVariables;
+	private final Map<QName, String> localVariables;
 	private final Configuration configuration;
-	private final Map<PortReference, EnvironmentPort> ports = Maps.newLinkedHashMap();
+	private final Map<PortReference, EnvironmentPort> ports;
 	private final Pipeline pipeline;
-	private final Processor processor;
-	private EnvironmentPort defaultParametersPort;
-	private EnvironmentPort xpathContextPort;
+	private final EnvironmentPort defaultParametersPort;
+	private final EnvironmentPort xpathContextPort;
+
+
+	private static Map<PortReference, EnvironmentPort> getPortsMap(final Iterable<EnvironmentPort> ports)
+	{
+		return Maps.uniqueIndex(ports, FUNCTION_GET_PORT_REFERENCE);
+	}
 
 
 	public static Environment newEnvironment(final Pipeline pipeline, final Configuration configuration)
 	{
-		return new Environment(pipeline, configuration);
+		return new Environment(pipeline, configuration, EMPTY_PORTS_LIST, null, null, null, EMPTY_VARIABLES_MAP,
+			EMPTY_VARIABLES_MAP);
 	}
 
 
-	private Environment(final Pipeline pipeline, final Configuration configuration)
+	private Environment(
+		final Pipeline pipeline, final Configuration configuration, final Iterable<EnvironmentPort> ports,
+		final EnvironmentPort defaultReadablePort, final EnvironmentPort defaultParametersPort,
+		final EnvironmentPort xpathContextPort, final Map<QName, String> inheritedVariables,
+		final Map<QName, String> localVariables)
 	{
-		assert pipeline != null;
+		this(pipeline, configuration, getPortsMap(ports), defaultReadablePort, defaultParametersPort, xpathContextPort,
+			inheritedVariables, localVariables);
+	}
+
+
+	private Environment(
+		final Pipeline pipeline, final Configuration configuration, final Map<PortReference, EnvironmentPort> ports,
+		final EnvironmentPort defaultReadablePort, final EnvironmentPort defaultParametersPort,
+		final EnvironmentPort xpathContextPort, final Map<QName, String> inheritedVariables,
+		final Map<QName, String> localVariables)
+	{
 		this.pipeline = pipeline;
-
-		assert configuration != null;
 		this.configuration = configuration;
-
-		processor = configuration.getProcessor();
+		this.ports = ImmutableMap.copyOf(ports);
+		this.defaultReadablePort = defaultReadablePort;
+		this.defaultParametersPort = defaultParametersPort;
+		this.xpathContextPort = xpathContextPort;
+		this.inheritedVariables = ImmutableMap.copyOf(inheritedVariables);
+		this.localVariables = ImmutableMap.copyOf(localVariables);
 	}
 
 
-	private Environment(final Environment environment)
+	private Environment setupStepEnvironment(final Step step)
 	{
-		assert environment != null;
+		LOG.trace("step = {}", step.getName());
 
-		pipeline = environment.getPipeline();
-		configuration = environment.getConfiguration();
-		processor = environment.getProcessor();
-
-		inheritedVariables.putAll(environment.getVariables());
-		variables.putAll(environment.getVariables());
-
-		ports.putAll(environment.getPorts());
-		if (environment.getDefaultReadablePort() != null)
-		{
-			setDefaultReadablePort(environment.getDefaultReadablePort());
-		}
-
-		if (environment.getXPathContextPort() != null)
-		{
-			setXPathContextPort(environment.getXPathContextPort());
-		}
-
-		assert invariant();
+		return setupInputPorts(step).setPrimaryInputPortAsDefaultReadablePort(step).setXPathContextPort(step)
+			.setupVariables(step);
 	}
 
 
-	public boolean invariant()
+	private Environment setupInputPorts(final Step step)
 	{
-		final Set<QName> variableNames = Sets.newHashSet();
-		variableNames.addAll(localVariables.keySet());
-		variableNames.addAll(inheritedVariables.keySet());
-		return variableNames.equals(variables.keySet());
+		LOG.trace("step = {}", step.getName());
+
+		final Map<PortReference, EnvironmentPort> newPorts = Maps.newHashMap();
+
+		for (final Port port : step.getInputPorts())
+		{
+			newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, this));
+		}
+
+		for (final Port port : step.getOutputPorts())
+		{
+			if (port.portBindings.isEmpty())
+			{
+				newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, this));
+			}
+		}
+
+		return addPorts(newPorts);
+	}
+
+
+	public Environment setupOutputPorts(final Step step)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		return setupOutputPorts(step, this);
+	}
+
+
+	public Environment setupOutputPorts(final Step step, final Environment sourceEnvironment)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		final Map<PortReference, EnvironmentPort> newPorts = Maps.newHashMap();
+
+		for (final Port port : step.getOutputPorts())
+		{
+			if (!ports.containsKey(port.getPortReference()))
+			{
+				newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, sourceEnvironment));
+			}
+		}
+
+		return addPorts(newPorts).setPrimaryOutputPortAsDefaultReadablePort(step, sourceEnvironment);
+	}
+
+
+	private Environment setPrimaryInputPortAsDefaultReadablePort(final Step step)
+	{
+		LOG.trace("step = {} ; type = {}", step.getName(), step.getType());
+
+		final Port primaryInputPort = step.getPrimaryInputPort();
+		LOG.trace("primaryInputPort = {}", primaryInputPort);
+
+		if (primaryInputPort == null)
+		{
+			return this;
+		}
+
+		LOG.trace("new default readable port = {}", primaryInputPort);
+
+		// if port is empty then pipe to existing default readable port
+		final EnvironmentPort environmentPort = getEnvironmentPort(primaryInputPort);
+		final EnvironmentPort nonEmptyEnvironmentPort;
+		if (Iterables.isEmpty(environmentPort.portBindings))
+		{
+			nonEmptyEnvironmentPort = environmentPort.pipe(getDefaultReadablePort());
+		}
+		else
+		{
+			nonEmptyEnvironmentPort = environmentPort;
+		}
+
+		return addPorts(nonEmptyEnvironmentPort).setDefaultReadablePort(nonEmptyEnvironmentPort);
+	}
+
+
+	private Environment setPrimaryOutputPortAsDefaultReadablePort(final Step step, final Environment sourceEnvironment)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		final Port primaryOutputPort = step.getPrimaryOutputPort();
+
+		if (primaryOutputPort == null)
+		{
+			return this;
+		}
+
+		LOG.trace("new default readable port = {}", primaryOutputPort);
+
+		final EnvironmentPort environmentPort = getEnvironmentPort(primaryOutputPort);
+		final EnvironmentPort nonEmptyEnvironmentPort;
+		if (Iterables.isEmpty(environmentPort.portBindings))
+		{
+			nonEmptyEnvironmentPort = environmentPort.pipe(sourceEnvironment.getDefaultReadablePort());
+		}
+		else
+		{
+			nonEmptyEnvironmentPort = environmentPort;
+		}
+
+		return addPorts(nonEmptyEnvironmentPort).setDefaultReadablePort(nonEmptyEnvironmentPort);
+	}
+
+
+	private Environment setXPathContextPort(final Step step)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		final Port xpathContextPort = step.getXPathContextPort();
+		if (xpathContextPort == null)
+		{
+			return this;
+		}
+
+		return setXPathContextPort(getEnvironmentPort(xpathContextPort));
+	}
+
+
+	private Environment setupVariables(final Step step)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		final Map<QName, String> allVariables = Maps.newHashMap(inheritedVariables);
+		allVariables.putAll(localVariables);
+
+		final Map<QName, String> newLocalVariables = Maps.newHashMap(localVariables);
+
+		for (final Variable variable : step.getVariables())
+		{
+			final String value;
+			if (variable.getValue() != null)
+			{
+				value = variable.getValue();
+			}
+			else
+			{
+				value =
+					SaxonUtil.evaluateXPath(
+						variable.getSelect(), getConfiguration().getProcessor(), getXPathContextNode(), allVariables,
+						variable.getLocation()).toString();
+			}
+
+			LOG.trace("{} = {}", variable.getName(), value);
+
+			if (variable instanceof Parameter)
+			{
+				final EnvironmentPort parametersPort = getDefaultParametersPort();
+				assert parametersPort != null;
+				final XdmNode parameterNode =
+					XProcUtil.newParameterElement(variable.getName(), value, getConfiguration().getProcessor());
+				parametersPort.writeNodes(parameterNode);
+			}
+			else
+			{
+				allVariables.put(variable.getName(), value);
+				newLocalVariables.put(variable.getName(), value);
+			}
+		}
+
+		return setLocalVariables(newLocalVariables);
+	}
+
+
+	public Environment newFollowingStepEnvironment(final Step step)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		return newFollowingStepEnvironment().setupStepEnvironment(step);
 	}
 
 
 	public Environment newFollowingStepEnvironment()
 	{
-		final Environment environment = new Environment(this);
-		assert environment.invariant();
-		return environment;
+		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, inheritedVariables, localVariables);
+	}
+
+
+	public Environment newChildStepEnvironment(final Step step)
+	{
+		LOG.trace("step = {}", step.getName());
+
+		return newChildStepEnvironment().setupStepEnvironment(step);
 	}
 
 
 	public Environment newChildStepEnvironment()
 	{
-		final Environment environment = new Environment(this);
-		environment.inheritedVariables.putAll(localVariables);
-		assert environment.invariant();
+		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, CollectionUtil.merge(inheritedVariables, localVariables), EMPTY_VARIABLES_MAP);
+	}
 
-		return environment;
+
+	public Environment setLocalVariables(final Map<QName, String> localVariables)
+	{
+		assert localVariables != null;
+
+		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, inheritedVariables, CollectionUtil.merge(this.localVariables, localVariables));
 	}
 
 
 	public void setLocalVariable(final QName name, final String value)
 	{
 		localVariables.put(name, value);
-		variables.put(name, value);
-		assert invariant();
-	}
-
-
-	public Map<QName, String> getLocalVariables()
-	{
-		// XXX slow
-		return Collections.unmodifiableMap(localVariables);
 	}
 
 
@@ -161,10 +361,13 @@ public class Environment
 	}
 
 
-	public void setXPathContextPort(final EnvironmentPort xpathContextPort)
+	public Environment setXPathContextPort(final EnvironmentPort xpathContextPort)
 	{
-		LOG.entry(xpathContextPort);
-		this.xpathContextPort = xpathContextPort;
+		assert xpathContextPort != null;
+		assert ports.containsValue(xpathContextPort);
+
+		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, inheritedVariables, localVariables);
 	}
 
 
@@ -174,32 +377,35 @@ public class Environment
 	}
 
 
-	public Map<QName, String> getVariables()
-	{
-		// XXX slow
-		return Collections.unmodifiableMap(variables);
-	}
-
-
 	public String getVariable(final QName name)
 	{
-		return variables.get(name);
+		assert name != null;
+		LOG.trace("name = {}", name);
+
+		final String localValue = localVariables.get(name);
+		if (localValue != null)
+		{
+			return localValue;
+		}
+
+		return inheritedVariables.get(name);
 	}
 
 
-	public void setDefaultReadablePort(final EnvironmentPort port)
+	public Environment setDefaultReadablePort(final EnvironmentPort defaultReadablePort)
 	{
-		assert port != null;
-		assert ports.containsValue(port);
-		LOG.entry(port);
+		assert defaultReadablePort != null;
+		assert ports.containsValue(defaultReadablePort);
+		LOG.trace("defaultReadablePort = {}", defaultReadablePort);
 
-		defaultReadablePort = port;
+		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, inheritedVariables, localVariables);
 	}
 
 
 	public Map<PortReference, EnvironmentPort> getPorts()
 	{
-		return Collections.unmodifiableMap(ports);
+		return ports;
 	}
 
 
@@ -213,6 +419,35 @@ public class Environment
 	{
 		assert ports.containsKey(portReference) : "port = " + portReference + " ; ports = " + ports;
 		return ports.get(portReference);
+	}
+
+
+	public Environment addPorts(final EnvironmentPort... ports)
+	{
+		return addPorts(Arrays.asList(ports));
+	}
+
+
+	public Environment addPorts(final Iterable<EnvironmentPort> ports)
+	{
+		assert ports != null;
+		LOG.trace("ports = {}", ports);
+
+		final Map<PortReference, EnvironmentPort> newPorts = Maps.newHashMap(this.ports);
+		newPorts.putAll(getPortsMap(ports));
+
+		return new Environment(pipeline, configuration, newPorts, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, inheritedVariables, localVariables);
+	}
+
+
+	public Environment addPorts(final Map<PortReference, EnvironmentPort> ports)
+	{
+		assert ports != null;
+		LOG.trace("ports = {}", ports);
+
+		return new Environment(pipeline, configuration, CollectionUtil.merge(this.ports, ports), defaultReadablePort,
+			defaultParametersPort, xpathContextPort, inheritedVariables, localVariables);
 	}
 
 
@@ -239,21 +474,20 @@ public class Environment
 	}
 
 
-	public Processor getProcessor()
-	{
-		return processor;
-	}
-
-
 	public EnvironmentPort getDefaultParametersPort()
 	{
-		return this.defaultParametersPort;
+		return defaultParametersPort;
 	}
 
 
-	public void setDefaultParametersPort(final EnvironmentPort defaultParametersPort)
+	public Environment setDefaultParametersPort(final EnvironmentPort defaultParametersPort)
 	{
-		this.defaultParametersPort = defaultParametersPort;
+		assert defaultParametersPort != null;
+		assert ports.containsValue(defaultParametersPort);
+		LOG.trace("defaultParametersPort = {}", defaultParametersPort);
+
+		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
+			xpathContextPort, inheritedVariables, localVariables);
 	}
 
 
@@ -290,15 +524,18 @@ public class Environment
 		assert select != null;
 		LOG.entry(select);
 
+		// TODO slow
+		final Map<QName, String> variables = CollectionUtil.merge(inheritedVariables, localVariables);
+
 		try
 		{
-			final XPathCompiler xpathCompiler = getProcessor().newXPathCompiler();
+			final XPathCompiler xpathCompiler = configuration.getProcessor().newXPathCompiler();
 			final String pipelineSystemId = getPipeline().getLocation().getSystemId();
 			if (pipelineSystemId != null)
 			{
 				xpathCompiler.setBaseURI(URI.create(pipelineSystemId));
 			}
-			for (final Map.Entry<QName, String> variableEntry : getVariables().entrySet())
+			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
 			{
 				if (variableEntry.getValue() != null)
 				{
@@ -314,7 +551,7 @@ public class Environment
 				selector.setContextItem(xpathContextNode);
 			}
 
-			for (final Map.Entry<QName, String> variableEntry : getVariables().entrySet())
+			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
 			{
 				if (variableEntry.getValue() != null)
 				{
@@ -328,5 +565,26 @@ public class Environment
 		{
 			throw new PipelineException(e, "error while evaluating XPath query: %s", select);
 		}
+	}
+
+
+	private EnvironmentPort getPort(final PortReference portReference)
+	{
+		assert ports.containsKey(portReference) : portReference.toString();
+		return ports.get(portReference);
+	}
+
+
+	public Environment writeNodes(final PortReference portReference, final XdmNode... nodes)
+	{
+		return writeNodes(portReference, ImmutableList.of(nodes));
+	}
+
+
+	public Environment writeNodes(final PortReference portReference, final Iterable<XdmNode> nodes)
+	{
+		LOG.trace("portReference = {}", portReference);
+
+		return addPorts(getPort(portReference).writeNodes(nodes));
 	}
 }

@@ -21,13 +21,14 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.parser.StepFactory;
 
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.XdmNode;
 
 
 /**
@@ -49,8 +50,8 @@ public class Identity extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.SOURCE, location, false, true);
-		declareOutputPort(XProcPorts.RESULT, location, false, true);
+		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true));
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setSequence(true));
 	}
 
 
@@ -61,13 +62,11 @@ public class Identity extends AbstractStep
 
 
 	@Override
-	protected void doRun(final Environment environment)
+	protected Environment doRun(final Environment environment)
 	{
 		log.entry();
 
-		for (final XdmNode node : readNodes(XProcPorts.SOURCE, environment))
-		{
-			writeNodes(XProcPorts.RESULT, environment, node);
-		}
+		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), readNodes(
+			XProcPorts.SOURCE, environment));
 	}
 }

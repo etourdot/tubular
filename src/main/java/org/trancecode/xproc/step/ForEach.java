@@ -23,11 +23,17 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.parser.StepFactory;
+
+import java.util.List;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -52,8 +58,8 @@ public class ForEach extends AbstractCompoundStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.ITERATION_SOURCE, location, true, true);
-		declareOutputPort(XProcPorts.RESULT, location, true, true);
+		addPort(Port.newInputPort(name, XProcPorts.ITERATION_SOURCE, location).setSequence(true));
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setSequence(true));
 	}
 
 
@@ -71,10 +77,11 @@ public class ForEach extends AbstractCompoundStep
 
 
 	@Override
-	public void doRun(final Environment environment)
+	public Environment doRun(final Environment environment)
 	{
 		log.entry();
 
+		final List<XdmNode> nodes = Lists.newArrayList();
 		for (final XdmNode node : readNodes(XProcPorts.ITERATION_SOURCE, environment))
 		{
 			log.trace("new iteration: {}", node);
@@ -83,7 +90,9 @@ public class ForEach extends AbstractCompoundStep
 			iterationEnvironment.setDefaultReadablePort(environmentPort);
 
 			final Environment resultEnvironment = runSteps(steps, iterationEnvironment);
-			getOutputEnvironmentPort(XProcPorts.RESULT, environment).pipe(resultEnvironment.getDefaultReadablePort());
+			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
 		}
+
+		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), nodes);
 	}
 }

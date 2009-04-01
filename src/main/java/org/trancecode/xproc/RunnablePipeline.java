@@ -23,9 +23,12 @@ import org.trancecode.io.OutputResolver;
 import org.trancecode.xproc.binding.InlinePortBinding;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
+
+import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -91,18 +94,22 @@ public class RunnablePipeline
 
 	public void setPortBinding(final String portName, final Iterable<Source> bindings)
 	{
+		final List<PortBinding> portBindings = Lists.newArrayList();
+
 		for (final Source binding : bindings)
 		{
 			try
 			{
 				final XdmNode node = getPipeline().getProcessor().newDocumentBuilder().build(binding);
-				getUnderlyingPipeline().setPortBindings(portName, new InlinePortBinding(node, null));
+				portBindings.add(new InlinePortBinding(node, null));
 			}
 			catch (final SaxonApiException e)
 			{
 				throw new PipelineException(e);
 			}
 		}
+
+		getUnderlyingPipeline().setPortBindings(portName, portBindings);
 	}
 
 

@@ -23,6 +23,8 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.XmlUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
@@ -55,7 +57,8 @@ public class Load extends AbstractStep
 	{
 		super(name, location);
 
-		declareOutputPort(XProcPorts.RESULT, location, false, false);
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
+
 		declareOption(XProcOptions.HREF, null, true, location);
 		declareOption(XProcOptions.DTD_VALIDATE, "'false'", false, location);
 	}
@@ -68,7 +71,7 @@ public class Load extends AbstractStep
 
 
 	@Override
-	protected void doRun(final Environment environment)
+	protected Environment doRun(final Environment environment)
 	{
 		log.entry();
 
@@ -104,6 +107,6 @@ public class Load extends AbstractStep
 			XmlUtil.closeQuietly(source, log);
 		}
 
-		writeNodes(XProcPorts.RESULT, environment, document);
+		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), document);
 	}
 }

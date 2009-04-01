@@ -19,8 +19,9 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.xproc.binding.AbstractBoundPortBinding;
+import org.trancecode.xml.Location;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -55,6 +56,8 @@ public class EnvironmentPort
 	{
 		assert declaredPort != null;
 		assert environment != null;
+		LOG.trace("declaredPort = {}", declaredPort);
+		LOG.trace("portBindings = {}", declaredPort.getPortBindings());
 
 		final List<EnvironmentPortBinding> portBindings =
 			ImmutableList.copyOf(Iterables.transform(
@@ -93,7 +96,7 @@ public class EnvironmentPort
 		final Port declaredPort, final Iterable<EnvironmentPortBinding> portBindings, final XPathExecutable select)
 	{
 		this.declaredPort = declaredPort;
-		this.portBindings = Lists.newArrayList(portBindings);
+		this.portBindings = ImmutableList.copyOf(portBindings);
 		this.select = select;
 	}
 
@@ -107,6 +110,8 @@ public class EnvironmentPort
 	public Iterable<XdmNode> readNodes()
 	{
 		LOG.entry(declaredPort);
+
+		assert !portBindings.isEmpty() : toString();
 
 		// TODO improve this by returning a true Iterable
 		final List<XdmNode> nodes = Lists.newArrayList();
@@ -143,34 +148,60 @@ public class EnvironmentPort
 	}
 
 
-	public void writeNodes(final XdmNode... nodes)
+	public EnvironmentPort writeNodes(final XdmNode... nodes)
 	{
-		final List<XdmNode> nodeList = ImmutableList.of(nodes);
-		portBindings.add(new AbstractBoundPortBinding()
+		return writeNodes(ImmutableList.of(nodes));
+	}
+
+
+	public EnvironmentPort writeNodes(final Iterable<XdmNode> nodes)
+	{
+		assert portBindings.isEmpty();
+
+		final List<XdmNode> nodeList = ImmutableList.copyOf(nodes);
+		LOG.trace("{} nodes -> {}", nodeList.size(), declaredPort.getPortReference());
+		final EnvironmentPortBinding portBinding = new EnvironmentPortBinding()
 		{
 			public Iterable<XdmNode> readNodes()
 			{
 				return nodeList;
 			}
-		});
+
+
+			@Override
+			public Location getLocation()
+			{
+				return declaredPort.getLocation();
+			}
+		};
+
+		return new EnvironmentPort(declaredPort, Collections.singleton(portBinding), select);
 	}
 
 
-	public void pipe(final EnvironmentPort port)
+	public EnvironmentPort pipe(final EnvironmentPort port)
 	{
 		assert port != null : getDeclaredPort();
 		assert port != this : getDeclaredPort();
 		LOG.trace("{} -> {}", port.getDeclaredPort(), getDeclaredPort());
 
-		portBindings.add(new AbstractBoundPortBinding()
+		final EnvironmentPortBinding portBinding = new EnvironmentPortBinding()
 		{
 			public Iterable<XdmNode> readNodes()
 			{
-				LOG.entry();
-				LOG.trace("from {}", port);
+				LOG.trace("read from {}", port);
 				return port.readNodes();
 			}
-		});
+
+
+			@Override
+			public Location getLocation()
+			{
+				return declaredPort.getLocation();
+			}
+		};
+
+		return new EnvironmentPort(declaredPort, Collections.singleton(portBinding), select);
 	}
 
 

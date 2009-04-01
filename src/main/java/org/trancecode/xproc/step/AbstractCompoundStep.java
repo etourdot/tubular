@@ -58,18 +58,12 @@ public abstract class AbstractCompoundStep extends AbstractStep implements Compo
 
 
 	@Override
-	protected void doRun(final Environment environment)
+	protected Environment doRun(final Environment environment)
 	{
 		log.entry();
 		log.trace("steps = {}", steps);
 
-		Environment currentEnvironment = environment.newChildStepEnvironment();
-		for (final Step step : steps)
-		{
-			currentEnvironment = step.run(currentEnvironment);
-		}
-
-		bindOutputEnvironmentPorts(currentEnvironment, environment);
+		return environment.setupOutputPorts(this, runSteps(steps, environment.newChildStepEnvironment()));
 	}
 
 

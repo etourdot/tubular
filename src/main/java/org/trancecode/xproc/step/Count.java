@@ -21,10 +21,13 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.XProcUtil;
 import org.trancecode.xproc.parser.StepFactory;
 
 import com.google.common.collect.Iterables;
@@ -51,15 +54,15 @@ public class Count extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.SOURCE, location, false, true);
-		declareOutputPort(XProcPorts.RESULT, location, false, false);
+		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true));
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
 
 		declareOption(XProcOptions.LIMIT, "0", false, location);
 	}
 
 
 	@Override
-	protected void doRun(final Environment environment)
+	protected Environment doRun(final Environment environment)
 	{
 		// TODO improve performance with "limit" option
 		final int count = Iterables.size(readNodes(XProcPorts.SOURCE, environment));
@@ -69,8 +72,8 @@ public class Count extends AbstractStep
 		final int result = (limit > 0 ? Math.min(count, limit) : count);
 		log.trace("result = {}", result);
 
-		writeNodes(XProcPorts.RESULT, environment, newResultElement(Integer.toString(result), environment
-			.getConfiguration().getProcessor()));
+		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), XProcUtil.newResultElement(
+			Integer.toString(result), environment.getConfiguration().getProcessor()));
 	}
 
 

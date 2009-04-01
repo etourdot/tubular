@@ -23,7 +23,8 @@ import org.trancecode.core.CollectionUtil;
 import org.trancecode.io.UriUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcOptions;
@@ -38,6 +39,8 @@ import java.util.Map;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
+
+import com.google.common.collect.Lists;
 
 import net.sf.saxon.OutputURIResolver;
 import net.sf.saxon.event.Receiver;
@@ -72,11 +75,11 @@ public class Xslt extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.SOURCE, location, true, true);
-		declareInputPort(XProcPorts.STYLESHEET, location, false, false);
-		declareParameterPort(XProcPorts.PARAMETERS, location, false, false);
-		declareOutputPort(XProcPorts.RESULT, location, true, false);
-		declareOutputPort(XProcPorts.SECONDARY, location, false, true);
+		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setPrimary(true).setSequence(true));
+		addPort(Port.newInputPort(name, XProcPorts.STYLESHEET, location));
+		addPort(Port.newParameterPort(name, XProcPorts.PARAMETERS, location));
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(true));
+		addPort(Port.newOutputPort(name, XProcPorts.SECONDARY, location).setSequence(true));
 
 		declareOption(XProcOptions.INITIAL_MODE, null, false, location);
 		declareOption(XProcOptions.TEMPLATE_NAME, null, false, location);
@@ -92,7 +95,7 @@ public class Xslt extends AbstractStep
 
 
 	@Override
-	protected void doRun(final Environment environment)
+	protected Environment doRun(final Environment environment) throws Exception
 	{
 		log.entry();
 
@@ -127,77 +130,71 @@ public class Xslt extends AbstractStep
 		final Processor processor = environment.getConfiguration().getProcessor();
 
 		// TODO pipeline logging
-		final XsltTransformer transformer;
-		try
+		final XsltTransformer transformer = processor.newXsltCompiler().compile(stylesheet.asSource()).load();
+
+		transformer.setSource(sourceDocument.asSource());
+		// TODO transformer.setMessageListener();
+		final XdmDestination result = new XdmDestination();
+		result.setBaseURI(outputBaseUri);
+		transformer.setDestination(result);
+		transformer.getUnderlyingController().setBaseOutputURI(outputBaseUri.toString());
+
+		final List<XdmNode> secondaryPortNodes = Lists.newArrayList();
+		transformer.getUnderlyingController().setOutputURIResolver(new OutputURIResolver()
 		{
-			transformer = processor.newXsltCompiler().compile(stylesheet.asSource()).load();
+			final Map<URI, XdmDestination> destinations = CollectionUtil.newSmallWriteOnceMap();
 
-			transformer.setSource(sourceDocument.asSource());
-			// TODO transformer.setMessageListener();
-			final XdmDestination result = new XdmDestination();
-			result.setBaseURI(outputBaseUri);
-			transformer.setDestination(result);
-			transformer.getUnderlyingController().setBaseOutputURI(outputBaseUri.toString());
 
-			transformer.getUnderlyingController().setOutputURIResolver(new OutputURIResolver()
+			public void close(final Result result) throws TransformerException
 			{
-				final Map<URI, XdmDestination> destinations = CollectionUtil.newSmallWriteOnceMap();
-
-
-				public void close(final Result result) throws TransformerException
-				{
-					final URI uri = URI.create(result.getSystemId());
-					assert destinations.containsKey(uri);
-					final XdmDestination xdmResult = destinations.get(uri);
-					log.trace("result base URI = {}", xdmResult.getXdmNode().getBaseURI());
-					writeNodes(XProcPorts.SECONDARY, environment, xdmResult.getXdmNode());
-				}
-
-
-				public Result resolve(final String href, final String base) throws TransformerException
-				{
-					final URI uri = UriUtil.resolve(href, base);
-					assert uri != null;
-					log.debug("new result document: {}", uri);
-
-					try
-					{
-						final XdmDestination xdmResult = new XdmDestination();
-						xdmResult.setBaseURI(uri);
-						destinations.put(uri, xdmResult);
-						final Receiver receiver = xdmResult.getReceiver(processor.getUnderlyingConfiguration());
-						receiver.setSystemId(uri.toString());
-
-						return receiver;
-					}
-					catch (final SaxonApiException e)
-					{
-						throw new PipelineException(e);
-					}
-				}
-			});
-
-			final String initialMode = getVariable(XProcOptions.INITIAL_MODE, environment, null);
-			if (initialMode != null)
-			{
-				// FIXME does not handle namespaces
-				transformer.setInitialMode(new QName(initialMode));
+				final URI uri = URI.create(result.getSystemId());
+				assert destinations.containsKey(uri);
+				final XdmDestination xdmResult = destinations.get(uri);
+				log.trace("result base URI = {}", xdmResult.getXdmNode().getBaseURI());
+				secondaryPortNodes.add(xdmResult.getXdmNode());
 			}
 
-			final Map<QName, String> parameters = readParameters(XProcPorts.PARAMETERS, environment);
-			log.debug("parameters = {}", parameters);
-			for (final Map.Entry<QName, String> parameter : parameters.entrySet())
+
+			public Result resolve(final String href, final String base) throws TransformerException
 			{
-				transformer.setParameter(parameter.getKey(), new XdmAtomicValue(parameter.getValue()));
+				final URI uri = UriUtil.resolve(href, base);
+				assert uri != null;
+				log.debug("new result document: {}", uri);
+
+				try
+				{
+					final XdmDestination xdmResult = new XdmDestination();
+					xdmResult.setBaseURI(uri);
+					destinations.put(uri, xdmResult);
+					final Receiver receiver = xdmResult.getReceiver(processor.getUnderlyingConfiguration());
+					receiver.setSystemId(uri.toString());
+
+					return receiver;
+				}
+				catch (final SaxonApiException e)
+				{
+					throw new TransformerException(e);
+				}
 			}
+		});
 
-			transformer.transform();
-
-			writeNodes(XProcPorts.RESULT, environment, result.getXdmNode());
-		}
-		catch (final Exception e)
+		final String initialMode = getVariable(XProcOptions.INITIAL_MODE, environment, null);
+		if (initialMode != null)
 		{
-			throw new PipelineException(e);
+			// FIXME does not handle namespaces
+			transformer.setInitialMode(new QName(initialMode));
 		}
+
+		final Map<QName, String> parameters = readParameters(XProcPorts.PARAMETERS, environment);
+		log.debug("parameters = {}", parameters);
+		for (final Map.Entry<QName, String> parameter : parameters.entrySet())
+		{
+			transformer.setParameter(parameter.getKey(), new XdmAtomicValue(parameter.getValue()));
+		}
+
+		transformer.transform();
+
+		return environment.writeNodes(new PortReference(getName(), XProcPorts.SECONDARY), secondaryPortNodes)
+			.writeNodes(new PortReference(getName(), XProcPorts.RESULT), result.getXdmNode());
 	}
 }

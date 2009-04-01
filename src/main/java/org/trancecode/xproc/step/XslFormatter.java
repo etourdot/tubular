@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import org.trancecode.io.UriUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
@@ -66,9 +67,9 @@ public class XslFormatter extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.SOURCE, location, false, false);
-		declareParameterPort(XProcPorts.PARAMETERS, location, false, false);
-		declareOutputPort(XProcPorts.RESULT, location, false, false);
+		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location));
+		addPort(Port.newParameterPort(name, XProcPorts.PARAMETERS, location));
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(false));
 
 		declareOption(XProcOptions.HREF, null, true, location);
 		declareOption(XProcOptions.CONTENT_TYPE, null, false, location);
@@ -82,7 +83,7 @@ public class XslFormatter extends AbstractStep
 
 
 	@Override
-	protected void doRun(final Environment environment) throws Exception
+	protected Environment doRun(final Environment environment) throws Exception
 	{
 		log.entry();
 
@@ -114,5 +115,6 @@ public class XslFormatter extends AbstractStep
 
 		// TODO run FOP
 		// TODO build result
+		return null;
 	}
 }

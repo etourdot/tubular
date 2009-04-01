@@ -24,10 +24,13 @@ import org.trancecode.io.MediaTypes;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.XProcUtil;
 import org.trancecode.xproc.parser.StepFactory;
 
 import java.io.OutputStream;
@@ -70,8 +73,9 @@ public class Store extends AbstractStep
 	{
 		super(name, location);
 
-		declareInputPort(XProcPorts.SOURCE, location, false, false);
-		declareOutputPort(XProcPorts.RESULT, location, false, false);
+		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location));
+		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(false));
+
 		declareOption(XProcOptions.HREF, null, true, location);
 		declareOption(XProcOptions.BYTE_ORDER_MARK, null, false, location);
 		declareOption(XProcOptions.CDATA_SECTION_ELEMENTS, "''", false, location);
@@ -98,7 +102,7 @@ public class Store extends AbstractStep
 
 
 	@Override
-	protected void doRun(final Environment environment)
+	protected Environment doRun(final Environment environment)
 	{
 		log.entry();
 
@@ -179,7 +183,7 @@ public class Store extends AbstractStep
 		}
 
 		final XdmNode resultNode =
-			newResultElement(outputUri.toString(), environment.getConfiguration().getProcessor());
-		writeNodes(XProcPorts.RESULT, environment, resultNode);
+			XProcUtil.newResultElement(outputUri.toString(), environment.getConfiguration().getProcessor());
+		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), resultNode);
 	}
 }

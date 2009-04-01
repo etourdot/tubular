@@ -31,24 +31,21 @@ import org.trancecode.xproc.Parameter;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
+import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.XProcNamespaces;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.Port.Type;
 
-import java.io.StringReader;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.xml.transform.stream.StreamSource;
-
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
@@ -65,10 +62,6 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public abstract class AbstractStep extends AbstractHasLocation implements Step
 {
-	public static final QName ELEMENT_PARAMETER = XProcNamespaces.XPROC.newSaxonQName("parameter");
-	public static final QName ATTRIBUTE_PARAMETER_NAME = new QName("name");
-	public static final QName ATTRIBUTE_PARAMETER_VALUE = new QName("value");
-
 	private static final Predicate<Port> PREDICATE_IS_INPUT_PORT = new Predicate<Port>()
 	{
 		@Override
@@ -144,52 +137,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public final Port declareInputPort(
-		final String portName, final Location location, final boolean primary, final boolean sequence)
-	{
-		return declarePort(portName, location, Type.INPUT, primary, sequence);
-	}
-
-
-	public final Port declareParameterPort(
-		final String portName, final Location location, final boolean primary, final boolean sequence)
-	{
-		return declarePort(portName, location, Type.PARAMETER, primary, sequence);
-	}
-
-
-	public final Port declareOutputPort(
-		final String portName, final Location location, final boolean primary, final boolean sequence)
-	{
-		return declarePort(portName, location, Type.OUTPUT, primary, sequence);
-	}
-
-
-	private final Port declarePort(
-		final String portName, final Location location, final Type type, final boolean primary, final boolean sequence)
-	{
-		// FIXME what of port that are explictly set to "not primary"?
-		final Port port = Port.newPort(getName(), portName, location, type).setPrimary(primary).setSequence(sequence);
-		addPort(port);
-		return port;
-	}
-
-
 	public final Port declarePort(final Port port)
 	{
-		if (port.isInput())
-		{
-			return declareInputPort(port.getPortName(), port.getLocation(), port.isPrimary(), port.isSequence());
-		}
-		else if (port.isOutput())
-		{
-			return declareOutputPort(port.getPortName(), port.getLocation(), port.isPrimary(), port.isSequence());
-		}
-		else
-		{
-			assert port.isParameter();
-			return declareParameterPort(port.getPortName(), port.getLocation(), port.isPrimary(), port.isSequence());
-		}
+		addPort(port);
+		return port;
 	}
 
 
@@ -221,61 +172,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected EnvironmentPort getEnvironmentPort(final String name, final Environment environment)
-	{
-		log.entry(name);
-
-		final Port declaredPort = ports.get(name);
-		assert declaredPort != null : "name = " + name + " ; ports = " + ports;
-
-		if (!environment.getPorts().containsKey(declaredPort.getPortReference()))
-		{
-			final EnvironmentPort environmentPort = environment.addEnvironmentPort(declaredPort);
-			if (declaredPort.isInput() && isPrimary(declaredPort))
-			{
-				if (declaredPort.getPortBindings().isEmpty())
-				{ // Set a pipe binding to default readable port if no binding on primary input port
-					final EnvironmentPort defaultPort = environment.getDefaultReadablePort();
-					if (defaultPort != null)
-					{
-						environmentPort.pipe(defaultPort);
-					}
-				}
-
-				log.trace("bindings = {}", declaredPort.getPortBindings());
-				environment.setDefaultReadablePort(environmentPort);
-			}
-
-			if (declaredPort.getPortName().equals(XProcPorts.XPATH_CONTEXT))
-			{
-				if (declaredPort.getPortBindings().isEmpty())
-				{
-					final EnvironmentPort xpathContextPort = environment.getXPathContextPort();
-					if (xpathContextPort != null)
-					{
-						environmentPort.pipe(xpathContextPort);
-					}
-				}
-			}
-
-			if (isXPathContextPort(declaredPort))
-			{
-				environment.setXPathContextPort(environmentPort);
-			}
-
-			assert !(!declaredPort.getPortBindings().isEmpty() && declaredPort.isOutput()) : "port is already bound: "
-				+ declaredPort + " ; bindings = " + declaredPort.getPortBindings();
-
-			return environmentPort;
-		}
-
-		final EnvironmentPort environmentPort = environment.getEnvironmentPort(declaredPort);
-		assert environmentPort != null : "name = " + name + " ; environment.ports = " + environment.getPorts();
-
-		return environmentPort;
-	}
-
-
 	private boolean isXPathContextPort(final Port port)
 	{
 		if (port.isInput())
@@ -295,102 +191,22 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected EnvironmentPort getInputEnvironmentPort(final String name, final Environment environment)
+	protected Iterable<XdmNode> readNodes(final String portName, final Environment environment)
 	{
-		final EnvironmentPort port = getEnvironmentPort(name, environment);
-		assert port.getDeclaredPort().isInput();
-		return port;
-	}
-
-
-	protected EnvironmentPort getOutputEnvironmentPort(final String name, final Environment environment)
-	{
-		final EnvironmentPort port = getEnvironmentPort(name, environment);
-		assert port.getDeclaredPort().isOutput();
-		return port;
-	}
-
-
-	protected Iterable<XdmNode> readNodes(final String name, final Environment environment)
-	{
-		log.entry(name);
-		final Iterable<XdmNode> nodes = getInputEnvironmentPort(name, environment).readNodes();
+		log.trace("portName = {}", portName);
+		final Iterable<XdmNode> nodes = environment.getEnvironmentPort(new PortReference(name, portName)).readNodes();
 		log.trace("nodes = {}", SaxonUtil.nodesToString(nodes));
 		return nodes;
 	}
 
 
-	protected XdmNode readNode(final String name, final Environment environment)
+	protected XdmNode readNode(final String portName, final Environment environment)
 	{
-		return readNode(getInputEnvironmentPort(name, environment));
+		return readNode(environment.getEnvironmentPort(new PortReference(name, portName)));
 	}
 
 
-	private void setupInputEnvironmentPorts(final Environment environment)
-	{
-		log.entry();
-
-		for (final Port port : Iterables.concat(getInputPorts(), getParameterPorts()))
-		{
-			getEnvironmentPort(port.getPortName(), environment);
-		}
-	}
-
-
-	protected void bindOutputEnvironmentPorts(final Environment environment)
-	{
-		bindOutputEnvironmentPorts(environment, environment);
-	}
-
-
-	protected void bindOutputEnvironmentPorts(final Environment sourceEnvironment, final Environment resultEnvironment)
-	{
-		log.entry();
-
-		for (final Port port : getOutputPorts())
-		{
-			log.trace("port = {}", port);
-			final EnvironmentPort environmentPort = getEnvironmentPort(port.getPortName(), resultEnvironment);
-
-			log.trace("primary port = {}", isPrimary(port));
-			if (isPrimary(port))
-			{
-				log.trace("port bindings = {}", port.getPortBindings());
-				// Set a pipe binding to default readable port if no binding on primary port
-				if (port.getPortBindings().isEmpty() && sourceEnvironment != resultEnvironment)
-				{
-					final EnvironmentPort defaultPort = sourceEnvironment.getDefaultReadablePort();
-					if (defaultPort != null && defaultPort != environmentPort)
-					{
-						environmentPort.pipe(defaultPort);
-					}
-				}
-
-				resultEnvironment.setDefaultReadablePort(environmentPort);
-			}
-		}
-	}
-
-
-	protected Environment newResultEnvironment(final Environment environment)
-	{
-		// create result environment and import from given environment
-		final Environment resultEnvironment = environment.newFollowingStepEnvironment();
-
-		log.trace("ports = {}", ports);
-		for (final Port port : ports.values())
-		{
-			log.trace("{} bindings = {}", port, port.getPortBindings());
-		}
-
-		setupInputEnvironmentPorts(resultEnvironment);
-		setLocalVariables(resultEnvironment, Iterables.concat(variables.values(), parameters.values()));
-
-		return resultEnvironment;
-	}
-
-
-	protected abstract void doRun(final Environment environment) throws Exception;
+	protected abstract Environment doRun(final Environment environment) throws Exception;
 
 
 	public Environment run(final Environment environment)
@@ -398,11 +214,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 		log.entry(getType(), getName());
 		log.trace("declared variables = {}", variables);
 
-		final Environment resultEnvironment = newResultEnvironment(environment);
-
+		final Environment resultEnvironment;
 		try
 		{
-			doRun(resultEnvironment);
+			resultEnvironment = doRun(environment.newFollowingStepEnvironment(this));
 		}
 		catch (final XProcException e)
 		{
@@ -413,33 +228,32 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 			// TODO handle exception
 			throw new IllegalStateException(e);
 		}
-		bindOutputEnvironmentPorts(resultEnvironment);
 
-		return resultEnvironment;
-	}
+		// TODO check result environment
 
-
-	protected void setDefaultReadablePort(final Environment environment)
-	{
-		final Port primaryOutputPort = getPrimaryOutputPort();
-		if (primaryOutputPort != null)
-		{
-			log.trace("new default readable port: {}", primaryOutputPort.getPortName());
-			final EnvironmentPort environmentPort = environment.getEnvironmentPort(primaryOutputPort);
-			assert environmentPort != null : "step = " + getName() + " ; port = " + primaryOutputPort.toString();
-			environment.setDefaultReadablePort(environmentPort);
-		}
+		return resultEnvironment.setupOutputPorts(this);
 	}
 
 
 	@ReturnsNullable
 	public Port getPrimaryInputPort()
 	{
-		for (final Port port : ports.values())
+		final List<Port> inputPorts = ImmutableList.copyOf(getInputPorts());
+		log.trace("inputPorts = {}", inputPorts);
+		if (inputPorts.size() == 1)
 		{
-			if (port.isInput() && !port.isParameter() && isPrimary(port))
+			final Port inputPort = Iterables.getOnlyElement(inputPorts);
+			if (!inputPort.isNotPrimary())
 			{
-				return port;
+				return inputPort;
+			}
+		}
+
+		for (final Port inputPort : inputPorts)
+		{
+			if (inputPort.isPrimary())
+			{
+				return inputPort;
 			}
 		}
 
@@ -450,11 +264,22 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	@ReturnsNullable
 	public Port getPrimaryParameterPort()
 	{
-		for (final Port port : ports.values())
+		final List<Port> parameterPorts = ImmutableList.copyOf(getParameterPorts());
+		log.trace("parameterPorts = {}", parameterPorts);
+		if (parameterPorts.size() == 1)
 		{
-			if (port.isParameter() && isPrimary(port))
+			final Port parameterPort = Iterables.getOnlyElement(parameterPorts);
+			if (!parameterPort.isNotPrimary())
 			{
-				return port;
+				return parameterPort;
+			}
+		}
+
+		for (final Port parameterPort : parameterPorts)
+		{
+			if (parameterPort.isPrimary())
+			{
+				return parameterPort;
 			}
 		}
 
@@ -462,13 +287,25 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected Port getPrimaryOutputPort()
+	@ReturnsNullable
+	public Port getPrimaryOutputPort()
 	{
-		for (final Port port : ports.values())
+		final List<Port> outputPorts = ImmutableList.copyOf(getOutputPorts());
+		log.trace("outputPorts = {}", outputPorts);
+		if (outputPorts.size() == 1)
 		{
-			if (port.isOutput() && isPrimary(port))
+			final Port outputPort = Iterables.getOnlyElement(outputPorts);
+			if (!outputPort.isNotPrimary())
 			{
-				return port;
+				return outputPort;
+			}
+		}
+
+		for (final Port outputPort : outputPorts)
+		{
+			if (outputPort.isPrimary())
+			{
+				return outputPort;
 			}
 		}
 
@@ -582,46 +419,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	private void setLocalVariables(final Environment environment, final Iterable<Variable> variables)
-	{
-		log.entry();
-
-		if (Iterables.isEmpty(variables))
-		{
-			return;
-		}
-
-		for (final Variable variable : variables)
-		{
-			final String value;
-			try
-			{
-				value = variable.evaluate(environment);
-			}
-			catch (final Exception e)
-			{
-				throw new PipelineException(e, "error while evaluating variable $%s in step %s of type %s @ %s",
-					getName(), getName(), getType(), getLocation());
-			}
-
-			log.trace("{} = {}", variable.getName(), value);
-
-			if (variable instanceof Parameter)
-			{
-				final EnvironmentPort parametersPort = environment.getDefaultParametersPort();
-				assert parametersPort != null;
-				final XdmNode parameterNode =
-					newParameterElement(variable.getName(), value, environment.getConfiguration().getProcessor());
-				parametersPort.writeNodes(parameterNode);
-			}
-			else
-			{
-				environment.setLocalVariable(variable.getName(), value);
-			}
-		}
-	}
-
-
 	protected static XdmNode readNode(final EnvironmentPort port)
 	{
 		try
@@ -635,42 +432,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	protected void writeNodes(final String portName, final Environment environment, final XdmNode... nodes)
-	{
-		log.entry(portName, nodes.length, SaxonUtil.nodesToString(nodes));
-		getEnvironmentPort(portName, environment).writeNodes(nodes);
-	}
-
-
-	protected static XdmNode newParameterElement(final QName name, final String value, final Processor processor)
-	{
-		// TODO
-		return null;
-	}
-
-
-	protected static XdmNode newResultElement(final String value, final Processor processor)
-	{
-		// TODO use s9api directly
-		final String document =
-			String.format("<c:result xmlns:c=\"%s\">%s</c:result>", XProcNamespaces.URI_XPROC_STEP, value);
-		try
-		{
-			return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
-		}
-		catch (final SaxonApiException e)
-		{
-			throw new IllegalStateException(e);
-		}
-	}
-
-
 	protected Map<QName, String> readParameters(final String portName, final Environment environment)
 	{
-		final EnvironmentPort port = getEnvironmentPort(portName, environment);
-
 		final Map<QName, String> parameters = CollectionUtil.newSmallWriteOnceMap();
-		for (final XdmNode parameterNode : port.readNodes())
+		for (final XdmNode parameterNode : readNodes(portName, environment))
 		{
 			final XPathCompiler xpathCompiler = environment.getConfiguration().getProcessor().newXPathCompiler();
 			try
@@ -703,6 +468,12 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 
 	public void setPortBindings(final String portName, final PortBinding... portBindings)
+	{
+		withPort(getPort(portName).setPortBindings(portBindings));
+	}
+
+
+	public void setPortBindings(final String portName, final Iterable<PortBinding> portBindings)
 	{
 		withPort(getPort(portName).setPortBindings(portBindings));
 	}
