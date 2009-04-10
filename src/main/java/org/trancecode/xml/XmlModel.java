@@ -19,6 +19,9 @@
  */
 package org.trancecode.xml;
 
+import javax.xml.XMLConstants;
+
+import net.sf.saxon.s9api.QName;
 
 
 /**
@@ -27,4 +30,7 @@ package org.trancecode.xml;
  */
 public interface XmlModel
 {
+	Namespace NAMESPACE = new Namespace(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
+
+	QName ATTRIBUTE_BASE = NAMESPACE.newSaxonQName("base");
 }
