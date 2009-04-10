@@ -19,10 +19,14 @@
  */
 package org.trancecode.io;
 
+import org.trancecode.annotation.Nullable;
+
 import java.net.URI;
 
 
 /**
+ * Utility methods related to URI handling.
+ * 
  * @author Herve Quiroz
  * @version $Revision$
  */
@@ -34,7 +38,7 @@ public final class UriUtil
 	}
 
 
-	public static URI createUri(final String uri)
+	public static URI createUri(@Nullable final String uri)
 	{
 		if (uri == null || uri.length() == 0)
 		{
@@ -45,7 +49,7 @@ public final class UriUtil
 	}
 
 
-	public static URI resolve(final String href, final String base)
+	public static URI resolve(@Nullable final String href, @Nullable final String base)
 	{
 		final URI hrefUri = createUri(href);
 		final URI baseUri = createUri(base);
