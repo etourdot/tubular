@@ -45,9 +45,6 @@ public interface Step extends HasLocation
 	boolean hasOptionDeclared(QName name);
 
 
-	void declareOption(Option option);
-
-
 	void declareVariable(Variable variable);
 
 

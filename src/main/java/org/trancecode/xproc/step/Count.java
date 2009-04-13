@@ -24,6 +24,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -57,7 +58,7 @@ public class Count extends AbstractStep
 		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true));
 		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
 
-		declareOption(XProcOptions.LIMIT, "0", false, location);
+		declareVariable(Variable.newOption(XProcOptions.LIMIT, location).setSelect("0").setRequired(false));
 	}
 
 

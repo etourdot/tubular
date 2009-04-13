@@ -285,7 +285,7 @@ public class Environment
 
 			LOG.trace("{} = {}", variable.getName(), value);
 
-			if (variable instanceof Parameter)
+			if (variable.isParameter())
 			{
 				final EnvironmentPort parametersPort = getDefaultParametersPort();
 				assert parametersPort != null;

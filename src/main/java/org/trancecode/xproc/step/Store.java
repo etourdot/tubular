@@ -27,6 +27,7 @@ import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -76,22 +77,28 @@ public class Store extends AbstractStep
 		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location));
 		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(false));
 
-		declareOption(XProcOptions.HREF, null, true, location);
-		declareOption(XProcOptions.BYTE_ORDER_MARK, null, false, location);
-		declareOption(XProcOptions.CDATA_SECTION_ELEMENTS, "''", false, location);
-		declareOption(XProcOptions.DOCTYPE_PUBLIC, null, false, location);
-		declareOption(XProcOptions.DOCTYPE_SYSTEM, null, false, location);
-		declareOption(XProcOptions.ENCODING, null, false, location);
-		declareOption(XProcOptions.ESCAPE_URI_ATTRIBUTES, "'false'", false, location);
-		declareOption(XProcOptions.INCLUDE_CONTENT_TYPE, "'true'", false, location);
-		declareOption(XProcOptions.INDENT, "'false'", false, location);
-		declareOption(XProcOptions.MEDIA_TYPE, null, false, location);
-		declareOption(XProcOptions.METHOD, "'xml'", false, location);
-		declareOption(XProcOptions.NORMALIZATION_FORM, "'none'", false, location);
-		declareOption(XProcOptions.OMIT_XML_DECLARATION, "'true'", false, location);
-		declareOption(XProcOptions.STANDALONE, "'omit'", false, location);
-		declareOption(XProcOptions.UNDECLARE_PREFIXES, null, false, location);
-		declareOption(XProcOptions.VERSION, "'1.0'", false, location);
+		declareVariable(Variable.newOption(XProcOptions.HREF, location).setRequired(true));
+		declareVariable(Variable.newOption(XProcOptions.BYTE_ORDER_MARK, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.CDATA_SECTION_ELEMENTS, location).setSelect("''").setRequired(
+			false));
+		declareVariable(Variable.newOption(XProcOptions.DOCTYPE_PUBLIC, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.DOCTYPE_SYSTEM, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.ENCODING, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.ESCAPE_URI_ATTRIBUTES, location).setSelect("'false'")
+			.setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.INCLUDE_CONTENT_TYPE, location).setSelect("'true'")
+			.setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.INDENT, location).setSelect("'false'").setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.MEDIA_TYPE, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.METHOD, location).setSelect("'xml'").setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.NORMALIZATION_FORM, location).setSelect("'none'").setRequired(
+			false));
+		declareVariable(Variable.newOption(XProcOptions.OMIT_XML_DECLARATION, location).setSelect("'true'")
+			.setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.STANDALONE, location).setSelect("'omit'").setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.UNDECLARE_PREFIXES, location).setSelect(null)
+			.setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.VERSION, location).setSelect("'1.0'").setRequired(false));
 	}
 
 

@@ -26,6 +26,7 @@ import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -59,8 +60,8 @@ public class Load extends AbstractStep
 
 		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
 
-		declareOption(XProcOptions.HREF, null, true, location);
-		declareOption(XProcOptions.DTD_VALIDATE, "'false'", false, location);
+		declareVariable(Variable.newOption(XProcOptions.HREF, location).setRequired(true));
+		declareVariable(Variable.newOption(XProcOptions.DTD_VALIDATE, location).setSelect("'false'").setRequired(false));
 	}
 
 

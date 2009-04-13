@@ -28,24 +28,68 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Variable extends AbstractHasLocation
+public final class Variable extends AbstractHasLocation
 {
+	private static enum Type
+	{
+		OPTION, VARIABLE, PARAMETER
+	};
+
 	private final QName name;
-	private String select;
-	private String value;
-	private final boolean required;
+	private final String select;
+	private final String value;
+	private final Boolean required;
+	private final Type type;
 
 
-	public Variable(final QName name, final String select, final boolean required, final Location location)
+	public static Variable newOption(final QName name, final Location location)
+	{
+		return new Variable(name, null, null, null, location, Type.OPTION);
+	}
+
+
+	public static Variable newParameter(final QName name, final Location location)
+	{
+		return new Variable(name, null, null, null, location, Type.PARAMETER);
+	}
+
+
+	public static Variable newVariable(final QName name, final Location location)
+	{
+		return new Variable(name, null, null, null, location, Type.VARIABLE);
+	}
+
+
+	private Variable(
+		final QName name, final String select, final String value, final Boolean required, final Location location,
+		final Type type)
 	{
 		super(location);
 
 		assert name != null;
 		this.name = name;
-
 		this.select = select;
-
+		this.value = value;
 		this.required = required;
+		this.type = type;
+	}
+
+
+	public boolean isVariable()
+	{
+		return type == Type.VARIABLE;
+	}
+
+
+	public boolean isParameter()
+	{
+		return type == Type.PARAMETER;
+	}
+
+
+	public boolean isOption()
+	{
+		return type == Type.OPTION;
 	}
 
 
@@ -61,12 +105,9 @@ public class Variable extends AbstractHasLocation
 	}
 
 
-	public void setSelect(final String select)
+	public Variable setSelect(final String select)
 	{
-		assert select != null;
-		assert select.length() > 0;
-
-		this.select = select;
+		return new Variable(name, select, value, required, location, type);
 	}
 
 
@@ -76,17 +117,27 @@ public class Variable extends AbstractHasLocation
 	}
 
 
-	public void setValue(final String value)
+	public Variable setValue(final String value)
 	{
-		assert value != null;
+		return new Variable(name, select, value, required, location, type);
+	}
 
-		this.value = value;
+
+	public Variable setRequired(final boolean required)
+	{
+		return new Variable(name, select, value, required, location, type);
 	}
 
 
 	public boolean isRequired()
 	{
-		return required;
+		return required != null && required;
+	}
+
+
+	public boolean isNotRequired()
+	{
+		return required != null && !required;
 	}
 
 

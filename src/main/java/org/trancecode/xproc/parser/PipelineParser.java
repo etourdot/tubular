@@ -23,7 +23,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonLocation;
 import org.trancecode.xml.SaxonUtil;
 import org.trancecode.xproc.CompoundStep;
-import org.trancecode.xproc.Option;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.PipelineFactory;
 import org.trancecode.xproc.Port;
@@ -369,7 +368,7 @@ public class PipelineParser implements XProcXmlModel
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
 		final boolean required =
 			getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_REQUIRED)), false);
-		step.declareOption(new Option(name, select, required, getLocation(node)));
+		step.declareVariable(Variable.newOption(name, getLocation(node)).setSelect(select).setRequired(required));
 	}
 
 
@@ -392,7 +391,7 @@ public class PipelineParser implements XProcXmlModel
 	{
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
-		step.declareVariable(new Variable(name, select, true, getLocation(node)));
+		step.declareVariable(Variable.newVariable(name, getLocation(node)).setSelect(select).setRequired(true));
 	}
 
 

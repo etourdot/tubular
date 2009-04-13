@@ -26,8 +26,6 @@ import org.trancecode.xml.SaxonUtil;
 import org.trancecode.xproc.AbstractHasLocation;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
-import org.trancecode.xproc.Option;
-import org.trancecode.xproc.Parameter;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
@@ -100,7 +98,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 	protected XLogger log = XLoggerFactory.getXLogger(getClass());
 
-	protected final Map<QName, Parameter> parameters = CollectionUtil.newSmallWriteOnceMap();
+	protected final Map<QName, Variable> parameters = CollectionUtil.newSmallWriteOnceMap();
 	protected final Map<QName, Variable> variables = CollectionUtil.newSmallWriteOnceMap();
 
 	protected final Map<String, Port> ports = CollectionUtil.newSmallWriteOnceMap();
@@ -114,13 +112,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 		assert name != null : getClass().getName();
 		this.name = name;
-	}
-
-
-	public void declareOption(final Option option)
-	{
-		assert !variables.containsKey(name);
-		variables.put(option.getName(), option);
 	}
 
 
@@ -141,15 +132,6 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		addPort(port);
 		return port;
-	}
-
-
-	public final Option declareOption(
-		final QName optionName, final String select, final boolean required, final Location location)
-	{
-		final Option option = new Option(optionName, select, required, location);
-		declareOption(option);
-		return option;
 	}
 
 
@@ -373,22 +355,16 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 	public void withOption(final QName name, final String select)
 	{
-		assert variables.get(name) instanceof Option;
-		variables.get(name).setSelect(select);
+		assert variables.containsKey(name);
+		assert variables.get(name).isOption();
+		variables.put(name, variables.get(name).setSelect(select));
 	}
 
 
 	public void withParam(final QName name, final String select, final String value, final Location location)
 	{
 		assert !parameters.containsKey(name);
-
-		final Parameter parameter = new Parameter(name, select, location);
-		if (value != null)
-		{
-			parameter.setValue(value);
-		}
-
-		parameters.put(name, parameter);
+		parameters.put(name, Variable.newParameter(name, location).setSelect(select).setValue(value));
 	}
 
 
@@ -396,8 +372,8 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		assert variables.containsKey(name) : "step = " + getName() + " ; option = " + name + " ; variables = "
 			+ variables.keySet();
-		assert variables.get(name) instanceof Option : variables.get(name).getClass().getName();
-		variables.get(name).setValue(value);
+		assert variables.get(name).isOption();
+		variables.put(name, variables.get(name).setValue(value));
 	}
 
 

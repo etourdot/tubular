@@ -23,6 +23,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -58,7 +59,7 @@ public class When extends AbstractCompoundStep
 		addPort(Port.newInputPort(name, XProcPorts.XPATH_CONTEXT, location));
 		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
 
-		declareOption(XProcOptions.TEST, null, false, location);
+		declareVariable(Variable.newOption(XProcOptions.TEST, location).setRequired(false));
 	}
 
 

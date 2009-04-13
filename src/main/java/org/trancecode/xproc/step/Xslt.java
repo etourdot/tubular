@@ -26,6 +26,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
@@ -81,10 +82,10 @@ public class Xslt extends AbstractStep
 		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(true));
 		addPort(Port.newOutputPort(name, XProcPorts.SECONDARY, location).setSequence(true));
 
-		declareOption(XProcOptions.INITIAL_MODE, null, false, location);
-		declareOption(XProcOptions.TEMPLATE_NAME, null, false, location);
-		declareOption(XProcOptions.OUTPUT_BASE_URI, null, false, location);
-		declareOption(XProcOptions.VERSION, null, false, location);
+		declareVariable(Variable.newOption(XProcOptions.INITIAL_MODE, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.TEMPLATE_NAME, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.OUTPUT_BASE_URI, location).setRequired(false));
+		declareVariable(Variable.newOption(XProcOptions.VERSION, location).setRequired(false));
 	}
 
 

@@ -24,6 +24,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -71,8 +72,8 @@ public class XslFormatter extends AbstractStep
 		addPort(Port.newParameterPort(name, XProcPorts.PARAMETERS, location));
 		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(false));
 
-		declareOption(XProcOptions.HREF, null, true, location);
-		declareOption(XProcOptions.CONTENT_TYPE, null, false, location);
+		declareVariable(Variable.newOption(XProcOptions.HREF, location).setRequired(true));
+		declareVariable(Variable.newOption(XProcOptions.CONTENT_TYPE, location).setRequired(false));
 	}
 
 
