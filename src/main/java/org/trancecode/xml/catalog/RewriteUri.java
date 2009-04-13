@@ -21,6 +21,7 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.annotation.Nullable;
 import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.core.ObjectUtil;
 import org.trancecode.io.UriUtil;
 
 import java.net.URI;
@@ -81,5 +82,27 @@ public class RewriteUri extends AbstractCatalog
 		}
 
 		return null;
+	}
+
+
+	@Override
+	public int hashCode()
+	{
+		return ObjectUtil.hashCode(RewriteUri.class, baseUri, uriStartString, rewritePrefix);
+	}
+
+
+	@Override
+	public boolean equals(final Object o)
+	{
+		if (o != null && o instanceof RewriteUri)
+		{
+			final RewriteUri rewriteUri = (RewriteUri)o;
+			return ObjectUtil.pairEquals(
+				baseUri, rewriteUri.baseUri, uriStartString, rewriteUri.uriStartString, rewritePrefix,
+				rewriteUri.rewritePrefix);
+		}
+
+		return false;
 	}
 }
