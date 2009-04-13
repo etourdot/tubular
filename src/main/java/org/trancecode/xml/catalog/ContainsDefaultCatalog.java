@@ -19,39 +19,12 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.annotation.Nullable;
-import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.io.UriUtil;
-
-import java.net.URI;
-
-
 /**
+ * Marker interface for {@link Catalog} implementations that are or contain a {@link DefaultCatalog}.
+ * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class DefaultCatalog extends AbstractCatalog implements ContainsDefaultCatalog
+public interface ContainsDefaultCatalog
 {
-	public static final DefaultCatalog INSTANCE = new DefaultCatalog();
-
-
-	private DefaultCatalog()
-	{
-		super(null);
-	}
-
-
-	@Override
-	@ReturnsNullable
-	protected URI doResolve(
-		@Nullable final String publicId, @Nullable final String systemId, @Nullable final String href,
-		@Nullable final String base)
-	{
-		if (systemId != null)
-		{
-			return UriUtil.createUri(systemId);
-		}
-
-		return UriUtil.resolve(href, base);
-	}
 }

@@ -26,11 +26,17 @@ import com.google.common.collect.ImmutableList;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class MainCatalog extends Group
+public class MainCatalog extends Group implements ContainsDefaultCatalog
 {
+	public static boolean isMainCatalog(final Catalog catalog)
+	{
+		return catalog instanceof ContainsDefaultCatalog;
+	}
+
+
 	public static Catalog wrap(final Catalog catalog)
 	{
-		if (catalog instanceof DefaultCatalog || catalog instanceof MainCatalog)
+		if (isMainCatalog(catalog))
 		{
 			return catalog;
 		}
