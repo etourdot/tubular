@@ -38,6 +38,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmAtomicValue;
@@ -625,5 +626,32 @@ public class Environment
 	public XdmNode readNode(final String stepName, final String portName)
 	{
 		return Iterables.getOnlyElement(getPort(stepName, portName).readNodes());
+	}
+
+
+	public Map<QName, String> readParameters(final String stepName, final String portName, final Environment environment)
+	{
+		final Map<QName, String> parameters = CollectionUtil.newSmallWriteOnceMap();
+		for (final XdmNode parameterNode : readNodes(stepName, portName))
+		{
+			final XPathCompiler xpathCompiler = environment.getConfiguration().getProcessor().newXPathCompiler();
+			try
+			{
+				final XPathSelector nameSelector = xpathCompiler.compile("string(//@name)").load();
+				nameSelector.setContextItem(parameterNode);
+				final String name = nameSelector.evaluateSingle().toString();
+				final XPathSelector valueSelector = xpathCompiler.compile("string(//@value)").load();
+				valueSelector.setContextItem(parameterNode);
+				final String value = valueSelector.evaluateSingle().toString();
+				// TODO name should be real QName
+				parameters.put(new QName(name), value);
+			}
+			catch (final SaxonApiException e)
+			{
+				throw new PipelineException(e);
+			}
+		}
+
+		return parameters;
 	}
 }
