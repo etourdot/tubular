@@ -629,12 +629,12 @@ public class Environment
 	}
 
 
-	public Map<QName, String> readParameters(final String stepName, final String portName, final Environment environment)
+	public Map<QName, String> readParameters(final String stepName, final String portName)
 	{
 		final Map<QName, String> parameters = CollectionUtil.newSmallWriteOnceMap();
 		for (final XdmNode parameterNode : readNodes(stepName, portName))
 		{
-			final XPathCompiler xpathCompiler = environment.getConfiguration().getProcessor().newXPathCompiler();
+			final XPathCompiler xpathCompiler = getConfiguration().getProcessor().newXPathCompiler();
 			try
 			{
 				final XPathSelector nameSelector = xpathCompiler.compile("string(//@name)").load();
