@@ -614,4 +614,10 @@ public class Environment
 
 		return addPorts(getPort(stepName, portName).writeNodes(nodes));
 	}
+
+
+	public Iterable<XdmNode> readNodes(final String stepName, final String portName)
+	{
+		return getPort(stepName, portName).readNodes();
+	}
 }
