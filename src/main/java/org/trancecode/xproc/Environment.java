@@ -620,4 +620,10 @@ public class Environment
 	{
 		return getPort(stepName, portName).readNodes();
 	}
+
+
+	public XdmNode readNode(final String stepName, final String portName)
+	{
+		return Iterables.getOnlyElement(getPort(stepName, portName).readNodes());
+	}
 }
