@@ -23,7 +23,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -93,6 +92,6 @@ public class ForEach extends AbstractCompoundStep
 			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
 		}
 
-		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), nodes);
+		return environment.writeNodes(getName(), XProcPorts.RESULT, nodes);
 	}
 }

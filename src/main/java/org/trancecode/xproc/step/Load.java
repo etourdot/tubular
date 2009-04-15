@@ -24,7 +24,6 @@ import org.trancecode.xml.XmlUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
@@ -108,6 +107,6 @@ public class Load extends AbstractStep
 			XmlUtil.closeQuietly(source, log);
 		}
 
-		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), document);
+		return environment.writeNodes(getName(), XProcPorts.RESULT, document);
 	}
 }

@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
@@ -73,7 +72,7 @@ public class Count extends AbstractStep
 		final int result = (limit > 0 ? Math.min(count, limit) : count);
 		log.trace("result = {}", result);
 
-		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), XProcUtil.newResultElement(
+		return environment.writeNodes(getName(), XProcPorts.RESULT, XProcUtil.newResultElement(
 			Integer.toString(result), environment.getConfiguration().getProcessor()));
 	}
 

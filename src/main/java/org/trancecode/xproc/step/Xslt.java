@@ -24,7 +24,6 @@ import org.trancecode.io.UriUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcExceptions;
@@ -195,7 +194,7 @@ public class Xslt extends AbstractStep
 
 		transformer.transform();
 
-		return environment.writeNodes(new PortReference(getName(), XProcPorts.SECONDARY), secondaryPortNodes)
-			.writeNodes(new PortReference(getName(), XProcPorts.RESULT), result.getXdmNode());
+		return environment.writeNodes(getName(), XProcPorts.SECONDARY, secondaryPortNodes).writeNodes(
+			getName(), XProcPorts.RESULT, result.getXdmNode());
 	}
 }

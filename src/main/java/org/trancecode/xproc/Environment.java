@@ -596,16 +596,22 @@ public class Environment
 	}
 
 
-	public Environment writeNodes(final PortReference portReference, final XdmNode... nodes)
+	private EnvironmentPort getPort(final String stepName, final String portName)
 	{
-		return writeNodes(portReference, ImmutableList.of(nodes));
+		return getPort(new PortReference(stepName, portName));
 	}
 
 
-	public Environment writeNodes(final PortReference portReference, final Iterable<XdmNode> nodes)
+	public Environment writeNodes(final String stepName, final String portName, final XdmNode... nodes)
 	{
-		LOG.trace("portReference = {}", portReference);
+		return writeNodes(stepName, portName, ImmutableList.of(nodes));
+	}
 
-		return addPorts(getPort(portReference).writeNodes(nodes));
+
+	public Environment writeNodes(final String stepName, final String portName, final Iterable<XdmNode> nodes)
+	{
+		LOG.trace("stepName = {} ; portName = {}", stepName, portName);
+
+		return addPorts(getPort(stepName, portName).writeNodes(nodes));
 	}
 }

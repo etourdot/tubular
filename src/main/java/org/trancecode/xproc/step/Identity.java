@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -66,7 +65,6 @@ public class Identity extends AbstractStep
 	{
 		log.entry();
 
-		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), readNodes(
-			XProcPorts.SOURCE, environment));
+		return environment.writeNodes(getName(), XProcPorts.RESULT, readNodes(XProcPorts.SOURCE, environment));
 	}
 }

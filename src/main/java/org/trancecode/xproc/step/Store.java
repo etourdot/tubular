@@ -25,7 +25,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
@@ -191,6 +190,6 @@ public class Store extends AbstractStep
 
 		final XdmNode resultNode =
 			XProcUtil.newResultElement(outputUri.toString(), environment.getConfiguration().getProcessor());
-		return environment.writeNodes(new PortReference(getName(), XProcPorts.RESULT), resultNode);
+		return environment.writeNodes(getName(), XProcPorts.RESULT, resultNode);
 	}
 }
