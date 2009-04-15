@@ -57,7 +57,8 @@ public class PipePortBinding extends AbstractPortBinding implements PortBinding
 	@Override
 	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
 	{
-		final EnvironmentPort boundPort = environment.getEnvironmentPort(portReference);
+		final EnvironmentPort boundPort =
+			environment.getEnvironmentPort(portReference.stepName, portReference.portName);
 		assert boundPort != null : "port = " + portReference + " ; location = " + location;
 
 		return new AbstractBoundPortBinding(location)

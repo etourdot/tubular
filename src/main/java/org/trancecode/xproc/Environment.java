@@ -430,7 +430,13 @@ public class Environment
 	}
 
 
-	public EnvironmentPort getEnvironmentPort(final PortReference portReference)
+	public EnvironmentPort getEnvironmentPort(final String stepName, final String portName)
+	{
+		return ports.get(new PortReference(stepName, portName));
+	}
+
+
+	private EnvironmentPort getEnvironmentPort(final PortReference portReference)
 	{
 		assert ports.containsKey(portReference) : "port = " + portReference + " ; ports = " + ports;
 		return ports.get(portReference);

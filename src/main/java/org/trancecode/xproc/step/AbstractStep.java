@@ -29,7 +29,6 @@ import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcException;
@@ -176,7 +175,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	protected Iterable<XdmNode> readNodes(final String portName, final Environment environment)
 	{
 		log.trace("portName = {}", portName);
-		final Iterable<XdmNode> nodes = environment.getEnvironmentPort(new PortReference(name, portName)).readNodes();
+		final Iterable<XdmNode> nodes = environment.getEnvironmentPort(name, portName).readNodes();
 		log.trace("nodes = {}", SaxonUtil.nodesToString(nodes));
 		return nodes;
 	}
@@ -184,7 +183,7 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 	protected XdmNode readNode(final String portName, final Environment environment)
 	{
-		return readNode(environment.getEnvironmentPort(new PortReference(name, portName)));
+		return readNode(environment.getEnvironmentPort(name, portName));
 	}
 
 
