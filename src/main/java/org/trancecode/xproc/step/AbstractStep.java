@@ -114,10 +114,11 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public void declareVariable(final Variable variable)
+	public Step declareVariable(final Variable variable)
 	{
 		assert !variables.containsKey(name);
 		variables.put(variable.getName(), variable);
+		return this;
 	}
 
 
@@ -127,10 +128,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public final Port declarePort(final Port port)
+	public final Step declarePort(final Port port)
 	{
 		addPort(port);
-		return port;
+		return this;
 	}
 
 
@@ -352,27 +353,30 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public void withOption(final QName name, final String select)
+	public Step withOption(final QName name, final String select)
 	{
 		assert variables.containsKey(name);
 		assert variables.get(name).isOption();
 		variables.put(name, variables.get(name).setSelect(select));
+		return this;
 	}
 
 
-	public void withParam(final QName name, final String select, final String value, final Location location)
+	public Step withParam(final QName name, final String select, final String value, final Location location)
 	{
 		assert !parameters.containsKey(name);
 		parameters.put(name, Variable.newParameter(name, location).setSelect(select).setValue(value));
+		return this;
 	}
 
 
-	public void withOptionValue(final QName name, final String value)
+	public Step withOptionValue(final QName name, final String value)
 	{
 		assert variables.containsKey(name) : "step = " + getName() + " ; option = " + name + " ; variables = "
 			+ variables.keySet();
 		assert variables.get(name).isOption();
 		variables.put(name, variables.get(name).setValue(value));
+		return this;
 	}
 
 
@@ -430,9 +434,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public void setPortBindings(final String portName, final PortBinding... portBindings)
+	public Step setPortBindings(final String portName, final PortBinding... portBindings)
 	{
 		withPort(getPort(portName).setPortBindings(portBindings));
+		return this;
 	}
 
 
@@ -442,10 +447,11 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public void withPort(final Port port)
+	public Step withPort(final Port port)
 	{
 		assert ports.containsKey(port.getPortName());
 		ports.put(port.getPortName(), port);
+		return this;
 	}
 
 

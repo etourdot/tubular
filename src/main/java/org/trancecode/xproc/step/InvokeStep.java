@@ -90,23 +90,26 @@ public class InvokeStep extends AbstractCompoundStep
 
 
 	@Override
-	public void withOption(final QName name, final String select)
+	public Step withOption(final QName name, final String select)
 	{
 		step.withOption(name, select);
+		return this;
 	}
 
 
 	@Override
-	public void withOptionValue(final QName name, final String value)
+	public Step withOptionValue(final QName name, final String value)
 	{
 		step.withOptionValue(name, value);
+		return this;
 	}
 
 
 	@Override
-	public void withParam(final QName name, final String select, final String value, final Location location)
+	public Step withParam(final QName name, final String select, final String value, final Location location)
 	{
 		step.withParam(name, select, value, location);
+		return this;
 	}
 
 

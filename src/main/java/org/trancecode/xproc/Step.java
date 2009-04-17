@@ -39,22 +39,22 @@ public interface Step extends HasLocation
 	QName getType();
 
 
-	Port declarePort(Port port);
+	Step declarePort(Port port);
 
 
 	boolean hasOptionDeclared(QName name);
 
 
-	void declareVariable(Variable variable);
+	Step declareVariable(Variable variable);
 
 
-	void withOption(QName name, String select);
+	Step withOption(QName name, String select);
 
 
-	void withOptionValue(QName name, String value);
+	Step withOptionValue(QName name, String value);
 
 
-	void withParam(QName name, String select, String value, Location location);
+	Step withParam(QName name, String select, String value, Location location);
 
 
 	Environment run(Environment environment);
@@ -66,10 +66,10 @@ public interface Step extends HasLocation
 	Map<String, Port> getPorts();
 
 
-	void setPortBindings(String portName, PortBinding... portBindings);
+	Step setPortBindings(String portName, PortBinding... portBindings);
 
 
-	void withPort(Port port);
+	Step withPort(Port port);
 
 
 	Iterable<Port> getInputPorts();
