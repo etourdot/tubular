@@ -338,30 +338,6 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private Port getPort(final String stepName, final String portName)
-	{
-		if (currentPipeline != null)
-		{
-			// FIXME lookup in pipeline ports
-			if (stepName.equals(currentPipeline.getName()))
-			{
-				return currentPipeline.getPort(portName);
-			}
-
-			for (final Step step : currentPipeline.getSteps())
-			{
-				if (step.getName().equals(stepName))
-				{
-					return step.getPort(portName);
-				}
-			}
-		}
-
-		throw new IllegalStateException("step = " + stepName + " ; port = " + portName + " ; currentPipeline = "
-			+ currentPipeline);
-	}
-
-
 	private void parseOption(final XdmNode node, final Step step)
 	{
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
