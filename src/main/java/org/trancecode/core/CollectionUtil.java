@@ -51,4 +51,13 @@ public final class CollectionUtil
 
 		return map;
 	}
+
+
+	public static <K, V> Map<K, V> copyAndPut(final Map<K, V> map1, final K key, final V value)
+	{
+		final Map<K, V> map = Maps.newHashMapWithExpectedSize(map1.size() + 1);
+		map.put(key, value);
+
+		return map;
+	}
 }
