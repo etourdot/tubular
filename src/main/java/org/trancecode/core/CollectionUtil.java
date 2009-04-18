@@ -60,4 +60,17 @@ public final class CollectionUtil
 
 		return map;
 	}
+
+
+	public static <E, P> E apply(
+		final E initialElement, final Iterable<P> parameters, final BinaryFunction<E, E, P> function)
+	{
+		E currentElement = initialElement;
+		for (final P parameter : parameters)
+		{
+			currentElement = function.evaluate(currentElement, parameter);
+		}
+
+		return currentElement;
+	}
 }
