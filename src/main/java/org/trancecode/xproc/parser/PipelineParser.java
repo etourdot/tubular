@@ -43,7 +43,6 @@ import org.trancecode.xproc.step.Pipeline;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +51,7 @@ import javax.xml.transform.TransformerException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -622,6 +622,6 @@ public class PipelineParser implements XProcXmlModel
 
 	public Map<QName, StepFactory> getLibrary()
 	{
-		return Collections.unmodifiableMap(localLibrary);
+		return ImmutableMap.copyOf(localLibrary);
 	}
 }
