@@ -386,8 +386,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 	@Override
 	public String toString()
 	{
-		return String.format(
-			"%s name = %s ; ports = %s ; variables = %s", getClass().getSimpleName(), name, ports, variables);
+		return String.format("%s ; name = %s ; ports = %s ; variables = %s", type, name, ports, variables);
 	}
 
 
