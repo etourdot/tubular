@@ -514,12 +514,9 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parseSteps(final XdmNode node, final CompoundStep compoundStep)
+	private Step parseSteps(final XdmNode node, final CompoundStep compoundStep)
 	{
-		for (final Step step : parseInnerSteps(node))
-		{
-			compoundStep.addStep(step);
-		}
+		return compoundStep.addSteps(parseInnerSteps(node));
 	}
 
 
@@ -551,7 +548,7 @@ public class PipelineParser implements XProcXmlModel
 
 			if (step instanceof CompoundStep)
 			{
-				parseSteps(node, (CompoundStep)step);
+				return parseSteps(node, (CompoundStep)step);
 			}
 
 			return step;
