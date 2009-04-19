@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc.parser;
 
+import org.trancecode.core.BinaryFunction;
+import org.trancecode.core.CollectionUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonLocation;
 import org.trancecode.xml.SaxonUtil;
@@ -140,43 +142,97 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parseInstanceStepBindings(final XdmNode node, final Step step)
+	private Step parseWithPort(final Iterable<XdmNode> withPortNodes, final Step step)
 	{
-		for (final XdmNode withPortNode : SaxonUtil.getElements(node, ELEMENTS_PORTS))
+		return CollectionUtil.apply(step, withPortNodes, new BinaryFunction<Step, Step, XdmNode>()
 		{
-			parseWithPort(withPortNode, step);
-		}
-
-		for (final XdmNode variableNode : SaxonUtil.getElements(node, ELEMENT_VARIABLE))
-		{
-			parseVariable(variableNode, step);
-		}
-
-		for (final XdmNode withParamNode : SaxonUtil.getElements(node, ELEMENT_WITH_PARAM))
-		{
-			parseWithParam(withParamNode, step);
-		}
-
-		for (final XdmNode withOptionNode : SaxonUtil.getElements(node, ELEMENT_WITH_OPTION))
-		{
-			parseWithOption(withOptionNode, step);
-		}
-
-		// Syntactic shortcuts
-		for (final Map.Entry<QName, String> attribute : SaxonUtil.getAttributes(node).entrySet())
-		{
-			final QName name = attribute.getKey();
-			final String value = attribute.getValue();
-			if (name.getNamespaceURI().isEmpty() && !name.equals(ATTRIBUTE_NAME) && !name.equals(ATTRIBUTE_TYPE))
+			@Override
+			public Step evaluate(final Step step, final XdmNode withPortNode)
 			{
-				log.trace("{} = {}", name, value);
-				step.withOptionValue(name, value);
+				return parseWithPort(withPortNode, step);
 			}
-		}
+		});
 	}
 
 
-	private void parseWithPort(final XdmNode portNode, final Step step)
+	private Step parseVariable(final Iterable<XdmNode> variableNodes, final Step step)
+	{
+		return CollectionUtil.apply(step, variableNodes, new BinaryFunction<Step, Step, XdmNode>()
+		{
+			@Override
+			public Step evaluate(final Step step, final XdmNode variableNode)
+			{
+				return parseVariable(variableNode, step);
+			}
+		});
+	}
+
+
+	private Step parseWithParam(final Iterable<XdmNode> parameterNodes, final Step step)
+	{
+		return CollectionUtil.apply(step, parameterNodes, new BinaryFunction<Step, Step, XdmNode>()
+		{
+			@Override
+			public Step evaluate(final Step step, final XdmNode parameterNode)
+			{
+				return parseWithParam(parameterNode, step);
+			}
+		});
+	}
+
+
+	private Step parseWithOption(final Iterable<XdmNode> withOptionNodes, final Step step)
+	{
+		return CollectionUtil.apply(step, withOptionNodes, new BinaryFunction<Step, Step, XdmNode>()
+		{
+			@Override
+			public Step evaluate(final Step step, final XdmNode withOptionNode)
+			{
+				return parseWithOption(withOptionNode, step);
+			}
+		});
+	}
+
+
+	private Step parseWithOptionValue(final XdmNode stepNode, final Step step)
+	{
+		return CollectionUtil.apply(
+			step, SaxonUtil.getAttributes(stepNode).entrySet(),
+			new BinaryFunction<Step, Step, Map.Entry<QName, String>>()
+			{
+				@Override
+				public Step evaluate(final Step step, final Map.Entry<QName, String> attribute)
+				{
+					final QName name = attribute.getKey();
+					final String value = attribute.getValue();
+					if (name.getNamespaceURI().isEmpty() && !name.equals(ATTRIBUTE_NAME)
+						&& !name.equals(ATTRIBUTE_TYPE))
+					{
+						log.trace("{} = {}", name, value);
+						return step.withOptionValue(name, value);
+					}
+
+					return step;
+				}
+			});
+	}
+
+
+	private Step parseInstanceStepBindings(final XdmNode node, final Step step)
+	{
+		final Step stepWithPorts = parseWithPort(SaxonUtil.getElements(node, ELEMENTS_PORTS), step);
+		final Step stepWithVariables = parseVariable(SaxonUtil.getElements(node, ELEMENT_VARIABLE), stepWithPorts);
+		final Step stepWithParameters =
+			parseWithParam(SaxonUtil.getElements(node, ELEMENT_WITH_PARAM), stepWithVariables);
+		final Step stepWithOptions =
+			parseWithOption(SaxonUtil.getElements(node, ELEMENT_WITH_OPTION), stepWithParameters);
+		final Step stepWithOptionValues = parseWithOptionValue(node, stepWithOptions);
+
+		return stepWithOptionValues;
+	}
+
+
+	private Step parseWithPort(final XdmNode portNode, final Step step)
 	{
 		final String name = getPortName(portNode);
 		final Port port = step.getPort(name);
@@ -186,7 +242,7 @@ public class PipelineParser implements XProcXmlModel
 		final Port configuredPort =
 			port.setSelect(portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT)).setPortBindings(
 				parsePortBindings(portNode));
-		step.withPort(configuredPort);
+		return step.withPort(configuredPort);
 	}
 
 
@@ -270,7 +326,7 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parsePort(final XdmNode portNode, final Step step)
+	private Step parsePort(final XdmNode portNode, final Step step)
 	{
 		final String portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
 		final Port.Type type = getPortType(portNode);
@@ -282,7 +338,7 @@ public class PipelineParser implements XProcXmlModel
 				.setPortBindings(parsePortBindings(portNode));
 		log.trace("new port: {}", port);
 
-		step.declarePort(port);
+		return step.declarePort(port);
 	}
 
 
@@ -338,36 +394,37 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private void parseOption(final XdmNode node, final Step step)
+	private Step parseOption(final XdmNode node, final Step step)
 	{
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
 		final boolean required =
 			getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_REQUIRED)), false);
-		step.declareVariable(Variable.newOption(name, getLocation(node)).setSelect(select).setRequired(required));
+		return step
+			.declareVariable(Variable.newOption(name, getLocation(node)).setSelect(select).setRequired(required));
 	}
 
 
-	private void parseWithParam(final XdmNode node, final Step step)
+	private Step parseWithParam(final XdmNode node, final Step step)
 	{
 		// TODO
 		throw new UnsupportedOperationException();
 	}
 
 
-	private void parseWithOption(final XdmNode node, final Step step)
+	private Step parseWithOption(final XdmNode node, final Step step)
 	{
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
-		step.withOption(name, select);
+		return step.withOption(name, select);
 	}
 
 
-	private void parseVariable(final XdmNode node, final Step step)
+	private Step parseVariable(final XdmNode node, final Step step)
 	{
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
-		step.declareVariable(Variable.newVariable(name, getLocation(node)).setSelect(select).setRequired(true));
+		return step.declareVariable(Variable.newVariable(name, getLocation(node)).setSelect(select).setRequired(true));
 	}
 
 
