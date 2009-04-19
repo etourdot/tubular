@@ -238,9 +238,12 @@ public class PipelineParser implements XProcXmlModel
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
 			+ " ; with-port = " + getPortType(portNode);
 
-		final Port configuredPort =
-			port.setSelect(portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT)).setPortBindings(
-				parsePortBindings(portNode));
+		final String select = portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT);
+		LOG.trace("select = {}", select);
+
+		final Port configuredPort = port.setSelect(select).setPortBindings(parsePortBindings(portNode));
+
+		LOG.trace("step {} with port {}", step, port);
 
 		return step.withPort(configuredPort);
 	}
@@ -543,8 +546,7 @@ public class PipelineParser implements XProcXmlModel
 		final StepFactory stepFactory = getStepFactory(type);
 		if (stepFactory != null)
 		{
-			final Step step = stepFactory.newStep(name, getLocation(node));
-			parseInstanceStepBindings(node, step);
+			final Step step = parseInstanceStepBindings(node, stepFactory.newStep(name, getLocation(node)));
 			LOG.trace("new instance step: {}", step);
 
 			if (step instanceof CompoundStep)
