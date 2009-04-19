@@ -171,6 +171,7 @@ public class Port extends AbstractHasLocation
 
 	public Port setSelect(final String select)
 	{
+		LOG.trace("{} select = {}", portReference, select);
 		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
@@ -195,8 +196,9 @@ public class Port extends AbstractHasLocation
 	public String toString()
 	{
 		return String.format(
-			"%s[%s][%s/%s]%s%s", getClass().getSimpleName(), type, portReference.stepName, portReference.portName,
-			getTag(primary, "[primary]", "[not primary]"), getTag(sequence, "[sequence]", "[not sequence]"));
+			"%s[%s][%s/%s]%s%s%s", getClass().getSimpleName(), type, portReference.stepName, portReference.portName,
+			getTag(primary, "[primary]", "[not primary]"), getTag(sequence, "[sequence]", "[not sequence]"),
+			(select != null ? "[select = " + select + "]" : ""));
 	}
 
 
