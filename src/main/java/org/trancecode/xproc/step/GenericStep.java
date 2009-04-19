@@ -55,6 +55,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 	private static final Logger LOG = LoggerFactory.getLogger(GenericStep.class);
 	private static final Map<QName, Variable> EMPTY_VARIABLE_MAP = Collections.emptyMap();
 	private static final Map<String, Port> EMPTY_PORT_MAP = Collections.emptyMap();
+	private static final List<Step> EMPTY_STEP_LIST = Collections.emptyList();
 
 	private static final Predicate<Port> PREDICATE_IS_INPUT_PORT = new Predicate<Port>()
 	{
@@ -100,19 +101,21 @@ public final class GenericStep extends AbstractHasLocation implements Step
 	private final QName type;
 	private final String name;
 	private final StepProcessor stepProcessor;
+	private final List<Step> steps;
 
 
 	public static Step newStep(
 		final QName type, final String name, final Location location, final StepProcessor stepProcessor)
 	{
 		return new GenericStep(type, name, location, stepProcessor, EMPTY_VARIABLE_MAP, EMPTY_VARIABLE_MAP,
-			EMPTY_PORT_MAP);
+			EMPTY_PORT_MAP, EMPTY_STEP_LIST);
 	}
 
 
 	private GenericStep(
 		final QName type, final String name, final Location location, final StepProcessor stepProcessor,
-		final Map<QName, Variable> variables, final Map<QName, Variable> parameters, final Map<String, Port> ports)
+		final Map<QName, Variable> variables, final Map<QName, Variable> parameters, final Map<String, Port> ports,
+		final Iterable<Step> steps)
 	{
 		super(location);
 
@@ -128,6 +131,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 		this.variables = ImmutableMap.copyOf(variables);
 		this.parameters = ImmutableMap.copyOf(parameters);
 		this.ports = ImmutableMap.copyOf(ports);
+		this.steps = ImmutableList.copyOf(steps);
 	}
 
 
@@ -136,7 +140,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 	{
 		assert !variables.containsKey(variable.getName());
 		return new GenericStep(type, name, location, stepProcessor, CollectionUtil.copyAndPut(variables, variable
-			.getName(), variable), parameters, ports);
+			.getName(), variable), parameters, ports, steps);
 	}
 
 
@@ -153,7 +157,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 		LOG.trace("port = {}", port);
 
 		return new GenericStep(type, name, location, stepProcessor, variables, parameters, CollectionUtil.copyAndPut(
-			ports, port.getPortName(), port));
+			ports, port.getPortName(), port), steps);
 	}
 
 
@@ -349,7 +353,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 		assert variable.isOption();
 
 		return new GenericStep(type, this.name, location, stepProcessor, CollectionUtil.copyAndPut(variables, variable
-			.getName(), variable.setSelect(select)), parameters, ports);
+			.getName(), variable.setSelect(select)), parameters, ports, steps);
 	}
 
 
@@ -359,7 +363,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 		assert !parameters.containsKey(name);
 
 		return new GenericStep(type, this.name, location, stepProcessor, variables, CollectionUtil.copyAndPut(
-			parameters, name, Variable.newParameter(name, location).setSelect(select).setValue(value)), ports);
+			parameters, name, Variable.newParameter(name, location).setSelect(select).setValue(value)), ports, steps);
 	}
 
 
@@ -372,7 +376,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 		assert variable.isOption();
 
 		return new GenericStep(type, this.name, location, stepProcessor, CollectionUtil.copyAndPut(variables, variable
-			.getName(), variable.setValue(value)), parameters, ports);
+			.getName(), variable.setValue(value)), parameters, ports, steps);
 	}
 
 
@@ -403,7 +407,7 @@ public final class GenericStep extends AbstractHasLocation implements Step
 		assert ports.containsKey(port.getPortName());
 
 		return new GenericStep(type, name, location, stepProcessor, variables, parameters, CollectionUtil.copyAndPut(
-			ports, port.getPortName(), port));
+			ports, port.getPortName(), port), steps);
 	}
 
 
