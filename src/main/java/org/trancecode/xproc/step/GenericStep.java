@@ -23,6 +23,7 @@ import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.CollectionUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.AbstractHasLocation;
+import org.trancecode.xproc.CompoundStep;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class GenericStep extends AbstractHasLocation implements Step
+public final class GenericStep extends AbstractHasLocation implements Step, CompoundStep
 {
 	private static final Logger LOG = LoggerFactory.getLogger(GenericStep.class);
 	private static final Map<QName, Variable> EMPTY_VARIABLE_MAP = Collections.emptyMap();
@@ -430,5 +431,26 @@ public final class GenericStep extends AbstractHasLocation implements Step
 	public QName getType()
 	{
 		return type;
+	}
+
+
+	@Override
+	public Step addStep(final Step step)
+	{
+		return addSteps(Collections.singleton(step));
+	}
+
+
+	public Step addSteps(final Iterable<Step> step)
+	{
+		return new GenericStep(type, name, location, stepProcessor, variables, parameters, ports, Iterables.concat(
+			this.steps, steps));
+	}
+
+
+	@Override
+	public Iterable<Step> getSteps()
+	{
+		return steps;
 	}
 }
