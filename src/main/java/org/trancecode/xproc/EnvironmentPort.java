@@ -119,6 +119,7 @@ public class EnvironmentPort
 			{
 				if (select != null)
 				{
+					LOG.trace("select = {}", select);
 					try
 					{
 						final XPathSelector selector = select.load();
