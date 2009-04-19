@@ -58,6 +58,13 @@ public abstract class AbstractCompoundStep extends AbstractStep implements Compo
 	}
 
 
+	public Step addSteps(final Iterable<Step> steps)
+	{
+		Iterables.addAll(this.steps, steps);
+		return this;
+	}
+
+
 	@Override
 	protected Environment doRun(final Environment environment)
 	{
