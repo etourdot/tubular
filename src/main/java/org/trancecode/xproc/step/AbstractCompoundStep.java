@@ -51,9 +51,10 @@ public abstract class AbstractCompoundStep extends AbstractStep implements Compo
 	}
 
 
-	public void addStep(final Step step)
+	public Step addStep(final Step step)
 	{
 		steps.add(step);
+		return this;
 	}
 
 

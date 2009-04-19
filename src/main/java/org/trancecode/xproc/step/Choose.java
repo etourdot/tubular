@@ -57,14 +57,14 @@ public class Choose extends AbstractCompoundStep
 
 
 	@Override
-	public void addStep(final Step step)
+	public Step addStep(final Step step)
 	{
 		if (!(step instanceof When))
 		{
 			throw new IllegalArgumentException(step.getClass().getName());
 		}
 
-		super.addStep(step);
+		return super.addStep(step);
 	}
 
 

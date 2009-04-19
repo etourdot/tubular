@@ -28,5 +28,5 @@ public interface CompoundStep extends Step
 	Iterable<Step> getSteps();
 
 
-	void addStep(Step step);
+	Step addStep(Step step);
 }
