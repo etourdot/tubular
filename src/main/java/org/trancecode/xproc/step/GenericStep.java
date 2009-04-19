@@ -40,6 +40,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 import net.sf.saxon.s9api.QName;
 
@@ -157,8 +158,19 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	{
 		LOG.trace("port = {}", port);
 
-		return new GenericStep(type, name, location, stepProcessor, variables, parameters, CollectionUtil.copyAndPut(
-			ports, port.getPortName(), port), steps);
+		return declarePorts(Collections.singleton(port));
+	}
+
+
+	@Override
+	public final Step declarePorts(final Iterable<Port> ports)
+	{
+		LOG.trace("ports = {}", ports);
+
+		final Map<String, Port> newPorts = Maps.newHashMap(this.ports);
+		newPorts.putAll(Maps.uniqueIndex(ports, Port.GET_PORT_NAME_FUNCTION));
+
+		return new GenericStep(type, name, location, stepProcessor, variables, parameters, newPorts, steps);
 	}
 
 

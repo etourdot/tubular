@@ -466,4 +466,15 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		return variables.values();
 	}
+
+
+	public Step declarePorts(final Iterable<Port> ports)
+	{
+		for (final Port port : ports)
+		{
+			declarePort(port);
+		}
+
+		return this;
+	}
 }

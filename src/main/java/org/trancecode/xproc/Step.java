@@ -42,6 +42,9 @@ public interface Step extends HasLocation
 	Step declarePort(Port port);
 
 
+	Step declarePorts(Iterable<Port> ports);
+
+
 	boolean hasOptionDeclared(QName name);
 
 
