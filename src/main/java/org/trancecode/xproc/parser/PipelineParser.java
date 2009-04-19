@@ -61,8 +61,8 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -76,7 +76,7 @@ public class PipelineParser implements XProcXmlModel
 	private final Map<QName, StepFactory> importedLibrary;
 	private final Map<QName, StepFactory> localLibrary = Maps.newHashMap();
 
-	private static final XLogger LOG = XLoggerFactory.getXLogger(PipelineParser.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PipelineParser.class);
 
 	private Pipeline pipeline;
 	private Pipeline currentPipeline;
@@ -99,7 +99,6 @@ public class PipelineParser implements XProcXmlModel
 
 	public void parse()
 	{
-		LOG.entry();
 		try
 		{
 			if (pipelineFactory.getUriResolver() != null)
@@ -431,8 +430,6 @@ public class PipelineParser implements XProcXmlModel
 
 	private Pipeline parsePipeline(final XdmNode node)
 	{
-		LOG.entry();
-
 		final String name = getStepName(node);
 		final QName type = SaxonUtil.getAttributeAsQName(node, ATTRIBUTE_TYPE);
 
@@ -483,7 +480,6 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseImport(final XdmNode node)
 	{
-		LOG.entry();
 		final String href = node.getAttributeValue(ATTRIBUTE_HREF);
 		assert href != null;
 		LOG.trace("href = {}", href);
@@ -506,7 +502,6 @@ public class PipelineParser implements XProcXmlModel
 
 	private Collection<QName> getSupportedStepTypes()
 	{
-		LOG.entry();
 		// TODO improve performance
 		final Collection<QName> types = new ArrayList<QName>();
 		types.addAll(localLibrary.keySet());
@@ -527,8 +522,6 @@ public class PipelineParser implements XProcXmlModel
 
 	private List<Step> parseInnerSteps(final XdmNode node)
 	{
-		LOG.entry();
-
 		return ImmutableList.copyOf(Iterables.transform(
 			SaxonUtil.getElements(node, getSupportedStepTypes()), new Function<XdmNode, Step>()
 			{
@@ -543,7 +536,6 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseInstanceStep(final XdmNode node)
 	{
-		LOG.entry();
 		final String name = getStepName(node);
 		final QName type = node.getNodeName();
 		LOG.trace("name = {} ; type = {}", name, type);
