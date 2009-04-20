@@ -133,9 +133,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.code.google-collections</groupId>
-      <artifactId>google-collect</artifactId>
-      <version>snapshot-20080530</version>
+      <groupId>com.google.collections</groupId>
+      <artifactId>google-collections</artifactId>
+      <version>1.0-rc1</version>
     </dependency>
 
     <dependency>
