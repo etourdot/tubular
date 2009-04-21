@@ -84,8 +84,11 @@ public class ForEach extends AbstractCompoundStep
 		for (final XdmNode node : readNodes(XProcPorts.ITERATION_SOURCE, environment))
 		{
 			log.trace("new iteration: {}", node);
-			final Environment iterationEnvironment = environment.newChildStepEnvironment();
-			final EnvironmentPort environmentPort = iterationEnvironment.addEnvironmentPort(newIterationPort(node));
+			final Port iterationPort = newIterationPort(node);
+			final Environment iterationEnvironment =
+				environment.newChildStepEnvironment().addPorts(
+					EnvironmentPort.newEnvironmentPort(iterationPort, environment));
+			final EnvironmentPort environmentPort = iterationEnvironment.getEnvironmentPort(iterationPort);
 			iterationEnvironment.setDefaultReadablePort(environmentPort);
 
 			final Environment resultEnvironment = runSteps(steps, iterationEnvironment);
