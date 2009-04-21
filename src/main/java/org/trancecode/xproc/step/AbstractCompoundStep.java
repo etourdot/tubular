@@ -88,4 +88,11 @@ public abstract class AbstractCompoundStep extends AbstractStep implements Compo
 
 		return currentEnvironment;
 	}
+
+
+	@Override
+	public boolean isCompoundStep()
+	{
+		return true;
+	}
 }

@@ -104,20 +104,22 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	private final String name;
 	private final StepProcessor stepProcessor;
 	private final List<Step> steps;
+	private final boolean compoundStep;
 
 
 	public static Step newStep(
-		final QName type, final String name, final Location location, final StepProcessor stepProcessor)
+		final QName type, final String name, final Location location, final StepProcessor stepProcessor,
+		final boolean compoundStep)
 	{
-		return new GenericStep(type, name, location, stepProcessor, EMPTY_VARIABLE_MAP, EMPTY_VARIABLE_MAP,
-			EMPTY_PORT_MAP, EMPTY_STEP_LIST);
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, EMPTY_VARIABLE_MAP,
+			EMPTY_VARIABLE_MAP, EMPTY_PORT_MAP, EMPTY_STEP_LIST);
 	}
 
 
 	private GenericStep(
 		final QName type, final String name, final Location location, final StepProcessor stepProcessor,
-		final Map<QName, Variable> variables, final Map<QName, Variable> parameters, final Map<String, Port> ports,
-		final Iterable<Step> steps)
+		final boolean compoundStep, final Map<QName, Variable> variables, final Map<QName, Variable> parameters,
+		final Map<String, Port> ports, final Iterable<Step> steps)
 	{
 		super(location);
 
@@ -130,6 +132,8 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 		assert stepProcessor != null;
 		this.stepProcessor = stepProcessor;
 
+		this.compoundStep = compoundStep;
+
 		this.variables = ImmutableMap.copyOf(variables);
 		this.parameters = ImmutableMap.copyOf(parameters);
 		this.ports = ImmutableMap.copyOf(ports);
@@ -138,11 +142,18 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
+	public boolean isCompoundStep()
+	{
+		return compoundStep;
+	}
+
+
+	@Override
 	public Step declareVariable(final Variable variable)
 	{
 		assert !variables.containsKey(variable.getName());
-		return new GenericStep(type, name, location, stepProcessor, CollectionUtil.copyAndPut(variables, variable
-			.getName(), variable), parameters, ports, steps);
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
+			variables, variable.getName(), variable), parameters, ports, steps);
 	}
 
 
@@ -170,7 +181,8 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 		final Map<String, Port> newPorts = Maps.newHashMap(this.ports);
 		newPorts.putAll(Maps.uniqueIndex(ports, Port.GET_PORT_NAME_FUNCTION));
 
-		return new GenericStep(type, name, location, stepProcessor, variables, parameters, newPorts, steps);
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, newPorts,
+			steps);
 	}
 
 
@@ -365,8 +377,8 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 		assert variable != null;
 		assert variable.isOption();
 
-		return new GenericStep(type, this.name, location, stepProcessor, CollectionUtil.copyAndPut(variables, variable
-			.getName(), variable.setSelect(select)), parameters, ports, steps);
+		return new GenericStep(type, this.name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
+			variables, variable.getName(), variable.setSelect(select)), parameters, ports, steps);
 	}
 
 
@@ -375,8 +387,9 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	{
 		assert !parameters.containsKey(name);
 
-		return new GenericStep(type, this.name, location, stepProcessor, variables, CollectionUtil.copyAndPut(
-			parameters, name, Variable.newParameter(name, location).setSelect(select).setValue(value)), ports, steps);
+		return new GenericStep(type, this.name, location, stepProcessor, compoundStep, variables, CollectionUtil
+			.copyAndPut(parameters, name, Variable.newParameter(name, location).setSelect(select).setValue(value)),
+			ports, steps);
 	}
 
 
@@ -388,8 +401,8 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 		assert variable != null;
 		assert variable.isOption();
 
-		return new GenericStep(type, this.name, location, stepProcessor, CollectionUtil.copyAndPut(variables, variable
-			.getName(), variable.setValue(value)), parameters, ports, steps);
+		return new GenericStep(type, this.name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
+			variables, variable.getName(), variable.setValue(value)), parameters, ports, steps);
 	}
 
 
@@ -419,8 +432,8 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	{
 		assert ports.containsKey(port.getPortName());
 
-		return new GenericStep(type, name, location, stepProcessor, variables, parameters, CollectionUtil.copyAndPut(
-			ports, port.getPortName(), port), steps);
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, CollectionUtil
+			.copyAndPut(ports, port.getPortName(), port), steps);
 	}
 
 
@@ -456,8 +469,8 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	@Override
 	public Step addSteps(final Iterable<Step> step)
 	{
-		return new GenericStep(type, name, location, stepProcessor, variables, parameters, ports, Iterables.concat(
-			this.steps, steps));
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
+			Iterables.concat(this.steps, steps));
 	}
 
 

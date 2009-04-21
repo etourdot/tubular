@@ -477,4 +477,11 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 
 		return this;
 	}
+
+
+	@Override
+	public boolean isCompoundStep()
+	{
+		return false;
+	}
 }

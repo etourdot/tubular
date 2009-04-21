@@ -546,7 +546,7 @@ public class PipelineParser implements XProcXmlModel
 			final Step step = parseInstanceStepBindings(node, stepFactory.newStep(name, getLocation(node)));
 			LOG.trace("new instance step: {}", step);
 
-			if (step instanceof CompoundStep)
+			if (step.isCompoundStep())
 			{
 				return parseSteps(node, (CompoundStep)step);
 			}

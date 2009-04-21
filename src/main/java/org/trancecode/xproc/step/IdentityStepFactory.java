@@ -39,8 +39,8 @@ public class IdentityStepFactory implements StepFactory
 	@Override
 	public Step newStep(final String name, final Location location)
 	{
-		return GenericStep.newStep(XProcSteps.IDENTITY, name, location, IdentityStepProcessor.INSTANCE).declarePort(
-			Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true)).declarePort(
-			Port.newOutputPort(name, XProcPorts.RESULT, location).setSequence(true));
+		return GenericStep.newStep(XProcSteps.IDENTITY, name, location, IdentityStepProcessor.INSTANCE, false)
+			.declarePort(Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true)).declarePort(
+				Port.newOutputPort(name, XProcPorts.RESULT, location).setSequence(true));
 	}
 }

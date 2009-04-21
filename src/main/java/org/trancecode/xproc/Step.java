@@ -101,4 +101,7 @@ public interface Step extends HasLocation
 
 
 	Iterable<Variable> getVariables();
+
+
+	boolean isCompoundStep();
 }
