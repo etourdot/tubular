@@ -75,6 +75,12 @@ public final class Variable extends AbstractHasLocation
 	}
 
 
+	public Variable setLocation(final Location location)
+	{
+		return new Variable(name, select, value, required, location, type);
+	}
+
+
 	public boolean isVariable()
 	{
 		return type == Type.VARIABLE;
