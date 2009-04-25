@@ -19,28 +19,28 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.parser.StepFactory;
+
+import com.google.common.collect.ImmutableSet;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class IdentityStepFactory implements StepFactory
+public class IdentityStepFactory extends AbstractStepFactory
 {
+	private static final Iterable<Port> PORTS =
+		ImmutableSet.of(Port.newInputPort(DEFAULT_STEP_NAME, XProcPorts.SOURCE, null).setSequence(true), Port
+			.newOutputPort(DEFAULT_STEP_NAME, XProcPorts.RESULT, null).setSequence(true));
+
 	public static final IdentityStepFactory INSTANCE = new IdentityStepFactory();
 
 
-	@Override
-	public Step newStep(final String name, final Location location)
+	public IdentityStepFactory()
 	{
-		return GenericStep.newStep(XProcSteps.IDENTITY, name, location, IdentityStepProcessor.INSTANCE, false)
-			.declarePort(Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true)).declarePort(
-				Port.newOutputPort(name, XProcPorts.RESULT, location).setSequence(true));
+		super(XProcSteps.IDENTITY, IdentityStepProcessor.INSTANCE, false, PORTS, EMPTY_VARIABLE_LIST);
 	}
 }
