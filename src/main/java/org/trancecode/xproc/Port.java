@@ -63,6 +63,24 @@ public class Port extends AbstractHasLocation
 	}
 
 
+	public static Port newInputPort(final String portName)
+	{
+		return newInputPort(null, portName, null);
+	}
+
+
+	public static Port newParameterPort(final String portName)
+	{
+		return newParameterPort(null, portName, null);
+	}
+
+
+	public static Port newOutputPort(final String portName)
+	{
+		return newOutputPort(null, portName, null);
+	}
+
+
 	public static Port newInputPort(final String stepName, final String portName, final Location location)
 	{
 		return newPort(stepName, portName, location, Type.INPUT);
