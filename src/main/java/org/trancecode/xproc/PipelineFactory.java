@@ -26,7 +26,7 @@ import org.trancecode.xproc.step.Choose;
 import org.trancecode.xproc.step.Count;
 import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepFactory;
-import org.trancecode.xproc.step.Load;
+import org.trancecode.xproc.step.LoadStepFactory;
 import org.trancecode.xproc.step.Otherwise;
 import org.trancecode.xproc.step.Store;
 import org.trancecode.xproc.step.When;
@@ -134,7 +134,7 @@ public class PipelineFactory
 		// Required steps
 		library.put(XProcSteps.COUNT, Count.FACTORY);
 		library.put(XProcSteps.IDENTITY, IdentityStepFactory.INSTANCE);
-		library.put(XProcSteps.LOAD, Load.FACTORY);
+		library.put(XProcSteps.LOAD, LoadStepFactory.INSTANCE);
 		library.put(XProcSteps.STORE, Store.FACTORY);
 		library.put(XProcSteps.XSLT, Xslt.FACTORY);
 
