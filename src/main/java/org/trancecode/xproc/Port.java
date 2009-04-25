@@ -113,6 +113,13 @@ public class Port extends AbstractHasLocation
 	}
 
 
+	public Port setStepName(final String stepName)
+	{
+		return new Port(new PortReference(stepName, getPortName()), location, type, primary, sequence, select,
+			portBindings);
+	}
+
+
 	public String getStepName()
 	{
 		return portReference.stepName;
