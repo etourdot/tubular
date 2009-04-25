@@ -223,6 +223,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	@Override
 	public Environment run(final Environment environment)
 	{
+		LOG.trace("name = {} ; type = {}", name, type);
 		return stepProcessor.run(this, environment);
 	}
 
