@@ -33,8 +33,8 @@ import com.google.common.collect.ImmutableSet;
 public class IdentityStepFactory extends AbstractStepFactory
 {
 	private static final Iterable<Port> PORTS =
-		ImmutableSet.of(Port.newInputPort(DEFAULT_STEP_NAME, XProcPorts.SOURCE, null).setSequence(true), Port
-			.newOutputPort(DEFAULT_STEP_NAME, XProcPorts.RESULT, null).setSequence(true));
+		ImmutableSet.of(Port.newInputPort(XProcPorts.SOURCE).setSequence(true), Port.newOutputPort(XProcPorts.RESULT)
+			.setSequence(true));
 
 	public static final IdentityStepFactory INSTANCE = new IdentityStepFactory();
 
