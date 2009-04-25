@@ -205,7 +205,7 @@ public class Environment
 		// if port is empty then pipe to existing default readable port
 		final EnvironmentPort environmentPort = getEnvironmentPort(primaryInputPort);
 		final EnvironmentPort nonEmptyEnvironmentPort;
-		if (Iterables.isEmpty(environmentPort.portBindings))
+		if (Iterables.isEmpty(environmentPort.portBindings) && getDefaultReadablePort() != null)
 		{
 			nonEmptyEnvironmentPort = environmentPort.pipe(getDefaultReadablePort());
 		}
