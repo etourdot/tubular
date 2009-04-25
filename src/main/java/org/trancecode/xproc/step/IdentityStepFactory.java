@@ -23,7 +23,7 @@ import org.trancecode.xproc.Port;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 
 /**
@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableSet;
 public class IdentityStepFactory extends AbstractStepFactory
 {
 	private static final Iterable<Port> PORTS =
-		ImmutableSet.of(Port.newInputPort(XProcPorts.SOURCE).setSequence(true), Port.newOutputPort(XProcPorts.RESULT)
+		ImmutableList.of(Port.newInputPort(XProcPorts.SOURCE).setSequence(true), Port.newOutputPort(XProcPorts.RESULT)
 			.setSequence(true));
 
 	public static final IdentityStepFactory INSTANCE = new IdentityStepFactory();
