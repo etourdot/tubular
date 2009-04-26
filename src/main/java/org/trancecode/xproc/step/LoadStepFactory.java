@@ -19,31 +19,32 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
-import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.parser.StepFactory;
+
+import com.google.common.collect.ImmutableList;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class LoadStepFactory implements StepFactory
+public class LoadStepFactory extends AbstractStepFactory
 {
+	private static final Iterable<Port> PORTS = ImmutableList.of(Port.newOutputPort(XProcPorts.RESULT));
+
+	private static final Iterable<Variable> VARIABLES =
+		ImmutableList.of(Variable.newOption(XProcOptions.HREF).setRequired(true), Variable.newOption(
+			XProcOptions.DTD_VALIDATE).setSelect("'false'"));
+
 	public static final LoadStepFactory INSTANCE = new LoadStepFactory();
 
 
-	@Override
-	public Step newStep(final String name, final Location location)
+	public LoadStepFactory()
 	{
-		return GenericStep.newStep(XProcSteps.LOAD, name, location, LoadStepProcessor.INSTANCE, false).declarePort(
-			Port.newOutputPort(name, XProcPorts.RESULT, location)).declareVariable(
-			Variable.newOption(XProcOptions.HREF, location).setRequired(true)).declareVariable(
-			Variable.newOption(XProcOptions.DTD_VALIDATE, location).setSelect("'false'"));
+		super(XProcSteps.LOAD, LoadStepProcessor.INSTANCE, false, PORTS, VARIABLES);
 	}
 }
