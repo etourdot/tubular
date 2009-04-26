@@ -141,6 +141,13 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	}
 
 
+	GenericStep setName(final String name)
+	{
+		LOG.trace("{} -> {}", this.name, name);
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
+	}
+
+
 	@Override
 	public boolean isCompoundStep()
 	{
@@ -149,7 +156,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public Step declareVariable(final Variable variable)
+	public GenericStep declareVariable(final Variable variable)
 	{
 		assert !variables.containsKey(variable.getName());
 		return new GenericStep(type, name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
@@ -165,7 +172,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public final Step declarePort(final Port port)
+	public final GenericStep declarePort(final Port port)
 	{
 		LOG.trace("port = {}", port);
 
@@ -174,7 +181,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public final Step declarePorts(final Iterable<Port> ports)
+	public final GenericStep declarePorts(final Iterable<Port> ports)
 	{
 		LOG.trace("ports = {}", ports);
 
@@ -371,7 +378,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public Step withOption(final QName name, final String select)
+	public GenericStep withOption(final QName name, final String select)
 	{
 		assert variables.containsKey(name);
 		final Variable variable = variables.get(name);
@@ -384,7 +391,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public Step withParam(final QName name, final String select, final String value, final Location location)
+	public GenericStep withParam(final QName name, final String select, final String value, final Location location)
 	{
 		assert !parameters.containsKey(name);
 
@@ -395,7 +402,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public Step withOptionValue(final QName name, final String value)
+	public GenericStep withOptionValue(final QName name, final String value)
 	{
 		assert variables.containsKey(name);
 		final Variable variable = variables.get(name);
@@ -422,14 +429,14 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public Step setPortBindings(final String portName, final PortBinding... portBindings)
+	public GenericStep setPortBindings(final String portName, final PortBinding... portBindings)
 	{
 		return withPort(getPort(portName).setPortBindings(portBindings));
 	}
 
 
 	@Override
-	public Step withPort(final Port port)
+	public GenericStep withPort(final Port port)
 	{
 		assert ports.containsKey(port.getPortName());
 
@@ -468,7 +475,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public Step addSteps(final Iterable<Step> step)
+	public GenericStep addSteps(final Iterable<Step> step)
 	{
 		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
 			Iterables.concat(this.steps, steps));
