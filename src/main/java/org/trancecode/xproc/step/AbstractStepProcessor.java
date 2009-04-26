@@ -21,8 +21,7 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.StepProcessor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,20 +31,22 @@ import org.slf4j.LoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class IdentityStepProcessor extends AbstractStepProcessor
+public abstract class AbstractStepProcessor implements StepProcessor
 {
-	public static final IdentityStepProcessor INSTANCE = new IdentityStepProcessor();
-
-	private static final Logger LOG = LoggerFactory.getLogger(IdentityStepProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractStepProcessor.class);
 
 
 	@Override
-	protected Environment doRun(final Step step, final Environment environment)
+	public Environment run(final Step step, final Environment environment)
 	{
 		LOG.trace("step = {}", step.getName());
-		assert step.getType().equals(XProcSteps.IDENTITY);
 
-		return environment.writeNodes(step.getName(), XProcPorts.RESULT, environment.readNodes(
-			step.getName(), XProcPorts.SOURCE));
+		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+		final Environment resultEnvironment = doRun(step, stepEnvironment);
+
+		return resultEnvironment.setupOutputPorts(step);
 	}
+
+
+	protected abstract Environment doRun(Step step, Environment environment);
 }
