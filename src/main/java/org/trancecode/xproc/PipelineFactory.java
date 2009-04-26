@@ -30,7 +30,7 @@ import org.trancecode.xproc.step.LoadStepFactory;
 import org.trancecode.xproc.step.Otherwise;
 import org.trancecode.xproc.step.Store;
 import org.trancecode.xproc.step.When;
-import org.trancecode.xproc.step.Xslt;
+import org.trancecode.xproc.step.XsltStepFactory;
 
 import java.util.Map;
 
@@ -136,7 +136,7 @@ public class PipelineFactory
 		library.put(XProcSteps.IDENTITY, IdentityStepFactory.INSTANCE);
 		library.put(XProcSteps.LOAD, LoadStepFactory.INSTANCE);
 		library.put(XProcSteps.STORE, Store.FACTORY);
-		library.put(XProcSteps.XSLT, Xslt.FACTORY);
+		library.put(XProcSteps.XSLT, XsltStepFactory.INSTANCE);
 
 		// Unsupported core steps
 		addUnsupportedStepFactory(XProcSteps.GROUP, library);

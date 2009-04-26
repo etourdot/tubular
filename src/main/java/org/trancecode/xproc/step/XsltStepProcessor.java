@@ -21,25 +21,23 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.core.CollectionUtil;
 import org.trancecode.io.UriUtil;
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Port;
+import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.parser.StepFactory;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import net.sf.saxon.OutputURIResolver;
@@ -52,54 +50,31 @@ import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltTransformer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Xslt extends AbstractStep
+public class XsltStepProcessor extends AbstractStepProcessor
 {
-	public static final String DEFAULT_VERSION = "2.0";
-	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList("2.0");
+	public static final XsltStepProcessor INSTANCE = new XsltStepProcessor();
 
-	public static StepFactory FACTORY = new StepFactory()
-	{
-		public Step newStep(final String name, final Location location)
-		{
-			return new Xslt(name, location);
-		}
-	};
+	private static final String DEFAULT_VERSION = "2.0";
+	private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("2.0");
 
-
-	private Xslt(final String name, final Location location)
-	{
-		super(name, location);
-
-		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setPrimary(true).setSequence(true));
-		addPort(Port.newInputPort(name, XProcPorts.STYLESHEET, location));
-		addPort(Port.newParameterPort(name, XProcPorts.PARAMETERS, location));
-		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(true));
-		addPort(Port.newOutputPort(name, XProcPorts.SECONDARY, location).setSequence(true));
-
-		declareVariable(Variable.newOption(XProcOptions.INITIAL_MODE, location).setRequired(false));
-		declareVariable(Variable.newOption(XProcOptions.TEMPLATE_NAME, location).setRequired(false));
-		declareVariable(Variable.newOption(XProcOptions.OUTPUT_BASE_URI, location).setRequired(false));
-		declareVariable(Variable.newOption(XProcOptions.VERSION, location).setRequired(false));
-	}
-
-
-	public QName getType()
-	{
-		return XProcSteps.XSLT;
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(XsltStepProcessor.class);
 
 
 	@Override
-	protected Environment doRun(final Environment environment) throws Exception
+	protected Environment doRun(final Step step, final Environment environment)
 	{
-		log.entry();
+		LOG.trace("step = {}", step.getName());
+		assert step.getType().equals(XProcSteps.XSLT);
 
-		final XdmNode sourceDocument = readNode(XProcPorts.SOURCE, environment);
+		final XdmNode sourceDocument = environment.readNode(step.getName(), XProcPorts.SOURCE);
 		assert sourceDocument != null;
 
 		final String providedOutputBaseUri = environment.getVariable(XProcOptions.OUTPUT_BASE_URI);
@@ -122,17 +97,25 @@ public class Xslt extends AbstractStep
 
 		if (!SUPPORTED_VERSIONS.contains(version))
 		{
-			throw XProcExceptions.xs0038(getLocation(), version);
+			throw XProcExceptions.xs0038(step.getLocation(), version);
 		}
-		final XdmNode stylesheet = readNode(XProcPorts.STYLESHEET, environment);
+		final XdmNode stylesheet = environment.readNode(step.getName(), XProcPorts.STYLESHEET);
 		assert stylesheet != null;
 
 		final Processor processor = environment.getConfiguration().getProcessor();
 
 		// TODO pipeline logging
-		final XsltTransformer transformer = processor.newXsltCompiler().compile(stylesheet.asSource()).load();
+		final XsltTransformer transformer;
+		try
+		{
+			transformer = processor.newXsltCompiler().compile(stylesheet.asSource()).load();
+			transformer.setSource(sourceDocument.asSource());
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new PipelineException(e);
+		}
 
-		transformer.setSource(sourceDocument.asSource());
 		// TODO transformer.setMessageListener();
 		final XdmDestination result = new XdmDestination();
 		result.setBaseURI(outputBaseUri);
@@ -150,7 +133,7 @@ public class Xslt extends AbstractStep
 				final URI uri = URI.create(result.getSystemId());
 				assert destinations.containsKey(uri);
 				final XdmDestination xdmResult = destinations.get(uri);
-				log.trace("result base URI = {}", xdmResult.getXdmNode().getBaseURI());
+				LOG.trace("result base URI = {}", xdmResult.getXdmNode().getBaseURI());
 				secondaryPortNodes.add(xdmResult.getXdmNode());
 			}
 
@@ -159,7 +142,7 @@ public class Xslt extends AbstractStep
 			{
 				final URI uri = UriUtil.resolve(href, base);
 				assert uri != null;
-				log.debug("new result document: {}", uri);
+				LOG.debug("new result document: {}", uri);
 
 				try
 				{
@@ -185,16 +168,24 @@ public class Xslt extends AbstractStep
 			transformer.setInitialMode(new QName(initialMode));
 		}
 
-		final Map<QName, String> parameters = readParameters(XProcPorts.PARAMETERS, environment);
-		log.debug("parameters = {}", parameters);
+		final Map<QName, String> parameters = environment.readParameters(step.getName(), XProcPorts.PARAMETERS);
+		LOG.debug("parameters = {}", parameters);
 		for (final Map.Entry<QName, String> parameter : parameters.entrySet())
 		{
 			transformer.setParameter(parameter.getKey(), new XdmAtomicValue(parameter.getValue()));
 		}
 
-		transformer.transform();
+		try
+		{
+			transformer.transform();
+		}
+		catch (final SaxonApiException e)
+		{
+			// TODO XProcException?
+			throw new PipelineException(e);
+		}
 
-		return environment.writeNodes(getName(), XProcPorts.SECONDARY, secondaryPortNodes).writeNodes(
-			getName(), XProcPorts.RESULT, result.getXdmNode());
+		return environment.writeNodes(step.getName(), XProcPorts.SECONDARY, secondaryPortNodes).writeNodes(
+			step.getName(), XProcPorts.RESULT, result.getXdmNode());
 	}
 }
