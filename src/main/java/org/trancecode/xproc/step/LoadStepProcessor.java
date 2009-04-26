@@ -23,7 +23,6 @@ import org.trancecode.xml.XmlUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
@@ -41,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class LoadStepProcessor implements StepProcessor
+public class LoadStepProcessor extends AbstractStepProcessor
 {
 	public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
 
@@ -49,37 +48,35 @@ public class LoadStepProcessor implements StepProcessor
 
 
 	@Override
-	public Environment run(final Step step, final Environment environment)
+	protected Environment doRun(final Step step, final Environment environment)
 	{
 		LOG.trace("step = {}", step.getName());
 		assert step.getType().equals(XProcSteps.LOAD);
 
-		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-
-		final String href = stepEnvironment.getVariable(XProcOptions.HREF);
+		final String href = environment.getVariable(XProcOptions.HREF);
 		assert href != null;
 		LOG.trace("href = {}", href);
 
-		final boolean validate = Boolean.parseBoolean(stepEnvironment.getVariable(XProcOptions.VALIDATE));
+		final boolean validate = Boolean.parseBoolean(environment.getVariable(XProcOptions.VALIDATE));
 		LOG.trace("validate = {}", validate);
 
 		final Source source;
 		try
 		{
 			source =
-				stepEnvironment.getConfiguration().getUriResolver().resolve(
-					href, stepEnvironment.getBaseUri().toString());
+				environment.getConfiguration().getUriResolver().resolve(
+					href, environment.getBaseUri().toString());
 		}
 		catch (final Exception e)
 		{
 			throw new PipelineException("Error while trying to read document ; href = %s ; baseUri = %s", e, href,
-				stepEnvironment.getBaseUri());
+				environment.getBaseUri());
 		}
 
 		final XdmNode document;
 		try
 		{
-			document = stepEnvironment.getConfiguration().getProcessor().newDocumentBuilder().build(source);
+			document = environment.getConfiguration().getProcessor().newDocumentBuilder().build(source);
 		}
 		catch (final SaxonApiException e)
 		{
@@ -90,8 +87,6 @@ public class LoadStepProcessor implements StepProcessor
 			XmlUtil.closeQuietly(source, LOG);
 		}
 
-		final Environment resultEnvironment = stepEnvironment.writeNodes(step.getName(), XProcPorts.RESULT, document);
-
-		return resultEnvironment.setupOutputPorts(step);
+		return environment.writeNodes(step.getName(), XProcPorts.RESULT, document);
 	}
 }
