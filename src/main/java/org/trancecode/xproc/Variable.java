@@ -42,6 +42,24 @@ public final class Variable extends AbstractHasLocation
 	private final Type type;
 
 
+	public static Variable newOption(final QName name)
+	{
+		return new Variable(name, null, null, null, null, Type.OPTION);
+	}
+
+
+	public static Variable newParameter(final QName name)
+	{
+		return new Variable(name, null, null, null, null, Type.PARAMETER);
+	}
+
+
+	public static Variable newVariable(final QName name)
+	{
+		return new Variable(name, null, null, null, null, Type.VARIABLE);
+	}
+
+
 	public static Variable newOption(final QName name, final Location location)
 	{
 		return new Variable(name, null, null, null, location, Type.OPTION);
