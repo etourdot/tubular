@@ -19,67 +19,41 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.XProcUtil;
-import org.trancecode.xproc.parser.StepFactory;
 
 import com.google.common.collect.Iterables;
 
-import net.sf.saxon.s9api.QName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Count extends AbstractStep
+public class CountStepProcessor extends AbstractStepProcessor
 {
-	public static StepFactory FACTORY = new StepFactory()
-	{
-		public Step newStep(final String name, final Location location)
-		{
-			return new Count(name, location);
-		}
-	};
+	public static final CountStepProcessor INSTANCE = new CountStepProcessor();
 
-
-	private Count(final String name, final Location location)
-	{
-		super(name, location);
-
-		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setSequence(true));
-		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
-
-		declareVariable(Variable.newOption(XProcOptions.LIMIT, location).setSelect("0").setRequired(false));
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(CountStepProcessor.class);
 
 
 	@Override
-	protected Environment doRun(final Environment environment)
+	protected Environment doRun(final Step step, final Environment environment)
 	{
 		// TODO improve performance with "limit" option
-		final int count = Iterables.size(readNodes(XProcPorts.SOURCE, environment));
-		log.trace("count = {}", count);
+		final int count = Iterables.size(environment.readNodes(step.getName(), XProcPorts.SOURCE));
+		LOG.trace("count = {}", count);
 		final int limit = Integer.parseInt(environment.getVariable(XProcOptions.LIMIT));
-		log.trace("limit = {}", limit);
+		LOG.trace("limit = {}", limit);
 		final int result = (limit > 0 ? Math.min(count, limit) : count);
-		log.trace("result = {}", result);
+		LOG.trace("result = {}", result);
 
-		return environment.writeNodes(getName(), XProcPorts.RESULT, XProcUtil.newResultElement(
-			Integer.toString(result), environment.getConfiguration().getProcessor()));
-	}
-
-
-	@Override
-	public QName getType()
-	{
-		return XProcSteps.COUNT;
+		return environment.writeNodes(step.getName(), XProcPorts.RESULT, XProcUtil.newResultElement(Integer
+			.toString(result), environment.getConfiguration().getProcessor()));
 	}
 }

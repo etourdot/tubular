@@ -23,7 +23,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.parser.StepFactory;
 import org.trancecode.xproc.step.Choose;
-import org.trancecode.xproc.step.Count;
+import org.trancecode.xproc.step.CountStepFactory;
 import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepFactory;
 import org.trancecode.xproc.step.LoadStepFactory;
@@ -132,7 +132,7 @@ public class PipelineFactory
 		library.put(XProcSteps.WHEN, When.FACTORY);
 
 		// Required steps
-		library.put(XProcSteps.COUNT, Count.FACTORY);
+		library.put(XProcSteps.COUNT, CountStepFactory.INSTANCE);
 		library.put(XProcSteps.IDENTITY, IdentityStepFactory.INSTANCE);
 		library.put(XProcSteps.LOAD, LoadStepFactory.INSTANCE);
 		library.put(XProcSteps.STORE, Store.FACTORY);
