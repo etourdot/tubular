@@ -41,12 +41,20 @@ public abstract class AbstractStepProcessor implements StepProcessor
 	{
 		LOG.trace("step = {}", step.getName());
 
-		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-		final Environment resultEnvironment = doRun(step, stepEnvironment);
+		try
+		{
+			final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+			final Environment resultEnvironment = doRun(step, stepEnvironment);
 
-		return resultEnvironment.setupOutputPorts(step);
+			return resultEnvironment.setupOutputPorts(step);
+		}
+		catch (final Exception e)
+		{
+			// TODO handle exception
+			throw new IllegalStateException(e);
+		}
 	}
 
 
-	protected abstract Environment doRun(Step step, Environment environment);
+	protected abstract Environment doRun(Step step, Environment environment) throws Exception;
 }
