@@ -59,6 +59,6 @@ public class StoreStepFactory extends AbstractStepFactory
 
 	public StoreStepFactory()
 	{
-		super(XProcSteps.STORE, null, false, PORTS, VARIABLES);
+		super(XProcSteps.STORE, StoreStepProcessor.INSTANCE, false, PORTS, VARIABLES);
 	}
 }
