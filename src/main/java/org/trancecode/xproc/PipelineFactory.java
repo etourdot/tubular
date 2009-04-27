@@ -28,7 +28,7 @@ import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepFactory;
 import org.trancecode.xproc.step.LoadStepFactory;
 import org.trancecode.xproc.step.Otherwise;
-import org.trancecode.xproc.step.Store;
+import org.trancecode.xproc.step.StoreStepFactory;
 import org.trancecode.xproc.step.When;
 import org.trancecode.xproc.step.XsltStepFactory;
 
@@ -135,7 +135,7 @@ public class PipelineFactory
 		library.put(XProcSteps.COUNT, CountStepFactory.INSTANCE);
 		library.put(XProcSteps.IDENTITY, IdentityStepFactory.INSTANCE);
 		library.put(XProcSteps.LOAD, LoadStepFactory.INSTANCE);
-		library.put(XProcSteps.STORE, Store.FACTORY);
+		library.put(XProcSteps.STORE, StoreStepFactory.INSTANCE);
 		library.put(XProcSteps.XSLT, XsltStepFactory.INSTANCE);
 
 		// Unsupported core steps
