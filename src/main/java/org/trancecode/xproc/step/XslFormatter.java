@@ -20,15 +20,10 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.io.UriUtil;
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.parser.StepFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,55 +35,32 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class XslFormatter extends AbstractStep
+public class XslFormatter extends AbstractStepProcessor
 {
 	public static final String DEFAULT_CONTENT_TYPE = "application/pdf";
 
-	public static StepFactory FACTORY = new StepFactory()
-	{
-		public Step newStep(final String name, final Location location)
-		{
-			return new XslFormatter(name, null, location);
-		}
-	};
+	public static final XslFormatter INSTANCE = new XslFormatter();
 
-
-	private XslFormatter(final String name, final String libraryName, final Location location)
-	{
-		super(name, location);
-
-		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location));
-		addPort(Port.newParameterPort(name, XProcPorts.PARAMETERS, location));
-		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setPrimary(false));
-
-		declareVariable(Variable.newOption(XProcOptions.HREF, location).setRequired(true));
-		declareVariable(Variable.newOption(XProcOptions.CONTENT_TYPE, location).setRequired(false));
-	}
-
-
-	public QName getType()
-	{
-		return XProcSteps.XSL_FORMATTER;
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(XslFormatter.class);
 
 
 	@Override
-	protected Environment doRun(final Environment environment) throws Exception
+	protected Environment doRun(final Step step, final Environment environment) throws Exception
 	{
-		log.entry();
-
-		final XdmNode source = readNode(XProcPorts.SOURCE, environment);
+		final XdmNode source = environment.readNode(step.getName(), XProcPorts.SOURCE);
 
 		final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);
 		assert href != null;
