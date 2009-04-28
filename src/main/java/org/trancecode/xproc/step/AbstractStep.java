@@ -441,9 +441,10 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	}
 
 
-	public void setPortBindings(final String portName, final Iterable<PortBinding> portBindings)
+	public Step setPortBindings(final String portName, final Iterable<PortBinding> portBindings)
 	{
 		withPort(getPort(portName).setPortBindings(portBindings));
+		return this;
 	}
 
 

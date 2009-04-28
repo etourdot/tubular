@@ -436,6 +436,13 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
+	public Step setPortBindings(final String portName, final Iterable<PortBinding> portBindings)
+	{
+		return withPort(getPort(portName).setPortBindings(portBindings));
+	}
+
+
+	@Override
 	public GenericStep withPort(final Port port)
 	{
 		assert ports.containsKey(port.getPortName());

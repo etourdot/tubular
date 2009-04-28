@@ -72,6 +72,9 @@ public interface Step extends HasLocation
 	Step setPortBindings(String portName, PortBinding... portBindings);
 
 
+	Step setPortBindings(String portName, Iterable<PortBinding> portBindings);
+
+
 	Step withPort(Port port);
 
 
