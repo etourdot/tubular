@@ -19,6 +19,11 @@
  */
 package org.trancecode.xproc;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+
 import net.sf.saxon.s9api.QName;
 
 
@@ -38,6 +43,8 @@ public interface XProcSteps extends XProcNamespaces
 	QName PIPELINE = XPROC.newSaxonQName("pipeline");
 	QName TRY = XPROC.newSaxonQName("try");
 	QName WHEN = XPROC.newSaxonQName("when");
+
+	Set<QName> CORE_STEPS = ImmutableSet.of(CHOOSE, FOR_EACH, GROUP, OTHERWISE, PIPELINE, TRY, WHEN);
 
 	// Required steps
 	QName ADD_ATTRIBUTE = XPROC.newSaxonQName("add-attribute");
@@ -68,8 +75,15 @@ public interface XProcSteps extends XProcNamespaces
 	QName UNESCAPE_MARKUP = XPROC.newSaxonQName("unescape-markup");
 	QName UNWRAP = XPROC.newSaxonQName("unwrap");
 	QName WRAP = XPROC.newSaxonQName("wrap");
-	QName XINXLUDE = XPROC.newSaxonQName("xinclude");
+	QName XINCLUDE = XPROC.newSaxonQName("xinclude");
 	QName XSLT = XPROC.newSaxonQName("xslt");
+
+	Set<QName> REQUIRED_STEPS =
+		ImmutableSet.of(
+			ADD_ATTRIBUTE, ADD_XML_BASE, COMPARE, COUNT, DELETE, DIRECTORY_LIST, ERROR, ESCAPE_MARKUP, FILTER,
+			HTTP_REQUEST, IDENTITY, INSERT, LABEL_ELEMENT, LOAD, MAKE_ABSOLUTE_URIS, NAMESPACE_RENAME, PACK,
+			PARAMETERS, RENAME, REPLACE, SET_ATTRIBUTES, SINK, SPLIT_SEQUENCE, STORE, STRING_REPLACE, UNESCAPE_MARKUP,
+			UNWRAP, WRAP, XINCLUDE, XSLT);
 
 	// Optional steps
 	QName EXEC = XPROC.newSaxonQName("exec");
@@ -82,4 +96,11 @@ public interface XProcSteps extends XProcNamespaces
 	QName WWW_FORM_URL_ENCODE = XPROC.newSaxonQName("www-form-url-encode");
 	QName XQUERY = XPROC.newSaxonQName("xquery");
 	QName XSL_FORMATTER = XPROC.newSaxonQName("xsl-formatter");
+
+	Set<QName> OPTIONAL_STEPS =
+		ImmutableSet.of(
+			EXEC, HASH, UUID, VALIDATE_WITH_RELANXNG, VALIDATE_WITH_SCHEMA, VALIDATE_WITH_SCHEMATRON,
+			WWW_FORM_URL_DECODE, WWW_FORM_URL_ENCODE, XQUERY, XSL_FORMATTER);
+
+	Set<QName> ALL_STEPS = ImmutableSet.copyOf(Iterables.concat(CORE_STEPS, REQUIRED_STEPS, OPTIONAL_STEPS));
 }
