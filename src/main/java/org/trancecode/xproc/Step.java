@@ -104,4 +104,13 @@ public interface Step extends HasLocation
 
 
 	boolean isCompoundStep();
+
+
+	Iterable<Step> getSteps();
+
+
+	Step addStep(Step step);
+
+
+	Step addSteps(Iterable<Step> steps);
 }

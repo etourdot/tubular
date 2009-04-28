@@ -25,11 +25,4 @@ package org.trancecode.xproc;
  */
 public interface CompoundStep extends Step
 {
-	Iterable<Step> getSteps();
-
-
-	Step addStep(Step step);
-
-
-	Step addSteps(Iterable<Step> steps);
 }
