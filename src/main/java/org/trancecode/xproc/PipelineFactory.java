@@ -167,7 +167,7 @@ public class PipelineFactory
 		addUnsupportedStepFactory(XProcSteps.UNESCAPE_MARKUP, library);
 		addUnsupportedStepFactory(XProcSteps.UNWRAP, library);
 		addUnsupportedStepFactory(XProcSteps.WRAP, library);
-		addUnsupportedStepFactory(XProcSteps.XINXLUDE, library);
+		addUnsupportedStepFactory(XProcSteps.XINCLUDE, library);
 
 		// Unsupported optional steps
 		addUnsupportedStepFactory(XProcSteps.EXEC, library);
