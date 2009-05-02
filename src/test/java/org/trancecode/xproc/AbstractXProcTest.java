@@ -128,7 +128,8 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 
 			final Iterable<XdmNode> expectedNodes = SaxonUtil.getElements(outputElement);
 			final Iterable<XdmNode> actualNodes = result.readNodes(portName);
-			Assert.assertEquals(actualNodes.toString(), Iterables.size(expectedNodes), Iterables.size(actualNodes));
+			Assert.assertEquals(portName + " = " + actualNodes.toString(), Iterables.size(expectedNodes), Iterables
+				.size(actualNodes));
 
 			final Iterator<XdmNode> expectedNodesIterator = expectedNodes.iterator();
 			final Iterator<XdmNode> actualNodesIterator = actualNodes.iterator();
