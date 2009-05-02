@@ -71,7 +71,9 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 		final PipelineResult result;
 		try
 		{
+			log.info("== parse pipeline ==");
 			final Pipeline pipeline = pipelineFactory.newPipeline(pipelineDocument.asSource());
+			log.info("== pipeline parsed ==");
 			final RunnablePipeline runnablePipeline = pipeline.load();
 
 			for (final XdmNode inputElement : SaxonUtil.getElements(testElement, ELEMENT_INPUT))
@@ -99,7 +101,9 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 				runnablePipeline.withParam(name, value);
 			}
 
+			log.info("== run pipeline ==");
 			result = runnablePipeline.run();
+			log.info("== pipeline run ==");
 		}
 		catch (final XProcException e)
 		{
