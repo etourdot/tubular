@@ -168,7 +168,7 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private Step parseWithPort(final Iterable<XdmNode> withPortNodes, final Step step)
+	private Step parseWithPorts(final Iterable<XdmNode> withPortNodes, final Step step)
 	{
 		return CollectionUtil.apply(step, withPortNodes, new BinaryFunction<Step, Step, XdmNode>()
 		{
@@ -207,7 +207,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseInstanceStepBindings(final XdmNode node, final Step step)
 	{
-		final Step stepWithPorts = parseWithPort(SaxonUtil.getElements(node, ELEMENTS_PORTS), step);
+		final Step stepWithPorts = parseWithPorts(SaxonUtil.getElements(node, ELEMENTS_PORTS), step);
 		final Step stepWithVariables = parseVariables(node, stepWithPorts);
 		final Step stepWithOptionValues = parseWithOptionValue(node, stepWithVariables);
 
