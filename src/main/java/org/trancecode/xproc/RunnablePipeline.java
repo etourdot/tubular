@@ -30,12 +30,13 @@ import javax.xml.transform.URIResolver;
 
 import com.google.common.collect.Lists;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -44,29 +45,32 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class RunnablePipeline
 {
+	private static final Logger LOG = LoggerFactory.getLogger(RunnablePipeline.class);
+
+	private final Processor processor;
 	private URIResolver uriResolver;
 	private OutputResolver outputResolver;
-	private final Pipeline pipeline;
-	private final XLogger log = XLoggerFactory.getXLogger(getClass());
+	private Step pipeline;
 
 
 	protected RunnablePipeline(final Pipeline pipeline)
 	{
 		assert pipeline != null;
-		this.pipeline = pipeline;
+		this.pipeline = pipeline.getUnderlyingPipeline();
+		processor = pipeline.getProcessor();
 	}
 
 
 	public PipelineResult run()
 	{
-		log.entry();
+		LOG.trace("pipeline = {}", pipeline);
 
-		final Configuration configuration = new Configuration(pipeline.getProcessor());
+		final Configuration configuration = new Configuration(processor);
 		configuration.setOutputResolver(outputResolver);
 		configuration.setUriResolver(uriResolver);
-		final Environment environment = Environment.newEnvironment(getUnderlyingPipeline(), configuration);
+		final Environment environment = Environment.newEnvironment(pipeline, configuration);
 
-		final Environment resultEnvironment = getUnderlyingPipeline().run(environment);
+		final Environment resultEnvironment = pipeline.run(environment);
 
 		return new PipelineResult(pipeline, resultEnvironment);
 	}
@@ -74,21 +78,15 @@ public class RunnablePipeline
 
 	public void withParam(final QName name, final String value)
 	{
-		log.entry(name, value);
-		getUnderlyingPipeline().withParam(name, null, value, getUnderlyingPipeline().getLocation());
+		LOG.trace("name = {} ; value = {}", name, value);
+		pipeline = pipeline.withParam(name, null, value, pipeline.getLocation());
 	}
 
 
 	public void withOption(final QName name, final String value)
 	{
-		log.entry(name, value);
-		getUnderlyingPipeline().withOptionValue(name, value);
-	}
-
-
-	protected org.trancecode.xproc.step.Pipeline getUnderlyingPipeline()
-	{
-		return pipeline.getUnderlyingPipeline();
+		LOG.trace("name = {} ; value = {}", name, value);
+		pipeline = pipeline.withOptionValue(name, value);
 	}
 
 
@@ -100,7 +98,7 @@ public class RunnablePipeline
 		{
 			try
 			{
-				final XdmNode node = getPipeline().getProcessor().newDocumentBuilder().build(binding);
+				final XdmNode node = processor.newDocumentBuilder().build(binding);
 				portBindings.add(new InlinePortBinding(node, null));
 			}
 			catch (final SaxonApiException e)
@@ -109,7 +107,7 @@ public class RunnablePipeline
 			}
 		}
 
-		getUnderlyingPipeline().setPortBindings(portName, portBindings);
+		pipeline = pipeline.setPortBindings(portName, portBindings);
 	}
 
 
@@ -131,7 +129,7 @@ public class RunnablePipeline
 	}
 
 
-	public Pipeline getPipeline()
+	public Step getPipeline()
 	{
 		return pipeline;
 	}

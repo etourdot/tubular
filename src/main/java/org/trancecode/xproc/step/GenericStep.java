@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.ObjectUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.AbstractHasLocation;
 import org.trancecode.xproc.CompoundStep;
@@ -107,12 +108,10 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	private final boolean compoundStep;
 
 
-	public static Step newStep(
-		final QName type, final String name, final Location location, final StepProcessor stepProcessor,
-		final boolean compoundStep)
+	public static GenericStep newStep(final QName type, final StepProcessor stepProcessor, final boolean compoundStep)
 	{
-		return new GenericStep(type, name, location, stepProcessor, compoundStep, EMPTY_VARIABLE_MAP,
-			EMPTY_VARIABLE_MAP, EMPTY_PORT_MAP, EMPTY_STEP_LIST);
+		return new GenericStep(type, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_MAP, EMPTY_VARIABLE_MAP,
+			EMPTY_PORT_MAP, EMPTY_STEP_LIST);
 	}
 
 
@@ -123,10 +122,7 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	{
 		super(location);
 
-		assert type != null;
 		this.type = type;
-
-		assert name != null;
 		this.name = name;
 
 		assert stepProcessor != null;
@@ -141,10 +137,24 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	}
 
 
-	GenericStep setName(final String name)
+	@Override
+	public GenericStep setName(final String name)
 	{
 		LOG.trace("{} -> {}", this.name, name);
-		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
+
+		if (ObjectUtil.equals(this.name, name))
+		{
+			return this;
+		}
+
+		GenericStep step =
+			new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
+		for (final Port port : ports.values())
+		{
+			step = step.withPort(port.setStepName(name));
+		}
+
+		return step;
 	}
 
 
@@ -158,9 +168,17 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	@Override
 	public GenericStep declareVariable(final Variable variable)
 	{
-		assert !variables.containsKey(variable.getName());
+		assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
+			+ " ; variables = " + variables;
 		return new GenericStep(type, name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
 			variables, variable.getName(), variable), parameters, ports, steps);
+	}
+
+
+	@Override
+	public Step declareVariables(final Iterable<Variable> variables)
+	{
+		return CollectionUtil.apply(this, variables, StepFunctions.declareVariable());
 	}
 
 
@@ -482,8 +500,14 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 
 
 	@Override
-	public GenericStep addSteps(final Iterable<Step> step)
+	public GenericStep addSteps(final Iterable<Step> steps)
 	{
+		if (Iterables.isEmpty(steps))
+		{
+			return this;
+		}
+
+		LOG.trace("steps = {}", steps);
 		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
 			Iterables.concat(this.steps, steps));
 	}
@@ -493,5 +517,17 @@ public final class GenericStep extends AbstractHasLocation implements Step, Comp
 	public Iterable<Step> getSteps()
 	{
 		return steps;
+	}
+
+
+	@Override
+	public Step setLocation(final Location location)
+	{
+		if (ObjectUtil.equals(this.location, location))
+		{
+			return this;
+		}
+
+		return new GenericStep(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
 	}
 }

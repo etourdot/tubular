@@ -21,9 +21,12 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.io.UriUtil;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
+import org.trancecode.xproc.XProcSteps;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +37,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
+
+import com.google.common.collect.ImmutableList;
 
 import net.sf.saxon.s9api.XdmNode;
 
@@ -52,7 +57,17 @@ public class XslFormatter extends AbstractStepProcessor
 {
 	public static final String DEFAULT_CONTENT_TYPE = "application/pdf";
 
+	private static final Iterable<Port> PORTS =
+		ImmutableList.of(Port.newInputPort(XProcPorts.SOURCE), Port.newParameterPort(XProcPorts.PARAMETERS), Port
+			.newOutputPort(XProcPorts.RESULT).setPrimary(false));
+
+	private static final Iterable<Variable> VARIABLES =
+		ImmutableList.of(Variable.newOption(XProcOptions.HREF).setRequired(true), Variable.newOption(
+			XProcOptions.CONTENT_TYPE).setRequired(false));
+
 	public static final XslFormatter INSTANCE = new XslFormatter();
+	public static final Step STEP =
+		GenericStep.newStep(XProcSteps.XSL_FORMATTER, INSTANCE, false).declarePorts(PORTS).declareVariables(VARIABLES);
 
 	private static final Logger LOG = LoggerFactory.getLogger(XslFormatter.class);
 

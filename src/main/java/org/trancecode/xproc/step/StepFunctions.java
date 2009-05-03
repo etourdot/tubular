@@ -17,54 +17,40 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.step;
 
-import javax.xml.transform.URIResolver;
-
-import net.sf.saxon.s9api.Processor;
+import org.trancecode.core.BinaryFunction;
+import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Pipeline
+public final class StepFunctions
 {
-	private final Processor processor;
-	private final URIResolver uriResolver;
-	private final Step pipeline;
-
-
-	protected Pipeline(final Processor processor, final URIResolver uriResolver, final Step pipeline)
+	private StepFunctions()
 	{
-		assert processor != null;
-		this.processor = processor;
-
-		assert uriResolver != null;
-		this.uriResolver = uriResolver;
-
-		assert pipeline != null;
-		this.pipeline = pipeline;
+		// No instantiation
 	}
 
 
-	public RunnablePipeline load()
+	public static BinaryFunction<Step, Step, Variable> declareVariable()
 	{
-		final RunnablePipeline pipeline = new RunnablePipeline(this);
-		pipeline.setUriResolver(uriResolver);
-
-		return pipeline;
+		return DeclareVariableBinaryFunction.INSTANCE;
 	}
 
 
-	protected Step getUnderlyingPipeline()
+	private static class DeclareVariableBinaryFunction implements BinaryFunction<Step, Step, Variable>
 	{
-		return pipeline;
-	}
+		private static final DeclareVariableBinaryFunction INSTANCE = new DeclareVariableBinaryFunction();
 
 
-	public Processor getProcessor()
-	{
-		return processor;
+		@Override
+		public Step evaluate(final Step step, final Variable variable)
+		{
+			return step.declareVariable(variable);
+		}
 	}
 }

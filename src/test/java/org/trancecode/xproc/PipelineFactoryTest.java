@@ -19,52 +19,25 @@
  */
 package org.trancecode.xproc;
 
-import javax.xml.transform.URIResolver;
+import org.trancecode.AbstractTest;
 
-import net.sf.saxon.s9api.Processor;
+import org.junit.Assert;
+import org.junit.Test;
 
 
 /**
+ * Tests for {@link PipelineFactory}.
+ * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Pipeline
+public class PipelineFactoryTest extends AbstractTest
 {
-	private final Processor processor;
-	private final URIResolver uriResolver;
-	private final Step pipeline;
-
-
-	protected Pipeline(final Processor processor, final URIResolver uriResolver, final Step pipeline)
+	@Test
+	public void newPipelineFactory()
 	{
-		assert processor != null;
-		this.processor = processor;
-
-		assert uriResolver != null;
-		this.uriResolver = uriResolver;
-
-		assert pipeline != null;
-		this.pipeline = pipeline;
-	}
-
-
-	public RunnablePipeline load()
-	{
-		final RunnablePipeline pipeline = new RunnablePipeline(this);
-		pipeline.setUriResolver(uriResolver);
-
-		return pipeline;
-	}
-
-
-	protected Step getUnderlyingPipeline()
-	{
-		return pipeline;
-	}
-
-
-	public Processor getProcessor()
-	{
-		return processor;
+		final PipelineFactory pipelineFactory = new PipelineFactory();
+		assert pipelineFactory.getLibrary() != null;
+		Assert.assertEquals(41, pipelineFactory.getLibrary().size());
 	}
 }

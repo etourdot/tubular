@@ -33,6 +33,12 @@ import net.sf.saxon.s9api.QName;
  */
 public interface Step extends HasLocation
 {
+	Step setLocation(Location location);
+
+
+	Step setName(String name);
+
+
 	String getName();
 
 
@@ -49,6 +55,9 @@ public interface Step extends HasLocation
 
 
 	Step declareVariable(Variable variable);
+
+
+	Step declareVariables(Iterable<Variable> variables);
 
 
 	Step withOption(QName name, String select);

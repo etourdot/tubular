@@ -19,12 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.Variable;
+import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.parser.StepFactory;
+import org.trancecode.xproc.XProcUtil;
 
 import com.google.common.collect.Iterables;
 
@@ -35,66 +34,45 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Pipeline extends AbstractCompoundStep
+public class Pipeline extends AbstractCompoundStepProcessor
 {
-	private final QName type;
+	public static final StepProcessor INSTANCE = new Pipeline();
 
 
-	public Pipeline(final String name, final Location location, final QName type)
+	public static Step newPipeline(final QName type)
 	{
-		super(name, location);
-
-		this.type = type;
+		return GenericStep.newStep(type, INSTANCE, true);
 	}
 
 
-	protected Pipeline clonePipeline()
+	public static Step addImplicitPorts(final Step pipeline)
 	{
-		final Pipeline pipeline = new Pipeline(name, location, type);
+		assert XProcUtil.isPipeline(pipeline);
 
-		for (final Variable variable : variables.values())
+		return addImplicitInputPort(addImplicitOutputPort(pipeline));
+	}
+
+
+	private static Step addImplicitInputPort(final Step pipeline)
+	{
+		if (Iterables.isEmpty(pipeline.getInputPorts()))
 		{
-			pipeline.declareVariable(variable);
-		}
-
-		for (final Port port : ports.values())
-		{
-			pipeline.declarePort(port);
-		}
-
-		// TODO parameters?
-
-		for (final Step step : getSteps())
-		{
-			pipeline.addStep(step);
+			return pipeline.declarePort(Port
+				.newInputPort(pipeline.getName(), XProcPorts.SOURCE, pipeline.getLocation()));
 		}
 
 		return pipeline;
 	}
 
 
-	public StepFactory getFactory()
+	private static Step addImplicitOutputPort(final Step pipeline)
 	{
-		return new InvokeStep.Factory(this);
-	}
-
-
-	public QName getType()
-	{
-		return type;
-	}
-
-
-	public void addImplicitPorts()
-	{
-		if (Iterables.isEmpty(getInputPorts()))
+		if (Iterables.isEmpty(pipeline.getOutputPorts()))
 		{
-			addPort(Port.newInputPort(name, XProcPorts.SOURCE, location));
+			return pipeline.declarePort(Port.newOutputPort(pipeline.getName(), XProcPorts.RESULT, pipeline
+				.getLocation()));
 		}
 
-		if (Iterables.isEmpty(getOutputPorts()))
-		{
-			addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
-		}
+		return pipeline;
 	}
 }

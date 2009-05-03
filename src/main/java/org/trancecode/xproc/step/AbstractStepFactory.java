@@ -73,7 +73,8 @@ public abstract class AbstractStepFactory implements StepFactory
 	@Override
 	public final Step newStep(final String name, final Location location)
 	{
-		final Step declaredStep = GenericStep.newStep(stepType, name, location, stepProcessor, isCompoundStep);
+		final Step declaredStep =
+			GenericStep.newStep(stepType, stepProcessor, isCompoundStep).setName(name).setLocation(location);
 
 		final Step stepWithDeclaredPorts =
 			CollectionUtil.apply(declaredStep, declaredPorts, new BinaryFunction<Step, Step, Port>()

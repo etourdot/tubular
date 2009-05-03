@@ -94,7 +94,7 @@
       <p:input port="source"/>
       <p:output port="result"/>
       <p:option name="attribute" select="'xml:id'"/>
-      <p:option name="label" select="'concat(&quot;_&quot;,$p:index)'"/>
+      <p:option name="label" select="'concat(&#34;_&#34;,$p:index)'"/>
       <p:option name="match" select="'*'"/>
       <p:option name="replace" select="'true'"/>
    </p:declare-step>

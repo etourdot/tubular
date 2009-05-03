@@ -25,7 +25,6 @@ import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.binding.PipePortBinding;
-import org.trancecode.xproc.parser.StepFactory;
 
 import java.util.Collections;
 
@@ -39,26 +38,6 @@ import net.sf.saxon.s9api.QName;
 public class InvokeStep extends AbstractCompoundStep
 {
 	private final Step step;
-
-
-	public static class Factory implements StepFactory
-	{
-		private final Pipeline step;
-
-
-		public Factory(final Pipeline step)
-		{
-			assert step != null;
-			this.step = step;
-		}
-
-
-		@Override
-		public Step newStep(final String name, final Location location)
-		{
-			return new InvokeStep(name, location, step.clonePipeline());
-		}
-	}
 
 
 	private InvokeStep(final String name, final Location location, final Step step)

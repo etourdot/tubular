@@ -485,4 +485,25 @@ public abstract class AbstractStep extends AbstractHasLocation implements Step
 	{
 		return false;
 	}
+
+
+	@Override
+	public Step setLocation(final Location location)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public Step setName(final String name)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public Step declareVariables(final Iterable<Variable> variables)
+	{
+		throw new UnsupportedOperationException();
+	}
 }

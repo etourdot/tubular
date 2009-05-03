@@ -32,11 +32,11 @@ import net.sf.saxon.s9api.XdmNode;
  */
 public class PipelineResult
 {
-	private final Pipeline pipeline;
+	private final Step pipeline;
 	private final Environment resultEnvironment;
 
 
-	protected PipelineResult(final Pipeline pipeline, final Environment resultEnvironment)
+	protected PipelineResult(final Step pipeline, final Environment resultEnvironment)
 	{
 		assert pipeline != null;
 		this.pipeline = pipeline;
@@ -46,7 +46,7 @@ public class PipelineResult
 	}
 
 
-	public Pipeline getPipeline()
+	public Step getPipeline()
 	{
 		return pipeline;
 	}
@@ -61,7 +61,7 @@ public class PipelineResult
 
 	public Iterable<XdmNode> readNodes(final String portName)
 	{
-		final Port declaredPort = pipeline.getUnderlyingPipeline().getPort(portName);
+		final Port declaredPort = pipeline.getPort(portName);
 		final EnvironmentPort environmentPort = resultEnvironment.getEnvironmentPort(declaredPort);
 		return environmentPort.readNodes();
 	}

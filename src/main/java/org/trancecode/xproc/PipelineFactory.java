@@ -19,23 +19,19 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.parser.StepFactory;
-import org.trancecode.xproc.step.Choose;
-import org.trancecode.xproc.step.CountStepFactory;
-import org.trancecode.xproc.step.ForEach;
-import org.trancecode.xproc.step.IdentityStepFactory;
-import org.trancecode.xproc.step.LoadStepFactory;
-import org.trancecode.xproc.step.Otherwise;
-import org.trancecode.xproc.step.StoreStepFactory;
-import org.trancecode.xproc.step.When;
-import org.trancecode.xproc.step.XsltStepFactory;
+import org.trancecode.xproc.step.CountStepProcessor;
+import org.trancecode.xproc.step.IdentityStepProcessor;
+import org.trancecode.xproc.step.LoadStepProcessor;
+import org.trancecode.xproc.step.StoreStepProcessor;
+import org.trancecode.xproc.step.XsltStepProcessor;
 
 import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -43,8 +39,8 @@ import com.google.common.collect.Maps;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -53,17 +49,32 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class PipelineFactory
 {
-	public static final Map<QName, StepFactory> DEFAULT_LIBRARY = newDefaultLibrary();
+	private static final Logger LOG = LoggerFactory.getLogger(PipelineFactory.class);
 
-	private final XLogger log = XLoggerFactory.getXLogger(getClass());
+	private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
+
+	private static StepProcessor UNSUPPORTED_STEP_PROCESSOR = new StepProcessor()
+	{
+		@Override
+		public Environment run(final Step step, final Environment environment)
+		{
+			throw new UnsupportedOperationException(step.getType().toString());
+		}
+	};
+
+	private static final Map<QName, Step> CORE_LIBRARY = getCoreLibrary();
+	private static final Map<QName, Step> DEFAULT_LIBRARY = getDefaultLibrary();
+	private static final Map<QName, StepProcessor> DEFAULT_PROCESSORS = getDefaultProcessors();
+
 	private Processor processor = new Processor(false);
 	private URIResolver uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
-	private Map<QName, StepFactory> library = getDefaultLibrary();
+	private Map<QName, Step> library = getDefaultLibrary();
 
 
 	public Pipeline newPipeline(final Source source)
 	{
-		log.entry(source);
+		LOG.trace("source = {}", source);
+
 		assert source != null;
 
 		if (processor == null)
@@ -72,9 +83,9 @@ public class PipelineFactory
 		}
 
 		// TODO
-		final PipelineParser parser = new PipelineParser(this, source, getLibrary());
+		final PipelineParser parser = new PipelineParser(processor, source, getLibrary(), getStepProcessors());
 		parser.parse();
-		final org.trancecode.xproc.step.Pipeline pipeline = parser.getPipeline();
+		final Step pipeline = parser.getPipeline();
 		if (pipeline == null)
 		{
 			throw new PipelineException("no pipeline could be parsed from %s", source.getSystemId());
@@ -87,111 +98,110 @@ public class PipelineFactory
 
 	public Map<QName, StepFactory> newPipelineLibrary(final Source source)
 	{
-		final PipelineParser parser = new PipelineParser(this, source, getLibrary());
+		final PipelineParser parser = new PipelineParser(processor, source, getLibrary(), getStepProcessors());
 		parser.parse();
 		// TODO
 		return null;
 	}
 
 
-	private static StepFactory newUnsupportedStepFactory(final QName stepType)
+	public Map<QName, StepProcessor> getStepProcessors()
 	{
-		return new StepFactory()
+		return Maps.newHashMap(getDefaultProcessors());
+	}
+
+
+	private static Map<QName, Step> getCoreLibrary()
+	{
+		final Map<QName, Step> coreSteps = Maps.newHashMap();
+		// TODO
+		if (false)
 		{
-			@Override
-			public Step newStep(final String name, final Location location)
-			{
-				throw new UnsupportedOperationException("step type = " + stepType + " ; name = " + name
-					+ " ; location = " + location);
-			}
-		};
+			coreSteps.put(XProcSteps.CHOOSE, null);
+			coreSteps.put(XProcSteps.FOR_EACH, null);
+			coreSteps.put(XProcSteps.OTHERWISE, null);
+			coreSteps.put(XProcSteps.WHEN, null);
+			coreSteps.put(XProcSteps.GROUP, null);
+			coreSteps.put(XProcSteps.TRY, null);
+		}
+		return ImmutableMap.copyOf(coreSteps);
 	}
 
 
-	private static void addUnsupportedStepFactory(final QName stepType, final Map<QName, StepFactory> library)
+	private static Map<QName, Step> getDefaultLibrary()
 	{
-		assert !library.containsKey(stepType);
-		library.put(stepType, newUnsupportedStepFactory(stepType));
+		final Source defaultLibrarySource =
+			new StreamSource(PipelineFactory.class.getResourceAsStream(RESOURCE_PATH_XPROC_LIBRARY_1_0));
+		final PipelineParser parser =
+			new PipelineParser(new Processor(false), defaultLibrarySource, CORE_LIBRARY, getDefaultProcessors());
+		parser.parse();
+
+		return parser.getLibrary();
 	}
 
 
-	public static Map<QName, StepFactory> getDefaultLibrary()
+	private static Map<QName, StepProcessor> getDefaultProcessors()
 	{
-		return DEFAULT_LIBRARY;
-	}
-
-
-	private static Map<QName, StepFactory> newDefaultLibrary()
-	{
-		final Map<QName, StepFactory> library = Maps.newHashMap();
-
-		// Core steps
-		library.put(XProcSteps.CHOOSE, Choose.FACTORY);
-		library.put(XProcSteps.FOR_EACH, ForEach.FACTORY);
-		library.put(XProcSteps.OTHERWISE, Otherwise.FACTORY);
-		library.put(XProcSteps.WHEN, When.FACTORY);
+		final Map<QName, StepProcessor> processors = Maps.newHashMap();
 
 		// Required steps
-		library.put(XProcSteps.COUNT, CountStepFactory.INSTANCE);
-		library.put(XProcSteps.IDENTITY, IdentityStepFactory.INSTANCE);
-		library.put(XProcSteps.LOAD, LoadStepFactory.INSTANCE);
-		library.put(XProcSteps.STORE, StoreStepFactory.INSTANCE);
-		library.put(XProcSteps.XSLT, XsltStepFactory.INSTANCE);
-
-		// Unsupported core steps
-		addUnsupportedStepFactory(XProcSteps.GROUP, library);
-		addUnsupportedStepFactory(XProcSteps.TRY, library);
+		// TODO
+		processors.put(XProcSteps.COUNT, CountStepProcessor.INSTANCE);
+		processors.put(XProcSteps.IDENTITY, IdentityStepProcessor.INSTANCE);
+		processors.put(XProcSteps.LOAD, LoadStepProcessor.INSTANCE);
+		processors.put(XProcSteps.STORE, StoreStepProcessor.INSTANCE);
+		processors.put(XProcSteps.XSLT, XsltStepProcessor.INSTANCE);
 
 		// Unsupported required steps
-		addUnsupportedStepFactory(XProcSteps.ADD_ATTRIBUTE, library);
-		addUnsupportedStepFactory(XProcSteps.ADD_XML_BASE, library);
-		addUnsupportedStepFactory(XProcSteps.COMPARE, library);
-		addUnsupportedStepFactory(XProcSteps.DELETE, library);
-		addUnsupportedStepFactory(XProcSteps.DIRECTORY_LIST, library);
-		addUnsupportedStepFactory(XProcSteps.ERROR, library);
-		addUnsupportedStepFactory(XProcSteps.ESCAPE_MARKUP, library);
-		addUnsupportedStepFactory(XProcSteps.FILTER, library);
-		addUnsupportedStepFactory(XProcSteps.HTTP_REQUEST, library);
-		addUnsupportedStepFactory(XProcSteps.INSERT, library);
-		addUnsupportedStepFactory(XProcSteps.LABEL_ELEMENT, library);
-		addUnsupportedStepFactory(XProcSteps.MAKE_ABSOLUTE_URIS, library);
-		addUnsupportedStepFactory(XProcSteps.NAMESPACE_RENAME, library);
-		addUnsupportedStepFactory(XProcSteps.PACK, library);
-		addUnsupportedStepFactory(XProcSteps.PARAMETERS, library);
-		addUnsupportedStepFactory(XProcSteps.RENAME, library);
-		addUnsupportedStepFactory(XProcSteps.REPLACE, library);
-		addUnsupportedStepFactory(XProcSteps.SET_ATTRIBUTES, library);
-		addUnsupportedStepFactory(XProcSteps.SINK, library);
-		addUnsupportedStepFactory(XProcSteps.SPLIT_SEQUENCE, library);
-		addUnsupportedStepFactory(XProcSteps.STRING_REPLACE, library);
-		addUnsupportedStepFactory(XProcSteps.UNESCAPE_MARKUP, library);
-		addUnsupportedStepFactory(XProcSteps.UNWRAP, library);
-		addUnsupportedStepFactory(XProcSteps.WRAP, library);
-		addUnsupportedStepFactory(XProcSteps.XINCLUDE, library);
+		processors.put(XProcSteps.ADD_ATTRIBUTE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.ADD_XML_BASE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.COMPARE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.DELETE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.DIRECTORY_LIST, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.ERROR, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.ESCAPE_MARKUP, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.FILTER, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.HTTP_REQUEST, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.INSERT, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.LABEL_ELEMENT, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.MAKE_ABSOLUTE_URIS, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.NAMESPACE_RENAME, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.PACK, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.PARAMETERS, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.RENAME, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.REPLACE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.SET_ATTRIBUTES, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.SINK, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.SPLIT_SEQUENCE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.STRING_REPLACE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.UNESCAPE_MARKUP, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.UNWRAP, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.WRAP, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.XINCLUDE, UNSUPPORTED_STEP_PROCESSOR);
 
 		// Unsupported optional steps
-		addUnsupportedStepFactory(XProcSteps.EXEC, library);
-		addUnsupportedStepFactory(XProcSteps.HASH, library);
-		addUnsupportedStepFactory(XProcSteps.UUID, library);
-		addUnsupportedStepFactory(XProcSteps.VALIDATE_WITH_RELANXNG, library);
-		addUnsupportedStepFactory(XProcSteps.VALIDATE_WITH_SCHEMATRON, library);
-		addUnsupportedStepFactory(XProcSteps.VALIDATE_WITH_SCHEMA, library);
-		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_DECODE, library);
-		addUnsupportedStepFactory(XProcSteps.WWW_FORM_URL_ENCODE, library);
-		addUnsupportedStepFactory(XProcSteps.XQUERY, library);
-		addUnsupportedStepFactory(XProcSteps.XSL_FORMATTER, library);
+		processors.put(XProcSteps.EXEC, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.HASH, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.UUID, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.VALIDATE_WITH_RELANXNG, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.VALIDATE_WITH_SCHEMATRON, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.VALIDATE_WITH_SCHEMA, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.WWW_FORM_URL_DECODE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.WWW_FORM_URL_ENCODE, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.XQUERY, UNSUPPORTED_STEP_PROCESSOR);
+		processors.put(XProcSteps.XSL_FORMATTER, UNSUPPORTED_STEP_PROCESSOR);
 
-		return ImmutableMap.copyOf(library);
+		return ImmutableMap.copyOf(processors);
 	}
 
 
-	public Map<QName, StepFactory> getLibrary()
+	public Map<QName, Step> getLibrary()
 	{
 		return library;
 	}
 
 
-	public void setLibrary(final Map<QName, StepFactory> library)
+	public void setLibrary(final Map<QName, Step> library)
 	{
 		assert library != null;
 		this.library = library;

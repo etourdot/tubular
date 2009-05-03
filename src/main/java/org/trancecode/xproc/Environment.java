@@ -22,7 +22,6 @@ package org.trancecode.xproc;
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.CollectionUtil;
 import org.trancecode.xml.SaxonUtil;
-import org.trancecode.xproc.step.Pipeline;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -84,7 +83,7 @@ public class Environment
 	private final Map<QName, String> localVariables;
 	private final Configuration configuration;
 	private final Map<PortReference, EnvironmentPort> ports;
-	private final Pipeline pipeline;
+	private final Step pipeline;
 	private final EnvironmentPort defaultParametersPort;
 	private final EnvironmentPort xpathContextPort;
 
@@ -95,7 +94,7 @@ public class Environment
 	}
 
 
-	public static Environment newEnvironment(final Pipeline pipeline, final Configuration configuration)
+	public static Environment newEnvironment(final Step pipeline, final Configuration configuration)
 	{
 		return new Environment(pipeline, configuration, EMPTY_PORTS_LIST, null, null, null, EMPTY_VARIABLES_MAP,
 			EMPTY_VARIABLES_MAP);
@@ -103,7 +102,7 @@ public class Environment
 
 
 	private Environment(
-		final Pipeline pipeline, final Configuration configuration, final Iterable<EnvironmentPort> ports,
+		final Step pipeline, final Configuration configuration, final Iterable<EnvironmentPort> ports,
 		final EnvironmentPort defaultReadablePort, final EnvironmentPort defaultParametersPort,
 		final EnvironmentPort xpathContextPort, final Map<QName, String> inheritedVariables,
 		final Map<QName, String> localVariables)
@@ -114,7 +113,7 @@ public class Environment
 
 
 	private Environment(
-		final Pipeline pipeline, final Configuration configuration, final Map<PortReference, EnvironmentPort> ports,
+		final Step pipeline, final Configuration configuration, final Map<PortReference, EnvironmentPort> ports,
 		final EnvironmentPort defaultReadablePort, final EnvironmentPort defaultParametersPort,
 		final EnvironmentPort xpathContextPort, final Map<QName, String> inheritedVariables,
 		final Map<QName, String> localVariables)
@@ -484,7 +483,7 @@ public class Environment
 	}
 
 
-	public Pipeline getPipeline()
+	public Step getPipeline()
 	{
 		return pipeline;
 	}
@@ -619,7 +618,10 @@ public class Environment
 
 	public Iterable<XdmNode> readNodes(final String stepName, final String portName)
 	{
-		return getPort(stepName, portName).readNodes();
+		LOG.trace("stepName = {} ; portName = {}", stepName, portName);
+		final Iterable<XdmNode> nodes = getPort(stepName, portName).readNodes();
+		LOG.trace("nodes = {}", nodes);
+		return nodes;
 	}
 
 
