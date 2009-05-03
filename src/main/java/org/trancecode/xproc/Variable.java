@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.core.StringUtil;
 import org.trancecode.xml.Location;
 
 import net.sf.saxon.s9api.QName;
@@ -198,7 +199,8 @@ public final class Variable extends AbstractHasLocation
 	@Override
 	public String toString()
 	{
-		return String
-			.format("%s name = %s ; select = %s ; value = %s", getClass().getSimpleName(), name, select, value);
+		return String.format(
+			"%s[%s]%s%s", type, name, StringUtil.getTag(select != null, "[select=" + select + "]", ""), StringUtil
+				.getTag(value != null, "[value=" + value + "]", ""));
 	}
 }
