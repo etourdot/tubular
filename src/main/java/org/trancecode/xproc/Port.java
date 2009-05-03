@@ -239,10 +239,9 @@ public class Port extends AbstractHasLocation
 	@Override
 	public String toString()
 	{
-		return String.format(
-			"%s[%s][%s/%s]%s%s%s", getClass().getSimpleName(), type, stepName, stepName, portName, getTag(
-				primary, "[primary]", "[not primary]"), getTag(sequence, "[sequence]", "[not sequence]"),
-			(select != null ? "[select = " + select + "]" : ""));
+		return String.format("%s[%s][%s/%s]%s%s%s", getClass().getSimpleName(), type, stepName, portName, getTag(
+			primary, "[primary]", "[not primary]"), getTag(sequence, "[sequence]", "[not sequence]"), (select != null
+			? "[select = " + select + "]" : ""));
 	}
 
 
