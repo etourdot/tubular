@@ -133,7 +133,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void declareStep(final Step step)
 	{
-		// TODO
+		localLibrary.put(step.getType(), step);
 	}
 
 
@@ -164,7 +164,7 @@ public class PipelineParser implements XProcXmlModel
 		step = parseDeclarePorts(stepNode, step);
 		step = parseVariables(stepNode, step);
 
-		localLibrary.put(type, step);
+		declareStep(step);
 	}
 
 
