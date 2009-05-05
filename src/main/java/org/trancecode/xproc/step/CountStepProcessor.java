@@ -20,15 +20,11 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.XProcUtil;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import org.slf4j.Logger;
@@ -41,15 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CountStepProcessor extends AbstractStepProcessor
 {
-	private static final Iterable<Port> PORTS =
-		ImmutableList.of(Port.newInputPort(XProcPorts.SOURCE).setSequence(true), Port.newOutputPort(XProcPorts.RESULT));
-
-	private static final Iterable<Variable> VARIABLES =
-		ImmutableList.of(Variable.newOption(XProcOptions.LIMIT).setSelect("0").setRequired(false));
-
 	public static final CountStepProcessor INSTANCE = new CountStepProcessor();
-	public static final Step STEP =
-		GenericStep.newStep(XProcSteps.COUNT, INSTANCE, false).declarePorts(PORTS).declareVariables(VARIABLES);
 
 	private static final Logger LOG = LoggerFactory.getLogger(CountStepProcessor.class);
 
