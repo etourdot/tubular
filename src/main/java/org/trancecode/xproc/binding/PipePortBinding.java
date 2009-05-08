@@ -45,6 +45,12 @@ public class PipePortBinding extends AbstractPortBinding implements PortBinding
 	private final PortReference portReference;
 
 
+	public PipePortBinding(final String stepName, final String portName, final Location location)
+	{
+		this(new PortReference(stepName, portName), location);
+	}
+
+
 	public PipePortBinding(final PortReference portReference, final Location location)
 	{
 		super(location);
