@@ -20,6 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.xml.Location;
+import org.trancecode.xproc.binding.PipePortBinding;
 
 import java.util.List;
 
@@ -304,5 +305,17 @@ public class Port extends AbstractHasLocation
 	public Port setPortBindings(final Iterable<PortBinding> portBindings)
 	{
 		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+	}
+
+
+	public Port pipe(final String stepName, final String portName, final Location location)
+	{
+		return setPortBindings(new PipePortBinding(stepName, portName, location));
+	}
+
+
+	public Port pipe(final Port port)
+	{
+		return pipe(port.getStepName(), port.getPortName(), port.getLocation());
 	}
 }
