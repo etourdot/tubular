@@ -45,6 +45,7 @@ public interface XProcSteps extends XProcNamespaces
 	QName WHEN = XPROC.newSaxonQName("when");
 
 	Set<QName> CORE_STEPS = ImmutableSet.of(CHOOSE, FOR_EACH, GROUP, OTHERWISE, PIPELINE, TRY, WHEN);
+	Set<QName> WHEN_STEPS = ImmutableSet.of(OTHERWISE, WHEN);
 
 	// Required steps
 	QName ADD_ATTRIBUTE = XPROC.newSaxonQName("add-attribute");

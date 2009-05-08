@@ -418,6 +418,12 @@ public class Environment
 	}
 
 
+	public Environment setDefaultReadablePort(final String stepName, final String portName)
+	{
+		return setDefaultReadablePort(getPort(stepName, portName));
+	}
+
+
 	public Map<PortReference, EnvironmentPort> getPorts()
 	{
 		return ports;

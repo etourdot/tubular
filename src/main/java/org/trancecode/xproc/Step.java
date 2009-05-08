@@ -20,109 +20,474 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.ObjectUtil;
 import org.trancecode.xml.Location;
+import org.trancecode.xproc.step.StepFunctions;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+
 import net.sf.saxon.s9api.QName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public interface Step extends HasLocation
+public final class Step extends AbstractHasLocation
 {
-	Step setLocation(Location location);
+	private static final Logger LOG = LoggerFactory.getLogger(Step.class);
+	private static final Map<QName, Variable> EMPTY_VARIABLE_MAP = Collections.emptyMap();
+	private static final Map<String, Port> EMPTY_PORT_MAP = Collections.emptyMap();
+	private static final List<Step> EMPTY_STEP_LIST = Collections.emptyList();
+
+	private static final Predicate<Port> PREDICATE_IS_INPUT_PORT = new Predicate<Port>()
+	{
+
+		public boolean apply(final Port port)
+		{
+			return port.isInput();
+		}
+	};
+
+	private static final Predicate<Port> PREDICATE_IS_OUTPUT_PORT = new Predicate<Port>()
+	{
+
+		public boolean apply(final Port port)
+		{
+			return port.isOutput();
+		}
+	};
+
+	private static final Predicate<Port> PREDICATE_IS_PARAMETER_PORT = new Predicate<Port>()
+	{
+
+		public boolean apply(final Port port)
+		{
+			return port.isParameter();
+		}
+	};
+
+	private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
+	{
+
+		public boolean apply(final Port port)
+		{
+			return isXPathContextPort(port);
+		}
+	};
+
+	private final Map<QName, Variable> parameters;
+	private final Map<QName, Variable> variables;
+
+	private final Map<String, Port> ports;
+
+	private final QName type;
+	private final String name;
+	private final StepProcessor stepProcessor;
+	private final List<Step> steps;
+	private final boolean compoundStep;
 
 
-	Step setName(String name);
+	public static Step newStep(final QName type, final StepProcessor stepProcessor, final boolean compoundStep)
+	{
+		return new Step(type, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_MAP, EMPTY_VARIABLE_MAP,
+			EMPTY_PORT_MAP, EMPTY_STEP_LIST);
+	}
 
 
-	String getName();
+	private Step(
+		final QName type, final String name, final Location location, final StepProcessor stepProcessor,
+		final boolean compoundStep, final Map<QName, Variable> variables, final Map<QName, Variable> parameters,
+		final Map<String, Port> ports, final Iterable<Step> steps)
+	{
+		super(location);
+
+		this.type = type;
+		this.name = name;
+
+		assert stepProcessor != null;
+		this.stepProcessor = stepProcessor;
+
+		this.compoundStep = compoundStep;
+
+		this.variables = ImmutableMap.copyOf(variables);
+		this.parameters = ImmutableMap.copyOf(parameters);
+		this.ports = ImmutableMap.copyOf(ports);
+		this.steps = ImmutableList.copyOf(steps);
+	}
 
 
-	QName getType();
+	public Step setName(final String name)
+	{
+		LOG.trace("{} -> {}", this.name, name);
+
+		if (ObjectUtil.equals(this.name, name))
+		{
+			return this;
+		}
+
+		Step step = new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
+		for (final Port port : ports.values())
+		{
+			step = step.withPort(port.setStepName(name));
+		}
+
+		return step;
+	}
 
 
-	Step declarePort(Port port);
+	public boolean isCompoundStep()
+	{
+		return compoundStep;
+	}
 
 
-	Step declarePorts(Iterable<Port> ports);
+	public Step declareVariable(final Variable variable)
+	{
+		assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
+			+ " ; variables = " + variables;
+		return new Step(type, name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
+			variables, variable.getName(), variable), parameters, ports, steps);
+	}
 
 
-	boolean hasOptionDeclared(QName name);
+	public Step declareVariables(final Iterable<Variable> variables)
+	{
+		return CollectionUtil.apply(this, variables, StepFunctions.declareVariable());
+	}
 
 
-	Step declareVariable(Variable variable);
+	public String getName()
+	{
+		return name;
+	}
 
 
-	Step declareVariables(Iterable<Variable> variables);
+	public final Step declarePort(final Port port)
+	{
+		LOG.trace("port = {}", port);
+
+		return declarePorts(Collections.singleton(port));
+	}
 
 
-	Step withOption(QName name, String select);
+	public final Step declarePorts(final Iterable<Port> ports)
+	{
+		LOG.trace("ports = {}", ports);
+
+		final Map<String, Port> newPorts = Maps.newHashMap(this.ports);
+		newPorts.putAll(Maps.uniqueIndex(ports, Port.GET_PORT_NAME_FUNCTION));
+
+		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, newPorts, steps);
+	}
 
 
-	Step withOptionValue(QName name, String value);
+	public Port getPort(final String name)
+	{
+		assert ports.containsKey(name) : "step = " + getName() + " ; port = " + name + " ; ports = " + ports.keySet();
+		return ports.get(name);
+	}
 
 
-	Step withParam(QName name, String select, String value, Location location);
+	public Map<String, Port> getPorts()
+	{
+		return ports;
+	}
 
 
-	Environment run(Environment environment);
+	private boolean isXPathContextPort(final Port port)
+	{
+		if (port.isInput())
+		{
+			if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT))
+			{
+				return true;
+			}
+
+			if (isPrimary(port))
+			{
+				return !ports.containsKey(XProcPorts.XPATH_CONTEXT);
+			}
+		}
+
+		return false;
+	}
 
 
-	Port getPort(String name);
-
-
-	Map<String, Port> getPorts();
-
-
-	Step setPortBindings(String portName, PortBinding... portBindings);
-
-
-	Step setPortBindings(String portName, Iterable<PortBinding> portBindings);
-
-
-	Step withPort(Port port);
-
-
-	Iterable<Port> getInputPorts();
-
-
-	Iterable<Port> getParameterPorts();
-
-
-	Iterable<Port> getOutputPorts();
+	public Environment run(final Environment environment)
+	{
+		LOG.trace("name = {} ; type = {}", name, type);
+		return stepProcessor.run(this, environment);
+	}
 
 
 	@ReturnsNullable
-	Port getXPathContextPort();
+	public Port getPrimaryInputPort()
+	{
+		final List<Port> inputPorts = ImmutableList.copyOf(getInputPorts());
+		LOG.trace("inputPorts = {}", inputPorts);
+		if (inputPorts.size() == 1)
+		{
+			final Port inputPort = Iterables.getOnlyElement(inputPorts);
+			if (!inputPort.isNotPrimary())
+			{
+				return inputPort;
+			}
+		}
+
+		for (final Port inputPort : inputPorts)
+		{
+			if (inputPort.isPrimary())
+			{
+				return inputPort;
+			}
+		}
+
+		return null;
+	}
 
 
 	@ReturnsNullable
-	Port getPrimaryInputPort();
+	public Port getPrimaryParameterPort()
+	{
+		final List<Port> parameterPorts = ImmutableList.copyOf(getParameterPorts());
+		LOG.trace("parameterPorts = {}", parameterPorts);
+		if (parameterPorts.size() == 1)
+		{
+			final Port parameterPort = Iterables.getOnlyElement(parameterPorts);
+			if (!parameterPort.isNotPrimary())
+			{
+				return parameterPort;
+			}
+		}
+
+		for (final Port parameterPort : parameterPorts)
+		{
+			if (parameterPort.isPrimary())
+			{
+				return parameterPort;
+			}
+		}
+
+		return null;
+	}
 
 
 	@ReturnsNullable
-	Port getPrimaryOutputPort();
+	public Port getPrimaryOutputPort()
+	{
+		final List<Port> outputPorts = ImmutableList.copyOf(getOutputPorts());
+		LOG.trace("outputPorts = {}", outputPorts);
+		if (outputPorts.size() == 1)
+		{
+			final Port outputPort = Iterables.getOnlyElement(outputPorts);
+			if (!outputPort.isNotPrimary())
+			{
+				return outputPort;
+			}
+		}
+
+		for (final Port outputPort : outputPorts)
+		{
+			if (outputPort.isPrimary())
+			{
+				return outputPort;
+			}
+		}
+
+		return null;
+	}
+
+
+	private boolean isPrimary(final Port port)
+	{
+		if (port.isParameter())
+		{
+			return isPrimary(port, getParameterPorts());
+		}
+
+		if (port.isInput())
+		{
+			return isPrimary(port, getInputPorts());
+		}
+
+		assert port.isOutput();
+		return isPrimary(port, getOutputPorts());
+	}
+
+
+	private static boolean isPrimary(final Port port, final Iterable<Port> ports)
+	{
+		assert port != null;
+
+		if (port.isNotPrimary())
+		{
+			return false;
+		}
+
+		if (port.isPrimary())
+		{
+			return true;
+		}
+
+		if (Iterables.size(ports) == 1)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+
+	public Iterable<Port> getInputPorts()
+	{
+		return Iterables.filter(ports.values(), PREDICATE_IS_INPUT_PORT);
+	}
+
+
+	public Iterable<Port> getOutputPorts()
+	{
+		return Iterables.filter(ports.values(), PREDICATE_IS_OUTPUT_PORT);
+	}
+
+
+	public Iterable<Port> getParameterPorts()
+	{
+		return Iterables.filter(ports.values(), PREDICATE_IS_PARAMETER_PORT);
+	}
+
+
+	public Step withOption(final QName name, final String select)
+	{
+		assert variables.containsKey(name);
+		final Variable variable = variables.get(name);
+		assert variable != null;
+		assert variable.isOption();
+
+		return new Step(type, this.name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
+			variables, variable.getName(), variable.setSelect(select)), parameters, ports, steps);
+	}
+
+
+	public Step withParam(final QName name, final String select, final String value, final Location location)
+	{
+		assert !parameters.containsKey(name);
+
+		return new Step(type, this.name, location, stepProcessor, compoundStep, variables, CollectionUtil.copyAndPut(
+			parameters, name, Variable.newParameter(name, location).setSelect(select).setValue(value)), ports, steps);
+	}
+
+
+	public Step withOptionValue(final QName name, final String value)
+	{
+		assert variables.containsKey(name);
+		final Variable variable = variables.get(name);
+		assert variable != null;
+		assert variable.isOption();
+
+		return new Step(type, this.name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
+			variables, variable.getName(), variable.setValue(value)), parameters, ports, steps);
+	}
+
+
+	public boolean hasOptionDeclared(final QName name)
+	{
+		return variables.containsKey(name);
+	}
+
+
+	@Override
+	public String toString()
+	{
+		return String.format("%s ; name = %s ; ports = %s ; variables = %s", type, name, ports, variables);
+	}
+
+
+	public Step setPortBindings(final String portName, final PortBinding... portBindings)
+	{
+		return withPort(getPort(portName).setPortBindings(portBindings));
+	}
+
+
+	public Step setPortBindings(final String portName, final Iterable<PortBinding> portBindings)
+	{
+		return withPort(getPort(portName).setPortBindings(portBindings));
+	}
+
+
+	public Step withPort(final Port port)
+	{
+		assert ports.containsKey(port.getPortName());
+
+		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, CollectionUtil
+			.copyAndPut(ports, port.getPortName(), port), steps);
+	}
 
 
 	@ReturnsNullable
-	Port getPrimaryParameterPort();
+	public Port getXPathContextPort()
+	{
+		return Iterables.getOnlyElement(Iterables.filter(getInputPorts(), PREDICATE_IS_XPATH_CONTEXT_PORT), null);
+	}
 
 
-	Iterable<Variable> getVariables();
+	public Iterable<Variable> getVariables()
+	{
+		return variables.values();
+	}
 
 
-	boolean isCompoundStep();
+	public QName getType()
+	{
+		return type;
+	}
 
 
-	Iterable<Step> getSteps();
+	public Step setSteps(final Iterable<Step> steps)
+	{
+		assert steps != null;
+		if (ObjectUtil.equals(this.steps, steps))
+		{
+			return this;
+		}
+
+		LOG.trace("steps = {}", steps);
+		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
+	}
 
 
-	Step addStep(Step step);
+	public Iterable<Step> getSteps()
+	{
+		return steps;
+	}
 
 
-	Step addSteps(Iterable<Step> steps);
+	public Step setLocation(final Location location)
+	{
+		if (ObjectUtil.equals(this.location, location))
+		{
+			return this;
+		}
+
+		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
+	}
+
+
+	public Variable getVariable(final QName name)
+	{
+		assert variables.containsKey(name);
+		return variables.get(name);
+	}
 }

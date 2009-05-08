@@ -37,7 +37,6 @@ import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
-import org.trancecode.xproc.step.GenericStep;
 import org.trancecode.xproc.step.Pipeline;
 
 import java.util.ArrayList;
@@ -160,7 +159,7 @@ public class PipelineParser implements XProcXmlModel
 		final QName type = SaxonUtil.getAttributeAsQName(stepNode, ATTRIBUTE_TYPE);
 		LOG.trace("new step type: {}", type);
 
-		Step step = GenericStep.newStep(type, stepProcessors.get(type), false);
+		Step step = Step.newStep(type, stepProcessors.get(type), false);
 		step = parseDeclarePorts(stepNode, step);
 		step = parseVariables(stepNode, step);
 
@@ -551,7 +550,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseSteps(final XdmNode node, final Step compoundStep)
 	{
-		return compoundStep.addSteps(parseInnerSteps(node));
+		return compoundStep.setSteps(parseInnerSteps(node));
 	}
 
 

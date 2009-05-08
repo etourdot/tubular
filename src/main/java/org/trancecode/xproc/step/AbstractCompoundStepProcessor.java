@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.StepProcessor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class AbstractCompoundStepProcessor extends AbstractStepProcessor
+public class AbstractCompoundStepProcessor implements StepProcessor
 {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractCompoundStepProcessor.class);
 
@@ -39,33 +40,22 @@ public class AbstractCompoundStepProcessor extends AbstractStepProcessor
 	public Environment run(final Step step, final Environment environment)
 	{
 		LOG.trace("step = {}", step.getName());
+		assert step.isCompoundStep();
 
-		try
-		{
-			final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-			final Environment resultEnvironment = doRun(step, stepEnvironment);
+		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+		final Environment resultEnvironment = runSteps(step.getSteps(), stepEnvironment);
 
-			return stepEnvironment.setupOutputPorts(step, resultEnvironment);
-		}
-		catch (final Exception e)
-		{
-			// TODO handle exception
-			throw new IllegalStateException(e);
-		}
+		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
 	}
 
 
-	@Override
-	protected Environment doRun(final Step step, final Environment environment)
+	protected Environment runSteps(final Iterable<Step> steps, final Environment environment)
 	{
-		LOG.trace("step = {}", step.getName());
-		LOG.trace("steps = {}", step.getSteps());
-
-		assert step.isCompoundStep();
+		LOG.trace("steps = {}", steps);
 
 		Environment currentEnvironment = environment.newChildStepEnvironment();
 
-		for (final Step childStep : step.getSteps())
+		for (final Step childStep : steps)
 		{
 			currentEnvironment = childStep.run(currentEnvironment);
 		}

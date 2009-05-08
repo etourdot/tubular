@@ -19,7 +19,6 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
@@ -27,74 +26,67 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.binding.InlinePortBinding;
-import org.trancecode.xproc.parser.StepFactory;
 
 import java.util.List;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class ForEach extends AbstractCompoundStep
+public class ForEach extends AbstractCompoundStepProcessor
 {
-	public static StepFactory FACTORY = new StepFactory()
+	public static final ForEach INSTANCE = new ForEach();
+
+	private static final Logger LOG = LoggerFactory.getLogger(ForEach.class);
+
+
+	private ForEach()
 	{
-		public Step newStep(final String name, final Location location)
-		{
-			return new ForEach(name, location);
-		}
-	};
-
-
-	private ForEach(final String name, final Location location)
-	{
-		super(name, location);
-
-		addPort(Port.newInputPort(name, XProcPorts.ITERATION_SOURCE, location).setSequence(true));
-		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location).setSequence(true));
+		// single instance
 	}
 
 
-	public QName getType()
+	private Port newIterationPort(final Step step, final XdmNode node)
 	{
-		return XProcSteps.FOR_EACH;
-	}
-
-
-	private Port newIterationPort(final XdmNode node)
-	{
-		return Port.newInputPort(name, XProcPorts.ITERATION_NODE, getLocation()).setPrimary(false).setSequence(false)
-			.setPortBindings(new InlinePortBinding(node, getLocation()));
+		return Port.newInputPort(step.getName(), XProcPorts.ITERATION_NODE, step.getLocation()).setPrimary(false)
+			.setSequence(false).setPortBindings(new InlinePortBinding(node, step.getLocation()));
 	}
 
 
 	@Override
-	public Environment doRun(final Environment environment)
+	public Environment run(final Step step, final Environment environment)
 	{
-		log.entry();
+		LOG.trace("step = {}", step.getName());
+		assert step.getType().equals(XProcSteps.FOR_EACH);
 
 		final List<XdmNode> nodes = Lists.newArrayList();
-		for (final XdmNode node : readNodes(XProcPorts.ITERATION_SOURCE, environment))
+
+		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+
+		for (final XdmNode node : stepEnvironment.readNodes(step.getName(), XProcPorts.ITERATION_SOURCE))
 		{
-			log.trace("new iteration: {}", node);
-			final Port iterationPort = newIterationPort(node);
+			LOG.trace("new iteration: {}", node);
+			final Port iterationPort = newIterationPort(step, node);
 			final Environment iterationEnvironment =
 				environment.newChildStepEnvironment().addPorts(
-					EnvironmentPort.newEnvironmentPort(iterationPort, environment));
-			final EnvironmentPort environmentPort = iterationEnvironment.getEnvironmentPort(iterationPort);
-			iterationEnvironment.setDefaultReadablePort(environmentPort);
+					EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
+					step.getName(), XProcPorts.ITERATION_SOURCE);
 
-			final Environment resultEnvironment = runSteps(steps, iterationEnvironment);
+			final Environment resultEnvironment = runSteps(step.getSteps(), iterationEnvironment);
 			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
 		}
 
-		return environment.writeNodes(getName(), XProcPorts.RESULT, nodes);
+		final Environment resultEnvironment = environment.writeNodes(step.getName(), XProcPorts.RESULT, nodes);
+
+		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
 	}
 }

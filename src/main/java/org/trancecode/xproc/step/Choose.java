@@ -19,74 +19,53 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
-import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.parser.StepFactory;
 
-import net.sf.saxon.s9api.QName;
+import java.util.Collections;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Choose extends AbstractCompoundStep
+public class Choose extends AbstractCompoundStepProcessor
 {
-	public static StepFactory FACTORY = new StepFactory()
+	public static final Choose INSTANCE = new Choose();
+
+	private static final Logger LOG = LoggerFactory.getLogger(Choose.class);
+
+
+	private Choose()
 	{
-		public Step newStep(final String name, final Location location)
-		{
-			return new Choose(name, location);
-		}
-	};
-
-
-	private Choose(final String name, final Location location)
-	{
-		super(name, location);
-
-		addPort(Port.newInputPort(name, XProcPorts.SOURCE, location).setPrimary(true).setSequence(true));
-		addPort(Port.newInputPort(name, XProcPorts.XPATH_CONTEXT, location));
-		addPort(Port.newOutputPort(name, XProcPorts.RESULT, location));
+		// single instance
 	}
 
 
 	@Override
-	public Step addStep(final Step step)
+	public Environment run(final Step step, final Environment environment)
 	{
-		if (!(step instanceof When))
+		LOG.trace("step = {}", step.getName());
+		assert step.getType().equals(XProcSteps.CHOOSE);
+		assert step.isCompoundStep();
+
+		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+		for (final Step whenStep : step.getSteps())
 		{
-			throw new IllegalArgumentException(step.getClass().getName());
-		}
+			assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
+			final Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);
 
-		return super.addStep(step);
-	}
-
-
-	@Override
-	protected Environment doRun(final Environment environment)
-	{
-		for (final Step step : steps)
-		{
-			final When when = (When)step;
-			if (when.test(environment))
+			if (resultEnvironment != null)
 			{
-				return environment.setupOutputPorts(this, when.run(environment));
+				return stepEnvironment.setupOutputPorts(step, resultEnvironment);
 			}
 		}
 
-		throw XProcExceptions.xd0004(getLocation());
-	}
-
-
-	@Override
-	public QName getType()
-	{
-		return XProcSteps.CHOOSE;
+		throw XProcExceptions.xd0004(step.getLocation());
 	}
 }

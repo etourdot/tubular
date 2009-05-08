@@ -19,82 +19,128 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.Location;
+import org.trancecode.core.BinaryFunction;
+import org.trancecode.core.CollectionUtil;
+import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.StepProcessor;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.binding.PipePortBinding;
 
 import java.util.Collections;
 
-import net.sf.saxon.s9api.QName;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class InvokeStep extends AbstractCompoundStep
+public class InvokeStep implements StepProcessor
 {
-	private final Step step;
+	public static final InvokeStep INSTANCE = new InvokeStep();
+
+	private static final Logger LOG = LoggerFactory.getLogger(InvokeStep.class);
 
 
-	private InvokeStep(final String name, final Location location, final Step step)
+	private InvokeStep()
 	{
-		super(name, location);
+		// single instance
+	}
 
-		assert step != null;
-		this.step = step;
 
-		for (final Port port : step.getPorts().values())
-		{
-			final Iterable<PortBinding> portBindings;
-			if (port.getPortBindings().isEmpty() && (port.isInput() || port.isParameter()))
+	public static Step newInvokeStep(final Step invokedStep)
+	{
+		assert invokedStep != null;
+
+		Step invokeStep = Step.newStep(invokedStep.getType(), INSTANCE, true).setSteps(ImmutableList.of(invokedStep));
+
+		// declare ports from invoked step
+		invokeStep =
+			CollectionUtil.apply(invokeStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
 			{
-				final PortReference localPortReference = new PortReference(name, port.getPortName());
-				log.trace("{} -> {}", localPortReference, port.getPortReference());
-				portBindings = Collections.singleton((PortBinding)new PipePortBinding(localPortReference, location));
-			}
-			else
+				@Override
+				public Step evaluate(final Step step, final Port port)
+				{
+					if (port.isOutput())
+					{
+						return step.declarePort(port.pipe(port));
+					}
+
+					return step.declarePort(port);
+				}
+			});
+
+		// declare variables from invoked step
+		invokeStep =
+			CollectionUtil.apply(invokeStep, invokedStep.getVariables(), new BinaryFunction<Step, Step, Variable>()
 			{
-				portBindings = port.getPortBindings();
-			}
+				@Override
+				public Step evaluate(final Step step, final Variable variable)
+				{
+					return step.declareVariable(variable);
+				}
+			});
 
-			addPort(Port.newPort(name, port.getPortName(), location, port.getType()).setPortBindings(portBindings));
-		}
+		return invokeStep;
+	}
 
-		addStep(step);
+
+	private Step setupInvokeStep(final Step invokeStep)
+	{
+		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSteps());
+
+		return CollectionUtil.apply(
+			invokedStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
+			{
+				@Override
+				public Step evaluate(final Step step, final Port port)
+				{
+					if (port.isInput())
+					{
+						final PortReference localPortReference =
+							new PortReference(invokedStep.getName(), port.getPortName());
+						LOG.trace("{} -> {}", localPortReference, port.getPortReference());
+						final Iterable<PortBinding> portBindings =
+							Collections.singleton((PortBinding)new PipePortBinding(localPortReference, invokeStep
+								.getLocation()));
+						return step.setPortBindings(port.getPortName(), portBindings);
+					}
+					else
+					{
+						return step;
+					}
+				}
+			});
+	}
+
+
+	private Step getInvokedStep(final Step invokeStep)
+	{
+		assert invokeStep != null;
+		return Iterables.getOnlyElement(invokeStep.getSteps());
 	}
 
 
 	@Override
-	public Step withOption(final QName name, final String select)
+	public Environment run(final Step step, final Environment environment)
 	{
-		step.withOption(name, select);
-		return this;
-	}
+		LOG.trace("step = {}", step.getName());
+		assert step.isCompoundStep();
 
+		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
 
-	@Override
-	public Step withOptionValue(final QName name, final String value)
-	{
-		step.withOptionValue(name, value);
-		return this;
-	}
+		final Step invokedStep = setupInvokeStep(getInvokedStep(step));
+		final Environment invokedStepEnvironment = stepEnvironment.newChildStepEnvironment();
+		final Environment resultEnvironment = invokedStep.run(invokedStepEnvironment);
 
-
-	@Override
-	public Step withParam(final QName name, final String select, final String value, final Location location)
-	{
-		step.withParam(name, select, value, location);
-		return this;
-	}
-
-
-	@Override
-	public QName getType()
-	{
-		return step.getType();
+		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
 	}
 }

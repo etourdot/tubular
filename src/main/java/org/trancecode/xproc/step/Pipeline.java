@@ -41,7 +41,7 @@ public class Pipeline extends AbstractCompoundStepProcessor
 
 	public static Step newPipeline(final QName type)
 	{
-		return GenericStep.newStep(type, INSTANCE, true);
+		return Step.newStep(type, INSTANCE, true);
 	}
 
 
