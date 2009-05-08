@@ -69,6 +69,7 @@
   <properties>
 
     <saxon9.version>9.1.0.5</saxon9.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
   </properties>
 
