@@ -50,7 +50,8 @@ public class ForEach extends AbstractCompoundStepProcessor
 	private static final Logger LOG = LoggerFactory.getLogger(ForEach.class);
 
 	private static final Iterable<Port> PORTS =
-		ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE), Port.newOutputPort(XProcPorts.RESULT));
+		ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE).setSequence(true), Port.newOutputPort(
+			XProcPorts.RESULT).setSequence(true));
 	public static final Step STEP = Step.newStep(XProcSteps.FOR_EACH, INSTANCE, true).declarePorts(PORTS);
 
 
