@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.step.CountStepProcessor;
+import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
@@ -104,16 +105,14 @@ public class PipelineFactory
 	private static Map<QName, Step> getCoreLibrary()
 	{
 		final Map<QName, Step> coreSteps = Maps.newHashMap();
-		// TODO
-		if (false)
-		{
-			coreSteps.put(XProcSteps.CHOOSE, null);
-			coreSteps.put(XProcSteps.FOR_EACH, null);
-			coreSteps.put(XProcSteps.OTHERWISE, null);
-			coreSteps.put(XProcSteps.WHEN, null);
-			coreSteps.put(XProcSteps.GROUP, null);
-			coreSteps.put(XProcSteps.TRY, null);
-		}
+
+		// coreSteps.put(XProcSteps.CHOOSE, null);
+		coreSteps.put(XProcSteps.FOR_EACH, ForEach.STEP);
+		// coreSteps.put(XProcSteps.OTHERWISE, null);
+		// coreSteps.put(XProcSteps.WHEN, null);
+		// coreSteps.put(XProcSteps.GROUP, null);
+		// coreSteps.put(XProcSteps.TRY, null);
+
 		return ImmutableMap.copyOf(coreSteps);
 	}
 
@@ -126,7 +125,11 @@ public class PipelineFactory
 			new PipelineParser(new Processor(false), defaultLibrarySource, CORE_LIBRARY, getDefaultProcessors());
 		parser.parse();
 
-		return parser.getLibrary();
+		final Map<QName, Step> library = Maps.newHashMap();
+		library.putAll(CORE_LIBRARY);
+		library.putAll(parser.getLibrary());
+
+		return library;
 	}
 
 

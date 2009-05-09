@@ -29,6 +29,7 @@ import org.trancecode.xproc.binding.InlinePortBinding;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -47,6 +48,10 @@ public class ForEach extends AbstractCompoundStepProcessor
 	public static final ForEach INSTANCE = new ForEach();
 
 	private static final Logger LOG = LoggerFactory.getLogger(ForEach.class);
+
+	private static final Iterable<Port> PORTS =
+		ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE), Port.newOutputPort(XProcPorts.RESULT));
+	public static final Step STEP = Step.newStep(XProcSteps.FOR_EACH, INSTANCE, true).declarePorts(PORTS);
 
 
 	private ForEach()
@@ -79,14 +84,14 @@ public class ForEach extends AbstractCompoundStepProcessor
 			final Environment iterationEnvironment =
 				environment.newChildStepEnvironment().addPorts(
 					EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
-					step.getName(), XProcPorts.ITERATION_SOURCE);
+					step.getName(), XProcPorts.ITERATION_NODE);
 
 			final Environment resultEnvironment = runSteps(step.getSteps(), iterationEnvironment);
 			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
 		}
 
-		final Environment resultEnvironment = environment.writeNodes(step.getName(), XProcPorts.RESULT, nodes);
+		final Environment resultEnvironment = stepEnvironment.writeNodes(step.getName(), XProcPorts.RESULT, nodes);
 
-		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
+		return resultEnvironment.setupOutputPorts(step);
 	}
 }
