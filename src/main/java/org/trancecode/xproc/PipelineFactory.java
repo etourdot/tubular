@@ -20,7 +20,6 @@
 package org.trancecode.xproc;
 
 import org.trancecode.xproc.parser.PipelineParser;
-import org.trancecode.xproc.parser.StepFactory;
 import org.trancecode.xproc.step.CountStepProcessor;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
@@ -93,15 +92,6 @@ public class PipelineFactory
 
 		// TODO pass the parsed pipeline to the runnable pipeline
 		return new Pipeline(processor, uriResolver, pipeline);
-	}
-
-
-	public Map<QName, StepFactory> newPipelineLibrary(final Source source)
-	{
-		final PipelineParser parser = new PipelineParser(processor, source, getLibrary(), getStepProcessors());
-		parser.parse();
-		// TODO
-		return null;
 	}
 
 
