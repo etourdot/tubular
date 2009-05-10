@@ -217,8 +217,16 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseWithPort(final XdmNode portNode, final Step step)
 	{
-		final String name = getPortName(portNode);
-		final Port port = step.getPort(name);
+		final String portName;
+		if (portNode.getNodeName().equals(XProcXmlModel.ELEMENT_XPATH_CONTEXT))
+		{
+			portName = XProcPorts.XPATH_CONTEXT;
+		}
+		else
+		{
+			portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
+		}
+		final Port port = step.getPort(portName);
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
 			+ " ; with-port = " + getPortType(portNode);
 
@@ -315,7 +323,15 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseDeclarePort(final XdmNode portNode, final Step step)
 	{
-		final String portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
+		final String portName;
+		if (portNode.getNodeName().equals(XProcXmlModel.ELEMENT_XPATH_CONTEXT))
+		{
+			portName = XProcPorts.XPATH_CONTEXT;
+		}
+		else
+		{
+			portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
+		}
 		final Port.Type type = getPortType(portNode);
 
 		final Port port =
