@@ -527,22 +527,20 @@ public class Environment
 		if (xpathContextPort != null)
 		{
 			final Iterator<XdmNode> contextNodes = xpathContextPort.readNodes().iterator();
-			if (!contextNodes.hasNext())
+			if (contextNodes.hasNext())
 			{
-				return null;
-			}
+				final XdmNode contextNode = contextNodes.next();
+				if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
+				{
+					// TODO XProc error
+					assert !contextNodes.hasNext();
+				}
 
-			final XdmNode contextNode = contextNodes.next();
-			if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
-			{
-				// TODO XProc error
-				assert !contextNodes.hasNext();
+				return contextNode;
 			}
-
-			return contextNode;
 		}
 
-		return null;
+		return SaxonUtil.getEmptyDocument(configuration.getProcessor());
 	}
 
 
@@ -572,11 +570,9 @@ public class Environment
 
 			final XPathSelector selector = xpathCompiler.compile(select).load();
 			final XdmNode xpathContextNode = getXPathContextNode();
-			if (xpathContextNode != null)
-			{
-				LOG.trace("xpathContextNode = {}", xpathContextNode);
-				selector.setContextItem(xpathContextNode);
-			}
+			assert xpathContextNode != null;
+			LOG.trace("xpathContextNode = {}", xpathContextNode);
+			selector.setContextItem(xpathContextNode);
 
 			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
 			{
