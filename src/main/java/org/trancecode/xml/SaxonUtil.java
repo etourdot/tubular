@@ -19,8 +19,10 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.io.IOUtil;
 import org.trancecode.xproc.XProcExceptions;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +33,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -39,6 +42,7 @@ import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.DOMDestination;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmAtomicValue;
@@ -242,5 +246,29 @@ public class SaxonUtil implements XmlModel
 		{
 			throw XProcExceptions.xd0023(location, select, e.getMessage());
 		}
+	}
+
+
+	public static XdmNode parse(final String xmlContent, final Processor processor)
+	{
+		final StringReader reader = new StringReader(xmlContent);
+		try
+		{
+			return processor.newDocumentBuilder().build(new StreamSource(reader));
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new IllegalStateException(e);
+		}
+		finally
+		{
+			IOUtil.closeQuietly(reader);
+		}
+	}
+
+
+	public static XdmNode getEmptyDocument(final Processor processor)
+	{
+		return parse("<?xml version=\"1.0\"?><document/>", processor);
 	}
 }
