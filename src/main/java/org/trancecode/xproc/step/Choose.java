@@ -75,7 +75,6 @@ public class Choose extends AbstractCompoundStepProcessor
 			{
 				final List<EnvironmentPort> newPorts = Lists.newArrayList();
 
-				System.err.println(whenStep.getPrimaryOutputPort());
 				for (final Port port : whenStep.getOutputPorts())
 				{
 					final EnvironmentPort environmentPort =
