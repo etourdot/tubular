@@ -27,7 +27,7 @@ package org.trancecode.xproc;
  */
 public interface XProcPorts
 {
-	String ITERATION_NODE = "iteration-node";
+	String CURRENT = "current";
 	String ITERATION_SOURCE = "iteration-source";
 	String SOURCE = "source";
 	String RESULT = "result";

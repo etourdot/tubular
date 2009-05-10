@@ -63,7 +63,7 @@ public class ForEach extends AbstractCompoundStepProcessor
 
 	private Port newIterationPort(final Step step, final XdmNode node)
 	{
-		return Port.newInputPort(step.getName(), XProcPorts.ITERATION_NODE, step.getLocation()).setPrimary(false)
+		return Port.newInputPort(step.getName(), XProcPorts.CURRENT, step.getLocation()).setPrimary(false)
 			.setSequence(false).setPortBindings(new InlinePortBinding(node, step.getLocation()));
 	}
 
@@ -85,7 +85,7 @@ public class ForEach extends AbstractCompoundStepProcessor
 			final Environment iterationEnvironment =
 				environment.newChildStepEnvironment().addPorts(
 					EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
-					step.getName(), XProcPorts.ITERATION_NODE);
+					step.getName(), XProcPorts.CURRENT);
 
 			final Environment resultEnvironment = runSteps(step.getSteps(), iterationEnvironment);
 			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
