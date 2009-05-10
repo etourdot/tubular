@@ -392,7 +392,8 @@ public final class Step extends AbstractHasLocation
 
 	public Step withOptionValue(final QName name, final String value)
 	{
-		assert variables.containsKey(name);
+		LOG.trace("name = {} ; value = {}", name, value);
+		assert variables.containsKey(name) : String.format("name = %s ; variables = %s", name, variables.keySet());
 		final Variable variable = variables.get(name);
 		assert variable != null;
 		assert variable.isOption();
