@@ -590,7 +590,7 @@ public class Environment
 		}
 		catch (final Exception e)
 		{
-			throw new PipelineException(e, "error while evaluating XPath query: %s", select);
+			throw new IllegalStateException("error while evaluating XPath query: " + select, e);
 		}
 	}
 
