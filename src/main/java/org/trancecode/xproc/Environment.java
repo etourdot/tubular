@@ -146,7 +146,12 @@ public class Environment
 
 		for (final Port port : step.getInputPorts())
 		{
-			newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, this));
+			EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
+			if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT))
+			{
+				environmentPort = environmentPort.pipe(getXPathContextPort());
+			}
+			newPorts.put(port.getPortReference(), environmentPort);
 		}
 
 		for (final Port port : step.getOutputPorts())
