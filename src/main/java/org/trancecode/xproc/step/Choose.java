@@ -94,8 +94,6 @@ public class Choose extends AbstractCompoundStepProcessor
 			}
 		}
 
-		// TODO map output ports from sub-pipeline
-
 		throw XProcExceptions.xd0004(step.getLocation());
 	}
 }
