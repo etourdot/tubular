@@ -32,6 +32,7 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcPorts;
+import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
@@ -52,8 +53,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -575,8 +576,14 @@ public class PipelineParser implements XProcXmlModel
 		LOG.trace("name = {} ; type = {}", name, type);
 
 		final Step declaredStep = getDeclaredStep(type);
-		final Step step = declaredStep.setName(name).setLocation(getLocation(node));
+		Step step = declaredStep.setName(name).setLocation(getLocation(node));
 		LOG.trace("new instance step: {}", step);
+
+		if (XProcSteps.WHEN_STEPS.contains(step.getType()))
+		{
+			// declare output ports
+			step = parseDeclarePorts(node, step);
+		}
 
 		return parseInstanceStep(node, step);
 	}
@@ -613,7 +620,7 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private static String getImplicitName(final XdmNode rootNode, final XdmNode node)
+	private String getImplicitName(final XdmNode rootNode, final XdmNode node)
 	{
 		if (rootNode == node || node.getParent() == null)
 		{
@@ -627,7 +634,7 @@ public class PipelineParser implements XProcXmlModel
 	}
 
 
-	private static int getNodeIndex(final XdmNode node)
+	private int getNodeIndex(final XdmNode node)
 	{
 		final XdmNode parentNode = node.getParent();
 		if (parentNode == null)
@@ -635,10 +642,20 @@ public class PipelineParser implements XProcXmlModel
 			return 1;
 		}
 
-		final List<XdmNode> childNodes = Lists.newArrayList(SaxonUtil.getElements(parentNode));
-		assert childNodes.contains(node);
+		final List<XdmNode> childNodes = ImmutableList.copyOf(SaxonUtil.getElements(parentNode, getStepElements()));
+		assert childNodes.contains(node) : node.getNodeName();
+		return childNodes.indexOf(node) + 1;
+	}
 
-		return childNodes.indexOf(node);
+
+	private Collection<QName> getStepElements()
+	{
+		final Collection<QName> elements = Sets.newHashSet();
+		elements.addAll(getSupportedStepTypes());
+		elements.add(XProcXmlModel.ELEMENT_DECLARE_STEP);
+		elements.add(XProcXmlModel.ELEMENT_LIBRARY);
+		elements.add(XProcXmlModel.ELEMENT_PIPELINE);
+		return elements;
 	}
 
 
