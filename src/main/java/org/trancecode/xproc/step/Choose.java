@@ -69,7 +69,7 @@ public class Choose extends AbstractCompoundStepProcessor
 		for (final Step whenStep : step.getSteps())
 		{
 			assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
-			final Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);
+			Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);
 
 			if (resultEnvironment != null)
 			{
@@ -82,10 +82,15 @@ public class Choose extends AbstractCompoundStepProcessor
 					newPorts.add(environmentPort.pipe(resultEnvironment.getEnvironmentPort(port)));
 				}
 
+				resultEnvironment = resultEnvironment.addPorts(newPorts);
 				final Port primaryOutputPort = whenStep.getPrimaryOutputPort();
+				if (primaryOutputPort != null)
+				{
+					resultEnvironment =
+						resultEnvironment.setDefaultReadablePort(step.getName(), primaryOutputPort.getPortName());
+				}
 
-				return resultEnvironment.addPorts(newPorts).setDefaultReadablePort(
-					step.getName(), primaryOutputPort.getPortName());
+				return resultEnvironment;
 			}
 		}
 
