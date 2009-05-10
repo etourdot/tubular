@@ -440,7 +440,10 @@ public final class Step extends AbstractHasLocation
 	@ReturnsNullable
 	public Port getXPathContextPort()
 	{
-		return Iterables.getOnlyElement(Iterables.filter(getInputPorts(), PREDICATE_IS_XPATH_CONTEXT_PORT), null);
+		final Port xpathContextPort =
+			Iterables.getOnlyElement(Iterables.filter(getInputPorts(), PREDICATE_IS_XPATH_CONTEXT_PORT), null);
+		LOG.trace("XPath context port = {}", xpathContextPort);
+		return xpathContextPort;
 	}
 
 
