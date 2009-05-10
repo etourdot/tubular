@@ -20,11 +20,18 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.EnvironmentPort;
+import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 
 import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +44,10 @@ import org.slf4j.LoggerFactory;
 public class Choose extends AbstractCompoundStepProcessor
 {
 	public static final Choose INSTANCE = new Choose();
+
+	private static final Iterable<Port> PORTS =
+		ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT).setSequence(false).setPrimary(false));
+	public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true).declarePorts(PORTS);
 
 	private static final Logger LOG = LoggerFactory.getLogger(Choose.class);
 
@@ -62,9 +73,24 @@ public class Choose extends AbstractCompoundStepProcessor
 
 			if (resultEnvironment != null)
 			{
-				return stepEnvironment.setupOutputPorts(step, resultEnvironment);
+				final List<EnvironmentPort> newPorts = Lists.newArrayList();
+
+				System.err.println(whenStep.getPrimaryOutputPort());
+				for (final Port port : whenStep.getOutputPorts())
+				{
+					final EnvironmentPort environmentPort =
+						EnvironmentPort.newEnvironmentPort(port.setStepName(step.getName()), stepEnvironment);
+					newPorts.add(environmentPort.pipe(resultEnvironment.getEnvironmentPort(port)));
+				}
+
+				final Port primaryOutputPort = whenStep.getPrimaryOutputPort();
+
+				return resultEnvironment.addPorts(newPorts).setDefaultReadablePort(
+					step.getName(), primaryOutputPort.getPortName());
 			}
 		}
+
+		// TODO map output ports from sub-pipeline
 
 		throw XProcExceptions.xd0004(step.getLocation());
 	}

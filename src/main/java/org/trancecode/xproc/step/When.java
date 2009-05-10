@@ -20,9 +20,14 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
+import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
+import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+
+import com.google.common.collect.ImmutableList;
 
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmAtomicValue;
@@ -40,6 +45,13 @@ import org.slf4j.LoggerFactory;
 public class When extends AbstractCompoundStepProcessor
 {
 	public static final When INSTANCE = new When();
+
+	private static final Iterable<Port> PORTS =
+		ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT).setSequence(false).setPrimary(false));
+	public static final Step STEP_WHEN =
+		Step.newStep(XProcSteps.WHEN, INSTANCE, true).declarePorts(PORTS).declareVariable(
+			Variable.newOption(XProcOptions.TEST).setRequired(true));
+	public static final Step STEP_OTHERWISE = Step.newStep(XProcSteps.OTHERWISE, INSTANCE, true).declarePorts(PORTS);
 
 	private static final Logger LOG = LoggerFactory.getLogger(When.class);
 

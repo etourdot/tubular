@@ -20,11 +20,13 @@
 package org.trancecode.xproc;
 
 import org.trancecode.xproc.parser.PipelineParser;
+import org.trancecode.xproc.step.Choose;
 import org.trancecode.xproc.step.CountStepProcessor;
 import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
+import org.trancecode.xproc.step.When;
 import org.trancecode.xproc.step.XsltStepProcessor;
 
 import java.util.Map;
@@ -106,10 +108,10 @@ public class PipelineFactory
 	{
 		final Map<QName, Step> coreSteps = Maps.newHashMap();
 
-		// coreSteps.put(XProcSteps.CHOOSE, null);
+		coreSteps.put(XProcSteps.CHOOSE, Choose.STEP);
 		coreSteps.put(XProcSteps.FOR_EACH, ForEach.STEP);
-		// coreSteps.put(XProcSteps.OTHERWISE, null);
-		// coreSteps.put(XProcSteps.WHEN, null);
+		coreSteps.put(XProcSteps.OTHERWISE, When.STEP_OTHERWISE);
+		coreSteps.put(XProcSteps.WHEN, When.STEP_WHEN);
 		// coreSteps.put(XProcSteps.GROUP, null);
 		// coreSteps.put(XProcSteps.TRY, null);
 
