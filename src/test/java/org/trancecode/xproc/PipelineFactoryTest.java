@@ -38,7 +38,7 @@ public class PipelineFactoryTest extends AbstractTest
 	{
 		final PipelineFactory pipelineFactory = new PipelineFactory();
 		assert pipelineFactory.getLibrary() != null;
-		Assert.assertEquals(42, pipelineFactory.getLibrary().size());
+		Assert.assertEquals(45, pipelineFactory.getLibrary().size());
 		assert pipelineFactory.getLibrary().containsKey(XProcSteps.COUNT);
 		assert pipelineFactory.getLibrary().containsKey(XProcSteps.FOR_EACH);
 	}
