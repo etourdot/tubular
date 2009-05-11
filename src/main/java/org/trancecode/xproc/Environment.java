@@ -275,14 +275,23 @@ public class Environment
 
 		for (final Variable variable : step.getVariables())
 		{
+			LOG.trace("variable = {}", variable);
 			final String value;
 			if (variable.getValue() != null)
 			{
 				value = variable.getValue();
 			}
+			else if (variable.getSelect() == null)
+			{
+				if (variable.isRequired())
+				{
+					throw new IllegalStateException(variable.toString());
+				}
+
+				value = null;
+			}
 			else
 			{
-				LOG.trace("variable = {}", variable);
 				value =
 					SaxonUtil.evaluateXPath(
 						variable.getSelect(), getConfiguration().getProcessor(), getXPathContextNode(), allVariables,
@@ -291,18 +300,21 @@ public class Environment
 
 			LOG.trace("{} = {}", variable.getName(), value);
 
-			if (variable.isParameter())
+			if (value != null)
 			{
-				final EnvironmentPort parametersPort = getDefaultParametersPort();
-				assert parametersPort != null;
-				final XdmNode parameterNode =
-					XProcUtil.newParameterElement(variable.getName(), value, getConfiguration().getProcessor());
-				parametersPort.writeNodes(parameterNode);
-			}
-			else
-			{
-				allVariables.put(variable.getName(), value);
-				newLocalVariables.put(variable.getName(), value);
+				if (variable.isParameter())
+				{
+					final EnvironmentPort parametersPort = getDefaultParametersPort();
+					assert parametersPort != null;
+					final XdmNode parameterNode =
+						XProcUtil.newParameterElement(variable.getName(), value, getConfiguration().getProcessor());
+					parametersPort.writeNodes(parameterNode);
+				}
+				else
+				{
+					allVariables.put(variable.getName(), value);
+					newLocalVariables.put(variable.getName(), value);
+				}
 			}
 		}
 
