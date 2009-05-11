@@ -472,7 +472,7 @@ public final class Step extends AbstractHasLocation
 	}
 
 
-	public Iterable<Step> getSteps()
+	public List<Step> getSteps()
 	{
 		return steps;
 	}
