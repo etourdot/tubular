@@ -57,7 +57,6 @@ public final class Step extends AbstractHasLocation
 
 	private static final Predicate<Port> PREDICATE_IS_INPUT_PORT = new Predicate<Port>()
 	{
-
 		public boolean apply(final Port port)
 		{
 			return port.isInput();
@@ -66,7 +65,6 @@ public final class Step extends AbstractHasLocation
 
 	private static final Predicate<Port> PREDICATE_IS_OUTPUT_PORT = new Predicate<Port>()
 	{
-
 		public boolean apply(final Port port)
 		{
 			return port.isOutput();
@@ -75,7 +73,6 @@ public final class Step extends AbstractHasLocation
 
 	private static final Predicate<Port> PREDICATE_IS_PARAMETER_PORT = new Predicate<Port>()
 	{
-
 		public boolean apply(final Port port)
 		{
 			return port.isParameter();
@@ -84,7 +81,6 @@ public final class Step extends AbstractHasLocation
 
 	private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
 	{
-
 		public boolean apply(final Port port)
 		{
 			return isXPathContextPort(port);
