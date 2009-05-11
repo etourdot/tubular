@@ -401,12 +401,20 @@ public class PipelineParser implements XProcXmlModel
 	{
 		LOG.trace("step = {}", step.getType());
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
+		Variable option = Variable.newOption(name, getLocation(node));
+
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
-		final boolean required =
-			getFirstNonNull(Boolean.parseBoolean(node.getAttributeValue(ATTRIBUTE_REQUIRED)), false);
-		return step
-			.declareVariable(Variable.newOption(name, getLocation(node)).setSelect(select).setRequired(required));
+		option = option.setSelect(select);
+
+		final String required = node.getAttributeValue(ATTRIBUTE_REQUIRED);
+		LOG.trace("name = {} ; required = {}", name, required);
+		if (required != null)
+		{
+			option = option.setRequired(Boolean.parseBoolean(required));
+		}
+
+		return step.declareVariable(option);
 	}
 
 
