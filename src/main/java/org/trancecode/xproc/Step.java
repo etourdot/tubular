@@ -29,7 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -48,7 +50,8 @@ import org.slf4j.LoggerFactory;
 public final class Step extends AbstractHasLocation
 {
 	private static final Logger LOG = LoggerFactory.getLogger(Step.class);
-	private static final Map<QName, Variable> EMPTY_VARIABLE_MAP = Collections.emptyMap();
+	private static final List<Variable> EMPTY_VARIABLE_LIST = ImmutableList.of();
+	private static final Map<QName, Variable> EMPTY_PARAMETER_MAP = ImmutableMap.of();
 	private static final Map<String, Port> EMPTY_PORT_MAP = Collections.emptyMap();
 	private static final List<Step> EMPTY_STEP_LIST = Collections.emptyList();
 
@@ -89,7 +92,7 @@ public final class Step extends AbstractHasLocation
 	};
 
 	private final Map<QName, Variable> parameters;
-	private final Map<QName, Variable> variables;
+	private final List<Variable> variables;
 
 	private final Map<String, Port> ports;
 
@@ -102,14 +105,14 @@ public final class Step extends AbstractHasLocation
 
 	public static Step newStep(final QName type, final StepProcessor stepProcessor, final boolean compoundStep)
 	{
-		return new Step(type, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_MAP, EMPTY_VARIABLE_MAP,
+		return new Step(type, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_LIST, EMPTY_PARAMETER_MAP,
 			EMPTY_PORT_MAP, EMPTY_STEP_LIST);
 	}
 
 
 	private Step(
 		final QName type, final String name, final Location location, final StepProcessor stepProcessor,
-		final boolean compoundStep, final Map<QName, Variable> variables, final Map<QName, Variable> parameters,
+		final boolean compoundStep, final Iterable<Variable> variables, final Map<QName, Variable> parameters,
 		final Map<String, Port> ports, final Iterable<Step> steps)
 	{
 		super(location);
@@ -122,7 +125,7 @@ public final class Step extends AbstractHasLocation
 
 		this.compoundStep = compoundStep;
 
-		this.variables = ImmutableMap.copyOf(variables);
+		this.variables = ImmutableList.copyOf(variables);
 		this.parameters = ImmutableMap.copyOf(parameters);
 		this.ports = ImmutableMap.copyOf(ports);
 		this.steps = ImmutableList.copyOf(steps);
@@ -156,10 +159,10 @@ public final class Step extends AbstractHasLocation
 
 	public Step declareVariable(final Variable variable)
 	{
-		assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
-			+ " ; variables = " + variables;
-		return new Step(type, name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
-			variables, variable.getName(), variable), parameters, ports, steps);
+		assert !Variables.containsVariable(variables, variable.getName()) : "step = " + name + " ; variable = "
+			+ variable.getName() + " ; variables = " + variables;
+		return new Step(type, name, location, stepProcessor, compoundStep, CollectionUtil.append(variables, variable),
+			parameters, ports, steps);
 	}
 
 
@@ -371,13 +374,24 @@ public final class Step extends AbstractHasLocation
 
 	public Step withOption(final QName name, final String select)
 	{
-		assert variables.containsKey(name);
-		final Variable variable = variables.get(name);
-		assert variable != null;
-		assert variable.isOption();
+		assert Variables.containsVariable(variables, name);
 
-		return new Step(type, this.name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
-			variables, variable.getName(), variable.setSelect(select)), parameters, ports, steps);
+		final Iterable<Variable> newVariables = Iterables.transform(variables, new Function<Variable, Variable>()
+		{
+			@Override
+			public Variable apply(final Variable variable)
+			{
+				if (variable.getName().equals(name))
+				{
+					assert variable.isOption();
+					return variable.setSelect(select);
+				}
+
+				return variable;
+			}
+		});
+
+		return new Step(type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports, steps);
 	}
 
 
@@ -392,20 +406,31 @@ public final class Step extends AbstractHasLocation
 
 	public Step withOptionValue(final QName name, final String value)
 	{
-		LOG.trace("name = {} ; value = {}", name, value);
-		assert variables.containsKey(name) : String.format("name = %s ; variables = %s", name, variables.keySet());
-		final Variable variable = variables.get(name);
-		assert variable != null;
-		assert variable.isOption();
+		assert Variables.containsVariable(variables, name);
 
-		return new Step(type, this.name, location, stepProcessor, compoundStep, CollectionUtil.copyAndPut(
-			variables, variable.getName(), variable.setValue(value)), parameters, ports, steps);
+		final Iterable<Variable> newVariables = Iterables.transform(variables, new Function<Variable, Variable>()
+		{
+			@Override
+			public Variable apply(final Variable variable)
+			{
+				if (variable.getName().equals(name))
+				{
+					assert variable.isOption();
+					return variable.setValue(value);
+				}
+
+				return variable;
+			}
+		});
+
+		return new Step(type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports, steps);
 	}
 
 
 	public boolean hasOptionDeclared(final QName name)
 	{
-		return variables.containsKey(name);
+		return Iterables
+			.any(variables, Predicates.and(VariablePredicates.isNamed(name), VariablePredicates.isOption()));
 	}
 
 
@@ -449,7 +474,7 @@ public final class Step extends AbstractHasLocation
 
 	public Iterable<Variable> getVariables()
 	{
-		return variables.values();
+		return variables;
 	}
 
 
@@ -491,7 +516,6 @@ public final class Step extends AbstractHasLocation
 
 	public Variable getVariable(final QName name)
 	{
-		assert variables.containsKey(name);
-		return variables.get(name);
+		return Variables.getVariable(variables, name);
 	}
 }
