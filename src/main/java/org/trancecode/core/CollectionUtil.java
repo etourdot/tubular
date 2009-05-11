@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
@@ -108,5 +110,11 @@ public final class CollectionUtil
 		}
 
 		return elements.get(elements.size() - 1);
+	}
+
+
+	public static <T> Iterable<T> append(final Iterable<T> iterable, final T... elements)
+	{
+		return Iterables.concat(iterable, ImmutableList.of(elements));
 	}
 }
