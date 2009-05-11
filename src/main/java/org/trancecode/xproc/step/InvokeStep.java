@@ -60,7 +60,7 @@ public class InvokeStep implements StepProcessor
 	{
 		assert invokedStep != null;
 
-		Step invokeStep = Step.newStep(invokedStep.getType(), INSTANCE, true).setSteps(ImmutableList.of(invokedStep));
+		Step invokeStep = Step.newStep(invokedStep.getType(), INSTANCE, true).setSubpipeline(ImmutableList.of(invokedStep));
 
 		// declare ports from invoked step
 		invokeStep =
@@ -95,7 +95,7 @@ public class InvokeStep implements StepProcessor
 
 	private Step setupInvokeStep(final Step invokeStep)
 	{
-		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSteps());
+		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
 		return CollectionUtil.apply(
 			invokedStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
@@ -125,7 +125,7 @@ public class InvokeStep implements StepProcessor
 	private Step getInvokedStep(final Step invokeStep)
 	{
 		assert invokeStep != null;
-		return Iterables.getOnlyElement(invokeStep.getSteps());
+		return Iterables.getOnlyElement(invokeStep.getSubpipeline());
 	}
 
 

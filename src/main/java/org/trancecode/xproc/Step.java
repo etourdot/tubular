@@ -459,7 +459,7 @@ public final class Step extends AbstractHasLocation
 	}
 
 
-	public Step setSteps(final Iterable<Step> steps)
+	public Step setSubpipeline(final Iterable<Step> steps)
 	{
 		assert steps != null;
 		if (ObjectUtil.equals(this.steps, steps))
@@ -472,7 +472,7 @@ public final class Step extends AbstractHasLocation
 	}
 
 
-	public List<Step> getSteps()
+	public List<Step> getSubpipeline()
 	{
 		return steps;
 	}

@@ -87,7 +87,7 @@ public class ForEach extends AbstractCompoundStepProcessor
 					EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
 					step.getName(), XProcPorts.CURRENT);
 
-			final Environment resultEnvironment = runSteps(step.getSteps(), iterationEnvironment);
+			final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
 			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
 		}
 

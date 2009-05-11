@@ -75,7 +75,7 @@ public class When extends AbstractCompoundStepProcessor
 			return null;
 		}
 
-		final Environment resultEnvironment = runSteps(step.getSteps(), stepEnvironment);
+		final Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
 
 		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
 	}

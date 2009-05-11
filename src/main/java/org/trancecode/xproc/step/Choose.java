@@ -66,7 +66,7 @@ public class Choose extends AbstractCompoundStepProcessor
 		assert step.isCompoundStep();
 
 		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-		for (final Step whenStep : step.getSteps())
+		for (final Step whenStep : step.getSubpipeline())
 		{
 			assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
 			Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);

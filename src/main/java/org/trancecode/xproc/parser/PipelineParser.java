@@ -567,7 +567,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseSteps(final XdmNode node, final Step compoundStep)
 	{
-		return compoundStep.setSteps(parseInnerSteps(node));
+		return compoundStep.setSubpipeline(parseInnerSteps(node));
 	}
 
 
