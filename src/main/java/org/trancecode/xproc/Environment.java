@@ -282,6 +282,7 @@ public class Environment
 			}
 			else
 			{
+				LOG.trace("variable = {}", variable);
 				value =
 					SaxonUtil.evaluateXPath(
 						variable.getSelect(), getConfiguration().getProcessor(), getXPathContextNode(), allVariables,
