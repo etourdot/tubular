@@ -41,7 +41,6 @@ import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.step.Pipeline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +112,6 @@ public class PipelineParser implements XProcXmlModel
 			if (rootNode.getNodeName().equals(ELEMENT_PIPELINE) || rootNode.getNodeName().equals(ELEMENT_DECLARE_STEP))
 			{
 				mainPipeline = parsePipeline(rootNode);
-				// parseInstanceStepBindings(rootNode, mainPipeline);
 			}
 			else if (rootNode.getNodeName().equals(ELEMENT_LIBRARY))
 			{
@@ -304,20 +302,6 @@ public class PipelineParser implements XProcXmlModel
 		}
 
 		throw new UnsupportedOperationException(name.toString());
-	}
-
-
-	private static <T> T getFirstNonNull(final T... values)
-	{
-		for (final T value : values)
-		{
-			if (value != null)
-			{
-				return value;
-			}
-		}
-
-		throw new IllegalStateException(Arrays.asList(values).toString());
 	}
 
 
