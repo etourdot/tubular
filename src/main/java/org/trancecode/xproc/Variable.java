@@ -19,10 +19,14 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.StringUtil;
 import org.trancecode.xml.Location;
 
 import net.sf.saxon.s9api.QName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,6 +35,9 @@ import net.sf.saxon.s9api.QName;
  */
 public final class Variable extends AbstractHasLocation
 {
+	private static final Logger LOG = LoggerFactory.getLogger(Variable.class);
+
+
 	private static enum Type
 	{
 		OPTION, VARIABLE, PARAMETER
@@ -41,47 +48,48 @@ public final class Variable extends AbstractHasLocation
 	private final String value;
 	private final Boolean required;
 	private final Type type;
+	private final PortBinding portBinding;
 
 
 	public static Variable newOption(final QName name)
 	{
-		return new Variable(name, null, null, null, null, Type.OPTION);
+		return new Variable(name, null, null, null, null, Type.OPTION, null);
 	}
 
 
 	public static Variable newParameter(final QName name)
 	{
-		return new Variable(name, null, null, null, null, Type.PARAMETER);
+		return new Variable(name, null, null, null, null, Type.PARAMETER, null);
 	}
 
 
 	public static Variable newVariable(final QName name)
 	{
-		return new Variable(name, null, null, null, null, Type.VARIABLE);
+		return new Variable(name, null, null, null, null, Type.VARIABLE, null);
 	}
 
 
 	public static Variable newOption(final QName name, final Location location)
 	{
-		return new Variable(name, null, null, null, location, Type.OPTION);
+		return new Variable(name, null, null, null, location, Type.OPTION, null);
 	}
 
 
 	public static Variable newParameter(final QName name, final Location location)
 	{
-		return new Variable(name, null, null, null, location, Type.PARAMETER);
+		return new Variable(name, null, null, null, location, Type.PARAMETER, null);
 	}
 
 
 	public static Variable newVariable(final QName name, final Location location)
 	{
-		return new Variable(name, null, null, null, location, Type.VARIABLE);
+		return new Variable(name, null, null, null, location, Type.VARIABLE, null);
 	}
 
 
 	private Variable(
 		final QName name, final String select, final String value, final Boolean required, final Location location,
-		final Type type)
+		final Type type, final PortBinding portBinding)
 	{
 		super(location);
 
@@ -91,12 +99,13 @@ public final class Variable extends AbstractHasLocation
 		this.value = value;
 		this.required = required;
 		this.type = type;
+		this.portBinding = portBinding;
 	}
 
 
 	public Variable setLocation(final Location location)
 	{
-		return new Variable(name, select, value, required, location, type);
+		return new Variable(name, select, value, required, location, type, portBinding);
 	}
 
 
@@ -132,7 +141,7 @@ public final class Variable extends AbstractHasLocation
 
 	public Variable setSelect(final String select)
 	{
-		return new Variable(name, select, value, required, location, type);
+		return new Variable(name, select, value, required, location, type, portBinding);
 	}
 
 
@@ -144,13 +153,13 @@ public final class Variable extends AbstractHasLocation
 
 	public Variable setValue(final String value)
 	{
-		return new Variable(name, select, value, required, location, type);
+		return new Variable(name, select, value, required, location, type, portBinding);
 	}
 
 
 	public Variable setRequired(final boolean required)
 	{
-		return new Variable(name, select, value, required, location, type);
+		return new Variable(name, select, value, required, location, type, portBinding);
 	}
 
 
@@ -166,41 +175,26 @@ public final class Variable extends AbstractHasLocation
 	}
 
 
-	public String evaluate(final Environment environment)
-	{
-		if (value != null)
-		{
-			return value;
-		}
-
-		if (select == null)
-		{
-			if (isRequired())
-			{
-				throw new PipelineException("Unbound variable %s @ %s", getName(), getLocation());
-			}
-
-			return null;
-		}
-		else
-		{
-			try
-			{
-				return environment.evaluateXPath(select).toString();
-			}
-			catch (final Exception e)
-			{
-				throw new PipelineException(e, "error while evaluating variable $%s ; select = %s", getName(), select);
-			}
-		}
-	}
-
-
 	@Override
 	public String toString()
 	{
 		return String.format(
 			"%s[%s]%s%s", type, name, StringUtil.getTag(select != null, "[select=" + select + "]", ""), StringUtil
 				.getTag(value != null, "[value=" + value + "]", ""));
+	}
+
+
+	@ReturnsNullable
+	public PortBinding getPortBinding()
+	{
+		return portBinding;
+	}
+
+
+	public Variable setPortBinding(final PortBinding portBinding)
+	{
+		LOG.trace("{}", name);
+		LOG.trace("{} -> {}", this.portBinding, portBinding);
+		return new Variable(name, select, value, required, location, type, portBinding);
 	}
 }

@@ -427,6 +427,9 @@ public class PipelineParser implements XProcXmlModel
 		variable = variable.setLocation(getLocation(node));
 		variable = variable.setSelect(select);
 		variable = variable.setRequired(true);
+		final PortBinding portBinding = Iterables.getOnlyElement(parsePortBindings(node), null);
+		variable = variable.setPortBinding(portBinding);
+
 		return step.declareVariable(variable);
 	}
 
