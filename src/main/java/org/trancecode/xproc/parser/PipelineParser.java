@@ -423,7 +423,11 @@ public class PipelineParser implements XProcXmlModel
 	{
 		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
 		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
-		return step.declareVariable(Variable.newVariable(name, getLocation(node)).setSelect(select).setRequired(true));
+		Variable variable = Variable.newVariable(name);
+		variable = variable.setLocation(getLocation(node));
+		variable = variable.setSelect(select);
+		variable = variable.setRequired(true);
+		return step.declareVariable(variable);
 	}
 
 
