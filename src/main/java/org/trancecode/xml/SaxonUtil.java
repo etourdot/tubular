@@ -40,6 +40,7 @@ import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.DOMDestination;
+import net.sf.saxon.s9api.ItemTypeFactory;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -270,5 +271,19 @@ public class SaxonUtil implements XmlModel
 	public static XdmNode getEmptyDocument(final Processor processor)
 	{
 		return parse("<?xml version=\"1.0\"?><document/>", processor);
+	}
+
+
+	public static XdmItem getUntypedXdmItem(final String value, final Processor processor)
+	{
+		try
+		{
+			return new XdmAtomicValue(value, new ItemTypeFactory(processor)
+				.getAtomicType(XmlSchemaModel.UNTYPED_ATOMIC));
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new IllegalStateException(e);
+		}
 	}
 }
