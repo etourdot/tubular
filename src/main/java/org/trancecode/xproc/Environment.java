@@ -40,6 +40,7 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 
@@ -291,10 +292,25 @@ public class Environment
 			}
 			else
 			{
-				value =
+				final PortBinding xpathPortBinding = variable.getPortBinding();
+				final XdmNode xpathContextNode;
+				if (xpathPortBinding != null)
+				{
+					xpathContextNode =
+						Iterables.getOnlyElement(xpathPortBinding.newEnvironmentPortBinding(this).readNodes());
+				}
+				else
+				{
+					xpathContextNode = getXPathContextNode();
+				}
+
+				final XdmValue result =
 					SaxonUtil.evaluateXPath(
-						variable.getSelect(), getConfiguration().getProcessor(), getXPathContextNode(), allVariables,
-						variable.getLocation()).toString();
+						variable.getSelect(), getConfiguration().getProcessor(), xpathContextNode, allVariables,
+						variable.getLocation());
+				final XdmItem resultNode = Iterables.getOnlyElement(result);
+
+				value = resultNode.getStringValue();
 			}
 
 			LOG.trace("{} = {}", variable.getName(), value);
@@ -566,6 +582,19 @@ public class Environment
 		assert select != null;
 		LOG.entry(select);
 
+		final XdmNode xpathContextNode = getXPathContextNode();
+		assert xpathContextNode != null;
+		LOG.trace("xpathContextNode = {}", xpathContextNode);
+
+		return evaluateXPath(select, xpathContextNode);
+	}
+
+
+	public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode)
+	{
+		assert select != null;
+		LOG.entry(select);
+
 		// TODO slow
 		final Map<QName, String> variables = CollectionUtil.merge(inheritedVariables, localVariables);
 
@@ -586,9 +615,6 @@ public class Environment
 			}
 
 			final XPathSelector selector = xpathCompiler.compile(select).load();
-			final XdmNode xpathContextNode = getXPathContextNode();
-			assert xpathContextNode != null;
-			LOG.trace("xpathContextNode = {}", xpathContextNode);
 			selector.setContextItem(xpathContextNode);
 
 			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
