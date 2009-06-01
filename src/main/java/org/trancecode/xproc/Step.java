@@ -395,8 +395,11 @@ public final class Step extends AbstractHasLocation
 	{
 		assert !parameters.containsKey(name);
 
-		return new Step(type, this.name, location, stepProcessor, compoundStep, variables, CollectionUtil.copyAndPut(
-			parameters, name, Variable.newParameter(name, location).setSelect(select).setValue(value)), ports, steps);
+		final Iterable<Variable> newVariables =
+			Variables.setOrAddVariable(variables, Variable.newParameter(name, location).setSelect(select).setValue(
+				value));
+
+		return new Step(type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports, steps);
 	}
 
 
