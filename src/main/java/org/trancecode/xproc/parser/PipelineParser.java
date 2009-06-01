@@ -333,12 +333,7 @@ public class PipelineParser implements XProcXmlModel
 	{
 		if (ELEMENTS_INPUT_PORTS.contains(node.getNodeName()))
 		{
-			return Type.INPUT;
-		}
-
-		if (node.getNodeName().equals(ELEMENT_INPUT))
-		{
-			if ("parameters".equals(node.getAttributeValue(ATTRIBUTE_KIND)))
+			if ("parameter".equals(node.getAttributeValue(ATTRIBUTE_KIND)))
 			{
 				return Type.PARAMETER;
 			}
