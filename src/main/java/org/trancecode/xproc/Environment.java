@@ -267,6 +267,7 @@ public class Environment
 	private Environment setupVariables(final Step step)
 	{
 		LOG.trace("step = {}", step.getName());
+		LOG.trace("variables = {}", Variables.getVariableNames(step.getVariables()));
 
 		final Map<QName, String> allVariables = Maps.newHashMap(inheritedVariables);
 		allVariables.putAll(localVariables);
