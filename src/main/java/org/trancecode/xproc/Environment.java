@@ -133,8 +133,13 @@ public class Environment
 	{
 		LOG.trace("step = {}", step.getName());
 
-		return setupInputPorts(step).setPrimaryInputPortAsDefaultReadablePort(step).setXPathContextPort(step)
-			.setupVariables(step);
+		Environment environment = setupInputPorts(step);
+		environment = environment.setPrimaryInputPortAsDefaultReadablePort(step);
+		environment = environment.setXPathContextPort(step);
+		environment = environment.setDefaultParametersPort(step);
+		environment = environment.setupVariables(step);
+
+		return environment;
 	}
 
 
@@ -321,7 +326,7 @@ public class Environment
 				if (variable.isParameter())
 				{
 					final EnvironmentPort parametersPort = getDefaultParametersPort();
-					assert parametersPort != null;
+					assert parametersPort != null : step.toString();
 					final XdmNode parameterNode =
 						XProcUtil.newParameterElement(variable.getName(), value, getConfiguration().getProcessor());
 					parametersPort.writeNodes(parameterNode);
@@ -538,6 +543,20 @@ public class Environment
 	public EnvironmentPort getDefaultParametersPort()
 	{
 		return defaultParametersPort;
+	}
+
+
+	private Environment setDefaultParametersPort(final Step step)
+	{
+		final Port port = step.getPrimaryParameterPort();
+		if (port != null)
+		{
+			final EnvironmentPort environmentPort = getEnvironmentPort(port);
+			assert environmentPort != null;
+			return setDefaultParametersPort(environmentPort);
+		}
+
+		return this;
 	}
 
 
