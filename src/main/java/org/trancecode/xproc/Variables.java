@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.core.CollectionUtil;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -97,6 +99,29 @@ public final class Variables
 				return currentVariable;
 			}
 		});
+	}
+
+
+	public static Iterable<Variable> setOrAddVariable(final Iterable<Variable> variables, final Variable variable)
+	{
+		if (containsVariable(variables, variable.getName()))
+		{
+			return Iterables.transform(variables, new Function<Variable, Variable>()
+			{
+				@Override
+				public Variable apply(final Variable currentVariable)
+				{
+					if (currentVariable.getName().equals(variable.getName()))
+					{
+						return variable;
+					}
+
+					return currentVariable;
+				}
+			});
+		}
+
+		return CollectionUtil.append(variables, variable);
 	}
 
 
