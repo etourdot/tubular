@@ -46,7 +46,7 @@ public final class XProcUtil
 	public static XdmNode newParameterElement(final QName name, final String value, final Processor processor)
 	{
 		// TODO
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 
