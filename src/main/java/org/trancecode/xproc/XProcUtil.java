@@ -45,8 +45,18 @@ public final class XProcUtil
 
 	public static XdmNode newParameterElement(final QName name, final String value, final Processor processor)
 	{
-		// TODO
-		throw new UnsupportedOperationException();
+		// TODO use s9api directly
+		final String document =
+			String.format(
+				"<c:param xmlns:c=\"%s\" name=\"%s\" value=\"%s\"/>", XProcNamespaces.URI_XPROC_STEP, name, value);
+		try
+		{
+			return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new IllegalStateException(e);
+		}
 	}
 
 
