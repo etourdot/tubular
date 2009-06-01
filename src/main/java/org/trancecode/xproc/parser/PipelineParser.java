@@ -404,8 +404,11 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseWithParam(final XdmNode node, final Step step)
 	{
-		// TODO
-		throw new UnsupportedOperationException();
+		LOG.trace("step = {}", step.getType());
+		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
+		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
+		LOG.trace("name = {} ; select = {}", name, select);
+		return step.withParam(name, select, null, getLocation(node));
 	}
 
 
