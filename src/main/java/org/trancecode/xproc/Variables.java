@@ -98,4 +98,17 @@ public final class Variables
 			}
 		});
 	}
+
+
+	public static final Iterable<QName> getVariableNames(final Iterable<Variable> variables)
+	{
+		return Iterables.transform(variables, new Function<Variable, QName>()
+		{
+			@Override
+			public QName apply(final Variable variable)
+			{
+				return variable.getName();
+			}
+		});
+	}
 }
