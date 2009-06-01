@@ -208,7 +208,7 @@ public final class Step extends AbstractHasLocation
 
 	private boolean isXPathContextPort(final Port port)
 	{
-		if (port.isInput())
+		if (port.isInput() && !port.isParameter())
 		{
 			if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT))
 			{
