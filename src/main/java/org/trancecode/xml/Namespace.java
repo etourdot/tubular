@@ -29,7 +29,7 @@ import net.sf.saxon.s9api.QName;
  * @version $Revision$
  */
 @Immutable
-public final class Namespace
+public class Namespace
 {
 	public final String uri;
 	public final String prefix;
