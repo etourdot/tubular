@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
@@ -34,6 +35,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.sf.saxon.s9api.QName;
@@ -278,6 +280,7 @@ public class Environment
 		allVariables.putAll(localVariables);
 
 		final Map<QName, String> newLocalVariables = Maps.newHashMap(localVariables);
+		final List<XdmNode> newParameterNodes = Lists.newArrayList();
 
 		for (final Variable variable : step.getVariables())
 		{
@@ -325,11 +328,9 @@ public class Environment
 			{
 				if (variable.isParameter())
 				{
-					final EnvironmentPort parametersPort = getDefaultParametersPort();
-					assert parametersPort != null : step.toString();
 					final XdmNode parameterNode =
 						XProcUtil.newParameterElement(variable.getName(), value, getConfiguration().getProcessor());
-					parametersPort.writeNodes(parameterNode);
+					newParameterNodes.add(parameterNode);
 				}
 				else
 				{
@@ -339,7 +340,11 @@ public class Environment
 			}
 		}
 
-		return setLocalVariables(newLocalVariables);
+		final EnvironmentPort parametersPort = getDefaultParametersPort();
+		assert parametersPort != null : step.toString();
+		final Environment newEnvironment = writeNodes(parametersPort, newParameterNodes);
+
+		return newEnvironment.setLocalVariables(newLocalVariables);
 	}
 
 
@@ -679,6 +684,14 @@ public class Environment
 		LOG.trace("stepName = {} ; portName = {}", stepName, portName);
 
 		return addPorts(getPort(stepName, portName).writeNodes(nodes));
+	}
+
+
+	private Environment writeNodes(final EnvironmentPort port, final Iterable<XdmNode> nodes)
+	{
+		LOG.trace("port = {}", port);
+
+		return addPorts(port.writeNodes(nodes));
 	}
 
 
