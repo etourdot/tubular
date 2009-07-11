@@ -341,10 +341,18 @@ public class Environment
 		}
 
 		final EnvironmentPort parametersPort = getDefaultParametersPort();
-		assert parametersPort != null : step.toString();
-		final Environment newEnvironment = writeNodes(parametersPort, newParameterNodes);
+		final Environment resultEnvironment;
+		if (newParameterNodes.isEmpty())
+		{
+			resultEnvironment = this;
+		}
+		else
+		{
+			assert parametersPort != null : step.toString();
+			resultEnvironment = writeNodes(parametersPort, newParameterNodes);
+		}
 
-		return newEnvironment.setLocalVariables(newLocalVariables);
+		return resultEnvironment.setLocalVariables(newLocalVariables);
 	}
 
 
