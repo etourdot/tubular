@@ -31,7 +31,7 @@ public final class XmlNamespace extends Namespace
 	public static final XmlNamespace INSTANCE = new XmlNamespace();
 
 
-	public XmlNamespace()
+	private XmlNamespace()
 	{
 		super(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
 	}
