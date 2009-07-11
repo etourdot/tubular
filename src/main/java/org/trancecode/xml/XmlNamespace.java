@@ -19,14 +19,20 @@
  */
 package org.trancecode.xml;
 
-import net.sf.saxon.s9api.QName;
+import javax.xml.XMLConstants;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public interface XmlModel
+public final class XmlNamespace extends Namespace
 {
-	QName ATTRIBUTE_BASE = XmlNamespace.INSTANCE.newSaxonQName("base");
+	public static final XmlNamespace INSTANCE = new XmlNamespace();
+
+
+	public XmlNamespace()
+	{
+		super(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
+	}
 }
