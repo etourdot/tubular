@@ -19,28 +19,20 @@
  */
 package org.trancecode.xml.catalog;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-
-import net.sf.saxon.s9api.QName;
+import org.trancecode.xml.Namespace;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public interface XmlCatalogModel
+public final class XmlCatalogNamespace extends Namespace
 {
-	QName ELEMENT_CATALOG = XmlCatalogNamespace.INSTANCE.newSaxonQName("catalog");
-	QName ELEMENT_GROUP = XmlCatalogNamespace.INSTANCE.newSaxonQName("group");
-	QName ELEMENT_REWRITE_SYSTEM = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteSystem");
-	QName ELEMENT_REWRITE_URI = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteURI");
+	public static final XmlCatalogNamespace INSTANCE = new XmlCatalogNamespace();
 
-	Set<QName> ELEMENTS_CATALOG = ImmutableSet.of(ELEMENT_REWRITE_SYSTEM, ELEMENT_REWRITE_URI, ELEMENT_GROUP);
-	Set<QName> ELEMENTS_GROUP = ImmutableSet.of(ELEMENT_CATALOG, ELEMENT_GROUP);
 
-	QName ATTRIBUTE_SYSTEM_ID_START_STRING = new QName("systemIdStartString");
-	QName ATTRIBUTE_REWRITE_PREFIX = new QName("rewritePrefix");
-	QName ATTRIBUTE_URI_START_STRING = new QName("uriStartString");
+	private XmlCatalogNamespace()
+	{
+		super("urn:oasis:names:tc:entity:xmlns:xml:catalog", "catalog");
+	}
 }
