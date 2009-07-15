@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.core;
+package org.trancecode.core.collection;
 
 
 
@@ -27,9 +27,9 @@ package org.trancecode.core;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class CollectionUtil
+public final class TubularCollections
 {
-	private CollectionUtil()
+	private TubularCollections()
 	{
 		// No instantiation
 	}
