@@ -20,7 +20,7 @@
 package org.trancecode.xproc.parser;
 
 import org.trancecode.core.BinaryFunction;
-import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.function.TubularFunctions;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.SaxonLocation;
 import org.trancecode.xml.SaxonUtil;
@@ -168,7 +168,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseWithPorts(final Iterable<XdmNode> withPortNodes, final Step step)
 	{
-		return CollectionUtil.apply(step, withPortNodes, new BinaryFunction<Step, Step, XdmNode>()
+		return TubularFunctions.apply(step, withPortNodes, new BinaryFunction<Step, Step, XdmNode>()
 		{
 			@Override
 			public Step evaluate(final Step step, final XdmNode withPortNode)
@@ -181,7 +181,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseWithOptionValue(final XdmNode stepNode, final Step step)
 	{
-		return CollectionUtil.apply(
+		return TubularFunctions.apply(
 			step, SaxonUtil.getAttributes(stepNode).entrySet(),
 			new BinaryFunction<Step, Step, Map.Entry<QName, String>>()
 			{
@@ -464,7 +464,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseVariables(final Iterable<XdmNode> variableNodes, final Step step)
 	{
-		return CollectionUtil.apply(step, variableNodes, new BinaryFunction<Step, Step, XdmNode>()
+		return TubularFunctions.apply(step, variableNodes, new BinaryFunction<Step, Step, XdmNode>()
 		{
 			@Override
 			public Step evaluate(final Step step, final XdmNode variableNode)
@@ -509,7 +509,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseDeclarePorts(final Iterable<XdmNode> declarePortNodes, final Step step)
 	{
-		return CollectionUtil.apply(step, declarePortNodes, new BinaryFunction<Step, Step, XdmNode>()
+		return TubularFunctions.apply(step, declarePortNodes, new BinaryFunction<Step, Step, XdmNode>()
 		{
 			@Override
 			public Step evaluate(final Step step, final XdmNode withPortNode)

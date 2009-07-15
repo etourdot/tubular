@@ -20,7 +20,7 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.core.BinaryFunction;
-import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.function.TubularFunctions;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
@@ -64,7 +64,7 @@ public class InvokeStep implements StepProcessor
 
 		// declare ports from invoked step
 		invokeStep =
-			CollectionUtil.apply(invokeStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
+			TubularFunctions.apply(invokeStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
 			{
 				@Override
 				public Step evaluate(final Step step, final Port port)
@@ -80,7 +80,7 @@ public class InvokeStep implements StepProcessor
 
 		// declare variables from invoked step
 		invokeStep =
-			CollectionUtil.apply(invokeStep, invokedStep.getVariables(), new BinaryFunction<Step, Step, Variable>()
+			TubularFunctions.apply(invokeStep, invokedStep.getVariables(), new BinaryFunction<Step, Step, Variable>()
 			{
 				@Override
 				public Step evaluate(final Step step, final Variable variable)
@@ -97,7 +97,7 @@ public class InvokeStep implements StepProcessor
 	{
 		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
-		return CollectionUtil.apply(
+		return TubularFunctions.apply(
 			invokedStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
 			{
 				@Override

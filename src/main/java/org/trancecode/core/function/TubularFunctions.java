@@ -17,20 +17,35 @@
  *
  * $Id$
  */
-package org.trancecode.core;
+package org.trancecode.core.function;
 
+import org.trancecode.core.BinaryFunction;
 
-
+import com.google.common.base.Function;
 
 
 /**
+ * Utility methods related to {@link Function}.
+ * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class CollectionUtil
+public final class TubularFunctions
 {
-	private CollectionUtil()
+	private TubularFunctions()
 	{
 		// No instantiation
+	}
+
+	public static <E, P> E apply(
+		final E initialElement, final Iterable<P> parameters, final BinaryFunction<E, E, P> function)
+	{
+		E currentElement = initialElement;
+		for (final P parameter : parameters)
+		{
+			currentElement = function.evaluate(currentElement, parameter);
+		}
+	
+		return currentElement;
 	}
 }
