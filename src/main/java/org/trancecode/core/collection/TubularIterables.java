@@ -17,7 +17,9 @@
  *
  * $Id$
  */
-package org.trancecode.core;
+package org.trancecode.core.collection;
+
+import org.trancecode.core.AbstractImmutableObject;
 
 import java.util.Iterator;
 
