@@ -19,15 +19,9 @@
  */
 package org.trancecode.core;
 
-import org.trancecode.annotation.ReturnsNullable;
 
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
 
@@ -79,42 +73,5 @@ public final class CollectionUtil
 		}
 
 		return currentElement;
-	}
-
-
-	@ReturnsNullable
-	public static <T> T getLast(final Iterable<T> elements)
-	{
-		if (elements instanceof List)
-		{
-			return getLast(elements);
-		}
-
-		try
-		{
-			return Iterators.getLast(elements.iterator());
-		}
-		catch (final NoSuchElementException e)
-		{
-			return null;
-		}
-	}
-
-
-	@ReturnsNullable
-	public static <T> T getLast(final List<T> elements)
-	{
-		if (elements.isEmpty())
-		{
-			return null;
-		}
-
-		return elements.get(elements.size() - 1);
-	}
-
-
-	public static <T> Iterable<T> append(final Iterable<T> iterable, final T... elements)
-	{
-		return Iterables.concat(iterable, ImmutableList.of(elements));
 	}
 }

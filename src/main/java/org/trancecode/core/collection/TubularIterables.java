@@ -19,12 +19,18 @@
  */
 package org.trancecode.core.collection;
 
+import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.AbstractImmutableObject;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 
 /**
@@ -65,5 +71,42 @@ public final class TubularIterables
 		{
 			return iteratorSupplier.get();
 		}
+	}
+
+
+	@ReturnsNullable
+	public static <T> T getLast(final Iterable<T> elements)
+	{
+		if (elements instanceof List)
+		{
+			return getLast(elements);
+		}
+	
+		try
+		{
+			return Iterators.getLast(elements.iterator());
+		}
+		catch (final NoSuchElementException e)
+		{
+			return null;
+		}
+	}
+
+
+	@ReturnsNullable
+	public static <T> T getLast(final List<T> elements)
+	{
+		if (elements.isEmpty())
+		{
+			return null;
+		}
+	
+		return elements.get(elements.size() - 1);
+	}
+
+
+	public static <T> Iterable<T> append(final Iterable<T> iterable, final T... elements)
+	{
+		return Iterables.concat(iterable, ImmutableList.of(elements));
 	}
 }

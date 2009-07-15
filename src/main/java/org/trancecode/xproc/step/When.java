@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
@@ -82,7 +82,7 @@ public class When extends AbstractCompoundStepProcessor
 
 		if (Iterables.isEmpty(step.getOutputPorts()))
 		{
-			final Step lastStep = CollectionUtil.getLast(step.getSubpipeline());
+			final Step lastStep = TubularIterables.getLast(step.getSubpipeline());
 
 			final Port primaryOutputPort = lastStep.getPrimaryOutputPort();
 			if (primaryOutputPort != null)

@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.collection.TubularIterables;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -121,7 +121,7 @@ public final class Variables
 			});
 		}
 
-		return CollectionUtil.append(variables, variable);
+		return TubularIterables.append(variables, variable);
 	}
 
 

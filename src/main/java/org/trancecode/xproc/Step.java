@@ -22,6 +22,7 @@ package org.trancecode.xproc;
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.CollectionUtil;
 import org.trancecode.core.ObjectUtil;
+import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.step.StepFunctions;
 
@@ -157,7 +158,7 @@ public final class Step extends AbstractHasLocation
 	{
 		assert !Variables.containsVariable(variables, variable.getName()) : "step = " + name + " ; variable = "
 			+ variable.getName() + " ; variables = " + variables;
-		return new Step(type, name, location, stepProcessor, compoundStep, CollectionUtil.append(variables, variable),
+		return new Step(type, name, location, stepProcessor, compoundStep, TubularIterables.append(variables, variable),
 			parameters, ports, steps);
 	}
 
