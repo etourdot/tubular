@@ -19,11 +19,12 @@
  */
 package org.trancecode.core.collection;
 
-
-
+import java.util.Collection;
 
 
 /**
+ * Utility methods related to {@link Collection}.
+ * 
  * @author Herve Quiroz
  * @version $Revision$
  */
