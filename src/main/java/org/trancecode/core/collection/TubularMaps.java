@@ -17,33 +17,46 @@
  *
  * $Id$
  */
-package org.trancecode.core;
+package org.trancecode.core.collection;
 
+import java.util.Map;
 
-
+import com.google.common.collect.Maps;
 
 
 /**
+ * Utility methods related to {@link Map}.
+ * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class CollectionUtil
+public final class TubularMaps
 {
-	private CollectionUtil()
+	private TubularMaps()
 	{
 		// No instantiation
 	}
 
-
-	public static <E, P> E apply(
-		final E initialElement, final Iterable<P> parameters, final BinaryFunction<E, E, P> function)
+	public static <K, V> Map<K, V> newSmallWriteOnceMap()
 	{
-		E currentElement = initialElement;
-		for (final P parameter : parameters)
-		{
-			currentElement = function.evaluate(currentElement, parameter);
-		}
+		// TODO
+		return Maps.newLinkedHashMap();
+	}
 
-		return currentElement;
+	public static <K, V> Map<K, V> merge(final Map<K, V> map1, final Map<K, V> map2)
+	{
+		final Map<K, V> map = Maps.newHashMapWithExpectedSize(map1.size() + map2.size());
+		map.putAll(map1);
+		map.putAll(map2);
+	
+		return map;
+	}
+
+	public static <K, V> Map<K, V> copyAndPut(final Map<K, V> map1, final K key, final V value)
+	{
+		final Map<K, V> map = Maps.newHashMap(map1);
+		map.put(key, value);
+	
+		return map;
 	}
 }

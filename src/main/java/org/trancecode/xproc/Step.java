@@ -23,6 +23,7 @@ import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.CollectionUtil;
 import org.trancecode.core.ObjectUtil;
 import org.trancecode.core.collection.TubularIterables;
+import org.trancecode.core.collection.TubularMaps;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.step.StepFunctions;
 
@@ -457,7 +458,7 @@ public final class Step extends AbstractHasLocation
 	{
 		assert ports.containsKey(port.getPortName());
 
-		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, CollectionUtil
+		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, TubularMaps
 			.copyAndPut(ports, port.getPortName(), port), steps);
 	}
 

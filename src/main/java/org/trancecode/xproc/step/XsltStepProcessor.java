@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.collection.TubularMaps;
 import org.trancecode.io.UriUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
@@ -125,7 +125,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 		final List<XdmNode> secondaryPortNodes = Lists.newArrayList();
 		transformer.getUnderlyingController().setOutputURIResolver(new OutputURIResolver()
 		{
-			final Map<URI, XdmDestination> destinations = CollectionUtil.newSmallWriteOnceMap();
+			final Map<URI, XdmDestination> destinations = TubularMaps.newSmallWriteOnceMap();
 
 
 			public void close(final Result result) throws TransformerException

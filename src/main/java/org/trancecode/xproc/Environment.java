@@ -20,7 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.CollectionUtil;
+import org.trancecode.core.collection.TubularMaps;
 import org.trancecode.xml.SaxonUtil;
 
 import java.net.URI;
@@ -382,7 +382,7 @@ public class Environment
 	public Environment newChildStepEnvironment()
 	{
 		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-			xpathContextPort, CollectionUtil.merge(inheritedVariables, localVariables), EMPTY_VARIABLES_MAP);
+			xpathContextPort, TubularMaps.merge(inheritedVariables, localVariables), EMPTY_VARIABLES_MAP);
 	}
 
 
@@ -391,7 +391,7 @@ public class Environment
 		assert localVariables != null;
 
 		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-			xpathContextPort, inheritedVariables, CollectionUtil.merge(this.localVariables, localVariables));
+			xpathContextPort, inheritedVariables, TubularMaps.merge(this.localVariables, localVariables));
 	}
 
 
@@ -525,7 +525,7 @@ public class Environment
 		assert ports != null;
 		LOG.trace("ports = {}", ports);
 
-		return new Environment(pipeline, configuration, CollectionUtil.merge(this.ports, ports), defaultReadablePort,
+		return new Environment(pipeline, configuration, TubularMaps.merge(this.ports, ports), defaultReadablePort,
 			defaultParametersPort, xpathContextPort, inheritedVariables, localVariables);
 	}
 
@@ -629,7 +629,7 @@ public class Environment
 		LOG.entry(select);
 
 		// TODO slow
-		final Map<QName, String> variables = CollectionUtil.merge(inheritedVariables, localVariables);
+		final Map<QName, String> variables = TubularMaps.merge(inheritedVariables, localVariables);
 
 		try
 		{
@@ -720,7 +720,7 @@ public class Environment
 
 	public Map<QName, String> readParameters(final String stepName, final String portName)
 	{
-		final Map<QName, String> parameters = CollectionUtil.newSmallWriteOnceMap();
+		final Map<QName, String> parameters = TubularMaps.newSmallWriteOnceMap();
 		for (final XdmNode parameterNode : readNodes(stepName, portName))
 		{
 			final XPathCompiler xpathCompiler = getConfiguration().getProcessor().newXPathCompiler();
