@@ -56,6 +56,8 @@ public abstract class AbstractImmutableObject
 	@Override
 	public int hashCode()
 	{
+		// FIXME how to handle a final reference to a collection (which is mutable) ?
+
 		if (!hashCodeComputed)
 		{
 			hashCode = ObjectUtil.hashCode(getClass(), properties);
