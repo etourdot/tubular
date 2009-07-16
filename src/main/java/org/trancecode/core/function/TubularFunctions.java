@@ -19,6 +19,8 @@
  */
 package org.trancecode.core.function;
 
+import org.trancecode.core.AbstractImmutableObject;
+
 import com.google.common.base.Function;
 
 
@@ -46,5 +48,31 @@ public final class TubularFunctions
 		}
 
 		return currentElement;
+	}
+
+
+	public static <F, T> Function<Function<F, T>, T> applyTo(final F argument)
+	{
+		return new ApplyFunction<F, T>(argument);
+	}
+
+
+	private static class ApplyFunction<F, T> extends AbstractImmutableObject implements Function<Function<F, T>, T>
+	{
+		private final F argument;
+
+
+		public ApplyFunction(final F argument)
+		{
+			super(argument);
+			this.argument = argument;
+		}
+
+
+		@Override
+		public T apply(final Function<F, T> function)
+		{
+			return function.apply(argument);
+		}
 	}
 }
