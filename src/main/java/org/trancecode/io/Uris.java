@@ -20,6 +20,7 @@
 package org.trancecode.io;
 
 import org.trancecode.annotation.Nullable;
+import org.trancecode.annotation.ReturnsNullable;
 
 import java.net.URI;
 
@@ -38,6 +39,7 @@ public final class Uris
 	}
 
 
+	@ReturnsNullable
 	public static URI createUri(@Nullable final String uri)
 	{
 		if (uri == null || uri.length() == 0)
@@ -49,6 +51,7 @@ public final class Uris
 	}
 
 
+	@ReturnsNullable
 	public static URI resolve(@Nullable final String href, @Nullable final String base)
 	{
 		final URI hrefUri = createUri(href);
