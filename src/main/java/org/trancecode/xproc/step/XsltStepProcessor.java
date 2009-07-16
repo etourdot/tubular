@@ -20,7 +20,7 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.core.collection.TubularMaps;
-import org.trancecode.io.UriUtil;
+import org.trancecode.io.Uris;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
@@ -140,7 +140,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 
 			public Result resolve(final String href, final String base) throws TransformerException
 			{
-				final URI uri = UriUtil.resolve(href, base);
+				final URI uri = Uris.resolve(href, base);
 				assert uri != null;
 				LOG.debug("new result document: {}", uri);
 

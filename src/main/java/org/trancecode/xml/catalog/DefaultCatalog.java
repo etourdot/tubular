@@ -21,7 +21,7 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.annotation.Nullable;
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.io.UriUtil;
+import org.trancecode.io.Uris;
 
 import java.net.URI;
 
@@ -49,9 +49,9 @@ public class DefaultCatalog extends AbstractCatalog implements ContainsDefaultCa
 	{
 		if (systemId != null)
 		{
-			return UriUtil.createUri(systemId);
+			return Uris.createUri(systemId);
 		}
 
-		return UriUtil.resolve(href, base);
+		return Uris.resolve(href, base);
 	}
 }

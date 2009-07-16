@@ -25,14 +25,14 @@ import java.net.URI;
 
 
 /**
- * Utility methods related to URI handling.
+ * Utility methods related to {@link URI}.
  * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class UriUtil
+public final class Uris
 {
-	private UriUtil()
+	private Uris()
 	{
 		// To prevent instantiation
 	}

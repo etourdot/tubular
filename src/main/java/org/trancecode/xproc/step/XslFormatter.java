@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.io.UriUtil;
+import org.trancecode.io.Uris;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
@@ -76,7 +76,7 @@ public class XslFormatter extends AbstractStepProcessor
 			@Override
 			public Source resolve(final String href, final String base) throws TransformerException
 			{
-				final URI uri = UriUtil.resolve(href, base);
+				final URI uri = Uris.resolve(href, base);
 				final InputStream inputStream =
 					environment.getConfiguration().getInputResolver().resolveInputStream(href, base);
 				return new StreamSource(inputStream, uri.toString());

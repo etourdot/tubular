@@ -22,7 +22,7 @@ package org.trancecode.xml.catalog;
 import org.trancecode.annotation.Nullable;
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.ObjectUtil;
-import org.trancecode.io.UriUtil;
+import org.trancecode.io.Uris;
 
 import java.net.URI;
 
@@ -66,7 +66,7 @@ public class RewriteUri extends AbstractCatalog
 		final String uriString;
 		if (href != null || base != null)
 		{
-			uriString = UriUtil.resolve(href, base).toString();
+			uriString = Uris.resolve(href, base).toString();
 		}
 		else
 		{
@@ -78,7 +78,7 @@ public class RewriteUri extends AbstractCatalog
 		if (uriString != null && uriString.startsWith(uriStartString))
 		{
 			final String suffix = uriString.substring(uriStartString.length());
-			return UriUtil.createUri(rewritePrefix + suffix);
+			return Uris.createUri(rewritePrefix + suffix);
 		}
 
 		return null;

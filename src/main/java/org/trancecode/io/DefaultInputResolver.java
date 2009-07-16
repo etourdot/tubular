@@ -44,7 +44,7 @@ public class DefaultInputResolver implements InputResolver
 	@Override
 	public InputStream resolveInputStream(final String href, final String base)
 	{
-		final URI uri = UriUtil.resolve(href, base);
+		final URI uri = Uris.resolve(href, base);
 		if (uri.getScheme() == null || "file".equals(uri.getScheme()))
 		{
 			final File file = new File(uri);
