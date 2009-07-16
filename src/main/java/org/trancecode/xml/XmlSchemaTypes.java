@@ -26,7 +26,7 @@ import net.sf.saxon.s9api.QName;
  * @author Hzrve Quiroz
  * @version $Revision$
  */
-public interface XmlSchemaModel
+public interface XmlSchemaTypes
 {
 	QName UNTYPED_ATOMIC = XmlSchemaNamespace.INSTANCE.newSaxonQName("untypedAtomic");
 }

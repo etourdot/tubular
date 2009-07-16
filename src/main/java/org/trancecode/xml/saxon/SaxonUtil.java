@@ -23,7 +23,7 @@ import org.trancecode.core.function.TubularPredicates;
 import org.trancecode.io.IOUtil;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.XmlModel;
-import org.trancecode.xml.XmlSchemaModel;
+import org.trancecode.xml.XmlSchemaTypes;
 import org.trancecode.xproc.XProcExceptions;
 
 import java.io.StringReader;
@@ -244,7 +244,7 @@ public class SaxonUtil implements XmlModel
 		try
 		{
 			return new XdmAtomicValue(value, new ItemTypeFactory(processor)
-				.getAtomicType(XmlSchemaModel.UNTYPED_ATOMIC));
+				.getAtomicType(XmlSchemaTypes.UNTYPED_ATOMIC));
 		}
 		catch (final SaxonApiException e)
 		{
