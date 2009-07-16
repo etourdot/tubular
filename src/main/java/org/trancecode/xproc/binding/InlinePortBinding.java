@@ -21,7 +21,7 @@ package org.trancecode.xproc.binding;
 
 import org.trancecode.annotation.Immutable;
 import org.trancecode.xml.Location;
-import org.trancecode.xml.SaxonUtil;
+import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
 import org.trancecode.xproc.PortBinding;

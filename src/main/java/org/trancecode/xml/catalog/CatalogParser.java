@@ -20,8 +20,8 @@
 package org.trancecode.xml.catalog;
 
 import org.trancecode.io.UriUtil;
-import org.trancecode.xml.SaxonUtil;
 import org.trancecode.xml.XmlModel;
+import org.trancecode.xml.saxon.SaxonUtil;
 
 import java.net.URI;
 import java.util.List;

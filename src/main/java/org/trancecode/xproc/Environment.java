@@ -21,7 +21,7 @@ package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.collection.TubularMaps;
-import org.trancecode.xml.SaxonUtil;
+import org.trancecode.xml.saxon.SaxonUtil;
 
 import java.net.URI;
 import java.util.Arrays;

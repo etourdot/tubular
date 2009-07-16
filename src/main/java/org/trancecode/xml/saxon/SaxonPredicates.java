@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xml;
+package org.trancecode.xml.saxon;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

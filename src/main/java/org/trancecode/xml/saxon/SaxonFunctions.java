@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xml;
+package org.trancecode.xml.saxon;
 
 import java.util.Iterator;
 

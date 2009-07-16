@@ -20,7 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.AbstractTest;
-import org.trancecode.xml.SaxonUtil;
+import org.trancecode.xml.saxon.SaxonUtil;
 
 import java.net.MalformedURLException;
 import java.net.URL;

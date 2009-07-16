@@ -17,10 +17,13 @@
  *
  * $Id$
  */
-package org.trancecode.xml;
+package org.trancecode.xml.saxon;
 
 import org.trancecode.core.function.TubularPredicates;
 import org.trancecode.io.IOUtil;
+import org.trancecode.xml.Location;
+import org.trancecode.xml.XmlModel;
+import org.trancecode.xml.XmlSchemaModel;
 import org.trancecode.xproc.XProcExceptions;
 
 import java.io.StringReader;

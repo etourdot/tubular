@@ -17,35 +17,64 @@
  *
  * $Id$
  */
-package org.trancecode.xml;
+package org.trancecode.xml.saxon;
 
-import java.util.Map;
+import org.trancecode.annotation.Immutable;
+import org.trancecode.xml.Location;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-
-import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 
 
 /**
- * Utility methods related to {@link Map} and Saxon.
- * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class SaxonMaps
+@Immutable
+public class SaxonLocation implements Location
 {
-	private SaxonMaps()
+	public final XdmNode node;
+
+	private String toString;
+
+
+	public SaxonLocation(final XdmNode node)
 	{
-		// No instantiation
+		this.node = node;
 	}
 
 
-	public static Map<QName, String> attributes(final Iterable<XdmNode> nodes)
+	public String getSystemId()
 	{
-		assert Iterables.all(nodes, SaxonPredicates.isAttribute());
-		final Map<QName, XdmNode> nodeMap = Maps.uniqueIndex(nodes, SaxonFunctions.getNodeName());
-		return Maps.transformValues(nodeMap, SaxonFunctions.getStringValue());
+		return node.getUnderlyingNode().getSystemId();
+	}
+
+
+	public int getColumnNumber()
+	{
+		return node.getUnderlyingNode().getColumnNumber();
+	}
+
+
+	public int getLineNumber()
+	{
+		return node.getUnderlyingNode().getLineNumber();
+	}
+
+
+	public String getPublicId()
+	{
+		return null;
+	}
+
+
+	@Override
+	public String toString()
+	{
+		if (toString == null)
+		{
+			toString = String.format("line %s, column %s in %s", getLineNumber(), getColumnNumber(), getSystemId());
+		}
+
+		return toString;
 	}
 }

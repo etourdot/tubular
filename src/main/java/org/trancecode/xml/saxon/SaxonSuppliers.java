@@ -17,11 +17,13 @@
  *
  * $Id$
  */
-package org.trancecode.xml;
+package org.trancecode.xml.saxon;
 
-import org.trancecode.core.collection.TubularIterables;
+import org.trancecode.core.function.TubularSuppliers;
 
-import com.google.common.collect.Iterables;
+import java.util.Iterator;
+
+import com.google.common.base.Supplier;
 
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.XdmItem;
@@ -29,39 +31,21 @@ import net.sf.saxon.s9api.XdmNode;
 
 
 /**
- * Utility methods related to {@link Iterable} and Saxon.
+ * Utility methods related to {@link Supplier} and Saxon.
  * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class SaxonIterables
+public final class SaxonSuppliers
 {
-	private SaxonIterables()
+	private SaxonSuppliers()
 	{
 		// No instantiation
 	}
 
 
-	public static Iterable<XdmItem> childXdmItems(final XdmNode node)
+	public static Supplier<Iterator<XdmItem>> axisIterator(final XdmNode node, final Axis axis)
 	{
-		return TubularIterables.newIterable(SaxonSuppliers.axisIterator(node, Axis.CHILD));
-	}
-
-
-	public static Iterable<XdmNode> childNodes(final XdmNode node)
-	{
-		return Iterables.filter(childXdmItems(node), XdmNode.class);
-	}
-
-
-	public static Iterable<XdmNode> childElements(final XdmNode node)
-	{
-		return Iterables.filter(childNodes(node), SaxonPredicates.isElement());
-	}
-
-
-	public static Iterable<XdmNode> attributes(final XdmNode node)
-	{
-		return Iterables.filter(childNodes(node), SaxonPredicates.isAttribute());
+		return TubularSuppliers.fromFunction(SaxonFunctions.axisIterator(axis), node);
 	}
 }
