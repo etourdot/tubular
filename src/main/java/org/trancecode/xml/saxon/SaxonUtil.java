@@ -22,7 +22,7 @@ package org.trancecode.xml.saxon;
 import org.trancecode.core.function.TubularPredicates;
 import org.trancecode.io.IOUtil;
 import org.trancecode.xml.Location;
-import org.trancecode.xml.XmlModel;
+import org.trancecode.xml.XmlAttributes;
 import org.trancecode.xml.XmlSchemaTypes;
 import org.trancecode.xproc.XProcExceptions;
 
@@ -64,7 +64,7 @@ import org.w3c.dom.Document;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class SaxonUtil implements XmlModel
+public class SaxonUtil implements XmlAttributes
 {
 	private static final XLogger LOG = XLoggerFactory.getXLogger(SaxonUtil.class);
 

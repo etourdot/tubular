@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.parser;
 
-import org.trancecode.xml.XmlModel;
+import org.trancecode.xml.XmlAttributes;
 import org.trancecode.xproc.XProcNamespaces;
 
 import java.util.Set;
@@ -36,7 +36,7 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public interface XProcXmlModel extends XmlModel
+public interface XProcXmlModel extends XmlAttributes
 {
 	QName ATTRIBUTE_HREF = new QName("href");
 

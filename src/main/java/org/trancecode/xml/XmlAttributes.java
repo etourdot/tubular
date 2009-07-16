@@ -26,7 +26,7 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public interface XmlModel
+public interface XmlAttributes
 {
-	QName ATTRIBUTE_BASE = XmlNamespace.INSTANCE.newSaxonQName("base");
+	QName BASE = XmlNamespace.INSTANCE.newSaxonQName("base");
 }

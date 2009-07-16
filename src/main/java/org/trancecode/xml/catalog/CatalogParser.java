@@ -20,7 +20,7 @@
 package org.trancecode.xml.catalog;
 
 import org.trancecode.io.UriUtil;
-import org.trancecode.xml.XmlModel;
+import org.trancecode.xml.XmlAttributes;
 import org.trancecode.xml.saxon.SaxonUtil;
 
 import java.net.URI;
@@ -95,7 +95,7 @@ public class CatalogParser
 	{
 		assert catalogNode != null;
 
-		final URI baseUri = UriUtil.createUri(catalogNode.getAttributeValue(XmlModel.ATTRIBUTE_BASE));
+		final URI baseUri = UriUtil.createUri(catalogNode.getAttributeValue(XmlAttributes.BASE));
 
 		if (XmlCatalogModel.ELEMENTS_GROUP.contains(catalogNode.getNodeName()))
 		{
