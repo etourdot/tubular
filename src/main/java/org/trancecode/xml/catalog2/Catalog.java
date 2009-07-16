@@ -36,7 +36,7 @@ import com.google.common.collect.Iterables;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class Catalog extends AbstractImmutableObject
+public final class Catalog extends AbstractImmutableObject implements Function<CatalogQuery, URI>
 {
 	private final Iterable<Function<CatalogQuery, URI>> catalogEntries;
 
@@ -53,6 +53,14 @@ public final class Catalog extends AbstractImmutableObject
 	}
 
 
+	private static Catalog newCatalog(
+		final Iterable<Function<CatalogQuery, URI>> catalogEntries1,
+		final Iterable<Function<CatalogQuery, URI>> catalogEntries2)
+	{
+		return newCatalog(Iterables.concat(catalogEntries1, catalogEntries2));
+	}
+
+
 	private Catalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
 	{
 		super(catalogEntries);
@@ -65,9 +73,39 @@ public final class Catalog extends AbstractImmutableObject
 		@Nullable final String publicId, @Nullable final String systemId, @Nullable final String href,
 		@Nullable final String base)
 	{
-		final CatalogQuery query = CatalogQuery.newInstance(publicId, systemId, href, base);
+		return apply(CatalogQuery.newInstance(publicId, systemId, href, base));
+	}
+
+
+	@Override
+	public URI apply(final CatalogQuery query)
+	{
 		final Function<Function<CatalogQuery, URI>, URI> applyFunction = TubularFunctions.applyTo(query);
 		final Iterable<URI> results = Iterables.transform(catalogEntries, applyFunction);
 		return Iterables.find(results, Predicates.notNull());
+	}
+
+
+	public Catalog override(final Function<CatalogQuery, URI>... newCatalogEntries)
+	{
+		return override(ImmutableList.of(newCatalogEntries));
+	}
+
+
+	public Catalog override(final Iterable<Function<CatalogQuery, URI>> newCatalogEntries)
+	{
+		return newCatalog(newCatalogEntries, catalogEntries);
+	}
+
+
+	public Catalog addEntries(final Function<CatalogQuery, URI>... newCatalogEntries)
+	{
+		return addEntries(ImmutableList.of(newCatalogEntries));
+	}
+
+
+	public Catalog addEntries(final Iterable<Function<CatalogQuery, URI>> newCatalogEntries)
+	{
+		return newCatalog(catalogEntries, newCatalogEntries);
 	}
 }
