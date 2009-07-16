@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.parser;
 
-import org.trancecode.core.BinaryFunction;
+import org.trancecode.core.function.Pair;
 import org.trancecode.core.function.TubularFunctions;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonLocation;
@@ -168,11 +168,13 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseWithPorts(final Iterable<XdmNode> withPortNodes, final Step step)
 	{
-		return TubularFunctions.apply(step, withPortNodes, new BinaryFunction<Step, Step, XdmNode>()
+		return TubularFunctions.apply(step, withPortNodes, new Function<Pair<Step, XdmNode>, Step>()
 		{
 			@Override
-			public Step evaluate(final Step step, final XdmNode withPortNode)
+			public Step apply(final Pair<Step, XdmNode> arguments)
 			{
+				final Step step = arguments.left();
+				final XdmNode withPortNode = arguments.right();
 				return parseWithPort(withPortNode, step);
 			}
 		});
@@ -182,12 +184,13 @@ public class PipelineParser implements XProcXmlModel
 	private Step parseWithOptionValue(final XdmNode stepNode, final Step step)
 	{
 		return TubularFunctions.apply(
-			step, SaxonUtil.attributes(stepNode).entrySet(),
-			new BinaryFunction<Step, Step, Map.Entry<QName, String>>()
+			step, SaxonUtil.attributes(stepNode).entrySet(), new Function<Pair<Step, Map.Entry<QName, String>>, Step>()
 			{
 				@Override
-				public Step evaluate(final Step step, final Map.Entry<QName, String> attribute)
+				public Step apply(final Pair<Step, Map.Entry<QName, String>> arguments)
 				{
+					final Step step = arguments.left();
+					final Map.Entry<QName, String> attribute = arguments.right();
 					final QName name = attribute.getKey();
 					final String value = attribute.getValue();
 					if (name.getNamespaceURI().isEmpty() && !name.equals(ATTRIBUTE_NAME)
@@ -464,11 +467,13 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseVariables(final Iterable<XdmNode> variableNodes, final Step step)
 	{
-		return TubularFunctions.apply(step, variableNodes, new BinaryFunction<Step, Step, XdmNode>()
+		return TubularFunctions.apply(step, variableNodes, new Function<Pair<Step, XdmNode>, Step>()
 		{
 			@Override
-			public Step evaluate(final Step step, final XdmNode variableNode)
+			public Step apply(final Pair<Step, XdmNode> arguments)
 			{
+				final Step step = arguments.left();
+				final XdmNode variableNode = arguments.right();
 				return parseVariable(variableNode, step);
 			}
 		});
@@ -509,11 +514,13 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseDeclarePorts(final Iterable<XdmNode> declarePortNodes, final Step step)
 	{
-		return TubularFunctions.apply(step, declarePortNodes, new BinaryFunction<Step, Step, XdmNode>()
+		return TubularFunctions.apply(step, declarePortNodes, new Function<Pair<Step, XdmNode>, Step>()
 		{
 			@Override
-			public Step evaluate(final Step step, final XdmNode withPortNode)
+			public Step apply(final Pair<Step, XdmNode> arguments)
 			{
+				final Step step = arguments.left();
+				final XdmNode withPortNode = arguments.right();
 				return parseDeclarePort(withPortNode, step);
 			}
 		});

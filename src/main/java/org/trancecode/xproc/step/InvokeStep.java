@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.BinaryFunction;
+import org.trancecode.core.function.Pair;
 import org.trancecode.core.function.TubularFunctions;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
@@ -32,6 +32,7 @@ import org.trancecode.xproc.binding.PipePortBinding;
 
 import java.util.Collections;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -60,15 +61,18 @@ public class InvokeStep implements StepProcessor
 	{
 		assert invokedStep != null;
 
-		Step invokeStep = Step.newStep(invokedStep.getType(), INSTANCE, true).setSubpipeline(ImmutableList.of(invokedStep));
+		Step invokeStep =
+			Step.newStep(invokedStep.getType(), INSTANCE, true).setSubpipeline(ImmutableList.of(invokedStep));
 
 		// declare ports from invoked step
 		invokeStep =
-			TubularFunctions.apply(invokeStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
+			TubularFunctions.apply(invokeStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
 			{
 				@Override
-				public Step evaluate(final Step step, final Port port)
+				public Step apply(final Pair<Step, Port> arguments)
 				{
+					final Step step = arguments.left();
+					final Port port = arguments.right();
 					if (port.isOutput())
 					{
 						return step.declarePort(port.pipe(port));
@@ -80,11 +84,13 @@ public class InvokeStep implements StepProcessor
 
 		// declare variables from invoked step
 		invokeStep =
-			TubularFunctions.apply(invokeStep, invokedStep.getVariables(), new BinaryFunction<Step, Step, Variable>()
+			TubularFunctions.apply(invokeStep, invokedStep.getVariables(), new Function<Pair<Step, Variable>, Step>()
 			{
 				@Override
-				public Step evaluate(final Step step, final Variable variable)
+				public Step apply(final Pair<Step, Variable> arguments)
 				{
+					final Step step = arguments.left();
+					final Variable variable = arguments.right();
 					return step.declareVariable(variable);
 				}
 			});
@@ -98,11 +104,13 @@ public class InvokeStep implements StepProcessor
 		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
 		return TubularFunctions.apply(
-			invokedStep, invokedStep.getPorts().values(), new BinaryFunction<Step, Step, Port>()
+			invokedStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
 			{
 				@Override
-				public Step evaluate(final Step step, final Port port)
+				public Step apply(final Pair<Step, Port> arguments)
 				{
+					final Step step = arguments.left();
+					final Port port = arguments.right();
 					if (port.isInput())
 					{
 						final PortReference localPortReference =

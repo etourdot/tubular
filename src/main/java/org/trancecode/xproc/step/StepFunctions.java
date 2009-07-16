@@ -19,9 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.BinaryFunction;
+import org.trancecode.core.function.Pair;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
+
+import com.google.common.base.Function;
 
 
 /**
@@ -36,20 +38,22 @@ public final class StepFunctions
 	}
 
 
-	public static BinaryFunction<Step, Step, Variable> declareVariable()
+	public static Function<Pair<Step, Variable>, Step> declareVariable()
 	{
 		return DeclareVariableBinaryFunction.INSTANCE;
 	}
 
 
-	private static class DeclareVariableBinaryFunction implements BinaryFunction<Step, Step, Variable>
+	private static class DeclareVariableBinaryFunction implements Function<Pair<Step, Variable>, Step>
 	{
 		private static final DeclareVariableBinaryFunction INSTANCE = new DeclareVariableBinaryFunction();
 
 
 		@Override
-		public Step evaluate(final Step step, final Variable variable)
+		public Step apply(final Pair<Step, Variable> arguments)
 		{
+			final Step step = arguments.left();
+			final Variable variable = arguments.right();
 			return step.declareVariable(variable);
 		}
 	}

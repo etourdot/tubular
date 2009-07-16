@@ -19,8 +19,6 @@
  */
 package org.trancecode.core.function;
 
-import org.trancecode.core.BinaryFunction;
-
 import com.google.common.base.Function;
 
 
@@ -37,15 +35,16 @@ public final class TubularFunctions
 		// No instantiation
 	}
 
+
 	public static <E, P> E apply(
-		final E initialElement, final Iterable<P> parameters, final BinaryFunction<E, E, P> function)
+		final E initialElement, final Iterable<P> parameters, final Function<Pair<E, P>, E> function)
 	{
 		E currentElement = initialElement;
 		for (final P parameter : parameters)
 		{
-			currentElement = function.evaluate(currentElement, parameter);
+			currentElement = function.apply(Pairs.newImmutablePair(currentElement, parameter));
 		}
-	
+
 		return currentElement;
 	}
 }
