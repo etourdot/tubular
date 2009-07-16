@@ -53,16 +53,16 @@ public final class TubularFunctions
 
 	public static <F, T> Function<Function<F, T>, T> applyTo(final F argument)
 	{
-		return new ApplyFunction<F, T>(argument);
+		return new ApplyToFunction<F, T>(argument);
 	}
 
 
-	private static class ApplyFunction<F, T> extends AbstractImmutableObject implements Function<Function<F, T>, T>
+	private static class ApplyToFunction<F, T> extends AbstractImmutableObject implements Function<Function<F, T>, T>
 	{
 		private final F argument;
 
 
-		public ApplyFunction(final F argument)
+		public ApplyToFunction(final F argument)
 		{
 			super(argument);
 			this.argument = argument;
