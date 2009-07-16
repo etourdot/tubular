@@ -19,14 +19,20 @@
  */
 package org.trancecode.xml;
 
-import net.sf.saxon.s9api.QName;
+import net.sf.saxon.om.NamespaceConstant;
 
 
 /**
- * @author Hzrve Quiroz
+ * @author Herve Quiroz
  * @version $Revision$
  */
-public interface XmlSchemaModel
+public final class XmlSchemaNamespace extends Namespace
 {
-	QName UNTYPED_ATOMIC = XmlSchemaNamespace.INSTANCE.newSaxonQName("untypedAtomic");
+	public static final XmlSchemaNamespace INSTANCE = new XmlSchemaNamespace();
+
+
+	private XmlSchemaNamespace()
+	{
+		super(NamespaceConstant.SCHEMA, "xs");
+	}
 }
