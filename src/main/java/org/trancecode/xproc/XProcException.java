@@ -29,6 +29,9 @@ import org.trancecode.xml.Location;
  */
 public class XProcException extends BaseException
 {
+	private static final long serialVersionUID = 4809656109440340746L;
+
+
 	public static enum Type
 	{
 		STATIC
