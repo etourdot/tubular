@@ -64,10 +64,10 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 		final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
 		documentBuilder.setLineNumbering(true);
 		final XdmNode testDocument = documentBuilder.build(testSource);
-		final XdmNode testElement = SaxonUtil.getElement(testDocument, ELEMENT_TEST);
+		final XdmNode testElement = SaxonUtil.childElement(testDocument, ELEMENT_TEST);
 		final String expectedError = testElement.getAttributeValue(ATTRIBUTE_ERROR);
-		final XdmNode pipelineElement = SaxonUtil.getElement(testElement, ELEMENT_PIPELINE);
-		final XdmNode pipelineDocument = SaxonUtil.getElement(pipelineElement);
+		final XdmNode pipelineElement = SaxonUtil.childElement(testElement, ELEMENT_PIPELINE);
+		final XdmNode pipelineDocument = SaxonUtil.childElement(pipelineElement);
 		final PipelineResult result;
 		try
 		{
@@ -76,25 +76,25 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 			log.info("== pipeline parsed ==");
 			final RunnablePipeline runnablePipeline = pipeline.load();
 
-			for (final XdmNode inputElement : SaxonUtil.getElements(testElement, ELEMENT_INPUT))
+			for (final XdmNode inputElement : SaxonUtil.childElements(testElement, ELEMENT_INPUT))
 			{
 				final String portName = inputElement.getAttributeValue(ATTRIBUTE_PORT);
 				final List<Source> sources = new ArrayList<Source>();
-				for (final XdmNode node : SaxonUtil.getElements(inputElement))
+				for (final XdmNode node : SaxonUtil.childElements(inputElement))
 				{
 					sources.add(getDocumentWrappedNode(node).asSource());
 				}
 				runnablePipeline.setPortBinding(portName, sources);
 			}
 
-			for (final XdmNode optionElement : SaxonUtil.getElements(testElement, ELEMENT_OPTION))
+			for (final XdmNode optionElement : SaxonUtil.childElements(testElement, ELEMENT_OPTION))
 			{
 				final QName name = SaxonUtil.getAttributeAsQName(optionElement, ATTRIBUTE_NAME);
 				final String value = optionElement.getAttributeValue(ATTRIBUTE_VALUE);
 				runnablePipeline.withOption(name, value);
 			}
 
-			for (final XdmNode parameterElement : SaxonUtil.getElements(testElement, ELEMENT_PARAMETER))
+			for (final XdmNode parameterElement : SaxonUtil.childElements(testElement, ELEMENT_PARAMETER))
 			{
 				final QName name = SaxonUtil.getAttributeAsQName(parameterElement, ATTRIBUTE_NAME);
 				final String value = parameterElement.getAttributeValue(ATTRIBUTE_VALUE);
@@ -117,7 +117,7 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 		}
 
 		final XdmNode comparePipelineElement =
-			Iterables.getOnlyElement(SaxonUtil.getElements(testElement, ELEMENT_COMPARE_PIPELINE), null);
+			Iterables.getOnlyElement(SaxonUtil.childElements(testElement, ELEMENT_COMPARE_PIPELINE), null);
 		if (comparePipelineElement != null)
 		{
 			// TODO parse compare-pipeline (if any)
@@ -126,11 +126,11 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 
 		// TODO run compare-pipeline (if any)
 
-		for (final XdmNode outputElement : SaxonUtil.getElements(testElement, ELEMENT_OUTPUT))
+		for (final XdmNode outputElement : SaxonUtil.childElements(testElement, ELEMENT_OUTPUT))
 		{
 			final String portName = outputElement.getAttributeValue(ATTRIBUTE_PORT);
 
-			final Iterable<XdmNode> expectedNodes = SaxonUtil.getElements(outputElement);
+			final Iterable<XdmNode> expectedNodes = SaxonUtil.childElements(outputElement);
 			final Iterable<XdmNode> actualNodes = result.readNodes(portName);
 			Assert.assertEquals(portName + " = " + actualNodes.toString(), Iterables.size(expectedNodes), Iterables
 				.size(actualNodes));
@@ -154,7 +154,7 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 	{
 		if (node.getNodeName().equals(ELEMENT_DOCUMENT))
 		{
-			return SaxonUtil.getElement(node);
+			return SaxonUtil.childElement(node);
 		}
 
 		return node;

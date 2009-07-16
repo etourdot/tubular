@@ -108,7 +108,7 @@ public class PipelineParser implements XProcXmlModel
 			final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
 			documentBuilder.setLineNumbering(true);
 			final XdmNode pipelineDocument = documentBuilder.build(source);
-			rootNode = SaxonUtil.getElement(pipelineDocument, ELEMENTS_ROOT);
+			rootNode = SaxonUtil.childElement(pipelineDocument, ELEMENTS_ROOT);
 			if (rootNode.getNodeName().equals(ELEMENT_PIPELINE) || rootNode.getNodeName().equals(ELEMENT_DECLARE_STEP))
 			{
 				mainPipeline = parsePipeline(rootNode);
@@ -137,7 +137,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseDeclareSteps(final XdmNode node)
 	{
-		for (final XdmNode stepNode : SaxonUtil.getElements(node, ELEMENTS_DECLARE_STEP_OR_PIPELINE))
+		for (final XdmNode stepNode : SaxonUtil.childElements(node, ELEMENTS_DECLARE_STEP_OR_PIPELINE))
 		{
 			final QName type = SaxonUtil.getAttributeAsQName(stepNode, ATTRIBUTE_TYPE);
 
@@ -182,7 +182,7 @@ public class PipelineParser implements XProcXmlModel
 	private Step parseWithOptionValue(final XdmNode stepNode, final Step step)
 	{
 		return TubularFunctions.apply(
-			step, SaxonUtil.getAttributes(stepNode).entrySet(),
+			step, SaxonUtil.attributes(stepNode).entrySet(),
 			new BinaryFunction<Step, Step, Map.Entry<QName, String>>()
 			{
 				@Override
@@ -205,7 +205,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseInstanceStepBindings(final XdmNode node, final Step step)
 	{
-		final Step stepWithPorts = parseWithPorts(SaxonUtil.getElements(node, ELEMENTS_PORTS), step);
+		final Step stepWithPorts = parseWithPorts(SaxonUtil.childElements(node, ELEMENTS_PORTS), step);
 		final Step stepWithVariables = parseVariables(node, stepWithPorts);
 		final Step stepWithOptionValues = parseWithOptionValue(node, stepWithVariables);
 
@@ -263,7 +263,7 @@ public class PipelineParser implements XProcXmlModel
 	private Iterable<PortBinding> parsePortBindings(final XdmNode portNode)
 	{
 		return Iterables.transform(
-			SaxonUtil.getElements(portNode, ELEMENTS_PORT_BINDINGS), new Function<XdmNode, PortBinding>()
+			SaxonUtil.childElements(portNode, ELEMENTS_PORT_BINDINGS), new Function<XdmNode, PortBinding>()
 			{
 				@Override
 				public PortBinding apply(final XdmNode node)
@@ -366,7 +366,7 @@ public class PipelineParser implements XProcXmlModel
 		}
 		else if (portBindingNode.getNodeName().equals(ELEMENT_INLINE))
 		{
-			final XdmNode inlineNode = SaxonUtil.getElement(portBindingNode);
+			final XdmNode inlineNode = SaxonUtil.childElement(portBindingNode);
 			return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
 		}
 		else
@@ -458,7 +458,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseVariables(final XdmNode stepNode, final Step step)
 	{
-		return parseVariables(SaxonUtil.getElements(stepNode, ELEMENTS_VARIABLES), step);
+		return parseVariables(SaxonUtil.childElements(stepNode, ELEMENTS_VARIABLES), step);
 	}
 
 
@@ -503,7 +503,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseDeclarePorts(final XdmNode stepNode, final Step step)
 	{
-		return parseDeclarePorts(SaxonUtil.getElements(stepNode, ELEMENTS_PORTS), step);
+		return parseDeclarePorts(SaxonUtil.childElements(stepNode, ELEMENTS_PORTS), step);
 	}
 
 
@@ -522,7 +522,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseImports(final XdmNode node)
 	{
-		for (final XdmNode importNode : SaxonUtil.getElements(node, ELEMENT_IMPORT))
+		for (final XdmNode importNode : SaxonUtil.childElements(node, ELEMENT_IMPORT))
 		{
 			parseImport(importNode);
 		}
@@ -571,7 +571,7 @@ public class PipelineParser implements XProcXmlModel
 	private List<Step> parseInnerSteps(final XdmNode node)
 	{
 		return ImmutableList.copyOf(Iterables.transform(
-			SaxonUtil.getElements(node, getSupportedStepTypes()), new Function<XdmNode, Step>()
+			SaxonUtil.childElements(node, getSupportedStepTypes()), new Function<XdmNode, Step>()
 			{
 				@Override
 				public Step apply(final XdmNode stepElement)
@@ -655,7 +655,7 @@ public class PipelineParser implements XProcXmlModel
 			return 1;
 		}
 
-		final List<XdmNode> childNodes = ImmutableList.copyOf(SaxonUtil.getElements(parentNode, getStepElements()));
+		final List<XdmNode> childNodes = ImmutableList.copyOf(SaxonUtil.childElements(parentNode, getStepElements()));
 		assert childNodes.contains(node) : node.getNodeName();
 		return childNodes.indexOf(node) + 1;
 	}

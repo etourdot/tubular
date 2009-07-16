@@ -77,7 +77,7 @@ public class CatalogParser
 		final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
 		documentBuilder.setLineNumbering(true);
 		final XdmNode document = documentBuilder.build(source);
-		final XdmNode catalogNode = SaxonUtil.getElement(document, XmlCatalogModel.ELEMENT_CATALOG);
+		final XdmNode catalogNode = SaxonUtil.childElement(document, XmlCatalogModel.ELEMENT_CATALOG);
 
 		return parse(catalogNode);
 	}
@@ -122,7 +122,7 @@ public class CatalogParser
 
 		final List<Catalog> catalogs = Lists.newArrayList();
 
-		for (final XdmNode catalogElement : SaxonUtil.getElements(catalogNode, XmlCatalogModel.ELEMENTS_CATALOG))
+		for (final XdmNode catalogElement : SaxonUtil.childElements(catalogNode, XmlCatalogModel.ELEMENTS_CATALOG))
 		{
 			catalogs.add(parse(catalogElement));
 		}

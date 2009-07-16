@@ -19,15 +19,12 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.core.function.TubularPredicates;
 import org.trancecode.io.IOUtil;
 import org.trancecode.xproc.XProcExceptions;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +32,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.DOMDestination;
 import net.sf.saxon.s9api.ItemTypeFactory;
 import net.sf.saxon.s9api.Processor;
@@ -73,75 +72,38 @@ public class SaxonUtil implements XmlModel
 	}
 
 
-	private static <T> Iterable<T> iterable(final Iterator<T> iterator)
-	{
-		return new Iterable<T>()
-		{
-			public Iterator<T> iterator()
-			{
-				return iterator;
-			}
-		};
-	}
-
-
-	public static Map<QName, String> getAttributes(final XdmNode node)
+	public static Map<QName, String> attributes(final XdmNode node)
 	{
 		assert node != null;
 
-		final Map<QName, String> attributes = new LinkedHashMap<QName, String>();
-		for (final XdmItem xdmItem : iterable(node.axisIterator(Axis.ATTRIBUTE)))
-		{
-			if (xdmItem instanceof XdmNode)
-			{
-				final XdmNode childNode = (XdmNode)xdmItem;
-				assert childNode.getNodeKind().equals(XdmNodeKind.ATTRIBUTE);
-				attributes.put(childNode.getNodeName(), childNode.getStringValue());
-			}
-		}
-
-		return attributes;
+		return SaxonMaps.attributes(SaxonIterables.attributes(node));
 	}
 
 
-	public static Iterable<XdmNode> getElements(final XdmNode node, final Collection<QName> names)
+	public static Iterable<XdmNode> childElements(final XdmNode node, final Collection<QName> names)
 	{
 		assert node != null;
 
-		final List<XdmNode> nodes = new ArrayList<XdmNode>();
-		for (final XdmItem xdmItem : iterable(node.axisIterator(Axis.CHILD)))
-		{
-			if (xdmItem instanceof XdmNode)
-			{
-				final XdmNode childNode = (XdmNode)xdmItem;
-				if (childNode.getNodeKind().equals(XdmNodeKind.ELEMENT)
-					&& (names.isEmpty() || names.contains(childNode.getNodeName())))
-				{
-					nodes.add(childNode);
-				}
-
-			}
-		}
-
-		return nodes;
+		return Iterables.filter(SaxonIterables.childElements(node), Predicates.compose(
+			TubularPredicates.matches(names), SaxonFunctions.getNodeName()));
 	}
 
 
-	public static Iterable<XdmNode> getElements(final XdmNode node, final QName... names)
+	public static Iterable<XdmNode> childElements(final XdmNode node, final QName... names)
 	{
-		return getElements(node, Arrays.asList(names));
+		return childElements(node, ImmutableSet.of(names));
 	}
 
 
-	public static XdmNode getElement(final XdmNode node, final QName... names)
+	public static XdmNode childElement(final XdmNode node, final QName... names)
 	{
-		return getElement(node, Arrays.asList(names));
+		return childElement(node, ImmutableSet.of(names));
 	}
 
 
-	public static XdmNode getElement(final XdmNode node, final Collection<QName> names)
+	public static XdmNode childElement(final XdmNode node, final Collection<QName> names)
 	{
-		return Iterables.getOnlyElement(getElements(node, names));
+		return Iterables.getOnlyElement(childElements(node, names));
 	}
 
 
@@ -179,7 +141,7 @@ public class SaxonUtil implements XmlModel
 
 	public static Object nodesToString(final XdmNode... nodes)
 	{
-		return nodesToString(Arrays.asList(nodes));
+		return nodesToString(ImmutableList.of(nodes));
 	}
 
 
