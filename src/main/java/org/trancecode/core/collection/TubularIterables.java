@@ -101,6 +101,12 @@ public final class TubularIterables
 	}
 
 
+	public static <T> Iterable<T> prepend(final Iterable<T> iterable, final T... elements)
+	{
+		return Iterables.concat(ImmutableList.of(elements), iterable);
+	}
+
+
 	public static <F, T> Iterable<T> applyFunctions(final Iterable<Function<F, T>> functions, final F argument)
 	{
 		final Function<Function<F, T>, T> applyFunction = TubularFunctions.applyTo(argument);
