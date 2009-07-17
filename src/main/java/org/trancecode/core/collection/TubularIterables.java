@@ -21,10 +21,12 @@ package org.trancecode.core.collection;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.AbstractImmutableObject;
+import org.trancecode.core.function.TubularFunctions;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
@@ -96,5 +98,12 @@ public final class TubularIterables
 	public static <T> Iterable<T> append(final Iterable<T> iterable, final T... elements)
 	{
 		return Iterables.concat(iterable, ImmutableList.of(elements));
+	}
+
+
+	public static <F, T> Iterable<T> applyFunctions(final Iterable<Function<F, T>> functions, final F argument)
+	{
+		final Function<Function<F, T>, T> applyFunction = TubularFunctions.applyTo(argument);
+		return Iterables.transform(functions, applyFunction);
 	}
 }
