@@ -84,7 +84,7 @@ public final class Catalogs
 
 	public static Function<CatalogQuery, URI> routingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
 	{
-		return new RoutingCatalog(ImmutableList.copyOf(catalogEntries));
+		return new RoutingCatalog(catalogEntries);
 	}
 
 
