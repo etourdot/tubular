@@ -26,6 +26,7 @@ import org.trancecode.io.UriFunctions;
 import org.trancecode.io.Uris;
 
 import java.net.URI;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -33,6 +34,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.MapMaker;
 
 
 /**
@@ -121,5 +123,31 @@ public final class Catalogs
 		}
 
 		return Functions.compose(UriFunctions.resolveUri(baseUri), catalog);
+	}
+
+
+	public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
+	{
+		return new CacheCatalog(catalog);
+	}
+
+
+	private static class CacheCatalog extends ForwardingCatalog implements Function<CatalogQuery, URI>
+	{
+		private final Map<CatalogQuery, URI> cache;
+
+
+		public CacheCatalog(final Function<CatalogQuery, URI> delegate)
+		{
+			super(delegate);
+			cache = new MapMaker().softValues().makeComputingMap(delegate);
+		}
+
+
+		@Override
+		public URI apply(final CatalogQuery query)
+		{
+			return cache.get(query);
+		}
 	}
 }
