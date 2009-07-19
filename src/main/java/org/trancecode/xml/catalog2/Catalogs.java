@@ -19,11 +19,17 @@
  */
 package org.trancecode.xml.catalog2;
 
+import org.trancecode.core.AbstractImmutableObject;
+import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.io.Uris;
 
 import java.net.URI;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 
 /**
@@ -66,6 +72,39 @@ public final class Catalogs
 			}
 
 			return Uris.resolve(query.href, query.base);
+		}
+	}
+
+
+	public static Function<CatalogQuery, URI> routingCatalog(final Function<CatalogQuery, URI>... catalogEntries)
+	{
+		return routingCatalog(ImmutableList.of(catalogEntries));
+	}
+
+
+	public static Function<CatalogQuery, URI> routingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
+	{
+		return new RoutingCatalog(ImmutableList.copyOf(catalogEntries));
+	}
+
+
+	private static class RoutingCatalog extends AbstractImmutableObject implements Function<CatalogQuery, URI>
+	{
+		private final Iterable<Function<CatalogQuery, URI>> catalogEntries;
+
+
+		public RoutingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
+		{
+			super(catalogEntries);
+			Preconditions.checkNotNull(catalogEntries);
+			this.catalogEntries = catalogEntries;
+		}
+
+
+		@Override
+		public URI apply(final CatalogQuery query)
+		{
+			return Iterables.find(TubularIterables.applyFunctions(catalogEntries, query), Predicates.notNull());
 		}
 	}
 }
