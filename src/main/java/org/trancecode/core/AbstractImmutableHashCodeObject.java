@@ -20,40 +20,27 @@
 package org.trancecode.core;
 
 /**
- * Base class for immutable objects.
- * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public abstract class AbstractImmutableObject
+public abstract class AbstractImmutableHashCodeObject extends AbstractImmutableObject
 {
-	private final Object[] properties;
+	private int hashCode;
+	private boolean hashCodeComputed = false;
 
 
-	public AbstractImmutableObject(final Object... properties)
-	{
-		super();
-		this.properties = properties;
-	}
-
-
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (o != null && o instanceof AbstractImmutableObject)
-		{
-			final AbstractImmutableObject immutableObject = (AbstractImmutableObject)o;
-			return ObjectUtil
-				.pairEquals(getClass(), immutableObject.getClass(), properties, immutableObject.properties);
-		}
-
-		return false;
-	}
+	protected abstract int computeHashCode();
 
 
 	@Override
 	public int hashCode()
 	{
-		return ObjectUtil.hashCode(getClass(), properties);
+		if (!hashCodeComputed)
+		{
+			hashCode = computeHashCode();
+			hashCodeComputed = true;
+		}
+
+		return hashCode;
 	}
 }
