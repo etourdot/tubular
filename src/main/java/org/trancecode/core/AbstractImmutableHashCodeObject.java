@@ -29,7 +29,10 @@ public abstract class AbstractImmutableHashCodeObject extends AbstractImmutableO
 	private boolean hashCodeComputed = false;
 
 
-	protected abstract int computeHashCode();
+	public AbstractImmutableHashCodeObject(final Object... properties)
+	{
+		super(properties);
+	}
 
 
 	@Override
@@ -37,7 +40,7 @@ public abstract class AbstractImmutableHashCodeObject extends AbstractImmutableO
 	{
 		if (!hashCodeComputed)
 		{
-			hashCode = computeHashCode();
+			hashCode = super.hashCode();
 			hashCodeComputed = true;
 		}
 
