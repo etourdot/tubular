@@ -19,6 +19,7 @@
  */
 package org.trancecode.xml.catalog2;
 
+import org.trancecode.annotation.Nullable;
 import org.trancecode.core.AbstractImmutableObject;
 import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.io.UriFunctions;
@@ -111,8 +112,14 @@ public final class Catalogs
 	}
 
 
-	public static Function<CatalogQuery, URI> setBaseUri(final URI baseUri, final Function<CatalogQuery, URI> catalog)
+	public static Function<CatalogQuery, URI> setBaseUri(
+		final URI baseUri, @Nullable final Function<CatalogQuery, URI> catalog)
 	{
+		if (baseUri == null)
+		{
+			return catalog;
+		}
+
 		return Functions.compose(UriFunctions.resolveUri(baseUri), catalog);
 	}
 }
