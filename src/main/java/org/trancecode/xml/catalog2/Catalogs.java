@@ -21,11 +21,13 @@ package org.trancecode.xml.catalog2;
 
 import org.trancecode.core.AbstractImmutableObject;
 import org.trancecode.core.collection.TubularIterables;
+import org.trancecode.io.UriFunctions;
 import org.trancecode.io.Uris;
 
 import java.net.URI;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -106,5 +108,11 @@ public final class Catalogs
 		{
 			return Iterables.find(TubularIterables.applyFunctions(catalogEntries, query), Predicates.notNull());
 		}
+	}
+
+
+	public static Function<CatalogQuery, URI> setBaseUri(final URI baseUri, final Function<CatalogQuery, URI> catalog)
+	{
+		return Functions.compose(UriFunctions.resolveUri(baseUri), catalog);
 	}
 }
