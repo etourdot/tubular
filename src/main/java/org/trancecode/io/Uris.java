@@ -54,19 +54,23 @@ public final class Uris
 	@ReturnsNullable
 	public static URI resolve(@Nullable final String href, @Nullable final String base)
 	{
-		final URI hrefUri = createUri(href);
-		final URI baseUri = createUri(base);
+		return resolve(createUri(href), createUri(base));
+	}
 
-		if (baseUri == null)
+
+	@ReturnsNullable
+	public static URI resolve(@Nullable final URI href, @Nullable final URI base)
+	{
+		if (base == null)
 		{
-			return hrefUri;
+			return href;
 		}
 
-		if (hrefUri == null)
+		if (href == null)
 		{
-			return baseUri;
+			return base;
 		}
 
-		return baseUri.resolve(hrefUri);
+		return base.resolve(href);
 	}
 }
