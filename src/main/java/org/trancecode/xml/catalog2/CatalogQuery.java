@@ -19,14 +19,14 @@
  */
 package org.trancecode.xml.catalog2;
 
-import org.trancecode.core.AbstractImmutableObject;
+import org.trancecode.core.AbstractImmutableHashCodeObject;
 
 
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class CatalogQuery extends AbstractImmutableObject
+public final class CatalogQuery extends AbstractImmutableHashCodeObject
 {
 	public final String publicId;
 	public final String systemId;
