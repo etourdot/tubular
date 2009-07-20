@@ -166,9 +166,9 @@ public final class Catalogs
 	}
 
 
-	public static Function<CatalogQuery, URI> rewriteUri(final String systemIdStartString, final String rewritePrefix)
+	public static Function<CatalogQuery, URI> rewriteUri(final String uriStartString, final String rewritePrefix)
 	{
-		return new RewriteUri(systemIdStartString, rewritePrefix);
+		return new RewriteUri(uriStartString, rewritePrefix);
 	}
 
 
