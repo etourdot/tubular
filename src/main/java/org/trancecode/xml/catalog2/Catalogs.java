@@ -20,6 +20,7 @@
 package org.trancecode.xml.catalog2;
 
 import org.trancecode.annotation.Nullable;
+import org.trancecode.core.AbstractImmutableHashCodeObject;
 import org.trancecode.core.AbstractImmutableObject;
 import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.core.function.TubularFunctions;
@@ -128,5 +129,83 @@ public final class Catalogs
 	public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
 	{
 		return TubularFunctions.cache(catalog);
+	}
+
+
+	public static Function<CatalogQuery, URI> rewriteSystem(final String systemIdStartString, final String rewritePrefix)
+	{
+		return new RewriteSystem(systemIdStartString, rewritePrefix);
+	}
+
+
+	private static class RewriteSystem extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
+	{
+		private final String systemIdStartString;
+		private final String rewritePrefix;
+
+
+		public RewriteSystem(final String systemIdStartString, final String rewritePrefix)
+		{
+			super(systemIdStartString, rewritePrefix);
+			this.systemIdStartString = systemIdStartString;
+			this.rewritePrefix = rewritePrefix;
+		}
+
+
+		@Override
+		public URI apply(final CatalogQuery query)
+		{
+			if (query.systemId != null && query.systemId.startsWith(systemIdStartString))
+			{
+				final String suffix = query.systemId.substring(systemIdStartString.length());
+				return Uris.createUri(rewritePrefix + suffix);
+			}
+
+			return null;
+		}
+	}
+
+
+	public static Function<CatalogQuery, URI> rewriteUri(final String systemIdStartString, final String rewritePrefix)
+	{
+		return new RewriteUri(systemIdStartString, rewritePrefix);
+	}
+
+
+	private static class RewriteUri extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
+	{
+		private final String uriStartString;
+		private final String rewritePrefix;
+
+
+		public RewriteUri(final String uriStartString, final String rewritePrefix)
+		{
+			super(uriStartString, rewritePrefix);
+			this.uriStartString = uriStartString;
+			this.rewritePrefix = rewritePrefix;
+		}
+
+
+		@Override
+		public URI apply(final CatalogQuery query)
+		{
+			final String uriString;
+			if (query.href != null || query.base != null)
+			{
+				uriString = Uris.resolve(query.href, query.base).toString();
+			}
+			else
+			{
+				uriString = query.systemId;
+			}
+
+			if (uriString != null && uriString.startsWith(uriStartString))
+			{
+				final String suffix = uriString.substring(uriStartString.length());
+				return Uris.createUri(rewritePrefix + suffix);
+			}
+
+			return null;
+		}
 	}
 }
