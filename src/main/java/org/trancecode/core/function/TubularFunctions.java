@@ -21,7 +21,10 @@ package org.trancecode.core.function;
 
 import org.trancecode.core.AbstractImmutableObject;
 
+import java.util.Map;
+
 import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
 
 
 /**
@@ -73,6 +76,32 @@ public final class TubularFunctions
 		public T apply(final Function<F, T> function)
 		{
 			return function.apply(argument);
+		}
+	}
+
+
+	public static <F, T> Function<F, T> cache(final Function<F, T> function)
+	{
+		return new CacheFunction<F, T>(function);
+	}
+
+
+	private static class CacheFunction<F, T> extends AbstractImmutableObject implements Function<F, T>
+	{
+		private final Map<F, T> cache;
+
+
+		private CacheFunction(final Function<F, T> function)
+		{
+			super(function);
+			cache = new MapMaker().softValues().makeComputingMap(function);
+		}
+
+
+		@Override
+		public T apply(final F from)
+		{
+			return cache.get(from);
 		}
 	}
 }
