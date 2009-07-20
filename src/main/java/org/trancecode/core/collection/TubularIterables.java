@@ -47,6 +47,7 @@ public final class TubularIterables
 	}
 
 
+	/** Build an {@link Iterable} sequence of element from a {@link Iterator} provided by a {@link Supplier}. */
 	public static <T> Iterable<T> newIterable(final Supplier<Iterator<T>> iteratorSupplier)
 	{
 		return new IteratorIterable<T>(iteratorSupplier);
@@ -74,6 +75,7 @@ public final class TubularIterables
 	}
 
 
+	/** Get the last argument from a sequence, or <code>null</code> if there is no such last element. */
 	@ReturnsNullable
 	public static <T> T getLast(final Iterable<T> elements)
 	{
@@ -81,6 +83,7 @@ public final class TubularIterables
 	}
 
 
+	/** Get the last argument from a sequence, or <code>defaultElement</code> if there is no such last element. */
 	@ReturnsNullable
 	public static <T> T getLast(final Iterable<T> elements, final T defaultElement)
 	{
@@ -107,6 +110,7 @@ public final class TubularIterables
 	}
 
 
+	/** Compute a sequence of results by applying each function form the list to the same argument. */
 	public static <F, T> Iterable<T> applyFunctions(final Iterable<Function<F, T>> functions, final F argument)
 	{
 		final Function<Function<F, T>, T> applyFunction = TubularFunctions.applyTo(argument);
