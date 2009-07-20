@@ -208,4 +208,11 @@ public final class Catalogs
 			return null;
 		}
 	}
+
+
+	public static Function<CatalogQuery, URI> group(
+		final URI baseUri, final Iterable<Function<CatalogQuery, URI>> catalogs)
+	{
+		return setBaseUri(baseUri, routingCatalog(catalogs));
+	}
 }
