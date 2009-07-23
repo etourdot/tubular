@@ -21,6 +21,7 @@ package org.trancecode.core.collection;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 
@@ -37,26 +38,29 @@ public final class TubularMaps
 		// No instantiation
 	}
 
+
 	public static <K, V> Map<K, V> newSmallWriteOnceMap()
 	{
 		// TODO
 		return Maps.newLinkedHashMap();
 	}
 
+
 	public static <K, V> Map<K, V> merge(final Map<K, V> map1, final Map<K, V> map2)
 	{
 		final Map<K, V> map = Maps.newHashMapWithExpectedSize(map1.size() + map2.size());
 		map.putAll(map1);
 		map.putAll(map2);
-	
-		return map;
+
+		return ImmutableMap.copyOf(map);
 	}
+
 
 	public static <K, V> Map<K, V> copyAndPut(final Map<K, V> map1, final K key, final V value)
 	{
 		final Map<K, V> map = Maps.newHashMap(map1);
 		map.put(key, value);
-	
-		return map;
+
+		return ImmutableMap.copyOf(map);
 	}
 }
