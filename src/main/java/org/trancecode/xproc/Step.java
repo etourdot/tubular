@@ -57,30 +57,6 @@ public final class Step extends AbstractHasLocation
 	private static final Map<String, Port> EMPTY_PORT_MAP = Collections.emptyMap();
 	private static final List<Step> EMPTY_STEP_LIST = Collections.emptyList();
 
-	private static final Predicate<Port> PREDICATE_IS_INPUT_PORT = new Predicate<Port>()
-	{
-		public boolean apply(final Port port)
-		{
-			return port.isInput();
-		}
-	};
-
-	private static final Predicate<Port> PREDICATE_IS_OUTPUT_PORT = new Predicate<Port>()
-	{
-		public boolean apply(final Port port)
-		{
-			return port.isOutput();
-		}
-	};
-
-	private static final Predicate<Port> PREDICATE_IS_PARAMETER_PORT = new Predicate<Port>()
-	{
-		public boolean apply(final Port port)
-		{
-			return port.isParameter();
-		}
-	};
-
 	private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
 	{
 		public boolean apply(final Port port)
@@ -159,8 +135,8 @@ public final class Step extends AbstractHasLocation
 	{
 		assert !Variables.containsVariable(variables, variable.getName()) : "step = " + name + " ; variable = "
 			+ variable.getName() + " ; variables = " + variables;
-		return new Step(type, name, location, stepProcessor, compoundStep, TubularIterables.append(variables, variable),
-			parameters, ports, steps);
+		return new Step(type, name, location, stepProcessor, compoundStep,
+			TubularIterables.append(variables, variable), parameters, ports, steps);
 	}
 
 
@@ -354,19 +330,19 @@ public final class Step extends AbstractHasLocation
 
 	public Iterable<Port> getInputPorts()
 	{
-		return Iterables.filter(ports.values(), PREDICATE_IS_INPUT_PORT);
+		return Iterables.filter(ports.values(), PortPredicates.isInputPort());
 	}
 
 
 	public Iterable<Port> getOutputPorts()
 	{
-		return Iterables.filter(ports.values(), PREDICATE_IS_OUTPUT_PORT);
+		return Iterables.filter(ports.values(), PortPredicates.isOutputPort());
 	}
 
 
 	public Iterable<Port> getParameterPorts()
 	{
-		return Iterables.filter(ports.values(), PREDICATE_IS_PARAMETER_PORT);
+		return Iterables.filter(ports.values(), PortPredicates.isParameterPort());
 	}
 
 
