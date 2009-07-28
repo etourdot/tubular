@@ -165,7 +165,7 @@ public final class Step extends AbstractHasLocation
 		LOG.trace("ports = {}", ports);
 
 		final Map<String, Port> newPorts = Maps.newHashMap(this.ports);
-		newPorts.putAll(Maps.uniqueIndex(ports, Port.GET_PORT_NAME_FUNCTION));
+		newPorts.putAll(Maps.uniqueIndex(ports, PortFunctions.getPortName()));
 
 		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, newPorts, steps);
 	}

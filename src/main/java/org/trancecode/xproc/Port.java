@@ -24,7 +24,6 @@ import org.trancecode.xproc.binding.PipePortBinding;
 
 import java.util.List;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 import org.slf4j.ext.XLogger;
@@ -37,15 +36,6 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class Port extends AbstractHasLocation
 {
-	public static final Function<Port, String> GET_PORT_NAME_FUNCTION = new Function<Port, String>()
-	{
-		@Override
-		public String apply(final Port port)
-		{
-			return port.getPortName();
-		}
-	};
-
 	private static final XLogger LOG = XLoggerFactory.getXLogger(Port.class);
 	private static final List<PortBinding> EMPTY_PORT_BINDING_LIST = ImmutableList.of();
 
