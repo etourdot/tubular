@@ -46,7 +46,7 @@ public final class TubularMaps
 	}
 
 
-	public static <K, V> Map<K, V> merge(final Map<K, V> map1, final Map<K, V> map2)
+	public static <K, V> Map<K, V> merge(final Map<K, V> map1, final Map<? extends K, ? extends V> map2)
 	{
 		final Map<K, V> map = Maps.newHashMapWithExpectedSize(map1.size() + map2.size());
 		map.putAll(map1);
