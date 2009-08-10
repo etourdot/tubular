@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.xml.HasLocation;
+
 import net.sf.saxon.s9api.XdmNode;
 
 

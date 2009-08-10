@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.xml.HasLocation;
+
 /**
  * @author Herve Quiroz
  * @version $Revision$

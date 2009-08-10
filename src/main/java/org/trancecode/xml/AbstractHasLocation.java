@@ -17,10 +17,9 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xml;
 
 import org.trancecode.annotation.Stateless;
-import org.trancecode.xml.Location;
 
 
 /**

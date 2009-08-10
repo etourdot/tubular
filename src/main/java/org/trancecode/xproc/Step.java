@@ -24,6 +24,7 @@ import org.trancecode.core.ObjectUtil;
 import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.core.collection.TubularMaps;
 import org.trancecode.core.function.TubularFunctions;
+import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.step.StepFunctions;
 

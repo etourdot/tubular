@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.StringUtil;
+import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 
 import net.sf.saxon.s9api.QName;

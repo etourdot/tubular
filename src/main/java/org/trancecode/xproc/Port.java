@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.binding.PipePortBinding;
 
