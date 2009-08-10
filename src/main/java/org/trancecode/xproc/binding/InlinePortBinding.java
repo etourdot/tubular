@@ -57,7 +57,7 @@ public class InlinePortBinding extends AbstractPortBinding implements PortBindin
 	@Override
 	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
 	{
-		return new AbstractBoundPortBinding(location)
+		return new AbstractEnvironmentPortBinding(location)
 		{
 			public Iterable<XdmNode> readNodes()
 			{

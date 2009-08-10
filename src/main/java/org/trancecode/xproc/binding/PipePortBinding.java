@@ -67,7 +67,7 @@ public class PipePortBinding extends AbstractPortBinding implements PortBinding
 			environment.getEnvironmentPort(portReference.stepName, portReference.portName);
 		assert boundPort != null : "port = " + portReference + " ; location = " + location;
 
-		return new AbstractBoundPortBinding(location)
+		return new AbstractEnvironmentPortBinding(location)
 		{
 			public Iterable<XdmNode> readNodes()
 			{

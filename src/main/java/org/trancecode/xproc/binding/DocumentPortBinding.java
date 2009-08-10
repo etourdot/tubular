@@ -62,7 +62,7 @@ public class DocumentPortBinding extends AbstractPortBinding implements PortBind
 	@Override
 	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
 	{
-		return new AbstractBoundPortBinding(location)
+		return new AbstractEnvironmentPortBinding(location)
 		{
 			public Iterable<XdmNode> readNodes()
 			{

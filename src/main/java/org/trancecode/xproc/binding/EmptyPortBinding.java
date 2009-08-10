@@ -46,7 +46,7 @@ public class EmptyPortBinding extends AbstractPortBinding implements PortBinding
 	@Override
 	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
 	{
-		return new AbstractBoundPortBinding(location)
+		return new AbstractEnvironmentPortBinding(location)
 		{
 			@Override
 			public Iterable<XdmNode> readNodes()
