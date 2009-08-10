@@ -20,8 +20,9 @@
 package org.trancecode.xproc;
 
 import org.trancecode.core.collection.TubularIterables;
+import org.trancecode.core.function.TubularFunctions;
 
-import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
@@ -66,19 +67,9 @@ public final class Variables
 	{
 		assert containsVariable(variables, name);
 
-		return Iterables.transform(variables, new Function<Variable, Variable>()
-		{
-			@Override
-			public Variable apply(final Variable currentVariable)
-			{
-				if (currentVariable.getName().equals(name))
-				{
-					return variable;
-				}
-
-				return currentVariable;
-			}
-		});
+		return Iterables.transform(variables, TubularFunctions.conditional(Predicates.compose(
+			Predicates.equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions
+			.identity()));
 	}
 
 
@@ -86,19 +77,7 @@ public final class Variables
 	{
 		assert containsVariable(variables, variable.getName());
 
-		return Iterables.transform(variables, new Function<Variable, Variable>()
-		{
-			@Override
-			public Variable apply(final Variable currentVariable)
-			{
-				if (currentVariable.getName().equals(variable.getName()))
-				{
-					return variable;
-				}
-
-				return currentVariable;
-			}
-		});
+		return setVariable(variables, variable.getName(), variable);
 	}
 
 
@@ -106,19 +85,7 @@ public final class Variables
 	{
 		if (containsVariable(variables, variable.getName()))
 		{
-			return Iterables.transform(variables, new Function<Variable, Variable>()
-			{
-				@Override
-				public Variable apply(final Variable currentVariable)
-				{
-					if (currentVariable.getName().equals(variable.getName()))
-					{
-						return variable;
-					}
-
-					return currentVariable;
-				}
-			});
+			setVariable(variables, variable);
 		}
 
 		return TubularIterables.append(variables, variable);
