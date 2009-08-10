@@ -30,16 +30,16 @@ import net.sf.saxon.s9api.QName;
  */
 public interface XProcAttributes
 {
-	QName ATTRIBUTE_HREF = new QName("href");
-	QName ATTRIBUTE_KIND = new QName("kind");
-	QName ATTRIBUTE_NAME = new QName("name");
-	QName ATTRIBUTE_PORT = new QName("port");
-	QName ATTRIBUTE_PRIMARY = new QName("primary");
-	QName ATTRIBUTE_REQUIRED = new QName("required");
-	QName ATTRIBUTE_SELECT = new QName("select");
-	QName ATTRIBUTE_SEQUENCE = new QName("sequence");
-	QName ATTRIBUTE_STEP = new QName("step");
-	QName ATTRIBUTE_TEST = new QName("test");
-	QName ATTRIBUTE_TYPE = new QName("type");
-	QName ATTRIBUTE_VALUE = new QName("value");
+	QName HREF = new QName("href");
+	QName KIND = new QName("kind");
+	QName NAME = new QName("name");
+	QName PORT = new QName("port");
+	QName PRIMARY = new QName("primary");
+	QName REQUIRED = new QName("required");
+	QName SELECT = new QName("select");
+	QName SEQUENCE = new QName("sequence");
+	QName STEP = new QName("step");
+	QName TEST = new QName("test");
+	QName TYPE = new QName("type");
+	QName VALUE = new QName("value");
 }

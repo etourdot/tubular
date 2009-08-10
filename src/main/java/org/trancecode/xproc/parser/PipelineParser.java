@@ -109,12 +109,12 @@ public class PipelineParser
 			documentBuilder.setLineNumbering(true);
 			final XdmNode pipelineDocument = documentBuilder.build(source);
 			rootNode = SaxonUtil.childElement(pipelineDocument, XProcElements.ELEMENTS_ROOT);
-			if (rootNode.getNodeName().equals(XProcElements.ELEMENT_PIPELINE)
-				|| rootNode.getNodeName().equals(XProcElements.ELEMENT_DECLARE_STEP))
+			if (rootNode.getNodeName().equals(XProcElements.PIPELINE)
+				|| rootNode.getNodeName().equals(XProcElements.DECLARE_STEP))
 			{
 				mainPipeline = parsePipeline(rootNode);
 			}
-			else if (rootNode.getNodeName().equals(XProcElements.ELEMENT_LIBRARY))
+			else if (rootNode.getNodeName().equals(XProcElements.LIBRARY))
 			{
 				parseDeclareSteps(rootNode);
 			}
@@ -140,7 +140,7 @@ public class PipelineParser
 	{
 		for (final XdmNode stepNode : SaxonUtil.childElements(node, XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE))
 		{
-			final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.ATTRIBUTE_TYPE);
+			final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.TYPE);
 
 			if (stepProcessors.containsKey(type))
 			{
@@ -156,7 +156,7 @@ public class PipelineParser
 
 	private void parseDeclareStep(final XdmNode stepNode)
 	{
-		final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.ATTRIBUTE_TYPE);
+		final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.TYPE);
 		LOG.trace("new step type: {}", type);
 
 		Step step = Step.newStep(type, stepProcessors.get(type), false);
@@ -194,8 +194,8 @@ public class PipelineParser
 					final Map.Entry<QName, String> attribute = arguments.right();
 					final QName name = attribute.getKey();
 					final String value = attribute.getValue();
-					if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.ATTRIBUTE_NAME)
-						&& !name.equals(XProcAttributes.ATTRIBUTE_TYPE))
+					if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
+						&& !name.equals(XProcAttributes.TYPE))
 					{
 						LOG.trace("{} = {}", name, value);
 						return step.withOptionValue(name, value);
@@ -220,19 +220,19 @@ public class PipelineParser
 	private Step parseWithPort(final XdmNode portNode, final Step step)
 	{
 		final String portName;
-		if (portNode.getNodeName().equals(XProcElements.ELEMENT_XPATH_CONTEXT))
+		if (portNode.getNodeName().equals(XProcElements.XPATH_CONTEXT))
 		{
 			portName = XProcPorts.XPATH_CONTEXT;
 		}
 		else
 		{
-			portName = portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_PORT);
+			portName = portNode.getAttributeValue(XProcAttributes.PORT);
 		}
 		final Port port = step.getPort(portName);
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
 			+ " ; with-port = " + getPortType(portNode);
 
-		final String select = portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_SELECT);
+		final String select = portNode.getAttributeValue(XProcAttributes.SELECT);
 		LOG.trace("select = {}", select);
 
 		final Port configuredPort = port.setSelect(select).setPortBindings(parsePortBindings(portNode));
@@ -247,15 +247,15 @@ public class PipelineParser
 	{
 		if (XProcElements.ELEMENTS_STANDARD_PORTS.contains(portNode.getNodeName()))
 		{
-			return portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_PORT);
+			return portNode.getAttributeValue(XProcAttributes.PORT);
 		}
 
-		if (portNode.getNodeName().equals(XProcElements.ELEMENT_ITERATION_SOURCE))
+		if (portNode.getNodeName().equals(XProcElements.ITERATION_SOURCE))
 		{
 			return XProcPorts.ITERATION_SOURCE;
 		}
 
-		if (portNode.getNodeName().equals(XProcElements.ELEMENT_XPATH_CONTEXT))
+		if (portNode.getNodeName().equals(XProcElements.XPATH_CONTEXT))
 		{
 			return XProcPorts.XPATH_CONTEXT;
 		}
@@ -313,22 +313,21 @@ public class PipelineParser
 	private Step parseDeclarePort(final XdmNode portNode, final Step step)
 	{
 		final String portName;
-		if (portNode.getNodeName().equals(XProcElements.ELEMENT_XPATH_CONTEXT))
+		if (portNode.getNodeName().equals(XProcElements.XPATH_CONTEXT))
 		{
 			portName = XProcPorts.XPATH_CONTEXT;
 		}
 		else
 		{
-			portName = portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_PORT);
+			portName = portNode.getAttributeValue(XProcAttributes.PORT);
 		}
 		final Port.Type type = getPortType(portNode);
 
 		final Port port =
 			Port.newPort(step.getName(), portName, getLocation(portNode), type).setPrimary(
-				portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_PRIMARY)).setSequence(
-				portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_SEQUENCE)).setSelect(
-				portNode.getAttributeValue(XProcAttributes.ATTRIBUTE_SELECT))
-				.setPortBindings(parsePortBindings(portNode));
+				portNode.getAttributeValue(XProcAttributes.PRIMARY)).setSequence(
+				portNode.getAttributeValue(XProcAttributes.SEQUENCE)).setSelect(
+				portNode.getAttributeValue(XProcAttributes.SELECT)).setPortBindings(parsePortBindings(portNode));
 		LOG.trace("new port: {}", port);
 
 		return step.declarePort(port);
@@ -339,7 +338,7 @@ public class PipelineParser
 	{
 		if (XProcElements.ELEMENTS_INPUT_PORTS.contains(node.getNodeName()))
 		{
-			if ("parameter".equals(node.getAttributeValue(XProcAttributes.ATTRIBUTE_KIND)))
+			if ("parameter".equals(node.getAttributeValue(XProcAttributes.KIND)))
 			{
 				return Type.PARAMETER;
 			}
@@ -355,22 +354,22 @@ public class PipelineParser
 
 	private PortBinding parsePortBinding(final XdmNode portBindingNode)
 	{
-		if (portBindingNode.getNodeName().equals(XProcElements.ELEMENT_PIPE))
+		if (portBindingNode.getNodeName().equals(XProcElements.PIPE))
 		{
-			final String stepName = portBindingNode.getAttributeValue(XProcAttributes.ATTRIBUTE_STEP);
-			final String portName = portBindingNode.getAttributeValue(XProcAttributes.ATTRIBUTE_PORT);
+			final String stepName = portBindingNode.getAttributeValue(XProcAttributes.STEP);
+			final String portName = portBindingNode.getAttributeValue(XProcAttributes.PORT);
 			return new PipePortBinding(new PortReference(stepName, portName), getLocation(portBindingNode));
 		}
-		else if (portBindingNode.getNodeName().equals(XProcElements.ELEMENT_EMPTY))
+		else if (portBindingNode.getNodeName().equals(XProcElements.EMPTY))
 		{
 			return new EmptyPortBinding(getLocation(portBindingNode));
 		}
-		else if (portBindingNode.getNodeName().equals(XProcElements.ELEMENT_DOCUMENT))
+		else if (portBindingNode.getNodeName().equals(XProcElements.DOCUMENT))
 		{
-			final String href = portBindingNode.getAttributeValue(XProcAttributes.ATTRIBUTE_HREF);
+			final String href = portBindingNode.getAttributeValue(XProcAttributes.HREF);
 			return new DocumentPortBinding(href, getLocation(portBindingNode));
 		}
-		else if (portBindingNode.getNodeName().equals(XProcElements.ELEMENT_INLINE))
+		else if (portBindingNode.getNodeName().equals(XProcElements.INLINE))
 		{
 			final XdmNode inlineNode = SaxonUtil.childElement(portBindingNode);
 			return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
@@ -385,14 +384,14 @@ public class PipelineParser
 	private Step parseOption(final XdmNode node, final Step step)
 	{
 		LOG.trace("step = {}", step.getType());
-		final QName name = new QName(node.getAttributeValue(XProcAttributes.ATTRIBUTE_NAME), node);
+		final QName name = new QName(node.getAttributeValue(XProcAttributes.NAME), node);
 		Variable option = Variable.newOption(name, getLocation(node));
 
-		final String select = node.getAttributeValue(XProcAttributes.ATTRIBUTE_SELECT);
+		final String select = node.getAttributeValue(XProcAttributes.SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
 		option = option.setSelect(select);
 
-		final String required = node.getAttributeValue(XProcAttributes.ATTRIBUTE_REQUIRED);
+		final String required = node.getAttributeValue(XProcAttributes.REQUIRED);
 		LOG.trace("name = {} ; required = {}", name, required);
 		if (required != null)
 		{
@@ -406,8 +405,8 @@ public class PipelineParser
 	private Step parseWithParam(final XdmNode node, final Step step)
 	{
 		LOG.trace("step = {}", step.getType());
-		final QName name = new QName(node.getAttributeValue(XProcAttributes.ATTRIBUTE_NAME), node);
-		final String select = node.getAttributeValue(XProcAttributes.ATTRIBUTE_SELECT);
+		final QName name = new QName(node.getAttributeValue(XProcAttributes.NAME), node);
+		final String select = node.getAttributeValue(XProcAttributes.SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
 		return step.withParam(name, select, null, getLocation(node));
 	}
@@ -416,8 +415,8 @@ public class PipelineParser
 	private Step parseWithOption(final XdmNode node, final Step step)
 	{
 		LOG.trace("step = {}", step.getType());
-		final QName name = new QName(node.getAttributeValue(XProcAttributes.ATTRIBUTE_NAME), node);
-		final String select = node.getAttributeValue(XProcAttributes.ATTRIBUTE_SELECT);
+		final QName name = new QName(node.getAttributeValue(XProcAttributes.NAME), node);
+		final String select = node.getAttributeValue(XProcAttributes.SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
 		return step.withOption(name, select);
 	}
@@ -425,8 +424,8 @@ public class PipelineParser
 
 	private Step parseDeclareVariable(final XdmNode node, final Step step)
 	{
-		final QName name = new QName(node.getAttributeValue(XProcAttributes.ATTRIBUTE_NAME), node);
-		final String select = node.getAttributeValue(XProcAttributes.ATTRIBUTE_SELECT);
+		final QName name = new QName(node.getAttributeValue(XProcAttributes.NAME), node);
+		final String select = node.getAttributeValue(XProcAttributes.SELECT);
 		Variable variable = Variable.newVariable(name);
 		variable = variable.setLocation(getLocation(node));
 		variable = variable.setSelect(select);
@@ -441,7 +440,7 @@ public class PipelineParser
 	private Step parsePipeline(final XdmNode node)
 	{
 		final String name = getStepName(node);
-		final QName type = SaxonUtil.getAttributeAsQName(node, XProcAttributes.ATTRIBUTE_TYPE);
+		final QName type = SaxonUtil.getAttributeAsQName(node, XProcAttributes.TYPE);
 
 		Step pipeline = Pipeline.newPipeline(type).setName(name).setLocation(getLocation(node));
 
@@ -485,22 +484,22 @@ public class PipelineParser
 
 	private Step parseVariable(final XdmNode variableNode, final Step step)
 	{
-		if (variableNode.getNodeName().equals(XProcElements.ELEMENT_WITH_OPTION))
+		if (variableNode.getNodeName().equals(XProcElements.WITH_OPTION))
 		{
 			return parseWithOption(variableNode, step);
 		}
 
-		if (variableNode.getNodeName().equals(XProcElements.ELEMENT_WITH_PARAM))
+		if (variableNode.getNodeName().equals(XProcElements.WITH_PARAM))
 		{
 			return parseWithParam(variableNode, step);
 		}
 
-		if (variableNode.getNodeName().equals(XProcElements.ELEMENT_VARIABLE))
+		if (variableNode.getNodeName().equals(XProcElements.VARIABLE))
 		{
 			return parseDeclareVariable(variableNode, step);
 		}
 
-		if (variableNode.getNodeName().equals(XProcElements.ELEMENT_OPTION))
+		if (variableNode.getNodeName().equals(XProcElements.OPTION))
 		{
 			return parseOption(variableNode, step);
 		}
@@ -532,7 +531,7 @@ public class PipelineParser
 
 	private void parseImports(final XdmNode node)
 	{
-		for (final XdmNode importNode : SaxonUtil.childElements(node, XProcElements.ELEMENT_IMPORT))
+		for (final XdmNode importNode : SaxonUtil.childElements(node, XProcElements.IMPORT))
 		{
 			parseImport(importNode);
 		}
@@ -541,7 +540,7 @@ public class PipelineParser
 
 	private void parseImport(final XdmNode node)
 	{
-		final String href = node.getAttributeValue(XProcAttributes.ATTRIBUTE_HREF);
+		final String href = node.getAttributeValue(XProcAttributes.HREF);
 		assert href != null;
 		LOG.trace("href = {}", href);
 		final Source librarySource;
@@ -627,7 +626,7 @@ public class PipelineParser
 
 	private String getStepName(final XdmNode node)
 	{
-		final String explicitName = node.getAttributeValue(XProcAttributes.ATTRIBUTE_NAME);
+		final String explicitName = node.getAttributeValue(XProcAttributes.NAME);
 		if (explicitName != null && explicitName.length() > 0)
 		{
 			return explicitName;
@@ -675,9 +674,9 @@ public class PipelineParser
 	{
 		final Collection<QName> elements = Sets.newHashSet();
 		elements.addAll(getSupportedStepTypes());
-		elements.add(XProcElements.ELEMENT_DECLARE_STEP);
-		elements.add(XProcElements.ELEMENT_LIBRARY);
-		elements.add(XProcElements.ELEMENT_PIPELINE);
+		elements.add(XProcElements.DECLARE_STEP);
+		elements.add(XProcElements.LIBRARY);
+		elements.add(XProcElements.PIPELINE);
 		return elements;
 	}
 

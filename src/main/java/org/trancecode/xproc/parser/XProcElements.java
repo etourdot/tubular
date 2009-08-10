@@ -37,39 +37,38 @@ import net.sf.saxon.s9api.QName;
  */
 public interface XProcElements
 {
-	QName ELEMENT_CHOOSE = XProcNamespaces.XPROC.newSaxonQName("choose");
-	QName ELEMENT_DECLARE_STEP = XProcNamespaces.XPROC.newSaxonQName("declare-step");
-	QName ELEMENT_DOCUMENT = XProcNamespaces.XPROC.newSaxonQName("document");
-	QName ELEMENT_EMPTY = XProcNamespaces.XPROC.newSaxonQName("empty");
-	QName ELEMENT_FOR_EACH = XProcNamespaces.XPROC.newSaxonQName("for-each");
-	QName ELEMENT_IMPORT = XProcNamespaces.XPROC.newSaxonQName("import");
-	QName ELEMENT_INLINE = XProcNamespaces.XPROC.newSaxonQName("inline");
-	QName ELEMENT_INPUT = XProcNamespaces.XPROC.newSaxonQName("input");
-	QName ELEMENT_ITERATION_SOURCE = XProcNamespaces.XPROC.newSaxonQName("iteration-source");
-	QName ELEMENT_LIBRARY = XProcNamespaces.XPROC.newSaxonQName("library");
-	QName ELEMENT_OPTION = XProcNamespaces.XPROC.newSaxonQName("option");
-	QName ELEMENT_OTHERWISE = XProcNamespaces.XPROC.newSaxonQName("otherwise");
-	QName ELEMENT_OUTPUT = XProcNamespaces.XPROC.newSaxonQName("output");
-	QName ELEMENT_PIPE = XProcNamespaces.XPROC.newSaxonQName("pipe");
-	QName ELEMENT_PIPELINE = XProcNamespaces.XPROC.newSaxonQName("pipeline");
-	QName ELEMENT_VARIABLE = XProcNamespaces.XPROC.newSaxonQName("variable");
-	QName ELEMENT_WHEN = XProcNamespaces.XPROC.newSaxonQName("when");
-	QName ELEMENT_WITH_OPTION = XProcNamespaces.XPROC.newSaxonQName("with-option");
-	QName ELEMENT_WITH_PARAM = XProcNamespaces.XPROC.newSaxonQName("with-param");
-	QName ELEMENT_XPATH_CONTEXT = XProcNamespaces.XPROC.newSaxonQName("xpath-context");
+	QName CHOOSE = XProcNamespaces.XPROC.newSaxonQName("choose");
+	QName DECLARE_STEP = XProcNamespaces.XPROC.newSaxonQName("declare-step");
+	QName DOCUMENT = XProcNamespaces.XPROC.newSaxonQName("document");
+	QName EMPTY = XProcNamespaces.XPROC.newSaxonQName("empty");
+	QName FOR_EACH = XProcNamespaces.XPROC.newSaxonQName("for-each");
+	QName IMPORT = XProcNamespaces.XPROC.newSaxonQName("import");
+	QName INLINE = XProcNamespaces.XPROC.newSaxonQName("inline");
+	QName INPUT = XProcNamespaces.XPROC.newSaxonQName("input");
+	QName ITERATION_SOURCE = XProcNamespaces.XPROC.newSaxonQName("iteration-source");
+	QName LIBRARY = XProcNamespaces.XPROC.newSaxonQName("library");
+	QName OPTION = XProcNamespaces.XPROC.newSaxonQName("option");
+	QName OTHERWISE = XProcNamespaces.XPROC.newSaxonQName("otherwise");
+	QName OUTPUT = XProcNamespaces.XPROC.newSaxonQName("output");
+	QName PIPE = XProcNamespaces.XPROC.newSaxonQName("pipe");
+	QName PIPELINE = XProcNamespaces.XPROC.newSaxonQName("pipeline");
+	QName VARIABLE = XProcNamespaces.XPROC.newSaxonQName("variable");
+	QName WHEN = XProcNamespaces.XPROC.newSaxonQName("when");
+	QName WITH_OPTION = XProcNamespaces.XPROC.newSaxonQName("with-option");
+	QName WITH_PARAM = XProcNamespaces.XPROC.newSaxonQName("with-param");
+	QName XPATH_CONTEXT = XProcNamespaces.XPROC.newSaxonQName("xpath-context");
 
-	Set<QName> ELEMENTS_CORE_STEPS = ImmutableSet.of(ELEMENT_FOR_EACH, ELEMENT_CHOOSE);
-	Set<QName> ELEMENTS_DECLARE_STEP_OR_PIPELINE = ImmutableSet.of(ELEMENT_DECLARE_STEP, ELEMENT_PIPELINE);
-	Set<QName> ELEMENTS_IN_PIPELINE = ImmutableSet.of(ELEMENT_IMPORT, ELEMENT_PIPELINE);
-	Set<QName> ELEMENTS_IN_PIPELINE_LIBRARY = ImmutableSet.of(ELEMENT_IMPORT, ELEMENT_DECLARE_STEP, ELEMENT_PIPELINE);
-	Set<QName> ELEMENTS_PORT_BINDINGS = ImmutableSet.of(ELEMENT_INLINE, ELEMENT_DOCUMENT, ELEMENT_EMPTY, ELEMENT_PIPE);
-	Set<QName> ELEMENTS_INPUT_PORTS = ImmutableSet.of(ELEMENT_INPUT, ELEMENT_ITERATION_SOURCE, ELEMENT_XPATH_CONTEXT);
-	Set<QName> ELEMENTS_OUTPUT_PORTS = ImmutableSet.of(ELEMENT_OUTPUT);
+	Set<QName> ELEMENTS_CORE_STEPS = ImmutableSet.of(FOR_EACH, CHOOSE);
+	Set<QName> ELEMENTS_DECLARE_STEP_OR_PIPELINE = ImmutableSet.of(DECLARE_STEP, PIPELINE);
+	Set<QName> ELEMENTS_IN_PIPELINE = ImmutableSet.of(IMPORT, PIPELINE);
+	Set<QName> ELEMENTS_IN_PIPELINE_LIBRARY = ImmutableSet.of(IMPORT, DECLARE_STEP, PIPELINE);
+	Set<QName> ELEMENTS_PORT_BINDINGS = ImmutableSet.of(INLINE, DOCUMENT, EMPTY, PIPE);
+	Set<QName> ELEMENTS_INPUT_PORTS = ImmutableSet.of(INPUT, ITERATION_SOURCE, XPATH_CONTEXT);
+	Set<QName> ELEMENTS_OUTPUT_PORTS = ImmutableSet.of(OUTPUT);
 	Set<QName> ELEMENTS_PORTS = ImmutableSet.copyOf(Iterables.concat(ELEMENTS_INPUT_PORTS, ELEMENTS_OUTPUT_PORTS));
-	Set<QName> ELEMENTS_VARIABLES =
-		ImmutableSet.of(ELEMENT_VARIABLE, ELEMENT_OPTION, ELEMENT_WITH_OPTION, ELEMENT_WITH_PARAM);
-	Set<QName> ELEMENTS_STANDARD_PORTS = ImmutableSet.of(ELEMENT_INPUT, ELEMENT_OUTPUT);
-	Set<QName> ELEMENTS_ROOT = ImmutableSet.of(ELEMENT_PIPELINE, ELEMENT_LIBRARY, ELEMENT_DECLARE_STEP);
-	Set<QName> ELEMENTS_WHEN_OTHERWISE = ImmutableSet.of(ELEMENT_WHEN, ELEMENT_OTHERWISE);
+	Set<QName> ELEMENTS_VARIABLES = ImmutableSet.of(VARIABLE, OPTION, WITH_OPTION, WITH_PARAM);
+	Set<QName> ELEMENTS_STANDARD_PORTS = ImmutableSet.of(INPUT, OUTPUT);
+	Set<QName> ELEMENTS_ROOT = ImmutableSet.of(PIPELINE, LIBRARY, DECLARE_STEP);
+	Set<QName> ELEMENTS_WHEN_OTHERWISE = ImmutableSet.of(WHEN, OTHERWISE);
 
 }
