@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class PipelineParser implements XProcXmlModel
+public class PipelineParser
 {
 	private static final Logger LOG = LoggerFactory.getLogger(PipelineParser.class);
 
@@ -108,12 +108,13 @@ public class PipelineParser implements XProcXmlModel
 			final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
 			documentBuilder.setLineNumbering(true);
 			final XdmNode pipelineDocument = documentBuilder.build(source);
-			rootNode = SaxonUtil.childElement(pipelineDocument, ELEMENTS_ROOT);
-			if (rootNode.getNodeName().equals(ELEMENT_PIPELINE) || rootNode.getNodeName().equals(ELEMENT_DECLARE_STEP))
+			rootNode = SaxonUtil.childElement(pipelineDocument, XProcXmlModel.ELEMENTS_ROOT);
+			if (rootNode.getNodeName().equals(XProcXmlModel.ELEMENT_PIPELINE)
+				|| rootNode.getNodeName().equals(XProcXmlModel.ELEMENT_DECLARE_STEP))
 			{
 				mainPipeline = parsePipeline(rootNode);
 			}
-			else if (rootNode.getNodeName().equals(ELEMENT_LIBRARY))
+			else if (rootNode.getNodeName().equals(XProcXmlModel.ELEMENT_LIBRARY))
 			{
 				parseDeclareSteps(rootNode);
 			}
@@ -137,9 +138,9 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseDeclareSteps(final XdmNode node)
 	{
-		for (final XdmNode stepNode : SaxonUtil.childElements(node, ELEMENTS_DECLARE_STEP_OR_PIPELINE))
+		for (final XdmNode stepNode : SaxonUtil.childElements(node, XProcXmlModel.ELEMENTS_DECLARE_STEP_OR_PIPELINE))
 		{
-			final QName type = SaxonUtil.getAttributeAsQName(stepNode, ATTRIBUTE_TYPE);
+			final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcXmlModel.ATTRIBUTE_TYPE);
 
 			if (stepProcessors.containsKey(type))
 			{
@@ -155,7 +156,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseDeclareStep(final XdmNode stepNode)
 	{
-		final QName type = SaxonUtil.getAttributeAsQName(stepNode, ATTRIBUTE_TYPE);
+		final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcXmlModel.ATTRIBUTE_TYPE);
 		LOG.trace("new step type: {}", type);
 
 		Step step = Step.newStep(type, stepProcessors.get(type), false);
@@ -193,8 +194,8 @@ public class PipelineParser implements XProcXmlModel
 					final Map.Entry<QName, String> attribute = arguments.right();
 					final QName name = attribute.getKey();
 					final String value = attribute.getValue();
-					if (name.getNamespaceURI().isEmpty() && !name.equals(ATTRIBUTE_NAME)
-						&& !name.equals(ATTRIBUTE_TYPE))
+					if (name.getNamespaceURI().isEmpty() && !name.equals(XProcXmlModel.ATTRIBUTE_NAME)
+						&& !name.equals(XProcXmlModel.ATTRIBUTE_TYPE))
 					{
 						LOG.trace("{} = {}", name, value);
 						return step.withOptionValue(name, value);
@@ -208,7 +209,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseInstanceStepBindings(final XdmNode node, final Step step)
 	{
-		final Step stepWithPorts = parseWithPorts(SaxonUtil.childElements(node, ELEMENTS_PORTS), step);
+		final Step stepWithPorts = parseWithPorts(SaxonUtil.childElements(node, XProcXmlModel.ELEMENTS_PORTS), step);
 		final Step stepWithVariables = parseVariables(node, stepWithPorts);
 		final Step stepWithOptionValues = parseWithOptionValue(node, stepWithVariables);
 
@@ -225,7 +226,7 @@ public class PipelineParser implements XProcXmlModel
 		}
 		else
 		{
-			portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
+			portName = portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_PORT);
 		}
 		final Port port = step.getPort(portName);
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
@@ -244,17 +245,17 @@ public class PipelineParser implements XProcXmlModel
 
 	private String getPortName(final XdmNode portNode)
 	{
-		if (ELEMENTS_STANDARD_PORTS.contains(portNode.getNodeName()))
+		if (XProcXmlModel.ELEMENTS_STANDARD_PORTS.contains(portNode.getNodeName()))
 		{
-			return portNode.getAttributeValue(ATTRIBUTE_PORT);
+			return portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_PORT);
 		}
 
-		if (portNode.getNodeName().equals(ELEMENT_ITERATION_SOURCE))
+		if (portNode.getNodeName().equals(XProcXmlModel.ELEMENT_ITERATION_SOURCE))
 		{
 			return XProcPorts.ITERATION_SOURCE;
 		}
 
-		if (portNode.getNodeName().equals(ELEMENT_XPATH_CONTEXT))
+		if (portNode.getNodeName().equals(XProcXmlModel.ELEMENT_XPATH_CONTEXT))
 		{
 			return XProcPorts.XPATH_CONTEXT;
 		}
@@ -266,7 +267,8 @@ public class PipelineParser implements XProcXmlModel
 	private Iterable<PortBinding> parsePortBindings(final XdmNode portNode)
 	{
 		return Iterables.transform(
-			SaxonUtil.childElements(portNode, ELEMENTS_PORT_BINDINGS), new Function<XdmNode, PortBinding>()
+			SaxonUtil.childElements(portNode, XProcXmlModel.ELEMENTS_PORT_BINDINGS),
+			new Function<XdmNode, PortBinding>()
 			{
 				@Override
 				public PortBinding apply(final XdmNode node)
@@ -317,14 +319,15 @@ public class PipelineParser implements XProcXmlModel
 		}
 		else
 		{
-			portName = portNode.getAttributeValue(ATTRIBUTE_PORT);
+			portName = portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_PORT);
 		}
 		final Port.Type type = getPortType(portNode);
 
 		final Port port =
 			Port.newPort(step.getName(), portName, getLocation(portNode), type).setPrimary(
-				portNode.getAttributeValue(ATTRIBUTE_PRIMARY)).setSequence(
-				portNode.getAttributeValue(ATTRIBUTE_SEQUENCE)).setSelect(portNode.getAttributeValue(ATTRIBUTE_SELECT))
+				portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_PRIMARY)).setSequence(
+				portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_SEQUENCE)).setSelect(
+				portNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT))
 				.setPortBindings(parsePortBindings(portNode));
 		LOG.trace("new port: {}", port);
 
@@ -334,9 +337,9 @@ public class PipelineParser implements XProcXmlModel
 
 	private static Type getPortType(final XdmNode node)
 	{
-		if (ELEMENTS_INPUT_PORTS.contains(node.getNodeName()))
+		if (XProcXmlModel.ELEMENTS_INPUT_PORTS.contains(node.getNodeName()))
 		{
-			if ("parameter".equals(node.getAttributeValue(ATTRIBUTE_KIND)))
+			if ("parameter".equals(node.getAttributeValue(XProcXmlModel.ATTRIBUTE_KIND)))
 			{
 				return Type.PARAMETER;
 			}
@@ -352,22 +355,22 @@ public class PipelineParser implements XProcXmlModel
 
 	private PortBinding parsePortBinding(final XdmNode portBindingNode)
 	{
-		if (portBindingNode.getNodeName().equals(ELEMENT_PIPE))
+		if (portBindingNode.getNodeName().equals(XProcXmlModel.ELEMENT_PIPE))
 		{
-			final String stepName = portBindingNode.getAttributeValue(ATTRIBUTE_STEP);
-			final String portName = portBindingNode.getAttributeValue(ATTRIBUTE_PORT);
+			final String stepName = portBindingNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_STEP);
+			final String portName = portBindingNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_PORT);
 			return new PipePortBinding(new PortReference(stepName, portName), getLocation(portBindingNode));
 		}
-		else if (portBindingNode.getNodeName().equals(ELEMENT_EMPTY))
+		else if (portBindingNode.getNodeName().equals(XProcXmlModel.ELEMENT_EMPTY))
 		{
 			return new EmptyPortBinding(getLocation(portBindingNode));
 		}
-		else if (portBindingNode.getNodeName().equals(ELEMENT_DOCUMENT))
+		else if (portBindingNode.getNodeName().equals(XProcXmlModel.ELEMENT_DOCUMENT))
 		{
-			final String href = portBindingNode.getAttributeValue(ATTRIBUTE_HREF);
+			final String href = portBindingNode.getAttributeValue(XProcXmlModel.ATTRIBUTE_HREF);
 			return new DocumentPortBinding(href, getLocation(portBindingNode));
 		}
-		else if (portBindingNode.getNodeName().equals(ELEMENT_INLINE))
+		else if (portBindingNode.getNodeName().equals(XProcXmlModel.ELEMENT_INLINE))
 		{
 			final XdmNode inlineNode = SaxonUtil.childElement(portBindingNode);
 			return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
@@ -382,14 +385,14 @@ public class PipelineParser implements XProcXmlModel
 	private Step parseOption(final XdmNode node, final Step step)
 	{
 		LOG.trace("step = {}", step.getType());
-		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
+		final QName name = new QName(node.getAttributeValue(XProcXmlModel.ATTRIBUTE_NAME), node);
 		Variable option = Variable.newOption(name, getLocation(node));
 
-		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
+		final String select = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
 		option = option.setSelect(select);
 
-		final String required = node.getAttributeValue(ATTRIBUTE_REQUIRED);
+		final String required = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_REQUIRED);
 		LOG.trace("name = {} ; required = {}", name, required);
 		if (required != null)
 		{
@@ -403,8 +406,8 @@ public class PipelineParser implements XProcXmlModel
 	private Step parseWithParam(final XdmNode node, final Step step)
 	{
 		LOG.trace("step = {}", step.getType());
-		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
-		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
+		final QName name = new QName(node.getAttributeValue(XProcXmlModel.ATTRIBUTE_NAME), node);
+		final String select = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
 		return step.withParam(name, select, null, getLocation(node));
 	}
@@ -413,8 +416,8 @@ public class PipelineParser implements XProcXmlModel
 	private Step parseWithOption(final XdmNode node, final Step step)
 	{
 		LOG.trace("step = {}", step.getType());
-		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
-		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
+		final QName name = new QName(node.getAttributeValue(XProcXmlModel.ATTRIBUTE_NAME), node);
+		final String select = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT);
 		LOG.trace("name = {} ; select = {}", name, select);
 		return step.withOption(name, select);
 	}
@@ -422,8 +425,8 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseDeclareVariable(final XdmNode node, final Step step)
 	{
-		final QName name = new QName(node.getAttributeValue(ATTRIBUTE_NAME), node);
-		final String select = node.getAttributeValue(ATTRIBUTE_SELECT);
+		final QName name = new QName(node.getAttributeValue(XProcXmlModel.ATTRIBUTE_NAME), node);
+		final String select = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_SELECT);
 		Variable variable = Variable.newVariable(name);
 		variable = variable.setLocation(getLocation(node));
 		variable = variable.setSelect(select);
@@ -438,7 +441,7 @@ public class PipelineParser implements XProcXmlModel
 	private Step parsePipeline(final XdmNode node)
 	{
 		final String name = getStepName(node);
-		final QName type = SaxonUtil.getAttributeAsQName(node, ATTRIBUTE_TYPE);
+		final QName type = SaxonUtil.getAttributeAsQName(node, XProcXmlModel.ATTRIBUTE_TYPE);
 
 		Step pipeline = Pipeline.newPipeline(type).setName(name).setLocation(getLocation(node));
 
@@ -461,7 +464,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseVariables(final XdmNode stepNode, final Step step)
 	{
-		return parseVariables(SaxonUtil.childElements(stepNode, ELEMENTS_VARIABLES), step);
+		return parseVariables(SaxonUtil.childElements(stepNode, XProcXmlModel.ELEMENTS_VARIABLES), step);
 	}
 
 
@@ -508,7 +511,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private Step parseDeclarePorts(final XdmNode stepNode, final Step step)
 	{
-		return parseDeclarePorts(SaxonUtil.childElements(stepNode, ELEMENTS_PORTS), step);
+		return parseDeclarePorts(SaxonUtil.childElements(stepNode, XProcXmlModel.ELEMENTS_PORTS), step);
 	}
 
 
@@ -529,7 +532,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseImports(final XdmNode node)
 	{
-		for (final XdmNode importNode : SaxonUtil.childElements(node, ELEMENT_IMPORT))
+		for (final XdmNode importNode : SaxonUtil.childElements(node, XProcXmlModel.ELEMENT_IMPORT))
 		{
 			parseImport(importNode);
 		}
@@ -538,7 +541,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private void parseImport(final XdmNode node)
 	{
-		final String href = node.getAttributeValue(ATTRIBUTE_HREF);
+		final String href = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_HREF);
 		assert href != null;
 		LOG.trace("href = {}", href);
 		final Source librarySource;
@@ -624,7 +627,7 @@ public class PipelineParser implements XProcXmlModel
 
 	private String getStepName(final XdmNode node)
 	{
-		final String explicitName = node.getAttributeValue(ATTRIBUTE_NAME);
+		final String explicitName = node.getAttributeValue(XProcXmlModel.ATTRIBUTE_NAME);
 		if (explicitName != null && explicitName.length() > 0)
 		{
 			return explicitName;
