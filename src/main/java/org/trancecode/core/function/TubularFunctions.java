@@ -24,6 +24,8 @@ import org.trancecode.core.AbstractImmutableObject;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.MapMaker;
 
 
@@ -102,6 +104,46 @@ public final class TubularFunctions
 		public T apply(final F from)
 		{
 			return cache.get(from);
+		}
+	}
+
+
+	public static <F, T> Function<F, T> conditional(
+		final Predicate<F> predicate, final Function<F, T> ifTrue, final Function<F, T> ifFalse)
+	{
+		return new ConditionalFunction<F, T>(predicate, ifTrue, ifFalse);
+	}
+
+
+	private static class ConditionalFunction<F, T> implements Function<F, T>
+	{
+		private final Predicate<F> predicate;
+		private final Function<F, T> ifTrue;
+		private final Function<F, T> ifFalse;
+
+
+		public ConditionalFunction(
+			final Predicate<F> predicate, final Function<F, T> ifTrue, final Function<F, T> ifFalse)
+		{
+			super();
+			Preconditions.checkNotNull(predicate);
+			Preconditions.checkNotNull(ifTrue);
+			Preconditions.checkNotNull(ifFalse);
+			this.predicate = predicate;
+			this.ifTrue = ifTrue;
+			this.ifFalse = ifFalse;
+		}
+
+
+		@Override
+		public T apply(final F from)
+		{
+			if (predicate.apply(from))
+			{
+				return ifTrue.apply(from);
+			}
+
+			return ifFalse.apply(from);
 		}
 	}
 }
