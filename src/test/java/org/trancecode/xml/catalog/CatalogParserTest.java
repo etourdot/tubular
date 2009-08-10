@@ -20,7 +20,7 @@
 package org.trancecode.xml.catalog;
 
 import org.trancecode.AbstractTest;
-import org.trancecode.io.PathUtil;
+import org.trancecode.io.Paths;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -44,14 +44,14 @@ public class CatalogParserTest extends AbstractTest
 {
 	private Source getSourceFromClasspath(final String path)
 	{
-		final InputStream inputStream = getClass().getResourceAsStream(PathUtil.asAbsolutePath(path));
+		final InputStream inputStream = getClass().getResourceAsStream(Paths.asAbsolutePath(path));
 		return new StreamSource(inputStream);
 	}
 
 
 	private Source getSourceFromTestResources(final String path)
 	{
-		return getSourceFromClasspath(getClass().getSimpleName() + PathUtil.asAbsolutePath(path));
+		return getSourceFromClasspath(getClass().getSimpleName() + Paths.asAbsolutePath(path));
 	}
 
 

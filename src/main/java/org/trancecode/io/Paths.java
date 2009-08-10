@@ -25,12 +25,12 @@ package org.trancecode.io;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class PathUtil
+public final class Paths
 {
 	private static final String PATH_DELIMITER = "/";
 
 
-	private PathUtil()
+	private Paths()
 	{
 		// No instantiation
 	}
