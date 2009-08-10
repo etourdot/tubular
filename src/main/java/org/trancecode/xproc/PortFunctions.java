@@ -47,7 +47,7 @@ public final class PortFunctions
 		public static final GetPortNameFunction INSTANCE = new GetPortNameFunction();
 
 
-		public GetPortNameFunction()
+		private GetPortNameFunction()
 		{
 			// Singleton
 		}
