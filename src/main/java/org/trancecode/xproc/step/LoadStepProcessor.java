@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.xml.XmlUtil;
+import org.trancecode.xml.Jaxp;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
@@ -84,7 +84,7 @@ public class LoadStepProcessor extends AbstractStepProcessor
 		}
 		finally
 		{
-			XmlUtil.closeQuietly(source, LOG);
+			Jaxp.closeQuietly(source, LOG);
 		}
 
 		return environment.writeNodes(step.getName(), XProcPorts.RESULT, document);

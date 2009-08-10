@@ -30,14 +30,14 @@ import org.slf4j.Logger;
 
 
 /**
- * Utility methods related to XML.
+ * Utility methods related to JAXP (Java API for XML Processing).
  * 
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class XmlUtil
+public final class Jaxp
 {
-	private XmlUtil()
+	private Jaxp()
 	{
 		// To prevent instantiation
 	}
