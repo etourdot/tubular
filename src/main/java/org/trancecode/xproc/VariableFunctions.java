@@ -20,6 +20,7 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 import net.sf.saxon.s9api.QName;
 
@@ -60,5 +61,11 @@ public final class VariableFunctions
 		{
 			return variable.getName();
 		}
+	}
+
+
+	public static Function<Variable, Variable> identity()
+	{
+		return Functions.identity();
 	}
 }
