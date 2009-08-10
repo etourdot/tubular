@@ -109,7 +109,7 @@ public final class TubularFunctions
 
 
 	public static <F, T> Function<F, T> conditional(
-		final Predicate<F> predicate, final Function<F, T> ifTrue, final Function<F, T> ifFalse)
+		final Predicate<F> predicate, final Function<? super F, T> ifTrue, final Function<? super F, T> ifFalse)
 	{
 		return new ConditionalFunction<F, T>(predicate, ifTrue, ifFalse);
 	}
@@ -118,12 +118,12 @@ public final class TubularFunctions
 	private static class ConditionalFunction<F, T> implements Function<F, T>
 	{
 		private final Predicate<F> predicate;
-		private final Function<F, T> ifTrue;
-		private final Function<F, T> ifFalse;
+		private final Function<? super F, T> ifTrue;
+		private final Function<? super F, T> ifFalse;
 
 
 		public ConditionalFunction(
-			final Predicate<F> predicate, final Function<F, T> ifTrue, final Function<F, T> ifFalse)
+			final Predicate<F> predicate, final Function<? super F, T> ifTrue, final Function<? super F, T> ifFalse)
 		{
 			super();
 			Preconditions.checkNotNull(predicate);
