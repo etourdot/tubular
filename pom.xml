@@ -292,6 +292,7 @@
             <link>http://java.sun.com/javase/6/docs/api/</link>
             <link>http://logging.apache.org/log4j/1.2/apidocs/</link>
             <link>http://www.saxonica.com/documentation/javadoc/</link>
+            <link>http://google-collections.googlecode.com/svn/trunk/javadoc/</link>
           </links>
           <source>1.6</source>
           <failOnError>false</failOnError>
