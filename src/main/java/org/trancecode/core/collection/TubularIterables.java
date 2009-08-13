@@ -116,4 +116,24 @@ public final class TubularIterables
 		final Function<Function<F, T>, T> applyFunction = TubularFunctions.applyTo(argument);
 		return Iterables.transform(functions, applyFunction);
 	}
+
+
+	public static <T> Iterable<T> getDescendants(
+		final Iterable<T> parentElements, final Function<T, Iterable<T>> getChildFunction)
+	{
+		if (Iterables.isEmpty(parentElements))
+		{
+			return parentElements;
+		}
+
+		final Iterable<T> children = Iterables.concat(Iterables.transform(parentElements, getChildFunction));
+
+		return Iterables.concat(parentElements, getDescendants(children, getChildFunction));
+	}
+
+
+	public static <T> Iterable<T> getDescendants(final T parentElement, final Function<T, Iterable<T>> getChildFunction)
+	{
+		return getDescendants(ImmutableList.of(parentElement), getChildFunction);
+	}
 }
