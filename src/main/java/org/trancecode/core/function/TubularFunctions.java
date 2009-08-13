@@ -26,6 +26,7 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
 
 
@@ -144,6 +145,22 @@ public final class TubularFunctions
 			}
 
 			return ifFalse.apply(from);
+		}
+	}
+
+
+	public static <T> Function<T, Iterable<T>> toIterable(final Class<T> elementClass)
+	{
+		return new ToIterableFunction<T>();
+	}
+
+
+	private static class ToIterableFunction<T> implements Function<T, Iterable<T>>
+	{
+		@Override
+		public Iterable<T> apply(final T element)
+		{
+			return ImmutableList.of(element);
 		}
 	}
 }
