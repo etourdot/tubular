@@ -163,4 +163,31 @@ public final class TubularFunctions
 			return ImmutableList.of(element);
 		}
 	}
+
+
+	public static <T> Function<T, Boolean> asFunction(final Predicate<T> predicate)
+	{
+		return new PredicateAsFunction<T>(predicate);
+	}
+
+
+	private static class PredicateAsFunction<T> implements Function<T, Boolean>
+	{
+		private final Predicate<T> predicate;
+
+
+		public PredicateAsFunction(final Predicate<T> predicate)
+		{
+			super();
+			Preconditions.checkNotNull(predicate);
+			this.predicate = predicate;
+		}
+
+
+		@Override
+		public Boolean apply(final T from)
+		{
+			return predicate.apply(from);
+		}
+	}
 }
