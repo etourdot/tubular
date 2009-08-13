@@ -23,6 +23,7 @@ import org.trancecode.core.AbstractImmutableObject;
 
 import java.util.Collection;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -71,5 +72,33 @@ public final class TubularPredicates
 		{
 			return filters.contains(object);
 		}
+	}
+
+
+	public static <T> Predicate<T> asPredicate(final Function<T, Boolean> function)
+	{
+		return new FunctionAsPredicate<T>(function);
+	}
+
+
+	private static class FunctionAsPredicate<T> implements Predicate<T>
+	{
+		private final Function<T, Boolean> function;
+
+
+		public FunctionAsPredicate(final Function<T, Boolean> function)
+		{
+			super();
+			Preconditions.checkNotNull(function);
+			this.function = function;
+		}
+
+
+		@Override
+		public boolean apply(final T input)
+		{
+			return function.apply(input);
+		}
+
 	}
 }
