@@ -43,7 +43,7 @@ public abstract class AbstractImmutableObject
 		if (o != null && o instanceof AbstractImmutableObject)
 		{
 			final AbstractImmutableObject immutableObject = (AbstractImmutableObject)o;
-			return ObjectUtil
+			return TubularObjects
 				.pairEquals(getClass(), immutableObject.getClass(), properties, immutableObject.properties);
 		}
 
@@ -54,6 +54,6 @@ public abstract class AbstractImmutableObject
 	@Override
 	public int hashCode()
 	{
-		return ObjectUtil.hashCode(getClass(), properties);
+		return TubularObjects.hashCode(getClass(), properties);
 	}
 }

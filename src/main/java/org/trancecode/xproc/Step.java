@@ -20,7 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.ObjectUtil;
+import org.trancecode.core.TubularObjects;
 import org.trancecode.core.collection.TubularIterables;
 import org.trancecode.core.collection.TubularMaps;
 import org.trancecode.core.function.TubularFunctions;
@@ -111,7 +111,7 @@ public final class Step extends AbstractHasLocation
 	{
 		LOG.trace("{} -> {}", this.name, name);
 
-		if (ObjectUtil.equals(this.name, name))
+		if (TubularObjects.equals(this.name, name))
 		{
 			return this;
 		}
@@ -465,7 +465,7 @@ public final class Step extends AbstractHasLocation
 	public Step setSubpipeline(final Iterable<Step> steps)
 	{
 		assert steps != null;
-		if (ObjectUtil.equals(this.steps, steps))
+		if (TubularObjects.equals(this.steps, steps))
 		{
 			return this;
 		}
@@ -483,7 +483,7 @@ public final class Step extends AbstractHasLocation
 
 	public Step setLocation(final Location location)
 	{
-		if (ObjectUtil.equals(this.location, location))
+		if (TubularObjects.equals(this.location, location))
 		{
 			return this;
 		}

@@ -21,7 +21,7 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.annotation.Nullable;
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.ObjectUtil;
+import org.trancecode.core.TubularObjects;
 
 import java.net.URI;
 
@@ -75,7 +75,7 @@ public class Group extends AbstractCatalog
 	@Override
 	public int hashCode()
 	{
-		return ObjectUtil.hashCode(Group.class, baseUri, catalogs);
+		return TubularObjects.hashCode(Group.class, baseUri, catalogs);
 	}
 
 
@@ -85,7 +85,7 @@ public class Group extends AbstractCatalog
 		if (o != null && o instanceof Group)
 		{
 			final Group group = (Group)o;
-			return ObjectUtil.pairEquals(baseUri, group.baseUri, catalogs, group.catalogs);
+			return TubularObjects.pairEquals(baseUri, group.baseUri, catalogs, group.catalogs);
 		}
 
 		return false;
