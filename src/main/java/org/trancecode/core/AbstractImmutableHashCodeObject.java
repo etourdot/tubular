@@ -36,6 +36,14 @@ public abstract class AbstractImmutableHashCodeObject extends AbstractImmutableO
 
 
 	@Override
+	public boolean equals(final Object o)
+	{
+		// To comply with Object.hashCode() and Object.equals() contract
+		return super.equals(o);
+	}
+
+
+	@Override
 	public int hashCode()
 	{
 		if (!hashCodeComputed)
