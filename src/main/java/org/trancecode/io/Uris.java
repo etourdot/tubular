@@ -23,6 +23,7 @@ import org.trancecode.annotation.Nullable;
 import org.trancecode.annotation.ReturnsNullable;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 
 /**
@@ -72,5 +73,19 @@ public final class Uris
 		}
 
 		return base.resolve(href);
+	}
+
+
+	public static boolean isValidUri(final String string)
+	{
+		try
+		{
+			new URI(string);
+			return true;
+		}
+		catch (final URISyntaxException e)
+		{
+			return false;
+		}
 	}
 }
