@@ -50,27 +50,33 @@ public final class TubularPredicates
 			return Predicates.alwaysTrue();
 		}
 
-		return new MatchingPredicate<T>(filters);
+		return isContainedBy(filters);
 	}
 
 
-	private static class MatchingPredicate<T> extends AbstractImmutableObject implements Predicate<T>
+	public static <T> Predicate<T> isContainedBy(final Collection<T> collection)
 	{
-		private final Collection<T> filters;
+		return new IsContainedByPredicate<T>(collection);
+	}
 
 
-		public MatchingPredicate(final Collection<T> filters)
+	private static class IsContainedByPredicate<T> extends AbstractImmutableObject implements Predicate<T>
+	{
+		private final Collection<T> collections;
+
+
+		public IsContainedByPredicate(final Collection<T> collection)
 		{
-			super(filters);
-			Preconditions.checkNotNull(filters);
-			this.filters = filters;
+			super(collection);
+			Preconditions.checkNotNull(collection);
+			this.collections = collection;
 		}
 
 
 		@Override
 		public boolean apply(final T object)
 		{
-			return filters.contains(object);
+			return collections.contains(object);
 		}
 	}
 
