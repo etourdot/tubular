@@ -123,4 +123,17 @@ public final class TubularObjects
 
 		return intern(key);
 	}
+
+
+	public static <T> T conditional(final boolean condition, final T ifTrue, final T ifFalse)
+	{
+		if (condition)
+		{
+			return ifTrue;
+		}
+		else
+		{
+			return ifFalse;
+		}
+	}
 }

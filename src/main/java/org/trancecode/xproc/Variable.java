@@ -20,7 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.StringUtil;
+import org.trancecode.core.TubularObjects;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 
@@ -179,9 +179,8 @@ public final class Variable extends AbstractHasLocation
 	@Override
 	public String toString()
 	{
-		return String.format(
-			"%s[%s]%s%s", type, name, StringUtil.getTag(select != null, "[select=" + select + "]", ""), StringUtil
-				.getTag(value != null, "[value=" + value + "]", ""));
+		return String.format("%s[%s]%s%s", type, name, TubularObjects.conditional(select != null, "[select=" + select
+			+ "]", ""), TubularObjects.conditional(value != null, "[value=" + value + "]", ""));
 	}
 
 

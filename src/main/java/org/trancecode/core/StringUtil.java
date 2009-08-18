@@ -31,15 +31,4 @@ public final class StringUtil
 	{
 		// No instantiation
 	}
-
-
-	public static String getTag(final boolean value, final String whenTrue, final String whenFalse)
-	{
-		if (value)
-		{
-			return whenTrue;
-		}
-
-		return whenFalse;
-	}
 }
