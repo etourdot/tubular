@@ -21,6 +21,12 @@ package org.trancecode.core;
 
 import org.trancecode.annotation.Nullable;
 
+import java.util.concurrent.ConcurrentMap;
+
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.MapMaker;
+
 
 /**
  * @author Herve Quiroz
@@ -28,6 +34,9 @@ import org.trancecode.annotation.Nullable;
  */
 public final class TubularObjects
 {
+	private static final ConcurrentMap<Object, Supplier<Object>> internMap = new MapMaker().weakValues().makeMap();
+
+
 	private TubularObjects()
 	{
 		// No instantiation
@@ -95,5 +104,23 @@ public final class TubularObjects
 		}
 
 		return true;
+	}
+
+
+	/** Similar to {@link String#intern()} but for any {@link Object} regardless of its class. */
+	public static <T> T intern(final T key)
+	{
+		@SuppressWarnings("unchecked")
+		final Supplier<T> internObject = (Supplier<T>)internMap.get(key);
+		if (internObject != null)
+		{
+			return internObject.get();
+		}
+
+		@SuppressWarnings("unchecked")
+		final Supplier<Object> wrappedKey = (Supplier<Object>)Suppliers.ofInstance(key);
+		internMap.putIfAbsent(key, wrappedKey);
+
+		return intern(key);
 	}
 }
