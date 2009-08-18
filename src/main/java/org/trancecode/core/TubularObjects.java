@@ -21,11 +21,10 @@ package org.trancecode.core;
 
 import org.trancecode.annotation.Nullable;
 
-import java.util.concurrent.ConcurrentMap;
-
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.MapMaker;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 
 /**
@@ -34,7 +33,7 @@ import com.google.common.collect.MapMaker;
  */
 public final class TubularObjects
 {
-	private static final ConcurrentMap<Object, Supplier<Object>> internMap = new MapMaker().weakValues().makeMap();
+	private static final Map<Object, Reference<Object>> internMap = new WeakHashMap<Object, Reference<Object>>();
 
 
 	private TubularObjects()
@@ -111,15 +110,14 @@ public final class TubularObjects
 	public static <T> T intern(final T key)
 	{
 		@SuppressWarnings("unchecked")
-		final Supplier<T> internObject = (Supplier<T>)internMap.get(key);
+		final Reference<T> internObject = (Reference<T>)internMap.get(key);
 		if (internObject != null)
 		{
 			return internObject.get();
 		}
 
-		@SuppressWarnings("unchecked")
-		final Supplier<Object> wrappedKey = (Supplier<Object>)Suppliers.ofInstance(key);
-		internMap.putIfAbsent(key, wrappedKey);
+		final Reference<Object> wrappedKey = new WeakReference<Object>(key);
+		internMap.put(key, wrappedKey);
 
 		return intern(key);
 	}
