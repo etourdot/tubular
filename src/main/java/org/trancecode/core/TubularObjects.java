@@ -109,6 +109,8 @@ public final class TubularObjects
 	/** Similar to {@link String#intern()} but for any {@link Object} regardless of its class. */
 	public static <T> T intern(final T key)
 	{
+		// TODO not classloader-friendly
+
 		@SuppressWarnings("unchecked")
 		final Reference<T> internObject = (Reference<T>)internMap.get(key);
 		if (internObject != null)
