@@ -195,7 +195,7 @@
             <exclude>**/Abstract*.java</exclude>
           </excludes>
           <forkMode>always</forkMode>
-          <argLine>-enableassertions -Xmx256m</argLine>
+          <argLine>-enableassertions -Xmx128m</argLine>
           <reportFormat>brief</reportFormat>
           <testFailureIgnore>true</testFailureIgnore>
           <systemProperties>
