@@ -25,9 +25,9 @@ package org.trancecode.core;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class StringUtil
+public final class TubularStrings
 {
-	private StringUtil()
+	private TubularStrings()
 	{
 		// No instantiation
 	}
