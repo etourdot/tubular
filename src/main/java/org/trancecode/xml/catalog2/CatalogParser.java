@@ -19,15 +19,20 @@
  */
 package org.trancecode.xml.catalog2;
 
+import org.trancecode.io.Uris;
+import org.trancecode.xml.XmlAttributes;
 import org.trancecode.xml.catalog.CatalogException;
 import org.trancecode.xml.catalog.XmlCatalogModel;
 import org.trancecode.xml.saxon.SaxonUtil;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.xml.transform.Source;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -82,10 +87,79 @@ public class CatalogParser
 	}
 
 
-	private Function<CatalogQuery, URI> parse(final XdmNode catalogNode) throws SaxonApiException
+	private Function<CatalogQuery, URI> parse(final XdmNode catalogNode)
 	{
-		final Function<CatalogQuery, URI> catalog = null;
+		final Function<CatalogQuery, URI> catalog = doParse(catalogNode);
 		LOG.trace("new catalog = {}", catalog);
 		return catalog;
+	}
+
+
+	private Function<CatalogQuery, URI> doParse(final XdmNode catalogNode)
+	{
+		assert catalogNode != null;
+
+		final URI baseUri = Uris.createUri(catalogNode.getAttributeValue(XmlAttributes.BASE));
+
+		if (XmlCatalogModel.ELEMENTS_GROUP.contains(catalogNode.getNodeName()))
+		{
+			return parseGroup(catalogNode, baseUri);
+		}
+
+		if (catalogNode.getNodeName().equals(XmlCatalogModel.ELEMENT_REWRITE_SYSTEM))
+		{
+			return parseRewriteSystem(catalogNode, baseUri);
+		}
+
+		if (catalogNode.getNodeName().equals(XmlCatalogModel.ELEMENT_REWRITE_URI))
+		{
+			return parseRewriteUri(catalogNode, baseUri);
+		}
+
+		throw new CatalogException("unsupported catalog element: %s", catalogNode.getNodeName());
+	}
+
+
+	private Function<CatalogQuery, URI> parseGroup(final XdmNode catalogNode, final URI baseUri)
+	{
+		assert catalogNode != null;
+
+		final List<Function<CatalogQuery, URI>> catalogs =
+			ImmutableList.copyOf(Iterables.transform(SaxonUtil.childElements(
+				catalogNode, XmlCatalogModel.ELEMENTS_CATALOG), new Function<XdmNode, Function<CatalogQuery, URI>>()
+			{
+				@Override
+				public Function<CatalogQuery, URI> apply(final XdmNode node)
+				{
+					return doParse(node);
+				}
+			}));
+
+		return Catalogs.group(baseUri, catalogs);
+	}
+
+
+	private Function<CatalogQuery, URI> parseRewriteSystem(final XdmNode catalogNode, final URI baseUri)
+
+	{
+		assert catalogNode != null;
+
+		final String systemIdStartString =
+			catalogNode.getAttributeValue(XmlCatalogModel.ATTRIBUTE_SYSTEM_ID_START_STRING);
+		final String rewritePrefix = catalogNode.getAttributeValue(XmlCatalogModel.ATTRIBUTE_REWRITE_PREFIX);
+
+		return Catalogs.setBaseUri(baseUri, Catalogs.rewriteSystem(systemIdStartString, rewritePrefix));
+	}
+
+
+	private Function<CatalogQuery, URI> parseRewriteUri(final XdmNode catalogNode, final URI baseUri)
+
+	{
+		assert catalogNode != null;
+
+		final String uriStartString = catalogNode.getAttributeValue(XmlCatalogModel.ATTRIBUTE_URI_START_STRING);
+		final String rewritePrefix = catalogNode.getAttributeValue(XmlCatalogModel.ATTRIBUTE_REWRITE_PREFIX);
+
+		return Catalogs.setBaseUri(baseUri, Catalogs.rewriteUri(uriStartString, rewritePrefix));
 	}
 }
