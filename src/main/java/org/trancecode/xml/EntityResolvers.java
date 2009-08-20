@@ -46,6 +46,12 @@ public final class EntityResolvers
 	}
 
 
+	public static EntityResolver newEntityResolver(final InputResolver inputResolver)
+	{
+		return newEntityResolver(inputResolver, Catalog.defaultCatalog());
+	}
+
+
 	public static EntityResolver newEntityResolver(final InputResolver inputResolver, final Catalog catalog)
 	{
 		return new InputResolverEntityResolver(inputResolver, catalog);
