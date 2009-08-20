@@ -19,8 +19,10 @@
  */
 package org.trancecode.io;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.slf4j.Logger;
 
@@ -33,6 +35,9 @@ import org.slf4j.Logger;
  */
 public final class IOUtil
 {
+	public static final byte[] EMPTY_BYTE_BUFFER = new byte[0];
+
+
 	private IOUtil()
 	{
 		// To prevent instantiation
@@ -70,5 +75,11 @@ public final class IOUtil
 				logger.warn(e.toString(), e);
 			}
 		}
+	}
+
+
+	public static InputStream newNullInputStream()
+	{
+		return new ByteArrayInputStream(EMPTY_BYTE_BUFFER);
 	}
 }
