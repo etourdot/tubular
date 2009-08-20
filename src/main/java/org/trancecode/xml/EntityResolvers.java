@@ -19,6 +19,7 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.io.IOUtil;
 import org.trancecode.io.InputResolver;
 import org.trancecode.xml.catalog.Catalog;
 
@@ -27,6 +28,8 @@ import java.net.URI;
 
 import com.google.common.base.Preconditions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -80,6 +83,38 @@ public final class EntityResolvers
 			final URI uri = catalog.resolve(publicId, systemId, null, null);
 			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
 			inputSource.setSystemId(uri.toString());
+
+			return inputSource;
+		}
+	}
+
+
+	public static EntityResolver nullEntityResolver()
+	{
+		return NullEntityResolver.INSTANCE;
+	}
+
+
+	private static class NullEntityResolver implements EntityResolver
+	{
+		public static final NullEntityResolver INSTANCE = new NullEntityResolver();
+
+		private static final Logger LOG = LoggerFactory.getLogger(NullEntityResolver.class);
+
+
+		private NullEntityResolver()
+		{
+			// Singleton
+		}
+
+
+		public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException
+		{
+			LOG.trace("publicId = {} ; systemId = {}", publicId, systemId);
+
+			final InputSource inputSource = new InputSource(IOUtil.newNullInputStream());
+			inputSource.setPublicId(publicId);
+			inputSource.setSystemId(systemId);
 
 			return inputSource;
 		}
