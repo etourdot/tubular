@@ -19,9 +19,6 @@
  */
 package org.trancecode.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
@@ -30,33 +27,12 @@ import java.net.URI;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class DefaultInputResolver extends AbstractInputResolver
+public abstract class AbstractInputResolver implements InputResolver
 {
-	public static final DefaultInputResolver INSTANCE = new DefaultInputResolver();
-
-
-	private DefaultInputResolver()
-	{
-		// Only a single instance needed
-	}
-
-
 	@Override
-	public InputStream resolveInputStream(final URI uri)
+	public InputStream resolveInputStream(final String href, final String base)
 	{
-		if (uri.getScheme() == null || "file".equals(uri.getScheme()))
-		{
-			final File file = new File(uri);
-			try
-			{
-				return new FileInputStream(file);
-			}
-			catch (final IOException e)
-			{
-				throw new RuntimeIOException(e, "error resolving input: %s", uri);
-			}
-		}
-
-		throw new UnsupportedOperationException("URI scheme not supported: " + uri.getScheme());
+		final URI uri = Uris.resolve(href, base);
+		return resolveInputStream(uri);
 	}
 }

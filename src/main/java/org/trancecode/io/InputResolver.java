@@ -20,6 +20,7 @@
 package org.trancecode.io;
 
 import java.io.InputStream;
+import java.net.URI;
 
 
 /**
@@ -29,4 +30,7 @@ import java.io.InputStream;
 public interface InputResolver
 {
 	InputStream resolveInputStream(String href, String base);
+
+
+	InputStream resolveInputStream(URI uri);
 }
