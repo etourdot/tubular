@@ -17,12 +17,10 @@
  *
  * $Id$
  */
-package org.trancecode.xml.catalog2;
+package org.trancecode.xml.catalog;
 
 import org.trancecode.io.Uris;
 import org.trancecode.xml.XmlAttributes;
-import org.trancecode.xml.catalog.CatalogException;
-import org.trancecode.xml.catalog.XmlCatalogModel;
 import org.trancecode.xml.saxon.SaxonUtil;
 
 import java.net.URI;

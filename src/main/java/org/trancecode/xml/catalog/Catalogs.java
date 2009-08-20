@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xml.catalog2;
+package org.trancecode.xml.catalog;
 
 import org.trancecode.annotation.Nullable;
 import org.trancecode.core.AbstractImmutableHashCodeObject;

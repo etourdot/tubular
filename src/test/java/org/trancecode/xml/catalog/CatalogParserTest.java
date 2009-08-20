@@ -17,10 +17,12 @@
  *
  * $Id$
  */
-package org.trancecode.xml.catalog2;
+package org.trancecode.xml.catalog;
 
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Paths;
+import org.trancecode.xml.catalog.Catalog;
+import org.trancecode.xml.catalog.CatalogParser;
 
 import java.io.InputStream;
 import java.net.URI;

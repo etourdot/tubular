@@ -20,7 +20,7 @@
 package org.trancecode.xml;
 
 import org.trancecode.io.InputResolver;
-import org.trancecode.xml.catalog2.Catalog;
+import org.trancecode.xml.catalog.Catalog;
 
 import java.io.IOException;
 import java.net.URI;
