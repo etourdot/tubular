@@ -33,6 +33,15 @@ import com.google.common.base.Function;
  */
 public final class Catalog extends ForwardingCatalog implements Function<CatalogQuery, URI>
 {
+	private static final Catalog defaultCatalog = newCatalog(Catalogs.defaultCatalog());
+
+
+	public static Catalog defaultCatalog()
+	{
+		return defaultCatalog;
+	}
+
+
 	public static Catalog newCatalog(final Function<CatalogQuery, URI> catalogFunction)
 	{
 		return new Catalog(catalogFunction);
