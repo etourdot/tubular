@@ -19,7 +19,24 @@
  */
 package org.trancecode.xml;
 
+import org.trancecode.core.AbstractImmutableObject;
+import org.trancecode.io.InputResolver;
+import org.trancecode.xml.catalog.Catalog;
+
+import java.net.URI;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXSource;
+
+import com.google.common.base.Preconditions;
+
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 
 /**
@@ -33,5 +50,55 @@ public final class UriResolvers
 	private UriResolvers()
 	{
 		// No instantiation
+	}
+
+
+	public static URIResolver newUriResolver(final InputResolver inputResolver, final Catalog catalog)
+	{
+		return new EntityResolverURIResolver(inputResolver, catalog);
+	}
+
+
+	private static class EntityResolverURIResolver extends AbstractImmutableObject implements URIResolver
+	{
+		private final InputResolver inputResolver;
+		private final Catalog catalog;
+		private final EntityResolver entityResolver;
+
+
+		public EntityResolverURIResolver(final InputResolver inputResolver, final Catalog catalog)
+		{
+			super(inputResolver, catalog);
+			Preconditions.checkNotNull(inputResolver);
+			Preconditions.checkNotNull(catalog);
+			this.inputResolver = inputResolver;
+			this.catalog = catalog;
+			entityResolver = EntityResolvers.newEntityResolver(inputResolver, catalog);
+		}
+
+
+		@Override
+		public Source resolve(final String href, final String base) throws TransformerException
+		{
+			final URI uri = catalog.resolveUri(href, base);
+			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
+			inputSource.setSystemId(uri.toString());
+
+			try
+			{
+				final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+				xmlReader.setEntityResolver(entityResolver);
+
+				final SAXSource source = new SAXSource(xmlReader, inputSource);
+				source.setSystemId(uri.toString());
+
+				return source;
+			}
+			catch (final SAXException e)
+			{
+				Sax.closeQuietly(inputSource);
+				throw new TransformerException(String.format("href = %s ; base = %s", href, base), e);
+			}
+		}
 	}
 }
