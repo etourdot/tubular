@@ -55,10 +55,22 @@ public final class Catalog extends ForwardingCatalog implements Function<Catalog
 
 
 	@ReturnsNullable
-	public URI resolve(
-		@Nullable final String publicId, @Nullable final String systemId, @Nullable final String href,
-		@Nullable final String base)
+	public URI resolveEntity(@Nullable final String publicId, @Nullable final String systemId)
 	{
-		return apply(CatalogQuery.newInstance(publicId, systemId, href, base));
+		return apply(CatalogQuery.newInstance(publicId, systemId, null, null));
+	}
+
+
+	@ReturnsNullable
+	public URI resolveUri(@Nullable final String href, @Nullable final String base)
+	{
+		return apply(CatalogQuery.newInstance(null, null, href, base));
+	}
+
+
+	@ReturnsNullable
+	public URI resolveUri(@Nullable final URI uri)
+	{
+		return apply(CatalogQuery.newInstance(null, null, uri.toString(), null));
 	}
 }

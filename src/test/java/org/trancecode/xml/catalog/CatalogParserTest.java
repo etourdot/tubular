@@ -21,8 +21,6 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Paths;
-import org.trancecode.xml.catalog.Catalog;
-import org.trancecode.xml.catalog.CatalogParser;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -69,7 +67,6 @@ public class CatalogParserTest extends AbstractTest
 		final Source catalogSource = getSourceFromTestResources("catalog.xml");
 		final Catalog catalog = Catalog.newCatalog(new CatalogParser(getProcessor()).parse(catalogSource));
 
-		Assert.assertEquals(URI.create("some/rewriten/path/whatever"), catalog.resolve(
-			null, null, "some/path/whatever", null));
+		Assert.assertEquals(URI.create("some/rewriten/path/whatever"), catalog.resolveUri("some/path/whatever", null));
 	}
 }

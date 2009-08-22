@@ -80,7 +80,7 @@ public final class EntityResolvers
 		@Override
 		public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException
 		{
-			final URI uri = catalog.resolve(publicId, systemId, null, null);
+			final URI uri = catalog.resolveEntity(publicId, systemId);
 			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
 			inputSource.setSystemId(uri.toString());
 
