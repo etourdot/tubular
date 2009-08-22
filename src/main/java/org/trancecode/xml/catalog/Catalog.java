@@ -26,6 +26,7 @@ import org.trancecode.io.Uris;
 import java.net.URI;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
 
 /**
@@ -65,6 +66,7 @@ public final class Catalog extends ForwardingCatalog implements Function<Catalog
 	@ReturnsNullable
 	public URI resolveUri(@Nullable final String href, @Nullable final String base)
 	{
+		Preconditions.checkArgument(href != null || base != null);
 		return apply(CatalogQuery.newInstance(null, null, Uris.resolve(href, base)));
 	}
 
