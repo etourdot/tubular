@@ -21,6 +21,10 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.core.AbstractImmutableHashCodeObject;
 
+import java.net.URI;
+
+import com.google.common.base.Preconditions;
+
 
 /**
  * @author Herve Quiroz
@@ -28,25 +32,53 @@ import org.trancecode.core.AbstractImmutableHashCodeObject;
  */
 public final class CatalogQuery extends AbstractImmutableHashCodeObject
 {
-	public final String publicId;
-	public final String systemId;
-	public final String href;
-	public final String base;
+	private final String publicId;
+	private final String systemId;
+	private final URI uri;
+	private String uriAsString;
 
 
-	public static CatalogQuery newInstance(
-		final String publicId, final String systemId, final String href, final String base)
+	public static CatalogQuery newInstance(final String publicId, final String systemId, final URI uri)
 	{
-		return new CatalogQuery(publicId, systemId, href, base);
+		return new CatalogQuery(publicId, systemId, uri);
 	}
 
 
-	private CatalogQuery(final String publicId, final String systemId, final String href, final String base)
+	private CatalogQuery(final String publicId, final String systemId, final URI uri)
 	{
-		super(publicId, systemId, href, base);
+		super(publicId, systemId, uri);
+		Preconditions.checkArgument(publicId != null || systemId != null || uri != null);
 		this.publicId = publicId;
 		this.systemId = systemId;
-		this.href = href;
-		this.base = base;
+		this.uri = uri;
+	}
+
+
+	public String publicId()
+	{
+		return publicId;
+	}
+
+
+	public String systemId()
+	{
+		return systemId;
+	}
+
+
+	public URI uri()
+	{
+		return uri;
+	}
+
+
+	public String uriAsString()
+	{
+		if (uriAsString == null && uri != null)
+		{
+			uriAsString = uri.toString();
+		}
+
+		return uriAsString;
 	}
 }

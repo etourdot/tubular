@@ -21,6 +21,7 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.annotation.Nullable;
 import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.io.Uris;
 
 import java.net.URI;
 
@@ -57,20 +58,20 @@ public final class Catalog extends ForwardingCatalog implements Function<Catalog
 	@ReturnsNullable
 	public URI resolveEntity(@Nullable final String publicId, @Nullable final String systemId)
 	{
-		return apply(CatalogQuery.newInstance(publicId, systemId, null, null));
+		return apply(CatalogQuery.newInstance(publicId, systemId, null));
 	}
 
 
 	@ReturnsNullable
 	public URI resolveUri(@Nullable final String href, @Nullable final String base)
 	{
-		return apply(CatalogQuery.newInstance(null, null, href, base));
+		return apply(CatalogQuery.newInstance(null, null, Uris.resolve(href, base)));
 	}
 
 
 	@ReturnsNullable
 	public URI resolveUri(@Nullable final URI uri)
 	{
-		return apply(CatalogQuery.newInstance(null, null, uri.toString(), null));
+		return apply(CatalogQuery.newInstance(null, null, uri));
 	}
 }

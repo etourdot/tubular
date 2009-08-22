@@ -71,12 +71,13 @@ public final class Catalogs
 		@Override
 		public URI apply(final CatalogQuery query)
 		{
-			if (query.systemId != null)
+			if (query.systemId() != null)
 			{
-				return Uris.createUri(query.systemId);
+				return Uris.createUri(query.systemId());
 			}
 
-			return Uris.resolve(query.href, query.base);
+			assert query.uri() != null;
+			return query.uri();
 		}
 	}
 
@@ -155,9 +156,9 @@ public final class Catalogs
 		@Override
 		public URI apply(final CatalogQuery query)
 		{
-			if (query.systemId != null && query.systemId.startsWith(systemIdStartString))
+			if (query.systemId() != null && query.systemId().startsWith(systemIdStartString))
 			{
-				final String suffix = query.systemId.substring(systemIdStartString.length());
+				final String suffix = query.systemId().substring(systemIdStartString.length());
 				return Uris.createUri(rewritePrefix + suffix);
 			}
 
@@ -189,16 +190,7 @@ public final class Catalogs
 		@Override
 		public URI apply(final CatalogQuery query)
 		{
-			final String uriString;
-			if (query.href != null || query.base != null)
-			{
-				uriString = Uris.resolve(query.href, query.base).toString();
-			}
-			else
-			{
-				uriString = query.systemId;
-			}
-
+			final String uriString = query.uriAsString();
 			if (uriString != null && uriString.startsWith(uriStartString))
 			{
 				final String suffix = uriString.substring(uriStartString.length());
