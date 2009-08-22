@@ -53,6 +53,12 @@ public final class UriResolvers
 	}
 
 
+	public static URIResolver newUriResolver(final InputResolver inputResolver)
+	{
+		return new EntityResolverURIResolver(inputResolver, Catalog.defaultCatalog());
+	}
+
+
 	public static URIResolver newUriResolver(final InputResolver inputResolver, final Catalog catalog)
 	{
 		return new EntityResolverURIResolver(inputResolver, catalog);
