@@ -313,11 +313,11 @@ public class PipelineParser
 		}
 		final Port.Type type = getPortType(portNode);
 
-		final Port port =
-			Port.newPort(step.getName(), portName, getLocation(portNode), type).setPrimary(
-				portNode.getAttributeValue(XProcAttributes.PRIMARY)).setSequence(
-				portNode.getAttributeValue(XProcAttributes.SEQUENCE)).setSelect(
-				portNode.getAttributeValue(XProcAttributes.SELECT)).setPortBindings(parsePortBindings(portNode));
+		Port port = Port.newPort(step.getName(), portName, getLocation(portNode), type);
+		port = port.setPrimary(portNode.getAttributeValue(XProcAttributes.PRIMARY));
+		port = port.setSequence(portNode.getAttributeValue(XProcAttributes.SEQUENCE));
+		port = port.setSelect(portNode.getAttributeValue(XProcAttributes.SELECT));
+		port = port.setPortBindings(parsePortBindings(portNode));
 		LOG.trace("new port: {}", port);
 
 		return step.declarePort(port);
