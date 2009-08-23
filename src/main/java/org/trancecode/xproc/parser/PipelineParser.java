@@ -19,8 +19,6 @@
  */
 package org.trancecode.xproc.parser;
 
-import org.trancecode.core.function.Pair;
-import org.trancecode.core.function.TubularFunctions;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonUtil;
@@ -169,41 +167,33 @@ public class PipelineParser
 
 	private Step parseWithPorts(final Iterable<XdmNode> withPortNodes, final Step step)
 	{
-		return TubularFunctions.apply(step, withPortNodes, new Function<Pair<Step, XdmNode>, Step>()
+		Step configuredStep = step;
+		for (final XdmNode withPortNode : withPortNodes)
 		{
-			@Override
-			public Step apply(final Pair<Step, XdmNode> arguments)
-			{
-				final Step step = arguments.left();
-				final XdmNode withPortNode = arguments.right();
-				return parseWithPort(withPortNode, step);
-			}
-		});
+			configuredStep = parseWithPort(withPortNode, configuredStep);
+		}
+
+		return configuredStep;
 	}
 
 
 	private Step parseWithOptionValue(final XdmNode stepNode, final Step step)
 	{
-		return TubularFunctions.apply(
-			step, SaxonUtil.attributes(stepNode).entrySet(), new Function<Pair<Step, Map.Entry<QName, String>>, Step>()
-			{
-				@Override
-				public Step apply(final Pair<Step, Map.Entry<QName, String>> arguments)
-				{
-					final Step step = arguments.left();
-					final Map.Entry<QName, String> attribute = arguments.right();
-					final QName name = attribute.getKey();
-					final String value = attribute.getValue();
-					if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
-						&& !name.equals(XProcAttributes.TYPE))
-					{
-						LOG.trace("{} = {}", name, value);
-						return step.withOptionValue(name, value);
-					}
+		Step configuredStep = step;
 
-					return step;
-				}
-			});
+		for (final Map.Entry<QName, String> attribute : SaxonUtil.attributes(stepNode).entrySet())
+		{
+			final QName name = attribute.getKey();
+			final String value = attribute.getValue();
+			if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
+				&& !name.equals(XProcAttributes.TYPE))
+			{
+				LOG.trace("{} = {}", name, value);
+				configuredStep = configuredStep.withOptionValue(name, value);
+			}
+		}
+
+		return configuredStep;
 	}
 
 
@@ -469,16 +459,14 @@ public class PipelineParser
 
 	private Step parseVariables(final Iterable<XdmNode> variableNodes, final Step step)
 	{
-		return TubularFunctions.apply(step, variableNodes, new Function<Pair<Step, XdmNode>, Step>()
+		Step configuredStep = step;
+
+		for (final XdmNode variableNode : variableNodes)
 		{
-			@Override
-			public Step apply(final Pair<Step, XdmNode> arguments)
-			{
-				final Step step = arguments.left();
-				final XdmNode variableNode = arguments.right();
-				return parseVariable(variableNode, step);
-			}
-		});
+			configuredStep = parseVariable(variableNode, configuredStep);
+		}
+
+		return configuredStep;
 	}
 
 
@@ -516,16 +504,14 @@ public class PipelineParser
 
 	private Step parseDeclarePorts(final Iterable<XdmNode> declarePortNodes, final Step step)
 	{
-		return TubularFunctions.apply(step, declarePortNodes, new Function<Pair<Step, XdmNode>, Step>()
+		Step configuredStep = step;
+
+		for (final XdmNode declarePortNode : declarePortNodes)
 		{
-			@Override
-			public Step apply(final Pair<Step, XdmNode> arguments)
-			{
-				final Step step = arguments.left();
-				final XdmNode withPortNode = arguments.right();
-				return parseDeclarePort(withPortNode, step);
-			}
-		});
+			configuredStep = parseDeclarePort(declarePortNode, configuredStep);
+		}
+
+		return configuredStep;
 	}
 
 
