@@ -136,4 +136,18 @@ public final class TubularIterables
 	{
 		return getDescendants(ImmutableList.of(parentElement), getChildFunction);
 	}
+
+
+	public static boolean removeAll(final Iterable<?> iterable)
+	{
+		boolean removed = false;
+		for (final Iterator<?> iterator = iterable.iterator(); iterator.hasNext();)
+		{
+			iterator.next();
+			iterator.remove();
+			removed = true;
+		}
+
+		return removed;
+	}
 }
