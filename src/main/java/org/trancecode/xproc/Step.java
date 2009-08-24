@@ -466,6 +466,7 @@ public final class Step extends AbstractHasLocation
 	public Step addChildStep(final Step step)
 	{
 		Preconditions.checkNotNull(step);
+		Preconditions.checkState(isCompoundStep());
 
 		LOG.trace("steps = {} ; step = {}", steps, step);
 		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
