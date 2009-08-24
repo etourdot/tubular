@@ -20,6 +20,7 @@
 package org.trancecode.xproc.parser;
 
 import org.trancecode.xml.Location;
+import org.trancecode.xml.saxon.SaxonIterables;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.PipelineException;
@@ -58,6 +59,7 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,8 +109,7 @@ public class PipelineParser
 			documentBuilder.setLineNumbering(true);
 			final XdmNode pipelineDocument = documentBuilder.build(source);
 			rootNode = SaxonUtil.childElement(pipelineDocument, XProcElements.ELEMENTS_ROOT);
-			if (rootNode.getNodeName().equals(XProcElements.PIPELINE)
-				|| rootNode.getNodeName().equals(XProcElements.DECLARE_STEP))
+			if (XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE.contains(rootNode.getNodeName()))
 			{
 				mainPipeline = parsePipeline(rootNode);
 			}
@@ -162,6 +163,100 @@ public class PipelineParser
 		step = parseVariables(stepNode, step);
 
 		declareStep(step);
+	}
+
+
+	private Step parseStepChildNodes(final XdmNode stepNode, final Step step)
+	{
+		Step configuredStep = step;
+		for (final XdmNode node : SaxonIterables.childNodes(stepNode))
+		{
+			configuredStep = parseStepChildNode(node, configuredStep);
+		}
+
+		return configuredStep;
+	}
+
+
+	private Step parseStepChildNode(final XdmNode node, final Step step)
+	{
+		if (node.getNodeKind() == XdmNodeKind.ELEMENT)
+		{
+			if (XProcElements.ELEMENTS_PORTS.contains(node.getNodeName()))
+			{
+				if (step.getPorts().containsKey(node.getAttributeValue(XProcAttributes.PORT)))
+				{
+					return parseWithPort(node, step);
+				}
+				else
+				{
+					return parseDeclarePort(node, step);
+				}
+			}
+
+			if (node.getNodeName().equals(XProcElements.VARIABLE))
+			{
+				return parseDeclareVariable(node, step);
+			}
+
+			if (node.getNodeName().equals(XProcElements.OPTION))
+			{
+				return parseOption(node, step);
+			}
+
+			if (node.getNodeName().equals(XProcElements.WITH_OPTION))
+			{
+				return parseWithOption(node, step);
+			}
+
+			if (node.getNodeName().equals(XProcElements.WITH_PARAM))
+			{
+				return parseWithParam(node, step);
+			}
+
+			if (getSupportedStepTypes().contains(node.getNodeName()))
+			{
+				return step.addChildStep(parseInstanceStep(node));
+			}
+
+			if (XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE.contains(node.getNodeName()))
+			{
+				parseDeclareStep(node);
+				return step;
+			}
+
+			if (node.getNodeName().equals(XProcElements.IMPORT))
+			{
+				parseImport(node);
+				return step;
+			}
+
+			LOG.warn("child element not supported: " + node.getNodeName());
+		}
+		else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
+		{
+			final QName name = node.getNodeName();
+			final String value = node.getStringValue();
+
+			if (name.equals(XProcAttributes.TEST) && step.getType().equals(XProcSteps.CHOOSE))
+			{
+				return step.withOption(name, value);
+			}
+
+			if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
+				&& !name.equals(XProcAttributes.TYPE))
+			{
+				return step.withOptionValue(name, value);
+			}
+
+			LOG.warn("attribute not supported: " + node.getNodeName());
+		}
+		else
+		{
+			LOG.warn("child node not supported: " + node.getNodeKind());
+		}
+
+		return step;
 	}
 
 
