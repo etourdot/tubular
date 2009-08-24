@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -459,6 +460,17 @@ public final class Step extends AbstractHasLocation
 	public QName getType()
 	{
 		return type;
+	}
+
+
+	public Step addChildStep(final Step step)
+	{
+		Preconditions.checkNotNull(step);
+
+		LOG.trace("steps = {} ; step = {}", steps, step);
+		return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
+			TubularIterables.append(steps, step));
+
 	}
 
 
