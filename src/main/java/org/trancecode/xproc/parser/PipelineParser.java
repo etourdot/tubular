@@ -196,7 +196,8 @@ public class PipelineParser
 		{
 			if (XProcElements.ELEMENTS_PORTS.contains(node.getNodeName()))
 			{
-				if (step.getPorts().containsKey(node.getAttributeValue(XProcAttributes.PORT)))
+				final String portName = getPortName(node);
+				if (step.getPorts().containsKey(portName))
 				{
 					return parseWithPort(node, step);
 				}
@@ -271,15 +272,7 @@ public class PipelineParser
 
 	private Step parseWithPort(final XdmNode portNode, final Step step)
 	{
-		final String portName;
-		if (portNode.getNodeName().equals(XProcElements.XPATH_CONTEXT))
-		{
-			portName = XProcPorts.XPATH_CONTEXT;
-		}
-		else
-		{
-			portName = portNode.getAttributeValue(XProcAttributes.PORT);
-		}
+		final String portName = getPortName(portNode);
 		final Port port = step.getPort(portName);
 		assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
 			+ " ; with-port = " + getPortType(portNode);
