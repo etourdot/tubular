@@ -55,7 +55,7 @@ public class PipelineFactory
 
 	private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
 
-	private static StepProcessor UNSUPPORTED_STEP_PROCESSOR = new StepProcessor()
+	protected static StepProcessor UNSUPPORTED_STEP_PROCESSOR = new StepProcessor()
 	{
 		@Override
 		public Environment run(final Step step, final Environment environment)
@@ -65,7 +65,7 @@ public class PipelineFactory
 	};
 
 	private static final Map<QName, Step> CORE_LIBRARY = getCoreLibrary();
-	private static final Map<QName, Step> DEFAULT_LIBRARY = getDefaultLibrary();
+	private static Map<QName, Step> defaultLibrary;
 	private static final Map<QName, StepProcessor> DEFAULT_PROCESSORS = getDefaultProcessors();
 
 	private Processor processor = new Processor(false);
@@ -121,17 +121,21 @@ public class PipelineFactory
 
 	private static Map<QName, Step> getDefaultLibrary()
 	{
-		final Source defaultLibrarySource =
-			new StreamSource(PipelineFactory.class.getResourceAsStream(RESOURCE_PATH_XPROC_LIBRARY_1_0));
-		final PipelineParser parser =
-			new PipelineParser(new Processor(false), defaultLibrarySource, CORE_LIBRARY, getDefaultProcessors());
-		parser.parse();
+		if (defaultLibrary == null)
+		{
+			final Source defaultLibrarySource =
+				new StreamSource(PipelineFactory.class.getResourceAsStream(RESOURCE_PATH_XPROC_LIBRARY_1_0));
+			final PipelineParser parser =
+				new PipelineParser(new Processor(false), defaultLibrarySource, CORE_LIBRARY, getDefaultProcessors());
+			parser.parse();
 
-		final Map<QName, Step> library = Maps.newHashMap();
-		library.putAll(CORE_LIBRARY);
-		library.putAll(parser.getLibrary());
+			final Map<QName, Step> library = Maps.newHashMap();
+			library.putAll(CORE_LIBRARY);
+			library.putAll(parser.getLibrary());
+			defaultLibrary = ImmutableMap.copyOf(library);
+		}
 
-		return library;
+		return defaultLibrary;
 	}
 
 
