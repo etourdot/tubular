@@ -32,6 +32,7 @@ import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.XProcUtil;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
@@ -109,9 +110,12 @@ public class PipelineParser
 			documentBuilder.setLineNumbering(true);
 			final XdmNode pipelineDocument = documentBuilder.build(source);
 			rootNode = SaxonUtil.childElement(pipelineDocument, XProcElements.ELEMENTS_ROOT);
+
+			parseImports(rootNode);
+
 			if (XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE.contains(rootNode.getNodeName()))
 			{
-				mainPipeline = parsePipeline(rootNode);
+				mainPipeline = parseDeclareStep(rootNode);
 			}
 			else if (rootNode.getNodeName().equals(XProcElements.LIBRARY))
 			{
@@ -139,30 +143,39 @@ public class PipelineParser
 	{
 		for (final XdmNode stepNode : SaxonUtil.childElements(node, XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE))
 		{
-			final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.TYPE);
-
-			if (stepProcessors.containsKey(type))
-			{
-				parseDeclareStep(stepNode);
-			}
-			else
-			{
-				parsePipeline(stepNode);
-			}
+			parseDeclareStep(stepNode);
 		}
 	}
 
 
-	private void parseDeclareStep(final XdmNode stepNode)
+	private Step parseDeclareStep(final XdmNode stepNode)
 	{
 		final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.TYPE);
 		LOG.trace("new step type: {}", type);
 
-		Step step = Step.newStep(type, stepProcessors.get(type), false);
-		step = parseDeclarePorts(stepNode, step);
-		step = parseVariables(stepNode, step);
+		Step step;
+		if (stepProcessors.containsKey(type))
+		{
+			final StepProcessor stepProcessor = stepProcessors.get(type);
+			step = Step.newStep(type, stepProcessor, false);
+		}
+		else
+		{
+			final String name = getStepName(stepNode);
+			step = Pipeline.newPipeline(type);
+			step = step.setName(name);
+		}
+
+		step = step.setLocation(getLocation(stepNode));
+		step = parseStepChildNodes(stepNode, step);
+
+		if (XProcUtil.isPipeline(step))
+		{
+			step = Pipeline.addImplicitPorts(step);
+		}
 
 		declareStep(step);
+		return step;
 	}
 
 
@@ -225,13 +238,7 @@ public class PipelineParser
 				return step;
 			}
 
-			if (node.getNodeName().equals(XProcElements.IMPORT))
-			{
-				parseImport(node);
-				return step;
-			}
-
-			LOG.warn("child element not supported: " + node.getNodeName());
+			LOG.warn("child element not supported: {}", node.getNodeName());
 		}
 		else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
 		{
@@ -251,54 +258,19 @@ public class PipelineParser
 
 			LOG.warn("attribute not supported: " + node.getNodeName());
 		}
+		else if (node.getNodeKind() == XdmNodeKind.TEXT)
+		{
+			if (!node.getStringValue().trim().isEmpty())
+			{
+				LOG.trace("unexpected text node: {}", node.getStringValue());
+			}
+		}
 		else
 		{
-			LOG.warn("child node not supported: " + node.getNodeKind());
+			LOG.warn("child node not supported: {}", node.getNodeKind());
 		}
 
 		return step;
-	}
-
-
-	private Step parseWithPorts(final Iterable<XdmNode> withPortNodes, final Step step)
-	{
-		Step configuredStep = step;
-		for (final XdmNode withPortNode : withPortNodes)
-		{
-			configuredStep = parseWithPort(withPortNode, configuredStep);
-		}
-
-		return configuredStep;
-	}
-
-
-	private Step parseWithOptionValue(final XdmNode stepNode, final Step step)
-	{
-		Step configuredStep = step;
-
-		for (final Map.Entry<QName, String> attribute : SaxonUtil.attributes(stepNode).entrySet())
-		{
-			final QName name = attribute.getKey();
-			final String value = attribute.getValue();
-			if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
-				&& !name.equals(XProcAttributes.TYPE))
-			{
-				LOG.trace("{} = {}", name, value);
-				configuredStep = configuredStep.withOptionValue(name, value);
-			}
-		}
-
-		return configuredStep;
-	}
-
-
-	private Step parseInstanceStepBindings(final XdmNode node, final Step step)
-	{
-		final Step stepWithPorts = parseWithPorts(SaxonUtil.childElements(node, XProcElements.ELEMENTS_PORTS), step);
-		final Step stepWithVariables = parseVariables(node, stepWithPorts);
-		final Step stepWithOptionValues = parseWithOptionValue(node, stepWithVariables);
-
-		return stepWithOptionValues;
 	}
 
 
@@ -522,94 +494,6 @@ public class PipelineParser
 	}
 
 
-	private Step parsePipeline(final XdmNode node)
-	{
-		final String name = getStepName(node);
-		final QName type = SaxonUtil.getAttributeAsQName(node, XProcAttributes.TYPE);
-
-		Step pipeline = Pipeline.newPipeline(type).setName(name).setLocation(getLocation(node));
-
-		parseImports(node);
-		parseDeclareSteps(node);
-
-		pipeline = parseDeclarePorts(node, pipeline);
-		pipeline = Pipeline.addImplicitPorts(pipeline);
-		pipeline = parseVariables(node, pipeline);
-		pipeline = parseSteps(node, pipeline);
-
-		if (pipeline.getType() != null)
-		{
-			localLibrary.put(type, pipeline);
-		}
-
-		return pipeline;
-	}
-
-
-	private Step parseVariables(final XdmNode stepNode, final Step step)
-	{
-		return parseVariables(SaxonUtil.childElements(stepNode, XProcElements.ELEMENTS_VARIABLES), step);
-	}
-
-
-	private Step parseVariables(final Iterable<XdmNode> variableNodes, final Step step)
-	{
-		Step configuredStep = step;
-
-		for (final XdmNode variableNode : variableNodes)
-		{
-			configuredStep = parseVariable(variableNode, configuredStep);
-		}
-
-		return configuredStep;
-	}
-
-
-	private Step parseVariable(final XdmNode variableNode, final Step step)
-	{
-		if (variableNode.getNodeName().equals(XProcElements.WITH_OPTION))
-		{
-			return parseWithOption(variableNode, step);
-		}
-
-		if (variableNode.getNodeName().equals(XProcElements.WITH_PARAM))
-		{
-			return parseWithParam(variableNode, step);
-		}
-
-		if (variableNode.getNodeName().equals(XProcElements.VARIABLE))
-		{
-			return parseDeclareVariable(variableNode, step);
-		}
-
-		if (variableNode.getNodeName().equals(XProcElements.OPTION))
-		{
-			return parseOption(variableNode, step);
-		}
-
-		throw new IllegalStateException(variableNode.getNodeName().toString());
-	}
-
-
-	private Step parseDeclarePorts(final XdmNode stepNode, final Step step)
-	{
-		return parseDeclarePorts(SaxonUtil.childElements(stepNode, XProcElements.ELEMENTS_PORTS), step);
-	}
-
-
-	private Step parseDeclarePorts(final Iterable<XdmNode> declarePortNodes, final Step step)
-	{
-		Step configuredStep = step;
-
-		for (final XdmNode declarePortNode : declarePortNodes)
-		{
-			configuredStep = parseDeclarePort(declarePortNode, configuredStep);
-		}
-
-		return configuredStep;
-	}
-
-
 	private void parseImports(final XdmNode node)
 	{
 		for (final XdmNode importNode : SaxonUtil.childElements(node, XProcElements.IMPORT))
@@ -647,28 +531,7 @@ public class PipelineParser
 		final Collection<QName> types = new ArrayList<QName>();
 		types.addAll(localLibrary.keySet());
 		types.addAll(importedLibrary.keySet());
-		LOG.trace("types = {}", types);
 		return types;
-	}
-
-
-	private Step parseSteps(final XdmNode node, final Step compoundStep)
-	{
-		return compoundStep.setSubpipeline(parseInnerSteps(node));
-	}
-
-
-	private List<Step> parseInnerSteps(final XdmNode node)
-	{
-		return ImmutableList.copyOf(Iterables.transform(
-			SaxonUtil.childElements(node, getSupportedStepTypes()), new Function<XdmNode, Step>()
-			{
-				@Override
-				public Step apply(final XdmNode stepElement)
-				{
-					return parseInstanceStep(stepElement);
-				}
-			}));
 	}
 
 
@@ -682,26 +545,9 @@ public class PipelineParser
 		Step step = declaredStep.setName(name).setLocation(getLocation(node));
 		LOG.trace("new instance step: {}", step);
 
-		if (XProcSteps.WHEN_STEPS.contains(step.getType()))
-		{
-			// declare output ports
-			step = parseDeclarePorts(node, step);
-		}
+		step = parseStepChildNodes(node, step);
 
-		return parseInstanceStep(node, step);
-	}
-
-
-	private Step parseInstanceStep(final XdmNode node, final Step step)
-	{
-		final Step stepWithBindings = parseInstanceStepBindings(node, step);
-
-		if (stepWithBindings.isCompoundStep())
-		{
-			return parseSteps(node, stepWithBindings);
-		}
-
-		return stepWithBindings;
+		return step;
 	}
 
 
