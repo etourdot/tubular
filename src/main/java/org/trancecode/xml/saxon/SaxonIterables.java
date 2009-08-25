@@ -44,7 +44,9 @@ public final class SaxonIterables
 
 	public static Iterable<XdmItem> childXdmItems(final XdmNode node)
 	{
-		return TubularIterables.newIterable(SaxonSuppliers.axisIterator(node, Axis.CHILD));
+		return Iterables.concat(
+			TubularIterables.newIterable(SaxonSuppliers.axisIterator(node, Axis.ATTRIBUTE)), TubularIterables
+				.newIterable(SaxonSuppliers.axisIterator(node, Axis.CHILD)));
 	}
 
 
