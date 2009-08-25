@@ -24,6 +24,8 @@ import org.trancecode.core.TubularObjects;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 
+import com.google.common.base.Preconditions;
+
 import net.sf.saxon.s9api.QName;
 
 import org.slf4j.Logger;
@@ -94,10 +96,15 @@ public final class Variable extends AbstractHasLocation
 	{
 		super(location);
 
-		assert name != null;
+		Preconditions.checkNotNull(name);
 		this.name = name;
+
+		Preconditions.checkArgument(select == null || !select.isEmpty());
 		this.select = select;
+
+		Preconditions.checkArgument(value == null || !value.isEmpty());
 		this.value = value;
+
 		this.required = required;
 		this.type = type;
 		this.portBinding = portBinding;
