@@ -25,6 +25,7 @@ import org.trancecode.xproc.binding.PipePortBinding;
 
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import org.slf4j.ext.XLogger;
@@ -109,12 +110,16 @@ public class Port extends AbstractHasLocation
 	{
 		super(location);
 
+		Preconditions.checkArgument(stepName == null || !stepName.isEmpty());
 		this.stepName = stepName;
+		Preconditions.checkNotNull(portName);
+		Preconditions.checkArgument(!portName.isEmpty());
 		this.portName = portName;
 		this.type = type;
 		this.primary = primary;
 		this.sequence = sequence;
 		this.select = select;
+		Preconditions.checkNotNull(portBindings);
 		this.portBindings = ImmutableList.copyOf(portBindings);
 	}
 
