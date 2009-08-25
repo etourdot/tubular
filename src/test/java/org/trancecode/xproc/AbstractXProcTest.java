@@ -38,6 +38,9 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -53,6 +56,15 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 	public static void setupLoggingLevel()
 	{
 		// setLoggingLevel("org.trancecode.xproc", TRACE);
+	}
+
+
+	@BeforeClass
+	public static void parseStandardLibrary()
+	{
+		Logger.getLogger("org.trancecode").setLevel(Level.INFO);
+		new PipelineFactory();
+		Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
 	}
 
 
