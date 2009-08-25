@@ -24,6 +24,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
@@ -51,5 +52,12 @@ public abstract class AbstractTest
 			Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%-5p %30.30c{2} %-30M %m%n")));
 			Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
 		}
+	}
+
+
+	@Before
+	public void logTestDelimiter()
+	{
+		log.info("------------------------------------------------------------------------------");
 	}
 }
