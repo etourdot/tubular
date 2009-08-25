@@ -294,7 +294,7 @@ public class Environment
 			{
 				if (variable.isRequired())
 				{
-					throw new IllegalStateException(variable.toString());
+					throw XProcExceptions.xs0018(variable);
 				}
 
 				value = null;
