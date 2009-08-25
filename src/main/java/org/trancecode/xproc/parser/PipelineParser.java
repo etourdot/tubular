@@ -31,7 +31,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.XProcUtil;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
@@ -245,11 +244,6 @@ public class PipelineParser
 			LOG.trace("{} = {}", node.getNodeName(), node.getStringValue());
 			final QName name = node.getNodeName();
 			final String value = node.getStringValue();
-
-			if (name.equals(XProcAttributes.TEST) && step.getType().equals(XProcSteps.WHEN))
-			{
-				return step.withOption(name, value);
-			}
 
 			if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
 				&& !name.equals(XProcAttributes.TYPE))
