@@ -242,10 +242,11 @@ public class PipelineParser
 		}
 		else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
 		{
+			LOG.trace("{} = {}", node.getNodeName(), node.getStringValue());
 			final QName name = node.getNodeName();
 			final String value = node.getStringValue();
 
-			if (name.equals(XProcAttributes.TEST) && step.getType().equals(XProcSteps.CHOOSE))
+			if (name.equals(XProcAttributes.TEST) && step.getType().equals(XProcSteps.WHEN))
 			{
 				return step.withOption(name, value);
 			}
