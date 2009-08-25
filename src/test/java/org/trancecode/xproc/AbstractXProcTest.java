@@ -79,7 +79,19 @@ public abstract class AbstractXProcTest extends AbstractTest implements XProcTes
 		final XdmNode testElement = SaxonUtil.childElement(testDocument, ELEMENT_TEST);
 		final String expectedError = testElement.getAttributeValue(ATTRIBUTE_ERROR);
 		final XdmNode pipelineElement = SaxonUtil.childElement(testElement, ELEMENT_PIPELINE);
-		final XdmNode pipelineDocument = SaxonUtil.childElement(pipelineElement);
+		final XdmNode pipelineDocument;
+		if (pipelineElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF) != null)
+		{
+			final String href = pipelineElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
+			assert !href.isEmpty();
+			pipelineDocument =
+				documentBuilder.build(processor.getUnderlyingConfiguration().getURIResolver().resolve(
+					href, pipelineElement.getBaseURI().toString()));
+		}
+		else
+		{
+			pipelineDocument = SaxonUtil.childElement(pipelineElement);
+		}
 		final PipelineResult result;
 		try
 		{

@@ -46,6 +46,7 @@ public interface XProcTestSuiteXmlModel
 	QName ELEMENT_COMPARE_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("compare-pipeline");
 
 	QName ATTRIBUTE_ERROR = new QName("error");
+	QName ATTRIBUTE_HREF = new QName("href");
 	QName ATTRIBUTE_PORT = new QName("port");
 	QName ATTRIBUTE_NAME = new QName("name");
 	QName ATTRIBUTE_VALUE = new QName("value");
