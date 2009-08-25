@@ -97,7 +97,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 
 		if (!SUPPORTED_VERSIONS.contains(version))
 		{
-			throw XProcExceptions.xs0038(step.getLocation(), version);
+			throw XProcExceptions.xc0038(step.getLocation(), version);
 		}
 		final XdmNode stylesheet = environment.readNode(step.getName(), XProcPorts.STYLESHEET);
 		assert stylesheet != null;
