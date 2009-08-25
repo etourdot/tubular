@@ -49,6 +49,13 @@ public final class XProcExceptions
 	}
 
 
+	public static XProcException xs0018(final Variable option)
+	{
+		return newXProcException(
+			Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value", option.getName());
+	}
+
+
 	public static XProcException xs0038(final Location location, final String version)
 	{
 		return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
