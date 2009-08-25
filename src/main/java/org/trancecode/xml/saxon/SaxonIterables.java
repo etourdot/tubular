@@ -56,6 +56,12 @@ public final class SaxonIterables
 	}
 
 
+	public static XdmNode childElement(final XdmNode node)
+	{
+		return Iterables.getOnlyElement(childElements(node));
+	}
+
+
 	public static Iterable<XdmNode> childElements(final XdmNode node)
 	{
 		return Iterables.filter(childNodes(node), SaxonPredicates.isElement());
