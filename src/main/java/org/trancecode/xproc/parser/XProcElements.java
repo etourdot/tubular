@@ -21,12 +21,18 @@ package org.trancecode.xproc.parser;
 
 import org.trancecode.xproc.XProcNamespaces;
 
+import java.io.StringReader;
 import java.util.Set;
+
+import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
 
 
 /**
@@ -76,5 +82,38 @@ public final class XProcElements
 	private XProcElements()
 	{
 		// No instantiation
+	}
+
+
+	public static XdmNode newParameterElement(final QName name, final String value, final Processor processor)
+	{
+		// TODO use s9api directly
+		final String document =
+			String.format(
+				"<c:param xmlns:c=\"%s\" name=\"%s\" value=\"%s\"/>", XProcNamespaces.URI_XPROC_STEP, name, value);
+		try
+		{
+			return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new IllegalStateException(e);
+		}
+	}
+
+
+	public static XdmNode newResultElement(final String value, final Processor processor)
+	{
+		// TODO use s9api directly
+		final String document =
+			String.format("<c:result xmlns:c=\"%s\">%s</c:result>", XProcNamespaces.URI_XPROC_STEP, value);
+		try
+		{
+			return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
+		}
+		catch (final SaxonApiException e)
+		{
+			throw new IllegalStateException(e);
+		}
 	}
 }
