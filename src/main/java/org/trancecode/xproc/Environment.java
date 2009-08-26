@@ -26,13 +26,11 @@ import org.trancecode.xproc.parser.XProcElements;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -58,9 +56,6 @@ import org.slf4j.ext.XLoggerFactory;
 public class Environment
 {
 	private static final XLogger LOG = XLoggerFactory.getXLogger(Environment.class);
-	private static final Map<QName, String> EMPTY_VARIABLES_MAP = Collections.emptyMap();
-	private static final Map<PortReference, EnvironmentPort> EMPTY_PORTS_MAP = Collections.emptyMap();
-	private static final Iterable<EnvironmentPort> EMPTY_PORTS_LIST = Collections.emptyList();
 
 	private static final Function<EnvironmentPort, PortReference> FUNCTION_GET_PORT_REFERENCE =
 		new Function<EnvironmentPort, PortReference>()
@@ -71,15 +66,6 @@ public class Environment
 				return environmentPort.getDeclaredPort().getPortReference();
 			}
 		};
-
-	private static final Predicate<Port> PREDICATE_HAS_PORT_BINDINGS = new Predicate<Port>()
-	{
-		@Override
-		public boolean apply(final Port port)
-		{
-			return !port.getPortBindings().isEmpty();
-		}
-	};
 
 	private final EnvironmentPort defaultReadablePort;
 	private final Map<QName, String> inheritedVariables;
@@ -99,8 +85,9 @@ public class Environment
 
 	public static Environment newEnvironment(final Step pipeline, final Configuration configuration)
 	{
-		return new Environment(pipeline, configuration, EMPTY_PORTS_LIST, null, null, null, EMPTY_VARIABLES_MAP,
-			EMPTY_VARIABLES_MAP);
+		final Map<QName, String> variables = ImmutableMap.of();
+		final Iterable<EnvironmentPort> ports = ImmutableList.of();
+		return new Environment(pipeline, configuration, ports, null, null, null, variables, variables);
 	}
 
 
@@ -382,8 +369,9 @@ public class Environment
 
 	public Environment newChildStepEnvironment()
 	{
+		final Map<QName, String> variables = ImmutableMap.of();
 		return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-			xpathContextPort, TubularMaps.merge(inheritedVariables, localVariables), EMPTY_VARIABLES_MAP);
+			xpathContextPort, TubularMaps.merge(inheritedVariables, localVariables), variables);
 	}
 
 
