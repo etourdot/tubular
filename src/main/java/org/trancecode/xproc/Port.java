@@ -46,8 +46,7 @@ public class Port extends AbstractHasLocation
 	private final Boolean sequence;
 	protected final List<PortBinding> portBindings;
 	private final String select;
-	private final String stepName;
-	private final String portName;
+	private final PortReference portReference;
 
 
 	public static enum Type
@@ -100,21 +99,18 @@ public class Port extends AbstractHasLocation
 
 	private Port(final String stepName, final String portName, final Location location, final Type type)
 	{
-		this(stepName, portName, location, type, null, null, null, EMPTY_PORT_BINDING_LIST);
+		this(new PortReference(stepName, portName), location, type, null, null, null, EMPTY_PORT_BINDING_LIST);
 	}
 
 
 	private Port(
-		final String stepName, final String portName, final Location location, final Type type, final Boolean primary,
+		final PortReference portReference, final Location location, final Type type, final Boolean primary,
 		final Boolean sequence, final String select, final Iterable<PortBinding> portBindings)
 	{
 		super(location);
 
-		Preconditions.checkArgument(stepName == null || !stepName.isEmpty());
-		this.stepName = stepName;
-		Preconditions.checkNotNull(portName);
-		Preconditions.checkArgument(!portName.isEmpty());
-		this.portName = portName;
+		Preconditions.checkNotNull(portReference);
+		this.portReference = portReference;
 		this.type = type;
 		this.primary = primary;
 		this.sequence = sequence;
@@ -126,19 +122,19 @@ public class Port extends AbstractHasLocation
 
 	public Port setLocation(final Location location)
 	{
-		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
 	public Port setStepName(final String stepName)
 	{
-		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+		return new Port(portReference.setStep(stepName), location, type, primary, sequence, select, portBindings);
 	}
 
 
 	public String getStepName()
 	{
-		return stepName;
+		return portReference.step();
 	}
 
 
@@ -174,14 +170,13 @@ public class Port extends AbstractHasLocation
 
 	public PortReference getPortReference()
 	{
-		// TODO cache
-		return new PortReference(stepName, portName);
+		return portReference;
 	}
 
 
 	public String getPortName()
 	{
-		return portName;
+		return portReference.port();
 	}
 
 
@@ -211,9 +206,8 @@ public class Port extends AbstractHasLocation
 
 	public Port setSelect(final String select)
 	{
-		LOG.trace("port = {}/{}", stepName, portName);
-		LOG.trace("select = {}", select);
-		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+		LOG.trace("port = {} ; select = {}", portReference, select);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
@@ -241,15 +235,14 @@ public class Port extends AbstractHasLocation
 		final String parameterTag = getTag(isParameter(), "[parameter]", "");
 		final String selectTag = (select != null ? "[select = " + select + "]" : "");
 		return String.format(
-			"%s[%s][%s/%s]%s%s%s%s", getClass().getSimpleName(), type, stepName, portName, parameterTag, primaryTag,
+			"%s[%s][%s]%s%s%s%s", getClass().getSimpleName(), type, portReference, parameterTag, primaryTag,
 			sequenceTag, selectTag);
 	}
 
 
 	public Port setPrimary(final String primary)
 	{
-		LOG.trace("port = {}/{}", stepName, portName);
-		LOG.trace("primary = {}", primary);
+		LOG.trace("port = {} ; primary = {}", portReference, primary);
 
 		if (primary == null)
 		{
@@ -264,16 +257,16 @@ public class Port extends AbstractHasLocation
 
 	public Port setPrimary(final boolean primary)
 	{
-		LOG.trace("port = {}/{}", stepName, portName);
+		LOG.trace("port = {}", portReference);
 		LOG.trace("{} -> {}", this.primary, primary);
 
-		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
 	public Port setSequence(final String sequence)
 	{
-		LOG.trace("port = {}/{}", stepName, portName);
+		LOG.trace("port = {}", portReference);
 		LOG.trace("sequence = {}", sequence);
 
 		if (sequence == null)
@@ -289,10 +282,10 @@ public class Port extends AbstractHasLocation
 
 	public Port setSequence(final boolean sequence)
 	{
-		LOG.trace("port = {}/{}", stepName, portName);
+		LOG.trace("port = {}", portReference);
 		LOG.trace("{} -> {}", this.sequence, sequence);
 
-		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
@@ -304,7 +297,7 @@ public class Port extends AbstractHasLocation
 
 	public Port setPortBindings(final Iterable<PortBinding> portBindings)
 	{
-		return new Port(stepName, portName, location, type, primary, sequence, select, portBindings);
+		return new Port(portReference, location, type, primary, sequence, select, portBindings);
 	}
 
 
