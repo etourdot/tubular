@@ -36,7 +36,7 @@ import org.slf4j.ext.XLoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class Port extends AbstractHasLocation
+public class Port extends AbstractHasLocation implements HasPortReference
 {
 	private static final XLogger LOG = XLoggerFactory.getXLogger(Port.class);
 	private static final List<PortBinding> EMPTY_PORT_BINDING_LIST = ImmutableList.of();
@@ -168,6 +168,7 @@ public class Port extends AbstractHasLocation
 	}
 
 
+	@Override
 	public PortReference getPortReference()
 	{
 		return portReference;

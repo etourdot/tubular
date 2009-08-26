@@ -43,7 +43,7 @@ import org.slf4j.ext.XLoggerFactory;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public class EnvironmentPort
+public class EnvironmentPort implements HasPortReference
 {
 	private static final XLogger LOG = XLoggerFactory.getXLogger(EnvironmentPort.class);
 
@@ -201,6 +201,13 @@ public class EnvironmentPort
 		};
 
 		return new EnvironmentPort(declaredPort, Collections.singleton(portBinding), select);
+	}
+
+
+	@Override
+	public PortReference getPortReference()
+	{
+		return getDeclaredPort().getPortReference();
 	}
 
 

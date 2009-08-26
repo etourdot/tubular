@@ -61,13 +61,13 @@ public final class PortFunctions
 	}
 
 
-	public static Function<EnvironmentPort, PortReference> getPortReference()
+	public static Function<HasPortReference, PortReference> getPortReference()
 	{
 		return GetPortReferenceFunction.INSTANCE;
 	}
 
 
-	private static class GetPortReferenceFunction implements Function<EnvironmentPort, PortReference>
+	private static class GetPortReferenceFunction implements Function<HasPortReference, PortReference>
 	{
 		public static final GetPortReferenceFunction INSTANCE = new GetPortReferenceFunction();
 
@@ -79,9 +79,9 @@ public final class PortFunctions
 
 
 		@Override
-		public PortReference apply(final EnvironmentPort port)
+		public PortReference apply(final HasPortReference port)
 		{
-			return port.getDeclaredPort().getPortReference();
+			return port.getPortReference();
 		}
 	}
 }
