@@ -39,8 +39,7 @@ public class PortReference
 
 	public PortReference(final String step, final String port)
 	{
-		Preconditions.checkNotNull(step);
-		Preconditions.checkArgument(!step.isEmpty());
+		Preconditions.checkArgument(step == null || !step.isEmpty());
 		this.step = step;
 
 		Preconditions.checkNotNull(port);
@@ -58,6 +57,12 @@ public class PortReference
 	public String port()
 	{
 		return port;
+	}
+
+
+	public PortReference setStep(final String step)
+	{
+		return new PortReference(step, port);
 	}
 
 
