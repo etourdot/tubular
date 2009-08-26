@@ -46,14 +46,14 @@ public class CountStepProcessor extends AbstractStepProcessor
 	protected Environment doRun(final Step step, final Environment environment)
 	{
 		// TODO improve performance with "limit" option
-		final int count = Iterables.size(environment.readNodes(step.getName(), XProcPorts.SOURCE));
+		final int count = Iterables.size(environment.readNodes(step.getPortReference(XProcPorts.SOURCE)));
 		LOG.trace("count = {}", count);
 		final int limit = Integer.parseInt(environment.getVariable(XProcOptions.LIMIT));
 		LOG.trace("limit = {}", limit);
 		final int result = (limit > 0 ? Math.min(count, limit) : count);
 		LOG.trace("result = {}", result);
 
-		return environment.writeNodes(step.getName(), XProcPorts.RESULT, XProcElements.newResultElement(Integer
+		return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), XProcElements.newResultElement(Integer
 			.toString(result), environment.getConfiguration().getProcessor()));
 	}
 }

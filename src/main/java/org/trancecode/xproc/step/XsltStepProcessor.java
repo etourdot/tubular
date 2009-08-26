@@ -74,7 +74,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 		LOG.trace("step = {}", step.getName());
 		assert step.getType().equals(XProcSteps.XSLT);
 
-		final XdmNode sourceDocument = environment.readNode(step.getName(), XProcPorts.SOURCE);
+		final XdmNode sourceDocument = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
 		assert sourceDocument != null;
 
 		final String providedOutputBaseUri = environment.getVariable(XProcOptions.OUTPUT_BASE_URI);
@@ -99,7 +99,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 		{
 			throw XProcExceptions.xc0038(step.getLocation(), version);
 		}
-		final XdmNode stylesheet = environment.readNode(step.getName(), XProcPorts.STYLESHEET);
+		final XdmNode stylesheet = environment.readNode(step.getPortReference(XProcPorts.STYLESHEET));
 		assert stylesheet != null;
 
 		final Processor processor = environment.getConfiguration().getProcessor();
@@ -168,7 +168,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 			transformer.setInitialMode(new QName(initialMode));
 		}
 
-		final Map<QName, String> parameters = environment.readParameters(step.getName(), XProcPorts.PARAMETERS);
+		final Map<QName, String> parameters = environment.readParameters(step.getPortReference(XProcPorts.PARAMETERS));
 		LOG.debug("parameters = {}", parameters);
 		for (final Map.Entry<QName, String> parameter : parameters.entrySet())
 		{
@@ -185,7 +185,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 			throw new PipelineException(e);
 		}
 
-		return environment.writeNodes(step.getName(), XProcPorts.SECONDARY, secondaryPortNodes).writeNodes(
-			step.getName(), XProcPorts.RESULT, result.getXdmNode());
+		return environment.writeNodes(step.getPortReference(XProcPorts.SECONDARY), secondaryPortNodes).writeNodes(
+			step.getPortReference(XProcPorts.RESULT), result.getXdmNode());
 	}
 }

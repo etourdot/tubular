@@ -60,7 +60,7 @@ public class XslFormatter extends AbstractStepProcessor
 	@Override
 	protected Environment doRun(final Step step, final Environment environment) throws Exception
 	{
-		final XdmNode source = environment.readNode(step.getName(), XProcPorts.SOURCE);
+		final XdmNode source = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
 
 		final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);
 		assert href != null;

@@ -45,7 +45,7 @@ public class IdentityStepProcessor extends AbstractStepProcessor
 		LOG.trace("step = {}", step.getName());
 		assert step.getType().equals(XProcSteps.IDENTITY);
 
-		return environment.writeNodes(step.getName(), XProcPorts.RESULT, environment.readNodes(
-			step.getName(), XProcPorts.SOURCE));
+		return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), environment.readNodes(step
+			.getPortReference(XProcPorts.SOURCE)));
 	}
 }

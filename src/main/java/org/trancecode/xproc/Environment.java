@@ -448,9 +448,9 @@ public class Environment
 	}
 
 
-	public Environment setDefaultReadablePort(final String stepName, final String portName)
+	public Environment setDefaultReadablePort(final PortReference portReference)
 	{
-		return setDefaultReadablePort(getPort(stepName, portName));
+		return setDefaultReadablePort(getPort(portReference));
 	}
 
 
@@ -463,12 +463,6 @@ public class Environment
 	public EnvironmentPort getEnvironmentPort(final Port port)
 	{
 		return getEnvironmentPort(port.getPortReference());
-	}
-
-
-	public EnvironmentPort getEnvironmentPort(final String stepName, final String portName)
-	{
-		return ports.get(PortReference.newReference(stepName, portName));
 	}
 
 
@@ -653,23 +647,17 @@ public class Environment
 	}
 
 
-	private EnvironmentPort getPort(final String stepName, final String portName)
+	public Environment writeNodes(final PortReference portReference, final XdmNode... nodes)
 	{
-		return getPort(PortReference.newReference(stepName, portName));
+		return writeNodes(portReference, ImmutableList.of(nodes));
 	}
 
 
-	public Environment writeNodes(final String stepName, final String portName, final XdmNode... nodes)
+	public Environment writeNodes(final PortReference portReference, final Iterable<XdmNode> nodes)
 	{
-		return writeNodes(stepName, portName, ImmutableList.of(nodes));
-	}
+		LOG.trace("port = {}", portReference);
 
-
-	public Environment writeNodes(final String stepName, final String portName, final Iterable<XdmNode> nodes)
-	{
-		LOG.trace("stepName = {} ; portName = {}", stepName, portName);
-
-		return addPorts(getPort(stepName, portName).writeNodes(nodes));
+		return addPorts(getPort(portReference).writeNodes(nodes));
 	}
 
 
@@ -681,25 +669,25 @@ public class Environment
 	}
 
 
-	public Iterable<XdmNode> readNodes(final String stepName, final String portName)
+	public Iterable<XdmNode> readNodes(final PortReference portReference)
 	{
-		LOG.trace("stepName = {} ; portName = {}", stepName, portName);
-		final Iterable<XdmNode> nodes = getPort(stepName, portName).readNodes();
+		LOG.trace("port = {}", portReference);
+		final Iterable<XdmNode> nodes = getPort(portReference).readNodes();
 		LOG.trace("nodes = {}", nodes);
 		return nodes;
 	}
 
 
-	public XdmNode readNode(final String stepName, final String portName)
+	public XdmNode readNode(final PortReference portReference)
 	{
-		return Iterables.getOnlyElement(getPort(stepName, portName).readNodes());
+		return Iterables.getOnlyElement(getPort(portReference).readNodes());
 	}
 
 
-	public Map<QName, String> readParameters(final String stepName, final String portName)
+	public Map<QName, String> readParameters(final PortReference portReference)
 	{
 		final Map<QName, String> parameters = TubularMaps.newSmallWriteOnceMap();
-		for (final XdmNode parameterNode : readNodes(stepName, portName))
+		for (final XdmNode parameterNode : readNodes(portReference))
 		{
 			final XPathCompiler xpathCompiler = getConfiguration().getProcessor().newXPathCompiler();
 			try

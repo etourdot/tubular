@@ -87,7 +87,8 @@ public class Choose extends AbstractCompoundStepProcessor
 				if (primaryOutputPort != null)
 				{
 					resultEnvironment =
-						resultEnvironment.setDefaultReadablePort(step.getName(), primaryOutputPort.getPortName());
+						resultEnvironment
+							.setDefaultReadablePort(step.getPortReference(primaryOutputPort.getPortName()));
 				}
 
 				return resultEnvironment;

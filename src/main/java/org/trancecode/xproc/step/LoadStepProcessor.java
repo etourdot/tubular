@@ -63,9 +63,7 @@ public class LoadStepProcessor extends AbstractStepProcessor
 		final Source source;
 		try
 		{
-			source =
-				environment.getConfiguration().getUriResolver().resolve(
-					href, environment.getBaseUri().toString());
+			source = environment.getConfiguration().getUriResolver().resolve(href, environment.getBaseUri().toString());
 		}
 		catch (final Exception e)
 		{
@@ -87,6 +85,6 @@ public class LoadStepProcessor extends AbstractStepProcessor
 			Jaxp.closeQuietly(source, LOG);
 		}
 
-		return environment.writeNodes(step.getName(), XProcPorts.RESULT, document);
+		return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), document);
 	}
 }

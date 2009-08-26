@@ -65,7 +65,7 @@ public class StoreStepProcessor extends AbstractStepProcessor
 	@Override
 	protected Environment doRun(final Step step, final Environment environment)
 	{
-		final XdmNode node = environment.readNode(step.getName(), XProcPorts.SOURCE);
+		final XdmNode node = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
 		assert node != null;
 
 		final URI baseUri = environment.getBaseUri();
@@ -143,6 +143,6 @@ public class StoreStepProcessor extends AbstractStepProcessor
 
 		final XdmNode resultNode =
 			XProcElements.newResultElement(outputUri.toString(), environment.getConfiguration().getProcessor());
-		return environment.writeNodes(step.getName(), XProcPorts.RESULT, resultNode);
+		return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), resultNode);
 	}
 }

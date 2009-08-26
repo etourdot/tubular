@@ -509,4 +509,10 @@ public final class Step extends AbstractHasLocation
 	{
 		return Variables.getVariable(variables, name);
 	}
+
+
+	public PortReference getPortReference(final String portName)
+	{
+		return PortReference.newReference(name, portName);
+	}
 }
