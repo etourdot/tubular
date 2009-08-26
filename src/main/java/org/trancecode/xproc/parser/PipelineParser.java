@@ -31,7 +31,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcUtil;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
@@ -168,7 +167,7 @@ public class PipelineParser
 		step = step.setLocation(getLocation(stepNode));
 		step = parseStepChildNodes(stepNode, step);
 
-		if (XProcUtil.isPipeline(step))
+		if (Pipeline.isPipeline(step))
 		{
 			step = Pipeline.addImplicitPorts(step);
 		}

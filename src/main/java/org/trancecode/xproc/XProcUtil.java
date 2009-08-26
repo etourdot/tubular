@@ -19,7 +19,6 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.annotation.Nullable;
 
 import java.io.StringReader;
 
@@ -73,12 +72,5 @@ public final class XProcUtil
 		{
 			throw new IllegalStateException(e);
 		}
-	}
-
-
-	public static boolean isPipeline(@Nullable final Step step)
-	{
-		return step != null && step.isCompoundStep() && !XProcSteps.ALL_STEPS.contains(step.getType())
-			&& !XProcSteps.PIPELINE.equals(step.getType());
 	}
 }

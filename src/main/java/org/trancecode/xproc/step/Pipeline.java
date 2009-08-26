@@ -19,11 +19,12 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.annotation.Nullable;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcUtil;
+import org.trancecode.xproc.XProcSteps;
 
 import com.google.common.collect.Iterables;
 
@@ -47,7 +48,7 @@ public class Pipeline extends AbstractCompoundStepProcessor
 
 	public static Step addImplicitPorts(final Step pipeline)
 	{
-		assert XProcUtil.isPipeline(pipeline);
+		assert Pipeline.isPipeline(pipeline);
 
 		return addImplicitInputPort(addImplicitOutputPort(pipeline));
 	}
@@ -74,5 +75,12 @@ public class Pipeline extends AbstractCompoundStepProcessor
 		}
 
 		return pipeline;
+	}
+
+
+	public static boolean isPipeline(@Nullable final Step step)
+	{
+		return step != null && step.isCompoundStep() && !XProcSteps.ALL_STEPS.contains(step.getType())
+			&& !XProcSteps.PIPELINE.equals(step.getType());
 	}
 }
