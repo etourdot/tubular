@@ -29,10 +29,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class PortReference
 {
-	private static final int HASHCODE_CLASS = PortReference.class.hashCode();
-
-	public final String stepName;
-	public final String portName;
+	private final String stepName;
+	private final String portName;
 	private transient int hashCode;
 	private transient String toString;
 
@@ -44,6 +42,18 @@ public class PortReference
 
 		assert portName != null;
 		this.portName = portName;
+	}
+
+
+	public String step()
+	{
+		return stepName;
+	}
+
+
+	public String port()
+	{
+		return portName;
 	}
 
 
