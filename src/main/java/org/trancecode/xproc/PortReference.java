@@ -29,31 +29,31 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class PortReference
 {
-	private final String stepName;
-	private final String portName;
+	private final String step;
+	private final String port;
 	private transient int hashCode;
 	private transient String toString;
 
 
-	public PortReference(final String stepName, final String portName)
+	public PortReference(final String step, final String port)
 	{
-		assert stepName != null;
-		this.stepName = stepName;
+		assert step != null;
+		this.step = step;
 
-		assert portName != null;
-		this.portName = portName;
+		assert port != null;
+		this.port = port;
 	}
 
 
 	public String step()
 	{
-		return stepName;
+		return step;
 	}
 
 
 	public String port()
 	{
-		return portName;
+		return port;
 	}
 
 
@@ -62,7 +62,7 @@ public class PortReference
 	{
 		if (hashCode == 0)
 		{
-			hashCode = new HashCodeBuilder(7, 13).append(stepName).append(portName).toHashCode();
+			hashCode = new HashCodeBuilder(7, 13).append(step).append(port).toHashCode();
 		}
 
 		return hashCode;
@@ -75,8 +75,8 @@ public class PortReference
 		if (o != null && o instanceof PortReference)
 		{
 			final PortReference portReference = (PortReference)o;
-			return new EqualsBuilder().append(stepName, portReference.stepName)
-				.append(portName, portReference.portName).isEquals();
+			return new EqualsBuilder().append(step, portReference.step)
+				.append(port, portReference.port).isEquals();
 		}
 
 		return false;
@@ -88,7 +88,7 @@ public class PortReference
 	{
 		if (toString == null)
 		{
-			toString = stepName + "/" + portName;
+			toString = step + "/" + port;
 		}
 
 		return toString;
