@@ -37,7 +37,13 @@ public class PortReference
 	private transient String toString;
 
 
-	public PortReference(final String step, final String port)
+	public static PortReference newReference(final String step, final String port)
+	{
+		return new PortReference(step, port);
+	}
+
+
+	private PortReference(final String step, final String port)
 	{
 		Preconditions.checkArgument(step == null || !step.isEmpty());
 		this.step = step;

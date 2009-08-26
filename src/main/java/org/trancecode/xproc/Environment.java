@@ -468,7 +468,7 @@ public class Environment
 
 	public EnvironmentPort getEnvironmentPort(final String stepName, final String portName)
 	{
-		return ports.get(new PortReference(stepName, portName));
+		return ports.get(PortReference.newReference(stepName, portName));
 	}
 
 
@@ -655,7 +655,7 @@ public class Environment
 
 	private EnvironmentPort getPort(final String stepName, final String portName)
 	{
-		return getPort(new PortReference(stepName, portName));
+		return getPort(PortReference.newReference(stepName, portName));
 	}
 
 

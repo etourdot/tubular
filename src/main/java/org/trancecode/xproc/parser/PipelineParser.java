@@ -402,7 +402,7 @@ public class PipelineParser
 		{
 			final String stepName = portBindingNode.getAttributeValue(XProcAttributes.STEP);
 			final String portName = portBindingNode.getAttributeValue(XProcAttributes.PORT);
-			return new PipePortBinding(new PortReference(stepName, portName), getLocation(portBindingNode));
+			return new PipePortBinding(PortReference.newReference(stepName, portName), getLocation(portBindingNode));
 		}
 		else if (portBindingNode.getNodeName().equals(XProcElements.EMPTY))
 		{

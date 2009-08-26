@@ -114,7 +114,7 @@ public class InvokeStep implements StepProcessor
 					if (port.isInput())
 					{
 						final PortReference localPortReference =
-							new PortReference(invokedStep.getName(), port.getPortName());
+							PortReference.newReference(invokedStep.getName(), port.getPortName());
 						LOG.trace("{} -> {}", localPortReference, port.getPortReference());
 						final Iterable<PortBinding> portBindings =
 							Collections.singleton((PortBinding)new PipePortBinding(localPortReference, invokeStep

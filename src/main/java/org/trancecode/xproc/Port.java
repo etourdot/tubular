@@ -99,7 +99,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
 
 	private Port(final String stepName, final String portName, final Location location, final Type type)
 	{
-		this(new PortReference(stepName, portName), location, type, null, null, null, EMPTY_PORT_BINDING_LIST);
+		this(PortReference.newReference(stepName, portName), location, type, null, null, null, EMPTY_PORT_BINDING_LIST);
 	}
 
 
