@@ -59,4 +59,29 @@ public final class PortFunctions
 			return port.getPortName();
 		}
 	}
+
+
+	public static Function<EnvironmentPort, PortReference> getPortReference()
+	{
+		return GetPortReferenceFunction.INSTANCE;
+	}
+
+
+	private static class GetPortReferenceFunction implements Function<EnvironmentPort, PortReference>
+	{
+		public static final GetPortReferenceFunction INSTANCE = new GetPortReferenceFunction();
+
+
+		private GetPortReferenceFunction()
+		{
+			// Singleton
+		}
+
+
+		@Override
+		public PortReference apply(final EnvironmentPort port)
+		{
+			return port.getDeclaredPort().getPortReference();
+		}
+	}
 }
