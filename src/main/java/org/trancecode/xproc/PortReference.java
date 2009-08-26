@@ -19,6 +19,10 @@
  */
 package org.trancecode.xproc;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+
 /**
  * @author Herve Quiroz
  * @version $Revision$
@@ -48,15 +52,7 @@ public class PortReference
 	{
 		if (hashCode == 0)
 		{
-			int h = HASHCODE_CLASS;
-
-			h <<= 4;
-			h ^= stepName.hashCode();
-
-			h <<= 4;
-			h ^= portName.hashCode();
-
-			hashCode = h;
+			hashCode = new HashCodeBuilder(7, 13).append(stepName).append(portName).toHashCode();
 		}
 
 		return hashCode;
@@ -69,7 +65,8 @@ public class PortReference
 		if (o != null && o instanceof PortReference)
 		{
 			final PortReference portReference = (PortReference)o;
-			return stepName.equals(portReference.stepName) && portName.equals(portReference.portName);
+			return new EqualsBuilder().append(stepName, portReference.stepName)
+				.append(portName, portReference.portName).isEquals();
 		}
 
 		return false;
