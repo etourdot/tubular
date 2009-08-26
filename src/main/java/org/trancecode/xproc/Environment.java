@@ -472,7 +472,7 @@ public class Environment
 	}
 
 
-	private EnvironmentPort getEnvironmentPort(final PortReference portReference)
+	public EnvironmentPort getEnvironmentPort(final PortReference portReference)
 	{
 		assert ports.containsKey(portReference) : "port = " + portReference + " ; ports = " + ports;
 		return ports.get(portReference);
