@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -37,10 +39,12 @@ public class PortReference
 
 	public PortReference(final String step, final String port)
 	{
-		assert step != null;
+		Preconditions.checkNotNull(step);
+		Preconditions.checkArgument(!step.isEmpty());
 		this.step = step;
 
-		assert port != null;
+		Preconditions.checkNotNull(port);
+		Preconditions.checkArgument(!port.isEmpty());
 		this.port = port;
 	}
 
@@ -75,8 +79,7 @@ public class PortReference
 		if (o != null && o instanceof PortReference)
 		{
 			final PortReference portReference = (PortReference)o;
-			return new EqualsBuilder().append(step, portReference.step)
-				.append(port, portReference.port).isEquals();
+			return new EqualsBuilder().append(step, portReference.step).append(port, portReference.port).isEquals();
 		}
 
 		return false;
