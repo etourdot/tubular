@@ -72,4 +72,9 @@ public final class XProcElements
 	public static final Set<QName> ELEMENTS_ROOT = ImmutableSet.of(PIPELINE, LIBRARY, DECLARE_STEP);
 	public static final Set<QName> ELEMENTS_WHEN_OTHERWISE = ImmutableSet.of(WHEN, OTHERWISE);
 
+
+	private XProcElements()
+	{
+		// No instantiation
+	}
 }
