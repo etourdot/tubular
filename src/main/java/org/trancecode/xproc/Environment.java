@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -57,16 +56,6 @@ public class Environment
 {
 	private static final XLogger LOG = XLoggerFactory.getXLogger(Environment.class);
 
-	private static final Function<EnvironmentPort, PortReference> FUNCTION_GET_PORT_REFERENCE =
-		new Function<EnvironmentPort, PortReference>()
-		{
-			@Override
-			public PortReference apply(final EnvironmentPort environmentPort)
-			{
-				return environmentPort.getDeclaredPort().getPortReference();
-			}
-		};
-
 	private final EnvironmentPort defaultReadablePort;
 	private final Map<QName, String> inheritedVariables;
 	private final Map<QName, String> localVariables;
@@ -79,7 +68,7 @@ public class Environment
 
 	private static Map<PortReference, EnvironmentPort> getPortsMap(final Iterable<EnvironmentPort> ports)
 	{
-		return Maps.uniqueIndex(ports, FUNCTION_GET_PORT_REFERENCE);
+		return Maps.uniqueIndex(ports, PortFunctions.getPortReference());
 	}
 
 
