@@ -23,11 +23,12 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.varia.NullAppender;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 
 
 /**
@@ -43,7 +44,7 @@ public abstract class AbstractTest
 	protected final XLogger log = XLoggerFactory.getXLogger(getClass());
 
 
-	@BeforeClass
+	@BeforeSuite
 	public static void setupLogging()
 	{
 		Logger.getRootLogger().removeAllAppenders();
@@ -52,10 +53,14 @@ public abstract class AbstractTest
 			Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%-5p %30.30c{2} %-30M %m%n")));
 			Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
 		}
+		else
+		{
+			Logger.getRootLogger().addAppender(new NullAppender());
+		}
 	}
 
 
-	@Before
+	@BeforeTest
 	public void logTestDelimiter()
 	{
 		log.info("------------------------------------------------------------------------------");

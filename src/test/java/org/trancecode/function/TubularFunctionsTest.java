@@ -25,8 +25,8 @@ import org.trancecode.core.function.TubularFunctions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 
 /**
@@ -35,6 +35,7 @@ import org.junit.Test;
  * @author Herve Quiroz
  * @version $Revision: 3842 $
  */
+@Test
 public class TubularFunctionsTest extends AbstractTest
 {
 	@Test
@@ -43,6 +44,6 @@ public class TubularFunctionsTest extends AbstractTest
 		final Iterable<String> iterable =
 			Iterables.concat(Iterables.transform(ImmutableList.of("abc", "def"), TubularFunctions
 				.toIterable(String.class)));
-		Assert.assertEquals(ImmutableList.of("abc", "def"), ImmutableList.copyOf(iterable));
+		AssertJUnit.assertEquals(ImmutableList.of("abc", "def"), ImmutableList.copyOf(iterable));
 	}
 }

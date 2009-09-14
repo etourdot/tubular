@@ -30,8 +30,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 
 /**
@@ -40,6 +40,7 @@ import org.junit.Test;
  * @author Herve Quiroz
  * @version $Revision$
  */
+@Test
 public class CatalogParserTest extends AbstractTest
 {
 	private Source getSourceFromClasspath(final String path)
@@ -67,6 +68,7 @@ public class CatalogParserTest extends AbstractTest
 		final Source catalogSource = getSourceFromTestResources("catalog.xml");
 		final Catalog catalog = Catalog.newCatalog(new CatalogParser(getProcessor()).parse(catalogSource));
 
-		Assert.assertEquals(URI.create("some/rewriten/path/whatever"), catalog.resolveUri("some/path/whatever", null));
+		AssertJUnit.assertEquals(URI.create("some/rewriten/path/whatever"), catalog.resolveUri(
+			"some/path/whatever", null));
 	}
 }

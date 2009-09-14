@@ -25,8 +25,8 @@ import org.trancecode.core.collection.TubularIterables;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 
 /**
@@ -35,6 +35,7 @@ import org.junit.Test;
  * @author Herve Quiroz
  * @version $Revision: 3842 $
  */
+@Test
 public class TubularIterablesTest extends AbstractTest
 {
 	@Test
@@ -54,11 +55,12 @@ public class TubularIterablesTest extends AbstractTest
 			}
 		};
 
-		Assert.assertEquals(ImmutableList.of("a", "bcd"), ImmutableList.copyOf(split.apply("abcd")));
-		Assert.assertEquals(ImmutableList.of(), ImmutableList.copyOf(split.apply("a")));
+		AssertJUnit.assertEquals(ImmutableList.of("a", "bcd"), ImmutableList.copyOf(split.apply("abcd")));
+		AssertJUnit.assertEquals(ImmutableList.of(), ImmutableList.copyOf(split.apply("a")));
 
 		final Iterable<String> elements = TubularIterables.getDescendants("abcd", split);
 
-		Assert.assertEquals(ImmutableList.of("abcd", "a", "bcd", "b", "cd", "c", "d"), ImmutableList.copyOf(elements));
+		AssertJUnit.assertEquals(ImmutableList.of("abcd", "a", "bcd", "b", "cd", "c", "d"), ImmutableList
+			.copyOf(elements));
 	}
 }

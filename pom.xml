@@ -85,6 +85,14 @@
     </dependency>
 
     <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.10</version>
+      <scope>test</scope>
+      <classifier>jdk15</classifier>
+    </dependency>
+
+    <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
       <version>1.2</version>
@@ -194,14 +202,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/Abstract*.java</exclude>
-          </excludes>
-          <forkMode>always</forkMode>
-          <argLine>-enableassertions -Xmx128m</argLine>
+          <parallel>methods</parallel>
+          <threadCount>2</threadCount>
+          <forkMode>once</forkMode>
+          <argLine>-Xmx128m</argLine>
           <reportFormat>brief</reportFormat>
           <testFailureIgnore>true</testFailureIgnore>
           <systemProperties>

@@ -32,9 +32,9 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 
 /**
@@ -43,13 +43,14 @@ import org.junit.Test;
  * @author Herve Quiroz
  * @version $Revision$
  */
+@Test
 public class SaxonIterablesTest extends AbstractTest
 {
 	private XdmNode document;
 	private XdmNode documentRoot;
 
 
-	@Before
+	@BeforeTest
 	public void parseDocument() throws Exception
 	{
 		final String documentString =
@@ -57,7 +58,7 @@ public class SaxonIterablesTest extends AbstractTest
 		final Source source = new StreamSource(new StringReader(documentString));
 		document = new Processor(false).newDocumentBuilder().build(source);
 		documentRoot = SaxonIterables.childElement(document);
-		Assert.assertEquals(new QName("root"), documentRoot.getNodeName());
+		AssertJUnit.assertEquals(new QName("root"), documentRoot.getNodeName());
 	}
 
 
@@ -65,6 +66,6 @@ public class SaxonIterablesTest extends AbstractTest
 	public void childNodes() throws Exception
 	{
 		final Iterable<XdmNode> childNodes = SaxonIterables.childNodes(documentRoot);
-		Assert.assertEquals(2, Iterables.size(Iterables.filter(childNodes, SaxonPredicates.isAttribute())));
+		AssertJUnit.assertEquals(2, Iterables.size(Iterables.filter(childNodes, SaxonPredicates.isAttribute())));
 	}
 }

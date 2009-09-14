@@ -21,8 +21,8 @@ package org.trancecode.xproc;
 
 import org.trancecode.AbstractTest;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 
 /**
@@ -31,6 +31,7 @@ import org.junit.Test;
  * @author Herve Quiroz
  * @version $Revision$
  */
+@Test
 public class PipelineFactoryTest extends AbstractTest
 {
 	@Test
@@ -38,7 +39,7 @@ public class PipelineFactoryTest extends AbstractTest
 	{
 		final PipelineFactory pipelineFactory = new PipelineFactory();
 		assert pipelineFactory.getLibrary() != null;
-		Assert.assertEquals(45, pipelineFactory.getLibrary().size());
+		AssertJUnit.assertEquals(45, pipelineFactory.getLibrary().size());
 		assert pipelineFactory.getLibrary().containsKey(XProcSteps.COUNT);
 		assert pipelineFactory.getLibrary().containsKey(XProcSteps.FOR_EACH);
 	}

@@ -21,8 +21,8 @@ package org.trancecode.core;
 
 import org.trancecode.AbstractTest;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 
 /**
@@ -31,6 +31,7 @@ import org.junit.Test;
  * @author Herve Quiroz
  * @version $Revision: 3842 $
  */
+@Test
 public class TubularObjectsTest extends AbstractTest
 {
 	private static final int TOO_MANY_INSTANCES = 1024 * 1024;
@@ -44,7 +45,7 @@ public class TubularObjectsTest extends AbstractTest
 		{
 			final Object object = new Object();
 			final Object intern = TubularObjects.intern(object);
-			Assert.assertEquals(object, intern);
+			AssertJUnit.assertEquals(object, intern);
 		}
 	}
 
@@ -55,20 +56,20 @@ public class TubularObjectsTest extends AbstractTest
 	{
 		final String string = new StringBuilder().append("a").append("bc").toString();
 		final String internString = TubularObjects.intern(string);
-		Assert.assertEquals(string, internString);
-		Assert.assertSame(internString, string);
+		AssertJUnit.assertEquals(string, internString);
+		AssertJUnit.assertSame(internString, string);
 
 		for (int i = 0; i < TOO_MANY_INSTANCES; i++)
 		{
 			final Object object = new Object();
 			final Object intern = TubularObjects.intern(object);
-			Assert.assertEquals(object, intern);
+			AssertJUnit.assertEquals(object, intern);
 		}
 
 		final String stringAfter = new StringBuilder().append("ab").append("c").toString();
 		assert stringAfter != string;
 		final String internStringAfter = TubularObjects.intern(stringAfter);
-		Assert.assertEquals(string, internStringAfter);
-		Assert.assertSame(string, internStringAfter);
+		AssertJUnit.assertEquals(string, internStringAfter);
+		AssertJUnit.assertSame(string, internStringAfter);
 	}
 }

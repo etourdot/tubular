@@ -42,8 +42,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import org.custommonkey.xmlunit.XMLAssert;
-import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 
 /**
@@ -68,6 +69,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 	}
 
 
+	@Test()
 	protected void test(final URL testUrl) throws Exception
 	{
 		final PipelineFactory pipelineFactory = new PipelineFactory();
@@ -137,7 +139,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 		{
 			if (expectedError != null)
 			{
-				Assert.assertEquals(expectedError, "err:" + e.getLabel());
+				AssertJUnit.assertEquals(expectedError, "err:" + e.getLabel());
 				return;
 			}
 
@@ -161,8 +163,8 @@ public abstract class AbstractXProcTest extends AbstractTest
 
 			final Iterable<XdmNode> expectedNodes = SaxonUtil.childElements(outputElement);
 			final Iterable<XdmNode> actualNodes = result.readNodes(portName);
-			Assert.assertEquals(portName + " = " + actualNodes.toString(), Iterables.size(expectedNodes), Iterables
-				.size(actualNodes));
+			AssertJUnit.assertEquals(
+				portName + " = " + actualNodes.toString(), Iterables.size(expectedNodes), Iterables.size(actualNodes));
 
 			final Iterator<XdmNode> expectedNodesIterator = expectedNodes.iterator();
 			final Iterator<XdmNode> actualNodesIterator = actualNodes.iterator();
@@ -212,6 +214,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 	}
 
 
+	@Test()
 	protected void test(final String testName) throws Exception
 	{
 		final String testUrlString = getTestUrlPrefix() + testName;
