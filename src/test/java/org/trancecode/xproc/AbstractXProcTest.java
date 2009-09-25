@@ -69,7 +69,6 @@ public abstract class AbstractXProcTest extends AbstractTest
 	}
 
 
-	@Test()
 	protected void test(final URL testUrl) throws Exception
 	{
 		final PipelineFactory pipelineFactory = new PipelineFactory();
@@ -214,7 +213,6 @@ public abstract class AbstractXProcTest extends AbstractTest
 	}
 
 
-	@Test()
 	protected void test(final String testName) throws Exception
 	{
 		final String testUrlString = getTestUrlPrefix() + testName;
