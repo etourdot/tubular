@@ -85,6 +85,19 @@
     <dependencies>
 
       <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>tubular-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>tubular-core</artifactId>
+        <classifier>tests</classifier>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.4</version>
