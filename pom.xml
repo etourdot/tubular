@@ -76,6 +76,7 @@
   <!-- ===================================================================== -->
 
   <modules>
+    <module>trancecode-util</module>
     <module>tubular-core</module>
   </modules>
 
@@ -83,6 +84,19 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>trancecode-util</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>trancecode-util</artifactId>
+        <classifier>tests</classifier>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.trancecode</groupId>
