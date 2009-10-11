@@ -78,6 +78,7 @@
   <modules>
     <module>trancecode-util</module>
     <module>tubular-core</module>
+    <module>xml-catalog</module>
   </modules>
 
   <!-- ===================================================================== -->
@@ -107,6 +108,19 @@
       <dependency>
         <groupId>org.trancecode</groupId>
         <artifactId>tubular-core</artifactId>
+        <classifier>tests</classifier>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>xml-catalog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>xml-catalog</artifactId>
         <classifier>tests</classifier>
         <version>${project.version}</version>
       </dependency>
