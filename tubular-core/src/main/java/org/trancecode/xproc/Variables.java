@@ -19,8 +19,8 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.core.collection.TubularIterables;
-import org.trancecode.core.function.TubularFunctions;
+import org.trancecode.collection.TubularIterables;
+import org.trancecode.function.TranceCodeFunctions;
 
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
@@ -67,7 +67,7 @@ public final class Variables
 	{
 		assert containsVariable(variables, name);
 
-		return Iterables.transform(variables, TubularFunctions.conditional(Predicates.compose(
+		return Iterables.transform(variables, TranceCodeFunctions.conditional(Predicates.compose(
 			Predicates.equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions
 			.identity()));
 	}

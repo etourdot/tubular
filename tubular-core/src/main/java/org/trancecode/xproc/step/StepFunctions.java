@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.function.Pair;
+import org.trancecode.function.Pair;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 

@@ -20,7 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.collection.TubularMaps;
+import org.trancecode.collection.TubularMaps;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.parser.XProcElements;

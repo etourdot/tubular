@@ -21,9 +21,9 @@ package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.TubularObjects;
-import org.trancecode.core.collection.TubularIterables;
-import org.trancecode.core.collection.TubularMaps;
-import org.trancecode.core.function.TubularFunctions;
+import org.trancecode.collection.TubularIterables;
+import org.trancecode.collection.TubularMaps;
+import org.trancecode.function.TranceCodeFunctions;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.step.StepFunctions;
@@ -144,7 +144,7 @@ public final class Step extends AbstractHasLocation
 
 	public Step declareVariables(final Iterable<Variable> variables)
 	{
-		return TubularFunctions.apply(this, variables, StepFunctions.declareVariable());
+		return TranceCodeFunctions.apply(this, variables, StepFunctions.declareVariable());
 	}
 
 

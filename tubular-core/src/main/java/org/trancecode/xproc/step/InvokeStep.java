@@ -19,8 +19,8 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.function.Pair;
-import org.trancecode.core.function.TubularFunctions;
+import org.trancecode.function.Pair;
+import org.trancecode.function.TranceCodeFunctions;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
@@ -66,7 +66,7 @@ public class InvokeStep implements StepProcessor
 
 		// declare ports from invoked step
 		invokeStep =
-			TubularFunctions.apply(invokeStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
+			TranceCodeFunctions.apply(invokeStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
 			{
 				@Override
 				public Step apply(final Pair<Step, Port> arguments)
@@ -84,7 +84,7 @@ public class InvokeStep implements StepProcessor
 
 		// declare variables from invoked step
 		invokeStep =
-			TubularFunctions.apply(invokeStep, invokedStep.getVariables(), new Function<Pair<Step, Variable>, Step>()
+			TranceCodeFunctions.apply(invokeStep, invokedStep.getVariables(), new Function<Pair<Step, Variable>, Step>()
 			{
 				@Override
 				public Step apply(final Pair<Step, Variable> arguments)
@@ -103,7 +103,7 @@ public class InvokeStep implements StepProcessor
 	{
 		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
-		return TubularFunctions.apply(
+		return TranceCodeFunctions.apply(
 			invokedStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
 			{
 				@Override

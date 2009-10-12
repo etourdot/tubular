@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.core.collection.TubularMaps;
+import org.trancecode.collection.TubularMaps;
 import org.trancecode.io.Uris;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;

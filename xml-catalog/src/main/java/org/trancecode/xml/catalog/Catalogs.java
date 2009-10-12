@@ -22,8 +22,8 @@ package org.trancecode.xml.catalog;
 import org.trancecode.annotation.Nullable;
 import org.trancecode.core.AbstractImmutableHashCodeObject;
 import org.trancecode.core.AbstractImmutableObject;
-import org.trancecode.core.collection.TubularIterables;
-import org.trancecode.core.function.TubularFunctions;
+import org.trancecode.collection.TubularIterables;
+import org.trancecode.function.TranceCodeFunctions;
 import org.trancecode.io.UriFunctions;
 import org.trancecode.io.Uris;
 
@@ -129,7 +129,7 @@ public final class Catalogs
 
 	public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
 	{
-		return TubularFunctions.cache(catalog);
+		return TranceCodeFunctions.cache(catalog);
 	}
 
 
