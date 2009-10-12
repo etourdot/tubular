@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.collection.TubularMaps;
+import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.parser.XProcElements;
 
@@ -36,10 +37,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
@@ -291,7 +294,7 @@ public class Environment
 				}
 
 				final XdmValue result =
-					SaxonUtil.evaluateXPath(
+					evaluateXPath(
 						variable.getSelect(), getConfiguration().getProcessor(), xpathContextNode, allVariables,
 						variable.getLocation());
 				final XdmItem resultNode = Iterables.getOnlyElement(result);
@@ -330,6 +333,47 @@ public class Environment
 		}
 
 		return resultEnvironment.setLocalVariables(newLocalVariables);
+	}
+
+
+	private static XdmValue evaluateXPath(
+		final String select, final Processor processor, final XdmNode xpathContextNode,
+		final Map<QName, String> variables, final Location location)
+	{
+		LOG.trace("select = {} ; variables = {}", select, variables);
+
+		try
+		{
+			final XPathCompiler xpathCompiler = processor.newXPathCompiler();
+			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
+			{
+				if (variableEntry.getValue() != null)
+				{
+					xpathCompiler.declareVariable(variableEntry.getKey());
+				}
+			}
+
+			final XPathSelector selector = xpathCompiler.compile(select).load();
+			if (xpathContextNode != null)
+			{
+				LOG.trace("xpathContextNode = {}", xpathContextNode);
+				selector.setContextItem(xpathContextNode);
+			}
+
+			for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
+			{
+				if (variableEntry.getValue() != null)
+				{
+					selector.setVariable(variableEntry.getKey(), new XdmAtomicValue(variableEntry.getValue()));
+				}
+			}
+
+			return selector.evaluate();
+		}
+		catch (final Exception e)
+		{
+			throw XProcExceptions.xd0023(location, select, e.getMessage());
+		}
 	}
 
 

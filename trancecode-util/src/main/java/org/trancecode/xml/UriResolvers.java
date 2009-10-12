@@ -21,7 +21,7 @@ package org.trancecode.xml;
 
 import org.trancecode.core.AbstractImmutableObject;
 import org.trancecode.io.InputResolver;
-import org.trancecode.xml.catalog.Catalog;
+import org.trancecode.io.Uris;
 
 import java.net.URI;
 
@@ -55,38 +55,33 @@ public final class UriResolvers
 
 	public static URIResolver newUriResolver(final InputResolver inputResolver)
 	{
-		return new EntityResolverURIResolver(inputResolver, Catalog.defaultCatalog());
-	}
-
-
-	public static URIResolver newUriResolver(final InputResolver inputResolver, final Catalog catalog)
-	{
-		return new EntityResolverURIResolver(inputResolver, catalog);
+		return new EntityResolverURIResolver(inputResolver);
 	}
 
 
 	private static class EntityResolverURIResolver extends AbstractImmutableObject implements URIResolver
 	{
 		private final InputResolver inputResolver;
-		private final Catalog catalog;
 		private final EntityResolver entityResolver;
 
 
-		public EntityResolverURIResolver(final InputResolver inputResolver, final Catalog catalog)
+		public EntityResolverURIResolver(final InputResolver inputResolver)
 		{
-			super(inputResolver, catalog);
-			Preconditions.checkNotNull(inputResolver);
-			Preconditions.checkNotNull(catalog);
-			this.inputResolver = inputResolver;
-			this.catalog = catalog;
-			entityResolver = EntityResolvers.newEntityResolver(inputResolver, catalog);
+			super(inputResolver);
+			this.inputResolver = Preconditions.checkNotNull(inputResolver);
+			entityResolver = EntityResolvers.newEntityResolver(inputResolver);
 		}
 
 
 		@Override
 		public Source resolve(final String href, final String base) throws TransformerException
 		{
-			final URI uri = catalog.resolveUri(href, base);
+			final URI uri = Uris.resolve(href, base);
+			if (uri == null)
+			{
+				throw new TransformerException(String.format("not a valid URI ; href = %s ; base = %s", href, base));
+			}
+
 			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
 			inputSource.setSystemId(uri.toString());
 

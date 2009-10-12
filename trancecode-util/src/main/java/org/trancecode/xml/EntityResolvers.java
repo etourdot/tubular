@@ -21,10 +21,10 @@ package org.trancecode.xml;
 
 import org.trancecode.io.IOUtil;
 import org.trancecode.io.InputResolver;
-import org.trancecode.xml.catalog.Catalog;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import com.google.common.base.Preconditions;
 
@@ -51,36 +51,35 @@ public final class EntityResolvers
 
 	public static EntityResolver newEntityResolver(final InputResolver inputResolver)
 	{
-		return newEntityResolver(inputResolver, Catalog.defaultCatalog());
-	}
-
-
-	public static EntityResolver newEntityResolver(final InputResolver inputResolver, final Catalog catalog)
-	{
-		return new InputResolverEntityResolver(inputResolver, catalog);
+		return new InputResolverEntityResolver(inputResolver);
 	}
 
 
 	private static class InputResolverEntityResolver implements EntityResolver
 	{
 		private final InputResolver inputResolver;
-		private final Catalog catalog;
 
 
-		public InputResolverEntityResolver(final InputResolver inputResolver, final Catalog catalog)
+		public InputResolverEntityResolver(final InputResolver inputResolver)
 		{
 			super();
-			Preconditions.checkNotNull(inputResolver);
-			Preconditions.checkNotNull(catalog);
-			this.inputResolver = inputResolver;
-			this.catalog = catalog;
+			this.inputResolver = Preconditions.checkNotNull(inputResolver);
 		}
 
 
 		@Override
 		public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException
 		{
-			final URI uri = catalog.resolveEntity(publicId, systemId);
+			final URI uri;
+			try
+			{
+				uri = new URI(systemId);
+			}
+			catch (final URISyntaxException e)
+			{
+				throw new SAXException("not a valid URI: " + systemId, e);
+			}
+
 			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
 			inputSource.setSystemId(uri.toString());
 

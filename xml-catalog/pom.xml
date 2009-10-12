@@ -17,7 +17,8 @@
   <name>${project.artifactId}</name>
   <description>TranceCode XML Catalog implementation</description>
 
-  <!-- ===================================================================== -->
+  <!-- =====================================================================
+-->
 
   <dependencies>
 
@@ -37,6 +38,12 @@
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.trancecode</groupId>
+      <artifactId>trancecode-util</artifactId>
       <scope>test</scope>
     </dependency>
 
