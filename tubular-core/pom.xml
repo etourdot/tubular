@@ -43,7 +43,13 @@
     <dependency>
       <groupId>org.trancecode</groupId>
       <artifactId>trancecode-util</artifactId>
+      <classifier>tests</classifier>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.trancecode</groupId>
+      <artifactId>trancecode-util</artifactId>
     </dependency>
 
     <dependency>
