@@ -48,7 +48,7 @@
 
     <dependency>
       <groupId>org.trancecode</groupId>
-      <artifactId>trancecode-util</artifactId>
+      <artifactId>xml-catalog</artifactId>
     </dependency>
 
     <dependency>
