@@ -18,5 +18,18 @@ package org.trancecode.xproc
 import scala.xml.Node
 
 case class Port(reference: PortReference, primary: Boolean, bindings: List[PortBinding]) {
-  def readNodes(environment: Environment): List[Node] = List.flatten(bindings.map(_.readNodes(environment)))
+
+  def readNodes(environment: Environment): List[Node] = {
+    List.flatten(bindings.map(_.readNodes(environment)))
+  }
+
+  def readNode(environment: Environment): Option[Node] = {
+    val nodes = readNodes(environment)
+    nodes.size match {
+      case 0 => None
+      case 1 => Some(nodes(0))
+      case _ => throw new IllegalStateException(nodes.size.toString)
+    }
+  }
+
 }
