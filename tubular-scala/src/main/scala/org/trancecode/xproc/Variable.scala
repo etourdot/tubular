@@ -15,18 +15,18 @@
  */
 package org.trancecode.xproc
 
-import scala.collection.immutable.Map
+case class Variable (
+  name: QName,
+  value: Some[String],
+  select: Some[String],
+  local: Boolean)
+  extends Function1[Environment, String] {
 
-case class Environment (
-  ports: Map[PortReference, Port],
-  variables: Map[QName, String],
-  defaultInputPort: Some[Port],
-  defaultXPathContextPort: Some[Port]) {
-
-  def evaluateXPath(query: String): String = {
-    // TODO
-    "TODO"
+  def apply(environment: Environment): String = {
+    if (!value.isEmpty)
+      value.get
+    else
+      environment.evaluateXPath(select.get)
   }
 
 }
-
