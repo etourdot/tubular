@@ -15,6 +15,11 @@
  */
 package org.trancecode.xproc
 
-case class Configuration () {
+import scala.xml.Node
+
+case class Configuration (baseUri: String) {
+
+  // TODO
+  def readXmlDocument(uri: String): Node = <todo/>
 
 }
