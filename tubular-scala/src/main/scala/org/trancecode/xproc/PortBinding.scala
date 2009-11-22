@@ -15,13 +15,8 @@
  */
 package org.trancecode.xproc
 
-case class Step (
-  name: String,
-  stepType: QName,
-  ports: Map[PortReference, Port],
-  variables: Map[QName, String],
-  function: Function1[Environment, Environment])
-  extends Function1[Environment, Environment] {
-  def apply(in: Environment): Environment = function(in)
-}
+import scala.xml.Node
 
+trait PortBinding {
+  def readNodes: List[Node]
+}

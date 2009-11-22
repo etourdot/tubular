@@ -15,13 +15,12 @@
  */
 package org.trancecode.xproc
 
-case class Step (
-  name: String,
-  stepType: QName,
+import scala.collection.immutable.Map
+
+case class Environment (
   ports: Map[PortReference, Port],
   variables: Map[QName, String],
-  function: Function1[Environment, Environment])
-  extends Function1[Environment, Environment] {
-  def apply(in: Environment): Environment = function(in)
+  defaultInputPort: Some[Port],
+  defaultXPathContextPort: Some[Port]) {
 }
 
