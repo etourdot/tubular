@@ -16,6 +16,7 @@
 package org.trancecode.xproc
 
 import scala.collection.immutable.Map
+import scala.xml.Node
 
 case class Environment (
   ports: Map[PortReference, Port],
@@ -25,6 +26,11 @@ case class Environment (
   configuration: Configuration) {
 
   def evaluateXPath(query: String): String = {
+    // TODO
+    "TODO"
+  }
+
+  def evaluateXPath(query: String, variables: Map[QName, String], contextNode: Node): String = {
     // TODO
     "TODO"
   }
