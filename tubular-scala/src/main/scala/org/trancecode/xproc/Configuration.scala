@@ -15,18 +15,6 @@
  */
 package org.trancecode.xproc
 
-import scala.collection.immutable.Map
-
-case class Environment (
-  ports: Map[PortReference, Port],
-  variables: Map[QName, String],
-  defaultInputPort: Some[Port],
-  defaultXPathContextPort: Some[Port],
-  configuration: Configuration) {
-
-  def evaluateXPath(query: String): String = {
-    // TODO
-    "TODO"
-  }
+case class Configuration () {
 
 }
