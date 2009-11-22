@@ -16,18 +16,34 @@
 package org.trancecode.xproc
 
 import scala.collection.immutable.Map
-import scala.xml.Node
+import scala.xml._
 
 case class Environment (
   ports: Map[PortReference, Port],
   variables: Map[QName, String],
-  defaultInputPort: Some[Port],
-  defaultXPathContextPort: Some[Port],
+  defaultInputPort: Option[Port],
+  defaultXPathContextPort: Option[Port],
   configuration: Configuration) {
 
+  val emptyContextNode: Node = <document/>
+
+  def xpathContextPort: Option[Port] = {
+    if (!defaultXPathContextPort.isEmpty)
+      defaultXPathContextPort
+    else
+      defaultInputPort
+  }
+
+  def xpathContextNode: Node = {
+    val port = xpathContextPort
+    if (port.isEmpty)
+      emptyContextNode
+    else
+      port.get.readNode(this).get
+  }
+
   def evaluateXPath(query: String): String = {
-    // TODO
-    "TODO"
+    evaluateXPath(query, variables, xpathContextNode)
   }
 
   def evaluateXPath(query: String, variables: Map[QName, String], contextNode: Node): String = {
