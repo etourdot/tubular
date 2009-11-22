@@ -20,13 +20,11 @@ import java.net.URI
 object Uri  {
 
   def resolve(href: Option[String], base: Option[String]): Option[String] = {
-    if (href.isEmpty)
-      base
-    else
-      if (base.isEmpty)
-        href
-      else
-        Some(URI.create(base.get).resolve(href.get).toString())
+    (href, base) match {
+      case (None, _) => base
+      case (_, None) => href
+      case _ => Some(URI.create(base.get).resolve(href.get).toString())
+    }
   }
 
 }
