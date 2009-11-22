@@ -18,5 +18,9 @@ package org.trancecode.xproc
 import scala.xml.Node
 
 case class PipePortBinding(port: PortReference) extends PortBinding {
-  def readNodes(environment: Environment): List[Node] = environment.ports(port).readNodes(environment)
+
+  def readNodes(environment: Environment): List[Node] = {
+    environment.ports(port).readNodes(environment)
+  }
+
 }

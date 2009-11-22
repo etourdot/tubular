@@ -18,5 +18,7 @@ package org.trancecode.xproc
 import scala.xml.Node
 
 class EmptyPortBinding extends PortBinding {
+
   def readNodes(environment: Environment): List[Node] = List()
+
 }

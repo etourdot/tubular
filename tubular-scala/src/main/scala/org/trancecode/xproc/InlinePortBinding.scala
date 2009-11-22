@@ -18,5 +18,7 @@ package org.trancecode.xproc
 import scala.xml.Node
 
 case class InlinePortBinding(node: Node) extends PortBinding {
+
   def readNodes(environment: Environment): List[Node] = List(node)
+
 }

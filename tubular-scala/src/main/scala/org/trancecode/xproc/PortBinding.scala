@@ -18,5 +18,7 @@ package org.trancecode.xproc
 import scala.xml.Node
 
 trait PortBinding {
+
   def readNodes(environment: Environment): List[Node]
+
 }
