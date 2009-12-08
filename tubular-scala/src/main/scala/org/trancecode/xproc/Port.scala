@@ -32,4 +32,8 @@ case class Port(reference: PortReference, primary: Boolean, bindings: List[PortB
     }
   }
 
+  def << (node: XdmNode): Port = {
+    new Port(reference, primary, bindings ::: List(new InlinePortBinding(node)))
+  }
+
 }
