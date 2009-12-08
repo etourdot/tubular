@@ -15,15 +15,15 @@
  */
 package org.trancecode.xproc
 
-import scala.xml.Node
+import net.sf.saxon.s9api.XdmNode
 
 case class Port(reference: PortReference, primary: Boolean, bindings: List[PortBinding]) {
 
-  def readNodes(environment: Environment): List[Node] = {
+  def readNodes(environment: Environment): List[XdmNode] = {
     List.flatten(bindings.map(_.readNodes(environment)))
   }
 
-  def readNode(environment: Environment): Option[Node] = {
+  def readNode(environment: Environment): Option[XdmNode] = {
     val nodes = readNodes(environment)
     nodes.size match {
       case 0 => None

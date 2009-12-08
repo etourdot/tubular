@@ -15,10 +15,10 @@
  */
 package org.trancecode.xproc
 
-import scala.xml.Node
+import net.sf.saxon.s9api.XdmNode
 
 class EmptyPortBinding extends PortBinding {
 
-  def readNodes(environment: Environment): List[Node] = List()
+  def readNodes(environment: Environment): List[XdmNode] = List()
 
 }

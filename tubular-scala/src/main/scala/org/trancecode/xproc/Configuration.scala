@@ -15,10 +15,34 @@
  */
 package org.trancecode.xproc
 
-import scala.xml._
+import javax.xml.transform.URIResolver
+import net.sf.saxon.s9api._
+import java.io.StringReader
+import java.lang.IllegalStateException
+import javax.xml.transform.stream.StreamSource
 
-case class Configuration (baseUri: String) {
+case class Configuration (baseUri: String, processor: Processor, uriResolver: URIResolver) {
 
-  def readXmlDocument(uri: String): Node = XML.loadFile(uri)
+  def readXmlDocument(uri: String): XdmNode = {
+  // TODO
+  null
+  }
+
+  def readXmlContent(xmlContent: String): XdmNode = {
+    val reader = new StringReader(xmlContent)
+
+    try {
+      return processor.newDocumentBuilder().build(new StreamSource(reader))
+    }
+    catch {
+      case e: SaxonApiException => throw new IllegalStateException(e)
+    }
+    finally
+    {
+      reader.close;
+    }
+  }
+
+  def emptyDocument: XdmNode = readXmlContent("<?xml version=\"1.0\"?><document/>")
 
 }

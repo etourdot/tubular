@@ -15,11 +15,11 @@
  */
 package org.trancecode.xproc
 
-import scala.xml.Node
+import net.sf.saxon.s9api.XdmNode
 
 case class PipePortBinding(port: PortReference) extends PortBinding {
 
-  def readNodes(environment: Environment): List[Node] = {
+  def readNodes(environment: Environment): List[XdmNode] = {
     environment.ports(port).readNodes(environment)
   }
 

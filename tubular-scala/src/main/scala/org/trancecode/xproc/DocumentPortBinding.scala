@@ -15,11 +15,11 @@
  */
 package org.trancecode.xproc
 
-import scala.xml.Node
+import net.sf.saxon.s9api.XdmNode
 
 case class DocumentPortBinding(href: String, baseUri: Option[String]) extends PortBinding {
 
-  def readNodes(environment: Environment): List[Node] = {
+  def readNodes(environment: Environment): List[XdmNode] = {
     val actualBaseUri = baseUri.getOrElse(environment.configuration.baseUri)
     val documentUri = Uri.resolve(Some(href), Some(actualBaseUri)).get
     val node = environment.configuration.readXmlDocument(documentUri)

@@ -21,10 +21,10 @@ case class Step (
   inputPorts: Map[PortReference, Port],
   outputPorts: Map[PortReference, Port],
   variables: Map[QName, Variable],
-  function: Function1[Environment, Environment])
+  function: Function2[Step, Environment, Environment])
   extends Function1[Environment, Environment] {
 
   // TODO
-  def apply(in: Environment): Environment = function(in)
+  def apply(in: Environment): Environment = function(this, in)
 
 }

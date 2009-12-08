@@ -15,10 +15,10 @@
  */
 package org.trancecode.xproc
 
-import scala.xml.Node
+import net.sf.saxon.s9api.XdmNode
 
-case class InlinePortBinding(node: Node) extends PortBinding {
+case class InlinePortBinding(node: XdmNode) extends PortBinding {
 
-  def readNodes(environment: Environment): List[Node] = List(node)
+  def readNodes(environment: Environment): List[XdmNode] = List(node)
 
 }

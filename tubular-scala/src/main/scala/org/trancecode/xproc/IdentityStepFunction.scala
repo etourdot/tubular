@@ -15,10 +15,11 @@
  */
 package org.trancecode.xproc
 
-import net.sf.saxon.s9api.XdmNode
+class IdentityStepFunction extends Function2[Step, Environment, Environment] {
 
-trait PortBinding {
-
-  def readNodes(environment: Environment): List[XdmNode]
+  // TODO
+  def apply(step: Step, environment: Environment): Environment = {
+    environment
+  }
 
 }
