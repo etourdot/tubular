@@ -17,7 +17,7 @@ package org.trancecode.xproc
 
 import net.sf.saxon.s9api.XdmNode
 
-case class Port(reference: PortReference, primary: Boolean, bindings: List[PortBinding]) {
+case class Port(reference: PortReference, primary: Option[Boolean], sequence: Option[Boolean], bindings: List[PortBinding]) {
 
   def readNodes(environment: Environment): List[XdmNode] = {
     List.flatten(bindings.map(_.readNodes(environment)))
@@ -33,7 +33,7 @@ case class Port(reference: PortReference, primary: Boolean, bindings: List[PortB
   }
 
   def << (node: XdmNode): Port = {
-    new Port(reference, primary, bindings ::: List(new InlinePortBinding(node)))
+    new Port(reference, primary, sequence, bindings ::: List(new InlinePortBinding(node)))
   }
 
 }
