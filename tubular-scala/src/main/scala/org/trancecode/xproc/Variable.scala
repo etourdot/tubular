@@ -15,6 +15,8 @@
  */
 package org.trancecode.xproc
 
+import net.sf.saxon.s9api._
+
 case class Variable (
   name: QName,
   value: Some[String],
