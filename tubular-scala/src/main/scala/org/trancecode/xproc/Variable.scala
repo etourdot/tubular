@@ -19,8 +19,8 @@ import net.sf.saxon.s9api._
 
 case class Variable (
   name: QName,
-  value: Some[String],
-  select: Some[String],
+  value: Option[String],
+  select: Option[String],
   local: Boolean)
   extends Function1[Environment, String] {
 
