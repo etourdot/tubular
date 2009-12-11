@@ -15,6 +15,7 @@
  */
 package org.trancecode.xproc
 
+import scala.collection.Map
 import net.sf.saxon.s9api._
 
 case class Step (
@@ -34,6 +35,11 @@ case class Step (
 
     // TODO build result environment
 
+  }
+
+
+  def evaluateVariables(environment: Environment): Map[QName, String] = {
+    variables.mapElements((variable: Variable) => variable(environment))
   }
 
 
