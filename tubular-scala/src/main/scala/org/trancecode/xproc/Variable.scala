@@ -28,7 +28,7 @@ case class Variable (
     if (!value.isEmpty)
       value.get
     else
-      environment.evaluateXPath(select.get)
+      environment.evaluateXPath(select.get).toString
   }
 
 }
