@@ -42,13 +42,21 @@ case class Environment (
       port.get.readNode(this).get
   }
 
-  def evaluateXPath(query: String): String = {
+  def evaluateXPath(query: String): XdmValue = {
     evaluateXPath(query, variables, xpathContextNode)
   }
 
-  def evaluateXPath(query: String, variables: Map[QName, String], contextNode: XdmNode): String = {
-    // TODO
-    "TODO"
+  def evaluateXPath(query: String, variables: Map[QName, String], contextNode: XdmNode): XdmValue = {
+
+    val xpathCompiler = configuration.processor.newXPathCompiler()
+    for (variableName <- variables.keys) xpathCompiler.declareVariable(variableName)
+    val selector = xpathCompiler.compile(query).load()
+    selector.setContextItem(xpathContextNode)
+    for (variableName <- variables.keys) {
+      selector.setVariable(variableName, Saxon.untypedXdmItem(configuration.processor, variables(variableName)))
+    }
+
+    selector.evaluate
   }
 
 }
