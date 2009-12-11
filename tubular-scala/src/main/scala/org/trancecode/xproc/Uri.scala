@@ -17,7 +17,7 @@ package org.trancecode.xproc
 
 import java.net.URI
 
-object Uri  {
+object Uri {
 
   def resolve(href: Option[String], base: Option[String]): Option[String] = {
     (href, base) match {
