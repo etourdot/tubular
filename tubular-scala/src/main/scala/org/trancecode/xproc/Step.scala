@@ -35,15 +35,15 @@ case class Step (
   }
 
 
-  def primaryInputPort: Port = {
-    inputPorts.size match {
-      case 1 => inputPorts.values.next
-      case _ => findPrimary(inputPorts.values.toList)
-    }
-  }
+  def primaryInputPort: Port = primaryPort(inputPorts.values.toList)
 
-  def findPrimary(ports: List[Port]): Port = {
-    ports.find(_.primary.get).get
+  def primaryOutputPort: Port = primaryPort(outputPorts.values.toList)
+
+  def primaryPort(ports: List[Port]): Port = {
+    ports.length match {
+      case 1 => ports(0)
+      case _ => ports.find(_.primary.get).get
+    }
   }
 
 }
