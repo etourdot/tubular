@@ -24,7 +24,13 @@ case class Step (
   function: Function2[Step, Environment, Environment])
   extends Function1[Environment, Environment] {
 
-  // TODO
-  def apply(in: Environment): Environment = function(this, in)
+  def apply(in: Environment): Environment = {
 
+    // TODO setup function environment
+
+    function(this, in)
+
+    // TODO build result environment
+
+  }
 }
