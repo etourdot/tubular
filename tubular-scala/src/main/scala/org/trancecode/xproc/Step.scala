@@ -15,6 +15,8 @@
  */
 package org.trancecode.xproc
 
+import net.sf.saxon.s9api._
+
 case class Step (
   name: String,
   stepType: QName,
