@@ -55,7 +55,7 @@ case class Step (
 
     // TODO setup XPath context port
 
-    (environment ++ inputPorts).withDefaultInputPort(defaultReadablePort)
+    environment.addPorts(inputPorts).withDefaultInputPort(defaultReadablePort)
   }
 
 

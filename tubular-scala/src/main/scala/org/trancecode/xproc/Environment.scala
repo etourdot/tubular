@@ -62,7 +62,10 @@ case class Environment (
   def withDefaultInputPort(port: Option[Port]) =
     new Environment(ports, variables, port, defaultXPathContextPort, configuration)
 
-  def ++ (newPorts: Iterable[(PortReference, Port)]) =
+  def addPorts(newPorts: Iterable[(PortReference, Port)]) =
     new Environment(ports ++ newPorts, variables, defaultInputPort, defaultXPathContextPort, configuration)
+
+  def addVariables(newVariables: Iterable[(QName, String)]) =
+    new Environment(ports, variables ++ newVariables, defaultInputPort, defaultXPathContextPort, configuration)
 
 }
