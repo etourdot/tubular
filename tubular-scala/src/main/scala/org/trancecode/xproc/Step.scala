@@ -27,14 +27,33 @@ case class Step (
   function: Function2[Step, Environment, Environment])
   extends Function1[Environment, Environment] {
 
-  def apply(in: Environment): Environment = {
+  def apply(environment: Environment): Environment = {
 
     // TODO setup function environment
 
-    function(this, in)
+    val workingEnvironment = setupVariables(setupPorts(environment))
+
+    function(this, workingEnvironment)
 
     // TODO build result environment
 
+  }
+
+  def setupVariables(environment: Environment) = {
+    // TODO
+    environment
+  }
+
+  def setupPorts(environment: Environment) = {
+    val stepInputPorts = environment.ports ++ inputPorts
+    val defaultReadablePort = {
+      if (primaryInputPort.isDefined)
+        primaryInputPort
+      else
+        environment.defaultInputPort
+    }
+
+    (environment ++ inputPorts).withDefaultInputPort(defaultReadablePort)
   }
 
 
@@ -43,14 +62,14 @@ case class Step (
   }
 
 
-  def primaryInputPort: Port = primaryPort(inputPorts.values.toList)
+  def primaryInputPort: Option[Port] = primaryPort(inputPorts.values.toList)
 
-  def primaryOutputPort: Port = primaryPort(outputPorts.values.toList)
+  def primaryOutputPort: Option[Port] = primaryPort(outputPorts.values.toList)
 
-  def primaryPort(ports: List[Port]): Port = {
+  def primaryPort(ports: List[Port]): Option[Port] = {
     ports.length match {
-      case 1 => ports(0)
-      case _ => ports.find(_.primary.get).get
+      case 1 => Some(ports(0))
+      case _ => ports.find(_.primary.get)
     }
   }
 
