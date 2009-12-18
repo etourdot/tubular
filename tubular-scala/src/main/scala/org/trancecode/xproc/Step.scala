@@ -40,8 +40,7 @@ case class Step (
   }
 
   def setupVariables(environment: Environment) = {
-    // TODO
-    environment
+    environment.addVariables(evaluateVariables(environment))
   }
 
   def setupPorts(environment: Environment) = {
