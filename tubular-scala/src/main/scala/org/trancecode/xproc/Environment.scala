@@ -59,8 +59,8 @@ case class Environment (
     selector.evaluate
   }
 
-  def withDefaultInputPort(port: Port) =
-    new Environment(ports, variables, Some(port), defaultXPathContextPort, configuration)
+  def withDefaultInputPort(port: Option[Port]) =
+    new Environment(ports, variables, port, defaultXPathContextPort, configuration)
 
   def ++ (newPorts: Iterable[(PortReference, Port)]) =
     new Environment(ports ++ newPorts, variables, defaultInputPort, defaultXPathContextPort, configuration)
