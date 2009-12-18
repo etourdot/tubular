@@ -29,8 +29,6 @@ case class Step (
 
   def apply(environment: Environment): Environment = {
 
-    // TODO setup function environment
-
     val workingEnvironment = setupVariables(setupPorts(environment))
 
     function(this, workingEnvironment)
