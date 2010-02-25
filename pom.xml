@@ -62,6 +62,11 @@
       <url>http://www.trancecode.org/maven/repository/</url>
     </repository>
 
+    <repository>
+      <id>scala-tools.org</id>
+      <url>http://www.scala-tools.org/repo-releases/</url>
+    </repository>
+
   </repositories>
 
   <!-- ===================================================================== -->
