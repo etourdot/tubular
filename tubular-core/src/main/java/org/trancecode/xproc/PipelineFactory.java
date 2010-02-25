@@ -55,7 +55,7 @@ public class PipelineFactory
 
 	private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
 
-	protected static StepProcessor UNSUPPORTED_STEP_PROCESSOR = new StepProcessor()
+	protected static final StepProcessor UNSUPPORTED_STEP_PROCESSOR = new StepProcessor()
 	{
 		@Override
 		public Environment run(final Step step, final Environment environment)
