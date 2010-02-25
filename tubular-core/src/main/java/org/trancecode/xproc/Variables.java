@@ -67,9 +67,8 @@ public final class Variables
 	{
 		assert containsVariable(variables, name);
 
-		return Iterables.transform(variables, TranceCodeFunctions.conditional(Predicates.compose(
-			Predicates.equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions
-			.identity()));
+		return Iterables.transform(variables, TranceCodeFunctions.conditional(Predicates.compose(Predicates
+			.equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions.identity()));
 	}
 
 
@@ -92,7 +91,7 @@ public final class Variables
 	}
 
 
-	public static final Iterable<QName> getVariableNames(final Iterable<Variable> variables)
+	public static Iterable<QName> getVariableNames(final Iterable<Variable> variables)
 	{
 		return Iterables.transform(variables, VariableFunctions.getName());
 	}
