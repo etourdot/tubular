@@ -20,9 +20,9 @@
 package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.TubularObjects;
 import org.trancecode.collection.TubularIterables;
 import org.trancecode.collection.TubularMaps;
+import org.trancecode.core.TubularObjects;
 import org.trancecode.function.TranceCodeFunctions;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
@@ -154,7 +154,7 @@ public final class Step extends AbstractHasLocation
 	}
 
 
-	public final Step declarePort(final Port port)
+	public Step declarePort(final Port port)
 	{
 		LOG.trace("port = {}", port);
 
@@ -162,7 +162,7 @@ public final class Step extends AbstractHasLocation
 	}
 
 
-	public final Step declarePorts(final Iterable<Port> ports)
+	public Step declarePorts(final Iterable<Port> ports)
 	{
 		LOG.trace("ports = {}", ports);
 
