@@ -33,7 +33,7 @@ import com.google.common.base.Preconditions;
  * @author Herve Quiroz
  * @version $Revision$
  */
-public final class Catalog extends ForwardingCatalog implements Function<CatalogQuery, URI>
+public final class Catalog extends ForwardingCatalog
 {
 	private static final Catalog defaultCatalog = newCatalog(Catalogs.defaultCatalog());
 
