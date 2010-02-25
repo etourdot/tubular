@@ -22,6 +22,8 @@ package org.trancecode.xproc;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.XProcException.Type;
 
+import net.sf.saxon.s9api.QName;
+
 
 /**
  * @author Herve Quiroz
@@ -53,6 +55,13 @@ public final class XProcExceptions
 	{
 		return newXProcException(
 			Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value", option.getName());
+	}
+
+
+	public static XProcException xs0031(final Location location, final QName optionName, final QName stepType)
+	{
+		return newXProcException(
+			Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)", optionName, stepType);
 	}
 
 
