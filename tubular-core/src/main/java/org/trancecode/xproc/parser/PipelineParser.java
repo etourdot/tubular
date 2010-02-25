@@ -30,6 +30,7 @@ import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
@@ -248,6 +249,10 @@ public class PipelineParser
 			if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
 				&& !name.equals(XProcAttributes.TYPE))
 			{
+				if (!step.hasOptionDeclared(name))
+				{
+					throw XProcExceptions.xs0031(getLocation(node), name, step.getType());
+				}
 				return step.withOptionValue(name, value);
 			}
 
