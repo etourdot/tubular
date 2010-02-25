@@ -24,7 +24,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
 import org.trancecode.xproc.PipelineException;
-import org.trancecode.xproc.PortBinding;
 
 import java.util.Collections;
 
@@ -38,7 +37,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @version $Revision$
  */
 @Immutable
-public class DocumentPortBinding extends AbstractPortBinding implements PortBinding
+public class DocumentPortBinding extends AbstractPortBinding
 {
 	private final String href;
 

@@ -23,7 +23,6 @@ import org.trancecode.annotation.Immutable;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
-import org.trancecode.xproc.PortBinding;
 
 import java.util.Collections;
 
@@ -35,7 +34,7 @@ import net.sf.saxon.s9api.XdmNode;
  * @version $Revision$
  */
 @Immutable
-public class EmptyPortBinding extends AbstractPortBinding implements PortBinding
+public class EmptyPortBinding extends AbstractPortBinding
 {
 	public EmptyPortBinding(final Location location)
 	{

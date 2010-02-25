@@ -24,7 +24,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.EnvironmentPortBinding;
-import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 
 import net.sf.saxon.s9api.XdmNode;
@@ -38,7 +37,7 @@ import org.slf4j.ext.XLoggerFactory;
  * @version $Revision$
  */
 @Immutable
-public class PipePortBinding extends AbstractPortBinding implements PortBinding
+public class PipePortBinding extends AbstractPortBinding
 {
 	private final XLogger log = XLoggerFactory.getXLogger(getClass());
 

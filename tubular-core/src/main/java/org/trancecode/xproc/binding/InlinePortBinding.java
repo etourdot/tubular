@@ -24,7 +24,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
-import org.trancecode.xproc.PortBinding;
 
 import java.util.Collections;
 
@@ -39,7 +38,7 @@ import org.slf4j.ext.XLoggerFactory;
  * @version $Revision$
  */
 @Immutable
-public class InlinePortBinding extends AbstractPortBinding implements PortBinding
+public class InlinePortBinding extends AbstractPortBinding
 {
 	private final XLogger log = XLoggerFactory.getXLogger(getClass());
 	private final XdmNode node;
