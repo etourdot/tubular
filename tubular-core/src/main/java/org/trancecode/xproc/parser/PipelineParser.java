@@ -247,7 +247,7 @@ public class PipelineParser
 			final String value = node.getStringValue();
 
 			if (name.getNamespaceURI().isEmpty() && !name.equals(XProcAttributes.NAME)
-				&& !name.equals(XProcAttributes.TYPE))
+				&& !name.equals(XProcAttributes.TYPE) && !name.equals(XProcAttributes.VERSION))
 			{
 				if (!step.hasOptionDeclared(name))
 				{

@@ -42,6 +42,7 @@ public class XProcAttributes
 	public static final QName TEST = new QName("test");
 	public static final QName TYPE = new QName("type");
 	public static final QName VALUE = new QName("value");
+	public static final QName VERSION = new QName("version");
 
 
 	private XProcAttributes()
