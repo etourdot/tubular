@@ -23,6 +23,17 @@
 
   <!-- ===================================================================== -->
 
+  <distributionManagement>
+
+    <repository>
+      <id>trancecode.org</id>
+      <url>dav:http://www.trancecode.org/maven/repository/</url>
+    </repository>
+
+  </distributionManagement>
+
+  <!-- ===================================================================== -->
+
   <modules>
     <module>saxon</module>
     <module>saxon-dom</module>
