@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -50,6 +51,7 @@ import javax.xml.transform.TransformerException;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -72,12 +74,14 @@ import org.slf4j.LoggerFactory;
 public class PipelineParser
 {
 	private static final Logger LOG = LoggerFactory.getLogger(PipelineParser.class);
+	private static Set<String> EMPTY_LIBRARIES = ImmutableSet.of();
 
 	private final Processor processor;
 	private final Source source;
 	private final Map<QName, Step> importedLibrary;
 	private final Map<QName, Step> localLibrary = Maps.newHashMap();
 	private final Map<QName, StepProcessor> stepProcessors;
+	private final Set<String> libraries = Sets.newHashSet();
 
 	private Step mainPipeline;
 	private XdmNode rootNode;
@@ -86,6 +90,14 @@ public class PipelineParser
 	public PipelineParser(
 		final Processor processor, final Source source, final Map<QName, Step> library,
 		final Map<QName, StepProcessor> stepProcessors)
+	{
+		this(processor, source, library, stepProcessors, EMPTY_LIBRARIES);
+	}
+
+
+	private PipelineParser(
+		final Processor processor, final Source source, final Map<QName, Step> library,
+		final Map<QName, StepProcessor> stepProcessors, final Set<String> libraries)
 	{
 		assert processor != null;
 		this.processor = processor;
@@ -98,6 +110,8 @@ public class PipelineParser
 
 		assert stepProcessors != null;
 		this.stepProcessors = stepProcessors;
+
+		this.libraries.addAll(libraries);
 	}
 
 
@@ -509,11 +523,18 @@ public class PipelineParser
 		{
 			throw new PipelineException(e, "href = %s", href);
 		}
-		final PipelineParser parser = new PipelineParser(processor, librarySource, importedLibrary, stepProcessors);
-		parser.parse();
-		final Map<QName, Step> newLibrary = parser.getLibrary();
-		LOG.trace("new steps = {}", newLibrary.keySet());
-		localLibrary.putAll(newLibrary);
+		final String librarySystemId = librarySource.getSystemId();
+		LOG.trace("librarySystemId = {} ; libraries = {}", librarySystemId, libraries);
+		if (!libraries.contains(librarySystemId))
+		{
+			libraries.add(librarySystemId);
+			final PipelineParser parser =
+				new PipelineParser(processor, librarySource, importedLibrary, stepProcessors, libraries);
+			parser.parse();
+			final Map<QName, Step> newLibrary = parser.getLibrary();
+			LOG.trace("new steps = {}", newLibrary.keySet());
+			localLibrary.putAll(newLibrary);
+		}
 	}
 
 
