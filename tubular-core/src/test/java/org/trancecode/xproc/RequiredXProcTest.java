@@ -51,6 +51,27 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
+	public void choose004() throws Exception
+	{
+		test("required/choose-004.xml");
+	}
+
+
+	@Test
+	public void choose005() throws Exception
+	{
+		test("required/choose-005.xml");
+	}
+
+
+	@Test
+	public void choose006() throws Exception
+	{
+		test("required/choose-006.xml");
+	}
+
+
+	@Test
 	public void count001() throws Exception
 	{
 		test("required/count-001.xml");
@@ -61,6 +82,13 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 	public void count002() throws Exception
 	{
 		test("required/count-002.xml");
+	}
+
+
+	@Test
+	public void count003() throws Exception
+	{
+		test("required/count-003.xml");
 	}
 
 
@@ -142,6 +170,55 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
+	public void forEach005() throws Exception
+	{
+		test("required/for-each-005.xml");
+	}
+
+
+	@Test
+	public void forEach006() throws Exception
+	{
+		test("required/for-each-006.xml");
+	}
+
+
+	@Test
+	public void forEach007() throws Exception
+	{
+		test("required/for-each-007.xml");
+	}
+
+
+	@Test
+	public void forEach008() throws Exception
+	{
+		test("required/for-each-008.xml");
+	}
+
+
+	@Test
+	public void forEach009() throws Exception
+	{
+		test("required/for-each-009.xml");
+	}
+
+
+	@Test
+	public void forEach010() throws Exception
+	{
+		test("required/for-each-010.xml");
+	}
+
+
+	@Test
+	public void forEach011() throws Exception
+	{
+		test("required/for-each-011.xml");
+	}
+
+
+	@Test
 	public void identity001() throws Exception
 	{
 		test("required/identity-001.xml");
@@ -177,6 +254,13 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
+	public void identity006() throws Exception
+	{
+		test("required/identity-006.xml");
+	}
+
+
+	@Test
 	public void import001() throws Exception
 	{
 		test("required/import-001.xml");
@@ -194,6 +278,41 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 	public void import003() throws Exception
 	{
 		test("required/import-003.xml");
+	}
+
+
+	@Test
+	public void import004() throws Exception
+	{
+		test("required/import-004.xml");
+	}
+
+
+	@Test
+	public void import005() throws Exception
+	{
+		test("required/import-005.xml");
+	}
+
+
+	@Test
+	public void import006() throws Exception
+	{
+		test("required/import-006.xml");
+	}
+
+
+	@Test
+	public void import007() throws Exception
+	{
+		test("required/import-007.xml");
+	}
+
+
+	@Test
+	public void import008() throws Exception
+	{
+		test("required/import-008.xml");
 	}
 
 
@@ -233,9 +352,79 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
+	public void input006() throws Exception
+	{
+		test("required/input-006.xml");
+	}
+
+
+	@Test
+	public void input007() throws Exception
+	{
+		test("required/input-007.xml");
+	}
+
+
+	@Test
+	public void input008() throws Exception
+	{
+		test("required/input-008.xml");
+	}
+
+
+	@Test
+	public void input009() throws Exception
+	{
+		test("required/input-009.xml");
+	}
+
+
+	@Test
+	public void input010() throws Exception
+	{
+		test("required/input-010.xml");
+	}
+
+
+	@Test
+	public void input011() throws Exception
+	{
+		test("required/input-011.xml");
+	}
+
+
+	@Test
+	public void input012() throws Exception
+	{
+		test("required/input-012.xml");
+	}
+
+
+	@Test
 	public void load001() throws Exception
 	{
 		test("required/load-001.xml");
+	}
+
+
+	@Test
+	public void load002() throws Exception
+	{
+		test("required/load-002.xml");
+	}
+
+
+	@Test
+	public void load003() throws Exception
+	{
+		test("required/load-003.xml");
+	}
+
+
+	@Test
+	public void load004() throws Exception
+	{
+		test("required/load-004.xml");
 	}
 
 
@@ -268,9 +457,37 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
+	public void param002() throws Exception
+	{
+		test("required/param-002.xml");
+	}
+
+
+	@Test
+	public void param003() throws Exception
+	{
+		test("required/param-003.xml");
+	}
+
+
+	@Test
+	public void param004() throws Exception
+	{
+		test("required/param-004.xml");
+	}
+
+
+	@Test
 	public void parameters001() throws Exception
 	{
 		test("required/parameters-001.xml");
+	}
+
+
+	@Test
+	public void parameters002() throws Exception
+	{
+		test("required/parameters-002.xml");
 	}
 
 
@@ -310,6 +527,20 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 
 
 	@Test
+	public void variable005() throws Exception
+	{
+		test("required/variable-005.xml");
+	}
+
+
+	@Test
+	public void variable006() throws Exception
+	{
+		test("required/variable-006.xml");
+	}
+
+
+	@Test
 	public void xslt001() throws Exception
 	{
 		test("required/xslt-001.xml");
@@ -341,5 +572,12 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
 	public void xslt005() throws Exception
 	{
 		test("required/xslt-005.xml");
+	}
+
+
+	@Test
+	public void xslt006() throws Exception
+	{
+		test("required/xslt-006.xml");
 	}
 }
