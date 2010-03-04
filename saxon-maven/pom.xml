@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w5.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ===================================================================== -->
+
+  <groupId>net.sf.saxon</groupId>
+  <artifactId>saxon-maven</artifactId>
+  <version>${saxon.version}</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+
+  <!-- ===================================================================== -->
+
+  <properties>
+    <saxon.module></saxon.module>
+    <saxon.version>9.1.0.8</saxon.version>
+    <saxon.version.tag>9-1-0-8</saxon.version.tag>
+    <saxon.binary.url>http://downloads.sourceforge.net/project/saxon/Saxon-B/${saxon.version}/saxonb${saxon.version.tag}j.zip</saxon.binary.url>
+    <saxon.source.url>http://downloads.sourceforge.net/project/saxon/Saxon-B/${saxon.version}/saxonb${saxon.version.tag}source.zip</saxon.source.url>
+  </properties>
+
+  <!-- ===================================================================== -->
+
+  <distributionManagement>
+
+    <repository>
+      <id>trancecode.org</id>
+      <url>dav:http://www.trancecode.org/maven/repository/</url>
+    </repository>
+
+  </distributionManagement>
+
+  <!-- ===================================================================== -->
+
+  <modules>
+    <module>saxon</module>
+    <module>saxon-dom</module>
+    <module>saxon-dom4j</module>
+    <module>saxon-jdom</module>
+    <module>saxon-s9api</module>
+    <module>saxon-sql</module>
+    <module>saxon-xom</module>
+    <module>saxon-xpath</module>
+    <module>saxon-xqj</module>
+  </modules>
+
+  <!-- ===================================================================== -->
+
+  <build>
+
+    <sourceDirectory>${basedir}/target/src</sourceDirectory>
+
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>**</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <executions>
+
+            <execution>
+              <id>download</id>
+              <phase>compile</phase>
+              <configuration>
+                <tasks>
+
+                  <property name="saxon.binary.file" value="${java.io.tmpdir}/saxon/${saxon.version}/binary.zip"/>
+                  <property name="saxon.source.file" value="${java.io.tmpdir}/saxon/${saxon.version}/source.zip"/>
+                  <mkdir dir="${java.io.tmpdir}/saxon/${saxon.version}"/>
+
+                  <mkdir dir="${project.build.directory}/download"/>
+                  <get dest="${saxon.binary.file}" src="${saxon.binary.url}" usetimestamp="true"/>
+                  <get dest="${saxon.source.file}" src="${saxon.source.url}" usetimestamp="true"/>
+
+                  <mkdir dir="${project.build.directory}/download/binary"/>
+                  <unzip dest="${project.build.directory}/download/binary" src="${saxon.binary.file}"/>
+                  <mkdir dir="${project.build.directory}/classes"/>
+                  <unzip dest="${project.build.directory}/classes" src="${project.build.directory}/download/binary/saxon9${saxon.module}.jar"/>
+
+                  <mkdir dir="${basedir}/target/src"/>
+                  <unzip dest="${basedir}/target/src" src="${saxon.source.file}"/>
+
+                </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <!-- ===================================================================== -->
+
+</project>
