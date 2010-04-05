@@ -32,7 +32,6 @@ import net.sf.saxon.s9api.QName;
  * Utility methods related to {@link Variable}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class Variables
 {

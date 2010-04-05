@@ -28,7 +28,6 @@ import java.util.Map;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public abstract class AbstractPortBinding extends AbstractHasLocation implements PortBinding
 {

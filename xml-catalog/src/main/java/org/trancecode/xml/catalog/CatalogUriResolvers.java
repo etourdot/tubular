@@ -40,7 +40,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class CatalogUriResolvers
 {

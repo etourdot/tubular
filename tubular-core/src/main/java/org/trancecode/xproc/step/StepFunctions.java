@@ -27,7 +27,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class StepFunctions
 {

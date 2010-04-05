@@ -43,7 +43,6 @@ import org.apache.fop.apps.FopFactory;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class XslFormatter extends AbstractStepProcessor
 {

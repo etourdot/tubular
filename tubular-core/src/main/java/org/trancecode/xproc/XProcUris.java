@@ -23,7 +23,6 @@ import java.net.URI;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface XProcUris
 {

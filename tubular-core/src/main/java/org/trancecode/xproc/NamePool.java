@@ -23,7 +23,6 @@ import org.trancecode.core.InterningPool;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class NamePool
 {

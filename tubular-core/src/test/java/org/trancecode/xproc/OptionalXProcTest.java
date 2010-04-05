@@ -23,7 +23,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 @Test
 public class OptionalXProcTest extends AbstractXProcTest implements XProcTestSuiteXmlModel

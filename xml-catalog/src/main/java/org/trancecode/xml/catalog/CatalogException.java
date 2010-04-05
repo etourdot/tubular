@@ -23,7 +23,6 @@ import org.trancecode.core.BaseException;
 
 /**
  * @author Herve
- * @version $Revision$
  */
 public class CatalogException extends BaseException
 {

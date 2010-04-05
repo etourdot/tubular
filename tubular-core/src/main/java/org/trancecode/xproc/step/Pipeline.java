@@ -32,7 +32,6 @@ import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class Pipeline extends AbstractCompoundStepProcessor
 {

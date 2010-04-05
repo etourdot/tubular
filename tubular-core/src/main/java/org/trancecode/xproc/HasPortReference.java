@@ -23,7 +23,6 @@ package org.trancecode.xproc;
  * For {@link Port} and {@link EnvironmentPort}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface HasPortReference
 {

@@ -25,7 +25,6 @@ import org.trancecode.xproc.EnvironmentPortBinding;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public abstract class AbstractEnvironmentPortBinding extends AbstractHasLocation implements EnvironmentPortBinding
 {

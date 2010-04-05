@@ -47,7 +47,6 @@ import org.testng.annotations.BeforeClass;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public abstract class AbstractXProcTest extends AbstractTest
 {

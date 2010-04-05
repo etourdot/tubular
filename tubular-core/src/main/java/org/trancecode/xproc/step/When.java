@@ -40,7 +40,6 @@ import net.sf.saxon.s9api.XdmValue;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class When extends AbstractCompoundStepProcessor
 {

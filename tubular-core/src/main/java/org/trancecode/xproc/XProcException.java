@@ -24,7 +24,6 @@ import org.trancecode.xml.Location;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class XProcException extends BaseException
 {

@@ -26,7 +26,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class StepName
 {

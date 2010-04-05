@@ -38,7 +38,6 @@ import net.sf.saxon.s9api.XdmNode;
  * Elements from the XProc XML model.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class XProcElements
 {

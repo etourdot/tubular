@@ -23,7 +23,6 @@ package org.trancecode.xproc;
  * Common XProc ports.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface XProcPorts
 {

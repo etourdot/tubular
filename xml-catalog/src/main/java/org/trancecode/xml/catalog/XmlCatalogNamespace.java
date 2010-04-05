@@ -23,7 +23,6 @@ import org.trancecode.xml.Namespace;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class XmlCatalogNamespace extends Namespace
 {

@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class CatalogEntityResolvers
 {

@@ -30,7 +30,6 @@ import net.sf.saxon.s9api.QName;
  * Standard XProc steps.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface XProcSteps extends XProcNamespaces
 {

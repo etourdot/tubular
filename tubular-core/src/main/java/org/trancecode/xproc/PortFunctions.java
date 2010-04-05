@@ -25,7 +25,6 @@ import com.google.common.base.Function;
  * {@link Function} implementations related to {@link Port}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class PortFunctions
 {

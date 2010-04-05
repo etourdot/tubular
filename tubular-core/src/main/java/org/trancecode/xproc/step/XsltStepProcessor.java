@@ -53,7 +53,6 @@ import net.sf.saxon.s9api.XsltTransformer;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class XsltStepProcessor extends AbstractStepProcessor
 {

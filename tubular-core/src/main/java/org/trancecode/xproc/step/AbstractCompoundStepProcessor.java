@@ -26,7 +26,6 @@ import org.trancecode.xproc.StepProcessor;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class AbstractCompoundStepProcessor implements StepProcessor
 {

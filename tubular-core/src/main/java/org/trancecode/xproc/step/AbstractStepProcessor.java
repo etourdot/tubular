@@ -27,7 +27,6 @@ import org.trancecode.xproc.XProcException;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public abstract class AbstractStepProcessor implements StepProcessor
 {

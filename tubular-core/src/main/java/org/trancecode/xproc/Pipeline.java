@@ -25,7 +25,6 @@ import net.sf.saxon.s9api.Processor;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class Pipeline
 {

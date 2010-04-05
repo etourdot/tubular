@@ -37,7 +37,6 @@ import org.testng.annotations.Test;
  * Tests for {@link CatalogParser}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 @Test
 public class CatalogParserTest extends AbstractTest

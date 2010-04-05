@@ -26,7 +26,6 @@ import org.trancecode.xml.Location;
  * Base {@link Exception} for errors related to pipelines.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class PipelineException extends BaseException
 {

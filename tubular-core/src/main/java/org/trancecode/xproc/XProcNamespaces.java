@@ -25,7 +25,6 @@ import org.trancecode.xml.Namespace;
  * XProc constants.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface XProcNamespaces
 {

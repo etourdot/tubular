@@ -23,7 +23,6 @@ import org.trancecode.xml.HasLocation;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface PortBinding extends HasLocation
 {

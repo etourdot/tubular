@@ -66,7 +66,6 @@ import net.sf.saxon.s9api.XdmNodeKind;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class PipelineParser
 {

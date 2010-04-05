@@ -28,7 +28,6 @@ import org.testng.annotations.Test;
  * Tests for {@link PipelineFactory}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 @Test
 public class PipelineFactoryTest extends AbstractTest

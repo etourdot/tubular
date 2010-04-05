@@ -28,7 +28,6 @@ import net.sf.saxon.s9api.QName;
  * Common XProc options.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface XProcOptions
 {

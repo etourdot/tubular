@@ -27,7 +27,6 @@ import com.google.common.base.Preconditions;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class CatalogQuery extends AbstractImmutableHashCodeObject
 {

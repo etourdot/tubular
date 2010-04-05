@@ -40,7 +40,6 @@ import com.google.common.collect.Iterables;
  * Utility methods related to {@link Catalog}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class Catalogs
 {

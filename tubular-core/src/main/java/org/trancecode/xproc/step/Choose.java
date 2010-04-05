@@ -36,7 +36,6 @@ import com.google.common.collect.Lists;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class Choose extends AbstractCompoundStepProcessor
 {

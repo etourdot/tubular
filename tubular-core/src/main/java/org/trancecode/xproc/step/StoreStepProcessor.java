@@ -38,7 +38,6 @@ import net.sf.saxon.s9api.Serializer.Property;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class StoreStepProcessor extends AbstractStepProcessor
 {

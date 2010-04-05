@@ -27,7 +27,6 @@ import org.trancecode.xproc.XProcSteps;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class IdentityStepProcessor extends AbstractStepProcessor
 {

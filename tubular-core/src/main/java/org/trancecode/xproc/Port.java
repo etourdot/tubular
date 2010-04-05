@@ -31,7 +31,6 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class Port extends AbstractHasLocation implements HasPortReference
 {

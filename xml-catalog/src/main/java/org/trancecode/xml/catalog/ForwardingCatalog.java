@@ -27,7 +27,6 @@ import com.google.common.collect.ForwardingObject;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class ForwardingCatalog extends ForwardingObject implements Function<CatalogQuery, URI>
 {

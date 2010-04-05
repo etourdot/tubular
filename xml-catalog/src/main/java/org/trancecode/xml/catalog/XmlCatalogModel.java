@@ -27,7 +27,6 @@ import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface XmlCatalogModel
 {

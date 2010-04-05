@@ -30,7 +30,6 @@ import com.google.common.collect.Iterables;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public class CountStepProcessor extends AbstractStepProcessor
 {

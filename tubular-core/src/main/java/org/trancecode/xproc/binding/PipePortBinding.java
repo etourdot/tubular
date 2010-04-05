@@ -31,7 +31,6 @@ import net.sf.saxon.s9api.XdmNode;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 @Immutable
 public class PipePortBinding extends AbstractPortBinding

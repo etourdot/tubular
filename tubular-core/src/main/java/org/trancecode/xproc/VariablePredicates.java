@@ -27,7 +27,6 @@ import net.sf.saxon.s9api.QName;
  * {@link Predicate} implementations related to {@link Variable}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class VariablePredicates
 {

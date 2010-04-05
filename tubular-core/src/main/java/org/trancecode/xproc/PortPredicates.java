@@ -25,7 +25,6 @@ import com.google.common.base.Predicate;
  * {@link Predicate} implementations related to {@link Port}.
  * 
  * @author Herve Quiroz
- * @version $Revision$
  */
 public final class PortPredicates
 {

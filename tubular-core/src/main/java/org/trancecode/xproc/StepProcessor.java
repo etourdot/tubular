@@ -21,7 +21,6 @@ package org.trancecode.xproc;
 
 /**
  * @author Herve Quiroz
- * @version $Revision$
  */
 public interface StepProcessor
 {
