@@ -19,6 +19,12 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
+import java.util.Collections;
+
 import org.trancecode.function.Pair;
 import org.trancecode.function.TranceCodeFunctions;
 import org.trancecode.logging.Logger;
@@ -30,12 +36,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.binding.PipePortBinding;
-
-import java.util.Collections;
-
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Herve Quiroz

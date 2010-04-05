@@ -19,16 +19,8 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.collection.TubularMaps;
-import org.trancecode.io.Uris;
-import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.PipelineException;
-import org.trancecode.xproc.Step;
-import org.trancecode.xproc.XProcExceptions;
-import org.trancecode.xproc.XProcOptions;
-import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.XProcSteps;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import java.net.URI;
 import java.util.List;
@@ -37,9 +29,6 @@ import java.util.Set;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import net.sf.saxon.OutputURIResolver;
 import net.sf.saxon.event.Receiver;
@@ -50,6 +39,16 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltTransformer;
+import org.trancecode.collection.TubularMaps;
+import org.trancecode.io.Uris;
+import org.trancecode.logging.Logger;
+import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcOptions;
+import org.trancecode.xproc.XProcPorts;
+import org.trancecode.xproc.XProcSteps;
 
 /**
  * @author Herve Quiroz

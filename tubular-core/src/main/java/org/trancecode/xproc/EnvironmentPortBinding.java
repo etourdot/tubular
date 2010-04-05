@@ -19,9 +19,8 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.xml.HasLocation;
-
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.xml.HasLocation;
 
 /**
  * @author Herve Quiroz

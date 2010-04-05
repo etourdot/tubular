@@ -19,17 +19,16 @@
  */
 package org.trancecode.xproc.binding;
 
-import org.trancecode.annotation.Immutable;
-import org.trancecode.xml.Location;
-import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.EnvironmentPortBinding;
-import org.trancecode.xproc.PipelineException;
-
 import java.util.Collections;
 
 import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.annotation.Immutable;
+import org.trancecode.xml.Location;
+import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.EnvironmentPortBinding;
+import org.trancecode.xproc.PipelineException;
 
 /**
  * @author Herve Quiroz

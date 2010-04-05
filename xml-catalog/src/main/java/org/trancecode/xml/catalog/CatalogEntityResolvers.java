@@ -19,13 +19,12 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.io.InputResolver;
+import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 import java.net.URI;
 
-import com.google.common.base.Preconditions;
-
+import org.trancecode.io.InputResolver;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

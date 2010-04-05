@@ -19,15 +19,15 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.binding.PipePortBinding;
-
-import java.util.List;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 /**
  * @author Herve Quiroz

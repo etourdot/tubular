@@ -19,6 +19,10 @@
  */
 package org.trancecode.xproc.step;
 
+import javax.xml.transform.Source;
+
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Jaxp;
 import org.trancecode.xproc.Environment;
@@ -27,11 +31,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-
-import javax.xml.transform.Source;
-
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmNode;
 
 /**
  * @author Herve Quiroz

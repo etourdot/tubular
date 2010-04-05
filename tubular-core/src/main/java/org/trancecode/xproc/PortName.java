@@ -20,7 +20,6 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

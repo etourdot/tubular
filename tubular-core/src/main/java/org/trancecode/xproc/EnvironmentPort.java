@@ -19,22 +19,21 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.Location;
-
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+import java.util.Collections;
+import java.util.List;
 
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathExecutable;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.Location;
 
 /**
  * @author Herve Quiroz

@@ -19,6 +19,12 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmAtomicValue;
+import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.collection.TubularIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
@@ -29,14 +35,6 @@ import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmAtomicValue;
-import net.sf.saxon.s9api.XdmItem;
-import net.sf.saxon.s9api.XdmValue;
 
 /**
  * @author Herve Quiroz

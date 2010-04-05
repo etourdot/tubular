@@ -19,11 +19,11 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.core.AbstractImmutableHashCodeObject;
+import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
-import com.google.common.base.Preconditions;
+import org.trancecode.core.AbstractImmutableHashCodeObject;
 
 /**
  * @author Herve Quiroz

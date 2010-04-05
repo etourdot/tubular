@@ -19,20 +19,6 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.collection.TubularIterables;
-import org.trancecode.collection.TubularMaps;
-import org.trancecode.core.TubularObjects;
-import org.trancecode.function.TranceCodeFunctions;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.AbstractHasLocation;
-import org.trancecode.xml.Location;
-import org.trancecode.xproc.step.StepFunctions;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -42,7 +28,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import net.sf.saxon.s9api.QName;
+import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.collection.TubularIterables;
+import org.trancecode.collection.TubularMaps;
+import org.trancecode.core.TubularObjects;
+import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.AbstractHasLocation;
+import org.trancecode.xml.Location;
+import org.trancecode.xproc.step.StepFunctions;
 
 /**
  * @author Herve Quiroz

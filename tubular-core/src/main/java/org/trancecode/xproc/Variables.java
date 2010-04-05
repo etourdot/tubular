@@ -19,14 +19,12 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.collection.TubularIterables;
-import org.trancecode.function.TranceCodeFunctions;
-
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-
 import net.sf.saxon.s9api.QName;
+import org.trancecode.collection.TubularIterables;
+import org.trancecode.function.TranceCodeFunctions;
 
 /**
  * Utility methods related to {@link Variable}.

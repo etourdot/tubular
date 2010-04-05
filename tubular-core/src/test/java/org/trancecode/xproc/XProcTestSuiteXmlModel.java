@@ -19,9 +19,8 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.xml.Namespace;
-
 import net.sf.saxon.s9api.QName;
+import org.trancecode.xml.Namespace;
 
 /**
  * @author Herve Quiroz

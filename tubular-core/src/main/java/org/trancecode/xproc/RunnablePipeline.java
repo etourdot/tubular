@@ -19,9 +19,7 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.io.OutputResolver;
-import org.trancecode.logging.Logger;
-import org.trancecode.xproc.binding.InlinePortBinding;
+import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,12 +27,13 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
 
-import com.google.common.collect.Lists;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.io.OutputResolver;
+import org.trancecode.logging.Logger;
+import org.trancecode.xproc.binding.InlinePortBinding;
 
 /**
  * @author Herve Quiroz

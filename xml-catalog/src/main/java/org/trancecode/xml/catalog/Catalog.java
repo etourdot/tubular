@@ -19,14 +19,14 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.annotation.Nullable;
-import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.io.Uris;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+import org.trancecode.annotation.Nullable;
+import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.io.Uris;
 
 /**
  * @author Herve Quiroz

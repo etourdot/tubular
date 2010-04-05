@@ -19,6 +19,17 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import java.util.Map;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
+
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.step.Choose;
@@ -29,18 +40,6 @@ import org.trancecode.xproc.step.LoadStepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
 import org.trancecode.xproc.step.When;
 import org.trancecode.xproc.step.XsltStepProcessor;
-
-import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.stream.StreamSource;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz

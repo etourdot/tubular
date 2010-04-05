@@ -19,15 +19,13 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
+import net.sf.saxon.s9api.QName;
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.TubularObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
-
-import com.google.common.base.Preconditions;
-
-import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz

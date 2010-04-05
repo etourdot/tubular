@@ -20,7 +20,6 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Predicate;
-
 import net.sf.saxon.s9api.QName;
 
 /**

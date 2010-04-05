@@ -19,11 +19,11 @@
  */
 package org.trancecode.xml.catalog;
 
-import java.net.URI;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingObject;
+
+import java.net.URI;
 
 /**
  * @author Herve Quiroz

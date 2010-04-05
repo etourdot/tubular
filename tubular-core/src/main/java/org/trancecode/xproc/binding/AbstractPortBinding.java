@@ -19,12 +19,12 @@
  */
 package org.trancecode.xproc.binding;
 
+import java.util.Map;
+
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
-
-import java.util.Map;
 
 /**
  * @author Herve Quiroz

@@ -19,16 +19,15 @@
  */
 package org.trancecode.xproc.binding;
 
+import java.util.Collections;
+
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.Immutable;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
-
-import java.util.Collections;
-
-import net.sf.saxon.s9api.XdmNode;
 
 /**
  * @author Herve Quiroz

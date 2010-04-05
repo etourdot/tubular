@@ -19,14 +19,13 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.Iterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.parser.XProcElements;
-
-import com.google.common.collect.Iterables;
 
 /**
  * @author Herve Quiroz

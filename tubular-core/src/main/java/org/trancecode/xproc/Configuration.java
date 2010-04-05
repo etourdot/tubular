@@ -19,14 +19,13 @@
  */
 package org.trancecode.xproc;
 
+import javax.xml.transform.URIResolver;
+
+import net.sf.saxon.s9api.Processor;
 import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
-
-import javax.xml.transform.URIResolver;
-
-import net.sf.saxon.s9api.Processor;
 
 /**
  * @author Herve Quiroz

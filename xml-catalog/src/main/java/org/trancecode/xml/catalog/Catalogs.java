@@ -19,22 +19,22 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.annotation.Nullable;
-import org.trancecode.core.AbstractImmutableHashCodeObject;
-import org.trancecode.core.AbstractImmutableObject;
-import org.trancecode.collection.TubularIterables;
-import org.trancecode.function.TranceCodeFunctions;
-import org.trancecode.io.UriFunctions;
-import org.trancecode.io.Uris;
-
-import java.net.URI;
-
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+
+import java.net.URI;
+
+import org.trancecode.annotation.Nullable;
+import org.trancecode.collection.TubularIterables;
+import org.trancecode.core.AbstractImmutableHashCodeObject;
+import org.trancecode.core.AbstractImmutableObject;
+import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.io.UriFunctions;
+import org.trancecode.io.Uris;
 
 /**
  * Utility methods related to {@link Catalog}.

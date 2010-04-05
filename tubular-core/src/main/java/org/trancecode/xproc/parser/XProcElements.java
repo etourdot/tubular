@@ -19,20 +19,19 @@
  */
 package org.trancecode.xproc.parser;
 
-import org.trancecode.xproc.XProcNamespaces;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 import java.io.StringReader;
 import java.util.Set;
 
 import javax.xml.transform.stream.StreamSource;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.xproc.XProcNamespaces;
 
 /**
  * Elements from the XProc XML model.

@@ -19,6 +19,12 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
@@ -27,12 +33,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-
-import java.util.Collections;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * @author Herve Quiroz

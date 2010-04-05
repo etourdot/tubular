@@ -19,9 +19,6 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.AbstractTest;
-import org.trancecode.io.Paths;
-
 import java.io.InputStream;
 import java.net.URI;
 
@@ -29,9 +26,10 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
-
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
+import org.trancecode.AbstractTest;
+import org.trancecode.io.Paths;
 
 /**
  * Tests for {@link CatalogParser}.

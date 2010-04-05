@@ -19,13 +19,6 @@
  */
 package org.trancecode.xproc.step;
 
-import org.trancecode.io.Uris;
-import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Step;
-import org.trancecode.xproc.XProcOptions;
-import org.trancecode.xproc.XProcPorts;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -37,9 +30,14 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.XdmNode;
-
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.trancecode.io.Uris;
+import org.trancecode.logging.Logger;
+import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.Step;
+import org.trancecode.xproc.XProcOptions;
+import org.trancecode.xproc.XProcPorts;
 
 /**
  * @author Herve Quiroz

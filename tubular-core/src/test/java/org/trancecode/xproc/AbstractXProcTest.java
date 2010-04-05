@@ -19,8 +19,7 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.AbstractTest;
-import org.trancecode.xml.saxon.SaxonUtil;
+import com.google.common.collect.Iterables;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,19 +30,17 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import com.google.common.collect.Iterables;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.custommonkey.xmlunit.XMLAssert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
+import org.trancecode.AbstractTest;
+import org.trancecode.xml.saxon.SaxonUtil;
 
 /**
  * @author Herve Quiroz

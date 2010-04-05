@@ -19,16 +19,14 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.Iterables;
+import net.sf.saxon.s9api.QName;
 import org.trancecode.annotation.Nullable;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-
-import com.google.common.collect.Iterables;
-
-import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz

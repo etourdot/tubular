@@ -19,6 +19,12 @@
  */
 package org.trancecode.xproc.step;
 
+import java.io.OutputStream;
+import java.net.URI;
+
+import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.Serializer.Property;
 import org.trancecode.io.IOUtil;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
@@ -28,13 +34,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.parser.XProcElements;
-
-import java.io.OutputStream;
-import java.net.URI;
-
-import net.sf.saxon.s9api.Serializer;
-import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.Serializer.Property;
 
 /**
  * @author Herve Quiroz

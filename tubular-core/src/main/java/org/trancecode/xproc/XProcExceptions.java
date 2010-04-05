@@ -19,10 +19,9 @@
  */
 package org.trancecode.xproc;
 
+import net.sf.saxon.s9api.QName;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.XProcException.Type;
-
-import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz

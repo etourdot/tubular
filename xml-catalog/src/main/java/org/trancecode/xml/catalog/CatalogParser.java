@@ -19,24 +19,23 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.io.Uris;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.XmlAttributes;
-import org.trancecode.xml.saxon.SaxonUtil;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import java.net.URI;
 import java.util.List;
 
 import javax.xml.transform.Source;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.io.Uris;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.XmlAttributes;
+import org.trancecode.xml.saxon.SaxonUtil;
 
 /**
  * @author Herve Quiroz

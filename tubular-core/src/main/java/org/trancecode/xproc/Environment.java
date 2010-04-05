@@ -19,24 +19,17 @@
  */
 package org.trancecode.xproc;
 
-import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.collection.TubularMaps;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.Location;
-import org.trancecode.xml.saxon.SaxonUtil;
-import org.trancecode.xproc.parser.XProcElements;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -47,6 +40,12 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
+import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.collection.TubularMaps;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.Location;
+import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xproc.parser.XProcElements;
 
 /**
  * @author Herve Quiroz
