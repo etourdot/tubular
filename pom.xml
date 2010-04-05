@@ -21,6 +21,22 @@
     <url>http://www.trancecode.org</url>
   </organization>
 
+  <issueManagement>
+    <system>Google Code</system>
+    <url>http://code.google.com/p/tubular/issues/list</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>Hudson</system>
+    <url>http://www.trancecode.org/hudson/job/tubular</url>
+  </ciManagement>
+
+  <scm>
+    <connection>scm:hg:https://tubular.googlecode.com/hg/</connection>
+    <developerConnection>scm:hg:https://tubular.googlecode.com/hg/</developerConnection>
+    <url>http://code.google.com/p/tubular/source/browse/</url>
+  </scm>
+
   <!-- ===================================================================== -->
 
   <developers>
@@ -31,6 +47,11 @@
       <email>herve.quiroz@trancecode.org</email>
       <organization>TranceCode</organization>
       <organizationUrl>http://www.trancecode.org</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Project Manager</role>
+        <role>Java Developer</role>
+      </roles>
     </developer>
 
   </developers>
@@ -38,17 +59,13 @@
   <!-- ===================================================================== -->
 
   <distributionManagement>
-    <site>
-      <id>trancecode.org</id>
-      <url>dav:http://www.trancecode.org/maven/site/trunk</url>
-    </site>
     <repository>
       <id>trancecode.org</id>
-      <url>dav:http://www.trancecode.org/maven/repository</url>
+      <url>scpexe://maven@maven.trancecode.org/home/maven/repository</url>
     </repository>
     <snapshotRepository>
       <id>trancecode.org</id>
-      <url>dav:http://www.trancecode.org/maven/repository</url>
+      <url>scpexe://maven@maven.trancecode.org/home/maven/repository</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
@@ -59,7 +76,7 @@
 
     <repository>
       <id>trancecode.org</id>
-      <url>http://www.trancecode.org/maven/repository/</url>
+      <url>http://maven.trancecode.org/repository/main/</url>
     </repository>
 
     <repository>
@@ -227,24 +244,27 @@
     </dependencies>
   </dependencyManagement>
 
+  <!-- ===================================================================== -->
+
   <build>
+
+    <extensions>
+
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>1.0-beta-6</version>
+      </extension>
+
+    </extensions>
+
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <executions>
-            <execution>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.1</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>
@@ -255,57 +275,14 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <!-- XXX disabled for now
-            <parallel>methods</parallel>
-            <threadCount>2</threadCount>
-            -->
-            <forkMode>once</forkMode>
-            <argLine>-Xmx128m</argLine>
-            <reportFormat>brief</reportFormat>
-            <testFailureIgnore>true</testFailureIgnore>
-            <workingDirectory>${basedir}/target</workingDirectory>
-            <systemProperties>
-              <property>
-                <name>org.trancecode.AbstractTest.QUIET</name>
-                <value>true</value>
-              </property>
-            </systemProperties>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.5</version>
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>javancss-maven-plugin</artifactId>
-          <version>2.0-beta-2</version>
-          <dependencies>
-            <dependency>
-              <groupId>javancss</groupId>
-              <artifactId>javancss</artifactId>
-              <version>29.50</version>
-            </dependency>
-          </dependencies>
+          <version>2.0</version>
         </plugin>
 
         <plugin>
@@ -320,9 +297,60 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
-          <version>1.2</version>
+          <version>2.3.1</version>
           <configuration>
             <xmlOutput>true</xmlOutput>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.1</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <!-- <parallel>methods</parallel> -->
+            <!-- <threadCount>2</threadCount> -->
+            <forkMode>once</forkMode>
+            <reportFormat>brief</reportFormat>
+            <testFailureIgnore>true</testFailureIgnore>
+            <argLine>-Xmx128m</argLine>
+            <workingDirectory>${basedir}/target</workingDirectory>
+            <systemProperties>
+              <property>
+                <name>org.trancecode.AbstractTest.QUIET</name>
+                <value>true</value>
+              </property>
+            </systemProperties>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.5</version>
+          <configuration>
+            <detectLinks>true</detectLinks>
+            <links>
+              <link>http://java.sun.com/javase/6/docs/api/</link>
+              <link>http://www.saxonica.com/documentation/javadoc/</link>
+            </links>
+            <source>1.6</source>
+            <failOnError>false</failOnError>
           </configuration>
         </plugin>
 
@@ -341,29 +369,5 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <reporting>
-
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <links>
-            <link>http://java.sun.com/javase/6/docs/api/</link>
-            <link>http://logging.apache.org/log4j/1.2/apidocs/</link>
-            <link>http://www.saxonica.com/documentation/javadoc/</link>
-            <link>http://google-collections.googlecode.com/svn/trunk/javadoc/</link>
-          </links>
-          <source>1.6</source>
-          <failOnError>false</failOnError>
-        </configuration>
-      </plugin>
-
-    </plugins>
-
-  </reporting>
 
 </project>
