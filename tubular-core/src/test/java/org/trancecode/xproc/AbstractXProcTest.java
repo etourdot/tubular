@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 
 /**

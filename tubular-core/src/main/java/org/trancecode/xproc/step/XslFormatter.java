@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.io.Uris;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
@@ -40,9 +41,6 @@ import net.sf.saxon.s9api.XdmNode;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -54,7 +52,7 @@ public class XslFormatter extends AbstractStepProcessor
 
 	public static final XslFormatter INSTANCE = new XslFormatter();
 
-	private static final Logger LOG = LoggerFactory.getLogger(XslFormatter.class);
+	private static final Logger LOG = Logger.getLogger(XslFormatter.class);
 
 
 	@Override

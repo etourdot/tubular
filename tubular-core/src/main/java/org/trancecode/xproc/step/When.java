@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import org.trancecode.collection.TubularIterables;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
@@ -37,9 +38,6 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -56,7 +54,7 @@ public class When extends AbstractCompoundStepProcessor
 			Variable.newOption(XProcOptions.TEST).setRequired(true));
 	public static final Step STEP_OTHERWISE = Step.newStep(XProcSteps.OTHERWISE, INSTANCE, true).declarePorts(PORTS);
 
-	private static final Logger LOG = LoggerFactory.getLogger(When.class);
+	private static final Logger LOG = Logger.getLogger(When.class);
 
 
 	private When()

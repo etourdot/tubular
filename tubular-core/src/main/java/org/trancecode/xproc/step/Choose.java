@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
@@ -33,9 +34,6 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -49,7 +47,7 @@ public class Choose extends AbstractCompoundStepProcessor
 		ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT).setSequence(false).setPrimary(false));
 	public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true).declarePorts(PORTS);
 
-	private static final Logger LOG = LoggerFactory.getLogger(Choose.class);
+	private static final Logger LOG = Logger.getLogger(Choose.class);
 
 
 	private Choose()

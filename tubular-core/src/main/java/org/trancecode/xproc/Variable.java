@@ -21,15 +21,13 @@ package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.TubularObjects;
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 
 import com.google.common.base.Preconditions;
 
 import net.sf.saxon.s9api.QName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Variable extends AbstractHasLocation
 {
-	private static final Logger LOG = LoggerFactory.getLogger(Variable.class);
+	private static final Logger LOG = Logger.getLogger(Variable.class);
 
 
 	private static enum Type

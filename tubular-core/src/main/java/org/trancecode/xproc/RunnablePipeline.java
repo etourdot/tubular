@@ -20,6 +20,7 @@
 package org.trancecode.xproc;
 
 import org.trancecode.io.OutputResolver;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.binding.InlinePortBinding;
 
 import java.util.Arrays;
@@ -35,9 +36,6 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -45,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RunnablePipeline
 {
-	private static final Logger LOG = LoggerFactory.getLogger(RunnablePipeline.class);
+	private static final Logger LOG = Logger.getLogger(RunnablePipeline.class);
 
 	private final Processor processor;
 	private URIResolver uriResolver;

@@ -20,6 +20,7 @@
 package org.trancecode.xproc.binding;
 
 import org.trancecode.annotation.Immutable;
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
@@ -27,9 +28,6 @@ import org.trancecode.xproc.EnvironmentPortBinding;
 import org.trancecode.xproc.PortReference;
 
 import net.sf.saxon.s9api.XdmNode;
-
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
 
 
 /**
@@ -39,7 +37,7 @@ import org.slf4j.ext.XLoggerFactory;
 @Immutable
 public class PipePortBinding extends AbstractPortBinding
 {
-	private final XLogger log = XLoggerFactory.getXLogger(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 
 	private final PortReference portReference;
 
@@ -69,8 +67,7 @@ public class PipePortBinding extends AbstractPortBinding
 		{
 			public Iterable<XdmNode> readNodes()
 			{
-				log.entry();
-				log.trace("boundPort = {}", boundPort);
+				log.trace("{@method} boundPort = {}", boundPort);
 				return boundPort.readNodes();
 			}
 		};

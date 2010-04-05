@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
@@ -26,9 +27,6 @@ import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.parser.XProcElements;
 
 import com.google.common.collect.Iterables;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -39,7 +37,7 @@ public class CountStepProcessor extends AbstractStepProcessor
 {
 	public static final CountStepProcessor INSTANCE = new CountStepProcessor();
 
-	private static final Logger LOG = LoggerFactory.getLogger(CountStepProcessor.class);
+	private static final Logger LOG = Logger.getLogger(CountStepProcessor.class);
 
 
 	@Override

@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
 import org.trancecode.xproc.Port;
@@ -35,9 +36,6 @@ import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -47,7 +45,7 @@ public class ForEach extends AbstractCompoundStepProcessor
 {
 	public static final ForEach INSTANCE = new ForEach();
 
-	private static final Logger LOG = LoggerFactory.getLogger(ForEach.class);
+	private static final Logger LOG = Logger.getLogger(ForEach.class);
 
 	private static final Iterable<Port> PORTS =
 		ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE).setSequence(true), Port.newOutputPort(

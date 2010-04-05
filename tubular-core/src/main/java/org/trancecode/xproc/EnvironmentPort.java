@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 
 import java.util.Collections;
@@ -35,9 +36,6 @@ import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -45,7 +43,7 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class EnvironmentPort implements HasPortReference
 {
-	private static final XLogger LOG = XLoggerFactory.getXLogger(EnvironmentPort.class);
+	private static final Logger LOG = Logger.getLogger(EnvironmentPort.class);
 
 	private final Port declaredPort;
 	protected final List<EnvironmentPortBinding> portBindings;
@@ -109,7 +107,7 @@ public class EnvironmentPort implements HasPortReference
 
 	public Iterable<XdmNode> readNodes()
 	{
-		LOG.entry(declaredPort);
+		LOG.trace("{@method} declaredPort = {}", declaredPort);
 
 		// TODO improve this by returning a true Iterable
 		final List<XdmNode> nodes = Lists.newArrayList();

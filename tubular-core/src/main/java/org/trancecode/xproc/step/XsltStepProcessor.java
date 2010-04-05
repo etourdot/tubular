@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.collection.TubularMaps;
 import org.trancecode.io.Uris;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
@@ -50,9 +51,6 @@ import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltTransformer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -65,7 +63,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
 	private static final String DEFAULT_VERSION = "2.0";
 	private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("2.0");
 
-	private static final Logger LOG = LoggerFactory.getLogger(XsltStepProcessor.class);
+	private static final Logger LOG = Logger.getLogger(XsltStepProcessor.class);
 
 
 	@Override

@@ -20,6 +20,7 @@
 package org.trancecode.xml.catalog;
 
 import org.trancecode.io.Uris;
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.XmlAttributes;
 import org.trancecode.xml.saxon.SaxonUtil;
 
@@ -37,9 +38,6 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CatalogParser
 {
-	private static final Logger LOG = LoggerFactory.getLogger(CatalogParser.class);
+	private static final Logger LOG = Logger.getLogger(CatalogParser.class);
 
 	private final Processor processor;
 

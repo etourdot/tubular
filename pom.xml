@@ -148,6 +148,18 @@
       </dependency>
 
       <dependency>
+        <groupId>org.trancecode.logging</groupId>
+        <artifactId>tc-logging-core</artifactId>
+        <version>0.1-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.trancecode.logging</groupId>
+        <artifactId>tc-logging-log4j</artifactId>
+        <version>0.1-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.4</version>

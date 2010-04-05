@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.io.IOUtil;
 import org.trancecode.io.MediaTypes;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
@@ -34,9 +35,6 @@ import java.net.URI;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.Serializer.Property;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -59,7 +57,7 @@ public class StoreStepProcessor extends AbstractStepProcessor
 
 	public static final StoreStepProcessor INSTANCE = new StoreStepProcessor();
 
-	private static final Logger LOG = LoggerFactory.getLogger(StoreStepProcessor.class);
+	private static final Logger LOG = Logger.getLogger(StoreStepProcessor.class);
 
 
 	@Override

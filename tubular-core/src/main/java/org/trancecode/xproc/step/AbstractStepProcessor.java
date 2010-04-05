@@ -19,13 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.XProcException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -34,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractStepProcessor implements StepProcessor
 {
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractStepProcessor.class);
+	private static final Logger LOG = Logger.getLogger(AbstractStepProcessor.class);
 
 
 	@Override

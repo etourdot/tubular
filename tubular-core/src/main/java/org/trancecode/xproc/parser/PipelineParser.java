@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.parser;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonIterables;
 import org.trancecode.xml.saxon.SaxonLocation;
@@ -63,9 +64,6 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -73,7 +71,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PipelineParser
 {
-	private static final Logger LOG = LoggerFactory.getLogger(PipelineParser.class);
+	private static final Logger LOG = Logger.getLogger(PipelineParser.class);
 	private static Set<String> EMPTY_LIBRARIES = ImmutableSet.of();
 
 	private final Processor processor;

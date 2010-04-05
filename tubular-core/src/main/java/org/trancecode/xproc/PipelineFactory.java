@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.step.Choose;
 import org.trancecode.xproc.step.CountStepProcessor;
@@ -41,9 +42,6 @@ import com.google.common.collect.Maps;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -51,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PipelineFactory
 {
-	private static final Logger LOG = LoggerFactory.getLogger(PipelineFactory.class);
+	private static final Logger LOG = Logger.getLogger(PipelineFactory.class);
 
 	private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
 

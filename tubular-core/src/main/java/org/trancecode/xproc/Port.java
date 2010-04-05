@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.binding.PipePortBinding;
@@ -28,9 +29,6 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -38,7 +36,7 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class Port extends AbstractHasLocation implements HasPortReference
 {
-	private static final XLogger LOG = XLoggerFactory.getXLogger(Port.class);
+	private static final Logger LOG = Logger.getLogger(Port.class);
 	private static final List<PortBinding> EMPTY_PORT_BINDING_LIST = ImmutableList.of();
 
 	private final Type type;

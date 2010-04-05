@@ -24,6 +24,7 @@ import org.trancecode.collection.TubularIterables;
 import org.trancecode.collection.TubularMaps;
 import org.trancecode.core.TubularObjects;
 import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.step.StepFunctions;
@@ -43,9 +44,6 @@ import com.google.common.collect.Maps;
 
 import net.sf.saxon.s9api.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -53,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Step extends AbstractHasLocation
 {
-	private static final Logger LOG = LoggerFactory.getLogger(Step.class);
+	private static final Logger LOG = Logger.getLogger(Step.class);
 	private static final List<Variable> EMPTY_VARIABLE_LIST = ImmutableList.of();
 	private static final Map<QName, Variable> EMPTY_PARAMETER_MAP = ImmutableMap.of();
 	private static final Map<String, Port> EMPTY_PORT_MAP = Collections.emptyMap();

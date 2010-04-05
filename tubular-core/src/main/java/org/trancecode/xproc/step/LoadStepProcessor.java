@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.Jaxp;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
@@ -32,9 +33,6 @@ import javax.xml.transform.Source;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -44,7 +42,7 @@ public class LoadStepProcessor extends AbstractStepProcessor
 {
 	public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
 
-	private static final Logger LOG = LoggerFactory.getLogger(LoadStepProcessor.class);
+	private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
 
 
 	@Override

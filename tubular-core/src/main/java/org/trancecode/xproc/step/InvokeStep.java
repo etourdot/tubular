@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.function.Pair;
 import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.PortBinding;
@@ -36,9 +37,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -48,7 +46,7 @@ public class InvokeStep implements StepProcessor
 {
 	public static final InvokeStep INSTANCE = new InvokeStep();
 
-	private static final Logger LOG = LoggerFactory.getLogger(InvokeStep.class);
+	private static final Logger LOG = Logger.getLogger(InvokeStep.class);
 
 
 	private InvokeStep()
@@ -66,34 +64,36 @@ public class InvokeStep implements StepProcessor
 
 		// declare ports from invoked step
 		invokeStep =
-			TranceCodeFunctions.apply(invokeStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
-			{
-				@Override
-				public Step apply(final Pair<Step, Port> arguments)
+			TranceCodeFunctions.apply(
+				invokeStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
 				{
-					final Step step = arguments.left();
-					final Port port = arguments.right();
-					if (port.isOutput())
+					@Override
+					public Step apply(final Pair<Step, Port> arguments)
 					{
-						return step.declarePort(port.pipe(port));
-					}
+						final Step step = arguments.left();
+						final Port port = arguments.right();
+						if (port.isOutput())
+						{
+							return step.declarePort(port.pipe(port));
+						}
 
-					return step.declarePort(port);
-				}
-			});
+						return step.declarePort(port);
+					}
+				});
 
 		// declare variables from invoked step
 		invokeStep =
-			TranceCodeFunctions.apply(invokeStep, invokedStep.getVariables(), new Function<Pair<Step, Variable>, Step>()
-			{
-				@Override
-				public Step apply(final Pair<Step, Variable> arguments)
+			TranceCodeFunctions.apply(
+				invokeStep, invokedStep.getVariables(), new Function<Pair<Step, Variable>, Step>()
 				{
-					final Step step = arguments.left();
-					final Variable variable = arguments.right();
-					return step.declareVariable(variable);
-				}
-			});
+					@Override
+					public Step apply(final Pair<Step, Variable> arguments)
+					{
+						final Step step = arguments.left();
+						final Variable variable = arguments.right();
+						return step.declareVariable(variable);
+					}
+				});
 
 		return invokeStep;
 	}

@@ -19,13 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -36,7 +34,7 @@ public class IdentityStepProcessor extends AbstractStepProcessor
 {
 	public static final IdentityStepProcessor INSTANCE = new IdentityStepProcessor();
 
-	private static final Logger LOG = LoggerFactory.getLogger(IdentityStepProcessor.class);
+	private static final Logger LOG = Logger.getLogger(IdentityStepProcessor.class);
 
 
 	@Override

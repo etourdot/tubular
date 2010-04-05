@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.collection.TubularMaps;
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.parser.XProcElements;
@@ -47,9 +48,6 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 
-import org.slf4j.ext.XLogger;
-import org.slf4j.ext.XLoggerFactory;
-
 
 /**
  * @author Herve Quiroz
@@ -57,7 +55,7 @@ import org.slf4j.ext.XLoggerFactory;
  */
 public class Environment
 {
-	private static final XLogger LOG = XLoggerFactory.getXLogger(Environment.class);
+	private static final Logger LOG = Logger.getLogger(Environment.class);
 
 	private final EnvironmentPort defaultReadablePort;
 	private final Map<QName, String> inheritedVariables;
@@ -548,7 +546,7 @@ public class Environment
 
 	public EnvironmentPort addEnvironmentPort(final Port port)
 	{
-		LOG.entry(port);
+		LOG.trace("{@method} port = {}", port);
 		assert port.getPortReference().equals(port.getPortReference());
 		assert !ports.containsKey(port.getPortReference());
 		final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
@@ -629,7 +627,7 @@ public class Environment
 	public XdmValue evaluateXPath(final String select)
 	{
 		assert select != null;
-		LOG.entry(select);
+		LOG.trace("{@method} select = {}", select);
 
 		final XdmNode xpathContextNode = getXPathContextNode();
 		assert xpathContextNode != null;
@@ -642,7 +640,7 @@ public class Environment
 	public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode)
 	{
 		assert select != null;
-		LOG.entry(select);
+		LOG.trace("{@method} select = {}", select);
 
 		// TODO slow
 		final Map<QName, String> variables = TubularMaps.merge(inheritedVariables, localVariables);
