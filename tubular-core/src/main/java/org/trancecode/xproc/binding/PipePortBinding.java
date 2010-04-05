@@ -29,7 +29,6 @@ import org.trancecode.xproc.PortReference;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
@@ -37,46 +36,42 @@ import net.sf.saxon.s9api.XdmNode;
 @Immutable
 public class PipePortBinding extends AbstractPortBinding
 {
-	private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
-	private final PortReference portReference;
+    private final PortReference portReference;
 
+    public PipePortBinding(final String stepName, final String portName, final Location location)
+    {
+        this(PortReference.newReference(stepName, portName), location);
+    }
 
-	public PipePortBinding(final String stepName, final String portName, final Location location)
-	{
-		this(PortReference.newReference(stepName, portName), location);
-	}
+    public PipePortBinding(final PortReference portReference, final Location location)
+    {
+        super(location);
 
+        assert portReference != null;
+        this.portReference = portReference;
+    }
 
-	public PipePortBinding(final PortReference portReference, final Location location)
-	{
-		super(location);
+    @Override
+    public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
+    {
+        final EnvironmentPort boundPort = environment.getEnvironmentPort(portReference);
+        assert boundPort != null : "port = " + portReference + " ; location = " + location;
 
-		assert portReference != null;
-		this.portReference = portReference;
-	}
+        return new AbstractEnvironmentPortBinding(location)
+        {
+            public Iterable<XdmNode> readNodes()
+            {
+                log.trace("{@method} boundPort = {}", boundPort);
+                return boundPort.readNodes();
+            }
+        };
+    }
 
-
-	@Override
-	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
-	{
-		final EnvironmentPort boundPort = environment.getEnvironmentPort(portReference);
-		assert boundPort != null : "port = " + portReference + " ; location = " + location;
-
-		return new AbstractEnvironmentPortBinding(location)
-		{
-			public Iterable<XdmNode> readNodes()
-			{
-				log.trace("{@method} boundPort = {}", boundPort);
-				return boundPort.readNodes();
-			}
-		};
-	}
-
-
-	@Override
-	public String toString()
-	{
-		return String.format("%s[%s]", getClass().getSimpleName(), portReference);
-	}
+    @Override
+    public String toString()
+    {
+        return String.format("%s[%s]", getClass().getSimpleName(), portReference);
+    }
 }

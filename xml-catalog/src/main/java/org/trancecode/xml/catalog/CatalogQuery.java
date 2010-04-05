@@ -25,60 +25,53 @@ import java.net.URI;
 
 import com.google.common.base.Preconditions;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class CatalogQuery extends AbstractImmutableHashCodeObject
 {
-	private final String publicId;
-	private final String systemId;
-	private final URI uri;
-	private String uriAsString;
+    private final String publicId;
+    private final String systemId;
+    private final URI uri;
+    private String uriAsString;
 
+    public static CatalogQuery newInstance(final String publicId, final String systemId, final URI uri)
+    {
+        return new CatalogQuery(publicId, systemId, uri);
+    }
 
-	public static CatalogQuery newInstance(final String publicId, final String systemId, final URI uri)
-	{
-		return new CatalogQuery(publicId, systemId, uri);
-	}
+    private CatalogQuery(final String publicId, final String systemId, final URI uri)
+    {
+        super(publicId, systemId, uri);
+        Preconditions.checkArgument(publicId != null || systemId != null || uri != null);
+        this.publicId = publicId;
+        this.systemId = systemId;
+        this.uri = uri;
+    }
 
+    public String publicId()
+    {
+        return publicId;
+    }
 
-	private CatalogQuery(final String publicId, final String systemId, final URI uri)
-	{
-		super(publicId, systemId, uri);
-		Preconditions.checkArgument(publicId != null || systemId != null || uri != null);
-		this.publicId = publicId;
-		this.systemId = systemId;
-		this.uri = uri;
-	}
+    public String systemId()
+    {
+        return systemId;
+    }
 
+    public URI uri()
+    {
+        return uri;
+    }
 
-	public String publicId()
-	{
-		return publicId;
-	}
+    public String uriAsString()
+    {
+        if (uriAsString == null && uri != null)
+        {
+            uriAsString = uri.toString();
+        }
 
-
-	public String systemId()
-	{
-		return systemId;
-	}
-
-
-	public URI uri()
-	{
-		return uri;
-	}
-
-
-	public String uriAsString()
-	{
-		if (uriAsString == null && uri != null)
-		{
-			uriAsString = uri.toString();
-		}
-
-		return uriAsString;
-	}
+        return uriAsString;
+    }
 }

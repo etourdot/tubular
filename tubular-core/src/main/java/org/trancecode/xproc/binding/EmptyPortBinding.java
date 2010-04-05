@@ -28,7 +28,6 @@ import java.util.Collections;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
@@ -36,29 +35,27 @@ import net.sf.saxon.s9api.XdmNode;
 @Immutable
 public class EmptyPortBinding extends AbstractPortBinding
 {
-	public EmptyPortBinding(final Location location)
-	{
-		super(location);
-	}
+    public EmptyPortBinding(final Location location)
+    {
+        super(location);
+    }
 
+    @Override
+    public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
+    {
+        return new AbstractEnvironmentPortBinding(location)
+        {
+            @Override
+            public Iterable<XdmNode> readNodes()
+            {
+                return Collections.emptyList();
+            }
+        };
+    }
 
-	@Override
-	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
-	{
-		return new AbstractEnvironmentPortBinding(location)
-		{
-			@Override
-			public Iterable<XdmNode> readNodes()
-			{
-				return Collections.emptyList();
-			}
-		};
-	}
-
-
-	@Override
-	public String toString()
-	{
-		return getClass().getSimpleName();
-	}
+    @Override
+    public String toString()
+    {
+        return getClass().getSimpleName();
+    }
 }

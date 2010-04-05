@@ -37,118 +37,110 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class InvokeStep implements StepProcessor
 {
-	public static final InvokeStep INSTANCE = new InvokeStep();
+    public static final InvokeStep INSTANCE = new InvokeStep();
 
-	private static final Logger LOG = Logger.getLogger(InvokeStep.class);
+    private static final Logger LOG = Logger.getLogger(InvokeStep.class);
 
+    private InvokeStep()
+    {
+        // single instance
+    }
 
-	private InvokeStep()
-	{
-		// single instance
-	}
+    public static Step newInvokeStep(final Step invokedStep)
+    {
+        assert invokedStep != null;
 
+        Step invokeStep = Step.newStep(invokedStep.getType(), INSTANCE, true).setSubpipeline(
+                ImmutableList.of(invokedStep));
 
-	public static Step newInvokeStep(final Step invokedStep)
-	{
-		assert invokedStep != null;
+        // declare ports from invoked step
+        invokeStep = TranceCodeFunctions.apply(invokeStep, invokedStep.getPorts().values(),
+                new Function<Pair<Step, Port>, Step>()
+                {
+                    @Override
+                    public Step apply(final Pair<Step, Port> arguments)
+                    {
+                        final Step step = arguments.left();
+                        final Port port = arguments.right();
+                        if (port.isOutput())
+                        {
+                            return step.declarePort(port.pipe(port));
+                        }
 
-		Step invokeStep =
-			Step.newStep(invokedStep.getType(), INSTANCE, true).setSubpipeline(ImmutableList.of(invokedStep));
+                        return step.declarePort(port);
+                    }
+                });
 
-		// declare ports from invoked step
-		invokeStep =
-			TranceCodeFunctions.apply(
-				invokeStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
-				{
-					@Override
-					public Step apply(final Pair<Step, Port> arguments)
-					{
-						final Step step = arguments.left();
-						final Port port = arguments.right();
-						if (port.isOutput())
-						{
-							return step.declarePort(port.pipe(port));
-						}
+        // declare variables from invoked step
+        invokeStep = TranceCodeFunctions.apply(invokeStep, invokedStep.getVariables(),
+                new Function<Pair<Step, Variable>, Step>()
+                {
+                    @Override
+                    public Step apply(final Pair<Step, Variable> arguments)
+                    {
+                        final Step step = arguments.left();
+                        final Variable variable = arguments.right();
+                        return step.declareVariable(variable);
+                    }
+                });
 
-						return step.declarePort(port);
-					}
-				});
+        return invokeStep;
+    }
 
-		// declare variables from invoked step
-		invokeStep =
-			TranceCodeFunctions.apply(
-				invokeStep, invokedStep.getVariables(), new Function<Pair<Step, Variable>, Step>()
-				{
-					@Override
-					public Step apply(final Pair<Step, Variable> arguments)
-					{
-						final Step step = arguments.left();
-						final Variable variable = arguments.right();
-						return step.declareVariable(variable);
-					}
-				});
+    private Step setupInvokeStep(final Step invokeStep)
+    {
+        final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
-		return invokeStep;
-	}
+        return TranceCodeFunctions.apply(invokedStep, invokedStep.getPorts().values(),
+                new Function<Pair<Step, Port>, Step>()
+                {
+                    @Override
+                    public Step apply(final Pair<Step, Port> arguments)
+                    {
+                        final Step step = arguments.left();
+                        final Port port = arguments.right();
+                        if (port.isInput())
+                        {
+                            final PortReference localPortReference = PortReference.newReference(invokedStep.getName(),
+                                    port.getPortName());
+                            LOG.trace("{} -> {}", localPortReference, port.getPortReference());
+                            final Iterable<PortBinding> portBindings = Collections
+                                    .singleton((PortBinding) new PipePortBinding(localPortReference, invokeStep
+                                            .getLocation()));
+                            return step.setPortBindings(port.getPortName(), portBindings);
+                        }
+                        else
+                        {
+                            return step;
+                        }
+                    }
+                });
+    }
 
+    private Step getInvokedStep(final Step invokeStep)
+    {
+        assert invokeStep != null;
+        return Iterables.getOnlyElement(invokeStep.getSubpipeline());
+    }
 
-	private Step setupInvokeStep(final Step invokeStep)
-	{
-		final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
+    @Override
+    public Environment run(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
+        assert step.isCompoundStep();
 
-		return TranceCodeFunctions.apply(
-			invokedStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
-			{
-				@Override
-				public Step apply(final Pair<Step, Port> arguments)
-				{
-					final Step step = arguments.left();
-					final Port port = arguments.right();
-					if (port.isInput())
-					{
-						final PortReference localPortReference =
-							PortReference.newReference(invokedStep.getName(), port.getPortName());
-						LOG.trace("{} -> {}", localPortReference, port.getPortReference());
-						final Iterable<PortBinding> portBindings =
-							Collections.singleton((PortBinding)new PipePortBinding(localPortReference, invokeStep
-								.getLocation()));
-						return step.setPortBindings(port.getPortName(), portBindings);
-					}
-					else
-					{
-						return step;
-					}
-				}
-			});
-	}
+        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
 
+        final Step invokedStep = setupInvokeStep(getInvokedStep(step));
+        final Environment invokedStepEnvironment = stepEnvironment.newChildStepEnvironment();
+        final Environment resultEnvironment = invokedStep.run(invokedStepEnvironment);
 
-	private Step getInvokedStep(final Step invokeStep)
-	{
-		assert invokeStep != null;
-		return Iterables.getOnlyElement(invokeStep.getSubpipeline());
-	}
-
-
-	@Override
-	public Environment run(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
-		assert step.isCompoundStep();
-
-		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-
-		final Step invokedStep = setupInvokeStep(getInvokedStep(step));
-		final Environment invokedStepEnvironment = stepEnvironment.newChildStepEnvironment();
-		final Environment resultEnvironment = invokedStep.run(invokedStepEnvironment);
-
-		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
-	}
+        return stepEnvironment.setupOutputPorts(step, resultEnvironment);
+    }
 }

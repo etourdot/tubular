@@ -28,52 +28,45 @@ import java.net.URI;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class Catalog extends ForwardingCatalog
 {
-	private static final Catalog defaultCatalog = newCatalog(Catalogs.defaultCatalog());
+    private static final Catalog defaultCatalog = newCatalog(Catalogs.defaultCatalog());
 
+    public static Catalog defaultCatalog()
+    {
+        return defaultCatalog;
+    }
 
-	public static Catalog defaultCatalog()
-	{
-		return defaultCatalog;
-	}
+    public static Catalog newCatalog(final Function<CatalogQuery, URI> catalogFunction)
+    {
+        return new Catalog(catalogFunction);
+    }
 
+    private Catalog(final Function<CatalogQuery, URI> catalog)
+    {
+        super(catalog);
+    }
 
-	public static Catalog newCatalog(final Function<CatalogQuery, URI> catalogFunction)
-	{
-		return new Catalog(catalogFunction);
-	}
+    @ReturnsNullable
+    public URI resolveEntity(@Nullable final String publicId, @Nullable final String systemId)
+    {
+        return apply(CatalogQuery.newInstance(publicId, systemId, null));
+    }
 
+    @ReturnsNullable
+    public URI resolveUri(@Nullable final String href, @Nullable final String base)
+    {
+        Preconditions.checkArgument(href != null || base != null);
+        return apply(CatalogQuery.newInstance(null, null, Uris.resolve(href, base)));
+    }
 
-	private Catalog(final Function<CatalogQuery, URI> catalog)
-	{
-		super(catalog);
-	}
-
-
-	@ReturnsNullable
-	public URI resolveEntity(@Nullable final String publicId, @Nullable final String systemId)
-	{
-		return apply(CatalogQuery.newInstance(publicId, systemId, null));
-	}
-
-
-	@ReturnsNullable
-	public URI resolveUri(@Nullable final String href, @Nullable final String base)
-	{
-		Preconditions.checkArgument(href != null || base != null);
-		return apply(CatalogQuery.newInstance(null, null, Uris.resolve(href, base)));
-	}
-
-
-	@ReturnsNullable
-	public URI resolveUri(@Nullable final URI uri)
-	{
-		return apply(CatalogQuery.newInstance(null, null, uri));
-	}
+    @ReturnsNullable
+    public URI resolveUri(@Nullable final URI uri)
+    {
+        return apply(CatalogQuery.newInstance(null, null, uri));
+    }
 }

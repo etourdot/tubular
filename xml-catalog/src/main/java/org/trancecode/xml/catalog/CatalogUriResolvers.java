@@ -38,65 +38,60 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class CatalogUriResolvers
 {
-	private CatalogUriResolvers()
-	{
-		// No instantiation
-	}
+    private CatalogUriResolvers()
+    {
+        // No instantiation
+    }
 
+    public static URIResolver newUriResolver(final InputResolver inputResolver, final Catalog catalog)
+    {
+        return new EntityResolverURIResolver(inputResolver, catalog);
+    }
 
-	public static URIResolver newUriResolver(final InputResolver inputResolver, final Catalog catalog)
-	{
-		return new EntityResolverURIResolver(inputResolver, catalog);
-	}
+    private static class EntityResolverURIResolver extends AbstractImmutableObject implements URIResolver
+    {
+        private final InputResolver inputResolver;
+        private final Catalog catalog;
+        private final EntityResolver entityResolver;
 
+        public EntityResolverURIResolver(final InputResolver inputResolver, final Catalog catalog)
+        {
+            super(inputResolver, catalog);
+            Preconditions.checkNotNull(inputResolver);
+            Preconditions.checkNotNull(catalog);
+            this.inputResolver = inputResolver;
+            this.catalog = catalog;
+            entityResolver = CatalogEntityResolvers.newEntityResolver(inputResolver, catalog);
+        }
 
-	private static class EntityResolverURIResolver extends AbstractImmutableObject implements URIResolver
-	{
-		private final InputResolver inputResolver;
-		private final Catalog catalog;
-		private final EntityResolver entityResolver;
+        @Override
+        public Source resolve(final String href, final String base) throws TransformerException
+        {
+            final URI uri = catalog.resolveUri(href, base);
+            final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
+            inputSource.setSystemId(uri.toString());
 
+            try
+            {
+                final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+                xmlReader.setEntityResolver(entityResolver);
 
-		public EntityResolverURIResolver(final InputResolver inputResolver, final Catalog catalog)
-		{
-			super(inputResolver, catalog);
-			Preconditions.checkNotNull(inputResolver);
-			Preconditions.checkNotNull(catalog);
-			this.inputResolver = inputResolver;
-			this.catalog = catalog;
-			entityResolver = CatalogEntityResolvers.newEntityResolver(inputResolver, catalog);
-		}
+                final SAXSource source = new SAXSource(xmlReader, inputSource);
+                source.setSystemId(uri.toString());
 
-
-		@Override
-		public Source resolve(final String href, final String base) throws TransformerException
-		{
-			final URI uri = catalog.resolveUri(href, base);
-			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
-			inputSource.setSystemId(uri.toString());
-
-			try
-			{
-				final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-				xmlReader.setEntityResolver(entityResolver);
-
-				final SAXSource source = new SAXSource(xmlReader, inputSource);
-				source.setSystemId(uri.toString());
-
-				return source;
-			}
-			catch (final SAXException e)
-			{
-				Sax.closeQuietly(inputSource);
-				throw new TransformerException(String.format("href = %s ; base = %s", href, base), e);
-			}
-		}
-	}
+                return source;
+            }
+            catch (final SAXException e)
+            {
+                Sax.closeQuietly(inputSource);
+                throw new TransformerException(String.format("href = %s ; base = %s", href, base), e);
+            }
+        }
+    }
 }

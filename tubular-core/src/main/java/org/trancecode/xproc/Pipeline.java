@@ -23,48 +23,43 @@ import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class Pipeline
 {
-	private final Processor processor;
-	private final URIResolver uriResolver;
-	private final Step pipeline;
+    private final Processor processor;
+    private final URIResolver uriResolver;
+    private final Step pipeline;
 
+    protected Pipeline(final Processor processor, final URIResolver uriResolver, final Step pipeline)
+    {
+        assert processor != null;
+        this.processor = processor;
 
-	protected Pipeline(final Processor processor, final URIResolver uriResolver, final Step pipeline)
-	{
-		assert processor != null;
-		this.processor = processor;
+        assert uriResolver != null;
+        this.uriResolver = uriResolver;
 
-		assert uriResolver != null;
-		this.uriResolver = uriResolver;
+        assert pipeline != null;
+        this.pipeline = pipeline;
+    }
 
-		assert pipeline != null;
-		this.pipeline = pipeline;
-	}
+    public RunnablePipeline load()
+    {
+        final RunnablePipeline pipeline = new RunnablePipeline(this);
+        pipeline.setUriResolver(uriResolver);
 
+        return pipeline;
+    }
 
-	public RunnablePipeline load()
-	{
-		final RunnablePipeline pipeline = new RunnablePipeline(this);
-		pipeline.setUriResolver(uriResolver);
+    protected Step getUnderlyingPipeline()
+    {
+        return pipeline;
+    }
 
-		return pipeline;
-	}
-
-
-	protected Step getUnderlyingPipeline()
-	{
-		return pipeline;
-	}
-
-
-	public Processor getProcessor()
-	{
-		return processor;
-	}
+    public Processor getProcessor()
+    {
+        return processor;
+    }
 }

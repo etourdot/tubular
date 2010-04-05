@@ -25,5 +25,5 @@ package org.trancecode.xproc;
  */
 public interface StepProcessor
 {
-	Environment run(Step step, Environment environment);
+    Environment run(Step step, Environment environment);
 }

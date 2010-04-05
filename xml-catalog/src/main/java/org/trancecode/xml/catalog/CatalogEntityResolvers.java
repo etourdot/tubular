@@ -30,49 +30,44 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class CatalogEntityResolvers
 {
-	private CatalogEntityResolvers()
-	{
-		// No instantiation
-	}
+    private CatalogEntityResolvers()
+    {
+        // No instantiation
+    }
 
+    public static EntityResolver newEntityResolver(final InputResolver inputResolver, final Catalog catalog)
+    {
+        return new InputResolverEntityResolver(inputResolver, catalog);
+    }
 
-	public static EntityResolver newEntityResolver(final InputResolver inputResolver, final Catalog catalog)
-	{
-		return new InputResolverEntityResolver(inputResolver, catalog);
-	}
+    private static class InputResolverEntityResolver implements EntityResolver
+    {
+        private final InputResolver inputResolver;
+        private final Catalog catalog;
 
+        public InputResolverEntityResolver(final InputResolver inputResolver, final Catalog catalog)
+        {
+            super();
+            Preconditions.checkNotNull(inputResolver);
+            Preconditions.checkNotNull(catalog);
+            this.inputResolver = inputResolver;
+            this.catalog = catalog;
+        }
 
-	private static class InputResolverEntityResolver implements EntityResolver
-	{
-		private final InputResolver inputResolver;
-		private final Catalog catalog;
+        @Override
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException
+        {
+            final URI uri = catalog.resolveEntity(publicId, systemId);
+            final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
+            inputSource.setSystemId(uri.toString());
 
-
-		public InputResolverEntityResolver(final InputResolver inputResolver, final Catalog catalog)
-		{
-			super();
-			Preconditions.checkNotNull(inputResolver);
-			Preconditions.checkNotNull(catalog);
-			this.inputResolver = inputResolver;
-			this.catalog = catalog;
-		}
-
-
-		@Override
-		public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException
-		{
-			final URI uri = catalog.resolveEntity(publicId, systemId);
-			final InputSource inputSource = new InputSource(inputResolver.resolveInputStream(uri));
-			inputSource.setSystemId(uri.toString());
-
-			return inputSource;
-		}
-	}
+            return inputSource;
+        }
+    }
 }

@@ -21,7 +21,6 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Predicate;
 
-
 /**
  * {@link Predicate} implementations related to {@link Port}.
  * 
@@ -30,83 +29,71 @@ import com.google.common.base.Predicate;
  */
 public final class PortPredicates
 {
-	private PortPredicates()
-	{
-		// No instantiation
-	}
+    private PortPredicates()
+    {
+        // No instantiation
+    }
 
+    public static Predicate<Port> isInputPort()
+    {
+        return IsInputPortPredicate.INSTANCE;
+    }
 
-	public static Predicate<Port> isInputPort()
-	{
-		return IsInputPortPredicate.INSTANCE;
-	}
+    private static class IsInputPortPredicate implements Predicate<Port>
+    {
+        public static final IsInputPortPredicate INSTANCE = new IsInputPortPredicate();
 
+        private IsInputPortPredicate()
+        {
+            // Singleton
+        }
 
-	private static class IsInputPortPredicate implements Predicate<Port>
-	{
-		public static final IsInputPortPredicate INSTANCE = new IsInputPortPredicate();
+        @Override
+        public boolean apply(final Port port)
+        {
+            return port.isInput();
+        }
+    }
 
+    public static Predicate<Port> isOutputPort()
+    {
+        return IsOutputPortPredicate.INSTANCE;
+    }
 
-		private IsInputPortPredicate()
-		{
-			// Singleton
-		}
+    private static class IsOutputPortPredicate implements Predicate<Port>
+    {
+        public static final IsOutputPortPredicate INSTANCE = new IsOutputPortPredicate();
 
+        private IsOutputPortPredicate()
+        {
+            // Singleton
+        }
 
-		@Override
-		public boolean apply(final Port port)
-		{
-			return port.isInput();
-		}
-	}
+        @Override
+        public boolean apply(final Port port)
+        {
+            return port.isOutput();
+        }
+    }
 
+    public static Predicate<Port> isParameterPort()
+    {
+        return IsParameterPortPredicate.INSTANCE;
+    }
 
-	public static Predicate<Port> isOutputPort()
-	{
-		return IsOutputPortPredicate.INSTANCE;
-	}
+    private static class IsParameterPortPredicate implements Predicate<Port>
+    {
+        public static final IsParameterPortPredicate INSTANCE = new IsParameterPortPredicate();
 
+        private IsParameterPortPredicate()
+        {
+            // Singleton
+        }
 
-	private static class IsOutputPortPredicate implements Predicate<Port>
-	{
-		public static final IsOutputPortPredicate INSTANCE = new IsOutputPortPredicate();
-
-
-		private IsOutputPortPredicate()
-		{
-			// Singleton
-		}
-
-
-		@Override
-		public boolean apply(final Port port)
-		{
-			return port.isOutput();
-		}
-	}
-
-
-	public static Predicate<Port> isParameterPort()
-	{
-		return IsParameterPortPredicate.INSTANCE;
-	}
-
-
-	private static class IsParameterPortPredicate implements Predicate<Port>
-	{
-		public static final IsParameterPortPredicate INSTANCE = new IsParameterPortPredicate();
-
-
-		private IsParameterPortPredicate()
-		{
-			// Singleton
-		}
-
-
-		@Override
-		public boolean apply(final Port port)
-		{
-			return port.isParameter();
-		}
-	}
+        @Override
+        public boolean apply(final Port port)
+        {
+            return port.isParameter();
+        }
+    }
 }

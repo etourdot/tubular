@@ -21,7 +21,6 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Predicate;
 
-
 /**
  * {@link Predicate} implementations related to {@link Step}.
  * 
@@ -30,8 +29,8 @@ import com.google.common.base.Predicate;
  */
 public final class StepPredicates
 {
-	private StepPredicates()
-	{
-		// No instantiation
-	}
+    private StepPredicates()
+    {
+        // No instantiation
+    }
 }

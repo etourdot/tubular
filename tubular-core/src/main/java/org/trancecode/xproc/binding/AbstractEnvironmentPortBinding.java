@@ -23,21 +23,19 @@ import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.EnvironmentPortBinding;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public abstract class AbstractEnvironmentPortBinding extends AbstractHasLocation implements EnvironmentPortBinding
 {
-	protected AbstractEnvironmentPortBinding(final Location location)
-	{
-		super(location);
-	}
+    protected AbstractEnvironmentPortBinding(final Location location)
+    {
+        super(location);
+    }
 
-
-	protected AbstractEnvironmentPortBinding()
-	{
-		super(null);
-	}
+    protected AbstractEnvironmentPortBinding()
+    {
+        super(null);
+    }
 }

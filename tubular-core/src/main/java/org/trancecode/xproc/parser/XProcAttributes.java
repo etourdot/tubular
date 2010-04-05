@@ -21,7 +21,6 @@ package org.trancecode.xproc.parser;
 
 import net.sf.saxon.s9api.QName;
 
-
 /**
  * Attributes from the XProc XML model.
  * 
@@ -30,23 +29,22 @@ import net.sf.saxon.s9api.QName;
  */
 public class XProcAttributes
 {
-	public static final QName HREF = new QName("href");
-	public static final QName KIND = new QName("kind");
-	public static final QName NAME = new QName("name");
-	public static final QName PORT = new QName("port");
-	public static final QName PRIMARY = new QName("primary");
-	public static final QName REQUIRED = new QName("required");
-	public static final QName SELECT = new QName("select");
-	public static final QName SEQUENCE = new QName("sequence");
-	public static final QName STEP = new QName("step");
-	public static final QName TEST = new QName("test");
-	public static final QName TYPE = new QName("type");
-	public static final QName VALUE = new QName("value");
-	public static final QName VERSION = new QName("version");
+    public static final QName HREF = new QName("href");
+    public static final QName KIND = new QName("kind");
+    public static final QName NAME = new QName("name");
+    public static final QName PORT = new QName("port");
+    public static final QName PRIMARY = new QName("primary");
+    public static final QName REQUIRED = new QName("required");
+    public static final QName SELECT = new QName("select");
+    public static final QName SEQUENCE = new QName("sequence");
+    public static final QName STEP = new QName("step");
+    public static final QName TEST = new QName("test");
+    public static final QName TYPE = new QName("type");
+    public static final QName VALUE = new QName("value");
+    public static final QName VERSION = new QName("version");
 
-
-	private XProcAttributes()
-	{
-		// No instantiation
-	}
+    private XProcAttributes()
+    {
+        // No instantiation
+    }
 }

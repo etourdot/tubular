@@ -36,7 +36,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-
 /**
  * Utility methods related to {@link Catalog}.
  * 
@@ -45,166 +44,146 @@ import com.google.common.collect.Iterables;
  */
 public final class Catalogs
 {
-	private Catalogs()
-	{
-		// No instantiation
-	}
+    private Catalogs()
+    {
+        // No instantiation
+    }
 
+    public static Function<CatalogQuery, URI> defaultCatalog()
+    {
+        return DefaultCatalog.INSTANCE;
+    }
 
-	public static Function<CatalogQuery, URI> defaultCatalog()
-	{
-		return DefaultCatalog.INSTANCE;
-	}
+    private static class DefaultCatalog implements Function<CatalogQuery, URI>
+    {
+        public static DefaultCatalog INSTANCE = new DefaultCatalog();
 
+        private DefaultCatalog()
+        {
+            // Singleton
+        }
 
-	private static class DefaultCatalog implements Function<CatalogQuery, URI>
-	{
-		public static DefaultCatalog INSTANCE = new DefaultCatalog();
+        @Override
+        public URI apply(final CatalogQuery query)
+        {
+            if (query.systemId() != null)
+            {
+                return Uris.createUri(query.systemId());
+            }
 
+            assert query.uri() != null;
+            return query.uri();
+        }
+    }
 
-		private DefaultCatalog()
-		{
-			// Singleton
-		}
+    public static Function<CatalogQuery, URI> routingCatalog(final Function<CatalogQuery, URI>... catalogEntries)
+    {
+        return routingCatalog(ImmutableList.of(catalogEntries));
+    }
 
+    public static Function<CatalogQuery, URI> routingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
+    {
+        return new RoutingCatalog(catalogEntries);
+    }
 
-		@Override
-		public URI apply(final CatalogQuery query)
-		{
-			if (query.systemId() != null)
-			{
-				return Uris.createUri(query.systemId());
-			}
+    private static class RoutingCatalog extends AbstractImmutableObject implements Function<CatalogQuery, URI>
+    {
+        private final Iterable<Function<CatalogQuery, URI>> catalogEntries;
 
-			assert query.uri() != null;
-			return query.uri();
-		}
-	}
+        public RoutingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
+        {
+            super(catalogEntries);
+            Preconditions.checkNotNull(catalogEntries);
+            this.catalogEntries = catalogEntries;
+        }
 
+        @Override
+        public URI apply(final CatalogQuery query)
+        {
+            return Iterables.find(TubularIterables.applyFunctions(catalogEntries, query), Predicates.notNull());
+        }
+    }
 
-	public static Function<CatalogQuery, URI> routingCatalog(final Function<CatalogQuery, URI>... catalogEntries)
-	{
-		return routingCatalog(ImmutableList.of(catalogEntries));
-	}
+    public static Function<CatalogQuery, URI> setBaseUri(final URI baseUri,
+            @Nullable final Function<CatalogQuery, URI> catalog)
+    {
+        if (baseUri == null)
+        {
+            return catalog;
+        }
 
+        return Functions.compose(UriFunctions.resolveUri(baseUri), catalog);
+    }
 
-	public static Function<CatalogQuery, URI> routingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
-	{
-		return new RoutingCatalog(catalogEntries);
-	}
+    public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
+    {
+        return TranceCodeFunctions.cache(catalog);
+    }
 
+    public static Function<CatalogQuery, URI> rewriteSystem(final String systemIdStartString, final String rewritePrefix)
+    {
+        return new RewriteSystem(systemIdStartString, rewritePrefix);
+    }
 
-	private static class RoutingCatalog extends AbstractImmutableObject implements Function<CatalogQuery, URI>
-	{
-		private final Iterable<Function<CatalogQuery, URI>> catalogEntries;
+    private static class RewriteSystem extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
+    {
+        private final String systemIdStartString;
+        private final String rewritePrefix;
 
+        public RewriteSystem(final String systemIdStartString, final String rewritePrefix)
+        {
+            super(systemIdStartString, rewritePrefix);
+            this.systemIdStartString = systemIdStartString;
+            this.rewritePrefix = rewritePrefix;
+        }
 
-		public RoutingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
-		{
-			super(catalogEntries);
-			Preconditions.checkNotNull(catalogEntries);
-			this.catalogEntries = catalogEntries;
-		}
+        @Override
+        public URI apply(final CatalogQuery query)
+        {
+            if (query.systemId() != null && query.systemId().startsWith(systemIdStartString))
+            {
+                final String suffix = query.systemId().substring(systemIdStartString.length());
+                return Uris.createUri(rewritePrefix + suffix);
+            }
 
+            return null;
+        }
+    }
 
-		@Override
-		public URI apply(final CatalogQuery query)
-		{
-			return Iterables.find(TubularIterables.applyFunctions(catalogEntries, query), Predicates.notNull());
-		}
-	}
+    public static Function<CatalogQuery, URI> rewriteUri(final String uriStartString, final String rewritePrefix)
+    {
+        return new RewriteUri(uriStartString, rewritePrefix);
+    }
 
+    private static class RewriteUri extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
+    {
+        private final String uriStartString;
+        private final String rewritePrefix;
 
-	public static Function<CatalogQuery, URI> setBaseUri(
-		final URI baseUri, @Nullable final Function<CatalogQuery, URI> catalog)
-	{
-		if (baseUri == null)
-		{
-			return catalog;
-		}
+        public RewriteUri(final String uriStartString, final String rewritePrefix)
+        {
+            super(uriStartString, rewritePrefix);
+            this.uriStartString = uriStartString;
+            this.rewritePrefix = rewritePrefix;
+        }
 
-		return Functions.compose(UriFunctions.resolveUri(baseUri), catalog);
-	}
+        @Override
+        public URI apply(final CatalogQuery query)
+        {
+            final String uriString = query.uriAsString();
+            if (uriString != null && uriString.startsWith(uriStartString))
+            {
+                final String suffix = uriString.substring(uriStartString.length());
+                return Uris.createUri(rewritePrefix + suffix);
+            }
 
+            return null;
+        }
+    }
 
-	public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
-	{
-		return TranceCodeFunctions.cache(catalog);
-	}
-
-
-	public static Function<CatalogQuery, URI> rewriteSystem(final String systemIdStartString, final String rewritePrefix)
-	{
-		return new RewriteSystem(systemIdStartString, rewritePrefix);
-	}
-
-
-	private static class RewriteSystem extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
-	{
-		private final String systemIdStartString;
-		private final String rewritePrefix;
-
-
-		public RewriteSystem(final String systemIdStartString, final String rewritePrefix)
-		{
-			super(systemIdStartString, rewritePrefix);
-			this.systemIdStartString = systemIdStartString;
-			this.rewritePrefix = rewritePrefix;
-		}
-
-
-		@Override
-		public URI apply(final CatalogQuery query)
-		{
-			if (query.systemId() != null && query.systemId().startsWith(systemIdStartString))
-			{
-				final String suffix = query.systemId().substring(systemIdStartString.length());
-				return Uris.createUri(rewritePrefix + suffix);
-			}
-
-			return null;
-		}
-	}
-
-
-	public static Function<CatalogQuery, URI> rewriteUri(final String uriStartString, final String rewritePrefix)
-	{
-		return new RewriteUri(uriStartString, rewritePrefix);
-	}
-
-
-	private static class RewriteUri extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
-	{
-		private final String uriStartString;
-		private final String rewritePrefix;
-
-
-		public RewriteUri(final String uriStartString, final String rewritePrefix)
-		{
-			super(uriStartString, rewritePrefix);
-			this.uriStartString = uriStartString;
-			this.rewritePrefix = rewritePrefix;
-		}
-
-
-		@Override
-		public URI apply(final CatalogQuery query)
-		{
-			final String uriString = query.uriAsString();
-			if (uriString != null && uriString.startsWith(uriStartString))
-			{
-				final String suffix = uriString.substring(uriStartString.length());
-				return Uris.createUri(rewritePrefix + suffix);
-			}
-
-			return null;
-		}
-	}
-
-
-	public static Function<CatalogQuery, URI> group(
-		final URI baseUri, final Iterable<Function<CatalogQuery, URI>> catalogs)
-	{
-		return setBaseUri(baseUri, routingCatalog(catalogs));
-	}
+    public static Function<CatalogQuery, URI> group(final URI baseUri,
+            final Iterable<Function<CatalogQuery, URI>> catalogs)
+    {
+        return setBaseUri(baseUri, routingCatalog(catalogs));
+    }
 }

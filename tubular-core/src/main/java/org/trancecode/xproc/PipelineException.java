@@ -22,7 +22,6 @@ package org.trancecode.xproc;
 import org.trancecode.core.BaseException;
 import org.trancecode.xml.Location;
 
-
 /**
  * Base {@link Exception} for errors related to pipelines.
  * 
@@ -31,90 +30,82 @@ import org.trancecode.xml.Location;
  */
 public class PipelineException extends BaseException
 {
-	private static final long serialVersionUID = 1891736137590567766L;
+    private static final long serialVersionUID = 1891736137590567766L;
 
-	private final Location location;
+    private final Location location;
 
+    private static String buildVerboseMessage(final String message, final Throwable cause, final Object... args)
+    {
+        final StringBuilder buffer = new StringBuilder(format(message, args));
 
-	private static String buildVerboseMessage(final String message, final Throwable cause, final Object... args)
-	{
-		final StringBuilder buffer = new StringBuilder(format(message, args));
+        if (cause != null)
 
-		if (cause != null)
+        {
+            buffer.append("\n").append("Caused by: ");
+            if (cause.getMessage() != null)
+            {
+                buffer.append(cause.getMessage());
+            }
+            else
+            {
+                buffer.append(cause);
+            }
+        }
 
-		{
-			buffer.append("\n").append("Caused by: ");
-			if (cause.getMessage() != null)
-			{
-				buffer.append(cause.getMessage());
-			}
-			else
-			{
-				buffer.append(cause);
-			}
-		}
+        return buffer.toString();
+    }
 
-		return buffer.toString();
-	}
+    public PipelineException(final String message, final Object... args)
+    {
+        super(message, args);
 
+        location = null;
+    }
 
-	public PipelineException(final String message, final Object... args)
-	{
-		super(message, args);
+    public PipelineException(final Location location, final String message, final Object... args)
+    {
+        super(message, args);
 
-		location = null;
-	}
+        this.location = location;
+    }
 
+    public PipelineException(final Throwable cause)
+    {
+        super(cause);
 
-	public PipelineException(final Location location, final String message, final Object... args)
-	{
-		super(message, args);
+        location = null;
+    }
 
-		this.location = location;
-	}
+    public PipelineException(final Throwable cause, final String message, final Object... args)
+    {
+        super(buildVerboseMessage(message, cause, args), cause);
 
+        location = null;
+    }
 
-	public PipelineException(final Throwable cause)
-	{
-		super(cause);
+    public PipelineException(final Throwable cause, final Location location, final String message, final Object... args)
+    {
+        super(buildVerboseMessage(message, cause, args), cause);
 
-		location = null;
-	}
+        this.location = location;
+    }
 
+    public String getMessageAndLocation()
+    {
+        final StringBuilder buffer = new StringBuilder();
 
-	public PipelineException(final Throwable cause, final String message, final Object... args)
-	{
-		super(buildVerboseMessage(message, cause, args), cause);
+        if (location != null)
+        {
+            buffer.append("At: ").append(location).append("\n");
+        }
 
-		location = null;
-	}
+        buffer.append(getMessage());
 
+        return buffer.toString();
+    }
 
-	public PipelineException(final Throwable cause, final Location location, final String message, final Object... args)
-	{
-		super(buildVerboseMessage(message, cause, args), cause);
-
-		this.location = location;
-	}
-
-
-	public String getMessageAndLocation()
-	{
-		final StringBuilder buffer = new StringBuilder();
-
-		if (location != null)
-		{
-			buffer.append("At: ").append(location).append("\n");
-		}
-
-		buffer.append(getMessage());
-
-		return buffer.toString();
-	}
-
-
-	public Location getLocation()
-	{
-		return location;
-	}
+    public Location getLocation()
+    {
+        return location;
+    }
 }

@@ -36,62 +36,56 @@ import com.google.common.collect.Lists;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class ForEach extends AbstractCompoundStepProcessor
 {
-	public static final ForEach INSTANCE = new ForEach();
+    public static final ForEach INSTANCE = new ForEach();
 
-	private static final Logger LOG = Logger.getLogger(ForEach.class);
+    private static final Logger LOG = Logger.getLogger(ForEach.class);
 
-	private static final Iterable<Port> PORTS =
-		ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE).setSequence(true), Port.newOutputPort(
-			XProcPorts.RESULT).setSequence(true));
-	public static final Step STEP = Step.newStep(XProcSteps.FOR_EACH, INSTANCE, true).declarePorts(PORTS);
+    private static final Iterable<Port> PORTS = ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE)
+            .setSequence(true), Port.newOutputPort(XProcPorts.RESULT).setSequence(true));
+    public static final Step STEP = Step.newStep(XProcSteps.FOR_EACH, INSTANCE, true).declarePorts(PORTS);
 
+    private ForEach()
+    {
+        // single instance
+    }
 
-	private ForEach()
-	{
-		// single instance
-	}
+    private Port newIterationPort(final Step step, final XdmNode node)
+    {
+        return Port.newInputPort(step.getName(), XProcPorts.CURRENT, step.getLocation()).setPrimary(false).setSequence(
+                false).setPortBindings(new InlinePortBinding(node, step.getLocation()));
+    }
 
+    @Override
+    public Environment run(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
+        assert step.getType().equals(XProcSteps.FOR_EACH);
 
-	private Port newIterationPort(final Step step, final XdmNode node)
-	{
-		return Port.newInputPort(step.getName(), XProcPorts.CURRENT, step.getLocation()).setPrimary(false).setSequence(
-			false).setPortBindings(new InlinePortBinding(node, step.getLocation()));
-	}
+        final List<XdmNode> nodes = Lists.newArrayList();
 
+        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
 
-	@Override
-	public Environment run(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
-		assert step.getType().equals(XProcSteps.FOR_EACH);
+        for (final XdmNode node : stepEnvironment.readNodes(step.getPortReference(XProcPorts.ITERATION_SOURCE)))
+        {
+            LOG.trace("new iteration: {}", node);
+            final Port iterationPort = newIterationPort(step, node);
+            final Environment iterationEnvironment = environment.newChildStepEnvironment().addPorts(
+                    EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
+                    step.getPortReference(XProcPorts.CURRENT));
 
-		final List<XdmNode> nodes = Lists.newArrayList();
+            final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
+            Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
+        }
 
-		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+        final Environment resultEnvironment = stepEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT),
+                nodes);
 
-		for (final XdmNode node : stepEnvironment.readNodes(step.getPortReference(XProcPorts.ITERATION_SOURCE)))
-		{
-			LOG.trace("new iteration: {}", node);
-			final Port iterationPort = newIterationPort(step, node);
-			final Environment iterationEnvironment =
-				environment.newChildStepEnvironment().addPorts(
-					EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
-					step.getPortReference(XProcPorts.CURRENT));
-
-			final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
-			Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
-		}
-
-		final Environment resultEnvironment =
-			stepEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT), nodes);
-
-		return resultEnvironment.setupOutputPorts(step);
-	}
+        return resultEnvironment.setupOutputPorts(step);
+    }
 }

@@ -24,7 +24,6 @@ import org.trancecode.AbstractTest;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-
 /**
  * Tests for {@link PipelineFactory}.
  * 
@@ -34,13 +33,13 @@ import org.testng.annotations.Test;
 @Test
 public class PipelineFactoryTest extends AbstractTest
 {
-	@Test
-	public void newPipelineFactory()
-	{
-		final PipelineFactory pipelineFactory = new PipelineFactory();
-		assert pipelineFactory.getLibrary() != null;
-		AssertJUnit.assertEquals(45, pipelineFactory.getLibrary().size());
-		assert pipelineFactory.getLibrary().containsKey(XProcSteps.COUNT);
-		assert pipelineFactory.getLibrary().containsKey(XProcSteps.FOR_EACH);
-	}
+    @Test
+    public void newPipelineFactory()
+    {
+        final PipelineFactory pipelineFactory = new PipelineFactory();
+        assert pipelineFactory.getLibrary() != null;
+        AssertJUnit.assertEquals(45, pipelineFactory.getLibrary().size());
+        assert pipelineFactory.getLibrary().containsKey(XProcSteps.COUNT);
+        assert pipelineFactory.getLibrary().containsKey(XProcSteps.FOR_EACH);
+    }
 }

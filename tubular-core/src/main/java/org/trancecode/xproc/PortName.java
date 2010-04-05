@@ -24,59 +24,53 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class PortName
 {
-	private final String name;
-	private int hashCode;
+    private final String name;
+    private int hashCode;
 
+    public static PortName newInstance(final String name)
+    {
+        return new PortName(name);
+    }
 
-	public static PortName newInstance(final String name)
-	{
-		return new PortName(name);
-	}
+    private PortName(final String name)
+    {
+        Preconditions.checkNotNull(name);
+        Preconditions.checkArgument(!name.isEmpty());
+        this.name = name;
+    }
 
+    @Override
+    public int hashCode()
+    {
+        if (hashCode == 0)
+        {
+            hashCode = new HashCodeBuilder(15, 17).append(name).toHashCode();
+        }
 
-	private PortName(final String name)
-	{
-		Preconditions.checkNotNull(name);
-		Preconditions.checkArgument(!name.isEmpty());
-		this.name = name;
-	}
+        return hashCode;
+    }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (o != null && o instanceof PortName)
+        {
+            final PortName portName = (PortName) o;
+            return new EqualsBuilder().append(name, portName.name).isEquals();
+        }
 
-	@Override
-	public int hashCode()
-	{
-		if (hashCode == 0)
-		{
-			hashCode = new HashCodeBuilder(15, 17).append(name).toHashCode();
-		}
+        return false;
+    }
 
-		return hashCode;
-	}
-
-
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (o != null && o instanceof PortName)
-		{
-			final PortName portName = (PortName)o;
-			return new EqualsBuilder().append(name, portName.name).isEquals();
-		}
-
-		return false;
-	}
-
-
-	@Override
-	public String toString()
-	{
-		return name;
-	}
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }

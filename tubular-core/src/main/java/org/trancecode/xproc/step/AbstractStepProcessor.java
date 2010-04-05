@@ -25,39 +25,36 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.XProcException;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public abstract class AbstractStepProcessor implements StepProcessor
 {
-	private static final Logger LOG = Logger.getLogger(AbstractStepProcessor.class);
+    private static final Logger LOG = Logger.getLogger(AbstractStepProcessor.class);
 
+    @Override
+    public Environment run(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
 
-	@Override
-	public Environment run(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
+        try
+        {
+            final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+            final Environment resultEnvironment = doRun(step, stepEnvironment);
 
-		try
-		{
-			final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-			final Environment resultEnvironment = doRun(step, stepEnvironment);
+            return resultEnvironment.setupOutputPorts(step);
+        }
+        catch (final XProcException e)
+        {
+            throw (XProcException) e.fillInStackTrace();
+        }
+        catch (final Exception e)
+        {
+            // TODO handle exception
+            throw new IllegalStateException(e);
+        }
+    }
 
-			return resultEnvironment.setupOutputPorts(step);
-		}
-		catch (final XProcException e)
-		{
-			throw (XProcException)e.fillInStackTrace();
-		}
-		catch (final Exception e)
-		{
-			// TODO handle exception
-			throw new IllegalStateException(e);
-		}
-	}
-
-
-	protected abstract Environment doRun(Step step, Environment environment) throws Exception;
+    protected abstract Environment doRun(Step step, Environment environment) throws Exception;
 }

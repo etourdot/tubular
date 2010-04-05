@@ -25,36 +25,32 @@ import org.trancecode.xproc.Variable;
 
 import com.google.common.base.Function;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class StepFunctions
 {
-	private StepFunctions()
-	{
-		// No instantiation
-	}
+    private StepFunctions()
+    {
+        // No instantiation
+    }
 
+    public static Function<Pair<Step, Variable>, Step> declareVariable()
+    {
+        return DeclareVariableBinaryFunction.INSTANCE;
+    }
 
-	public static Function<Pair<Step, Variable>, Step> declareVariable()
-	{
-		return DeclareVariableBinaryFunction.INSTANCE;
-	}
+    private static class DeclareVariableBinaryFunction implements Function<Pair<Step, Variable>, Step>
+    {
+        private static final DeclareVariableBinaryFunction INSTANCE = new DeclareVariableBinaryFunction();
 
-
-	private static class DeclareVariableBinaryFunction implements Function<Pair<Step, Variable>, Step>
-	{
-		private static final DeclareVariableBinaryFunction INSTANCE = new DeclareVariableBinaryFunction();
-
-
-		@Override
-		public Step apply(final Pair<Step, Variable> arguments)
-		{
-			final Step step = arguments.left();
-			final Variable variable = arguments.right();
-			return step.declareVariable(variable);
-		}
-	}
+        @Override
+        public Step apply(final Pair<Step, Variable> arguments)
+        {
+            final Step step = arguments.left();
+            final Variable variable = arguments.right();
+            return step.declareVariable(variable);
+        }
+    }
 }

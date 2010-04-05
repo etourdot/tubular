@@ -29,177 +29,151 @@ import com.google.common.base.Preconditions;
 
 import net.sf.saxon.s9api.QName;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class Variable extends AbstractHasLocation
 {
-	private static final Logger LOG = Logger.getLogger(Variable.class);
+    private static final Logger LOG = Logger.getLogger(Variable.class);
 
+    private static enum Type {
+        OPTION, VARIABLE, PARAMETER
+    };
 
-	private static enum Type
-	{
-		OPTION, VARIABLE, PARAMETER
-	};
+    private final QName name;
+    private final String select;
+    private final String value;
+    private final Boolean required;
+    private final Type type;
+    private final PortBinding portBinding;
 
-	private final QName name;
-	private final String select;
-	private final String value;
-	private final Boolean required;
-	private final Type type;
-	private final PortBinding portBinding;
+    public static Variable newOption(final QName name)
+    {
+        return new Variable(name, null, null, null, null, Type.OPTION, null);
+    }
 
+    public static Variable newParameter(final QName name)
+    {
+        return new Variable(name, null, null, null, null, Type.PARAMETER, null);
+    }
 
-	public static Variable newOption(final QName name)
-	{
-		return new Variable(name, null, null, null, null, Type.OPTION, null);
-	}
+    public static Variable newVariable(final QName name)
+    {
+        return new Variable(name, null, null, null, null, Type.VARIABLE, null);
+    }
 
+    public static Variable newOption(final QName name, final Location location)
+    {
+        return new Variable(name, null, null, null, location, Type.OPTION, null);
+    }
 
-	public static Variable newParameter(final QName name)
-	{
-		return new Variable(name, null, null, null, null, Type.PARAMETER, null);
-	}
+    public static Variable newParameter(final QName name, final Location location)
+    {
+        return new Variable(name, null, null, null, location, Type.PARAMETER, null);
+    }
 
+    public static Variable newVariable(final QName name, final Location location)
+    {
+        return new Variable(name, null, null, null, location, Type.VARIABLE, null);
+    }
 
-	public static Variable newVariable(final QName name)
-	{
-		return new Variable(name, null, null, null, null, Type.VARIABLE, null);
-	}
+    private Variable(final QName name, final String select, final String value, final Boolean required,
+            final Location location, final Type type, final PortBinding portBinding)
+    {
+        super(location);
 
+        Preconditions.checkNotNull(name);
+        this.name = name;
 
-	public static Variable newOption(final QName name, final Location location)
-	{
-		return new Variable(name, null, null, null, location, Type.OPTION, null);
-	}
+        Preconditions.checkArgument(select == null || !select.isEmpty());
+        this.select = select;
 
+        Preconditions.checkArgument(value == null || !value.isEmpty());
+        this.value = value;
 
-	public static Variable newParameter(final QName name, final Location location)
-	{
-		return new Variable(name, null, null, null, location, Type.PARAMETER, null);
-	}
+        this.required = required;
+        this.type = type;
+        this.portBinding = portBinding;
+    }
 
+    public Variable setLocation(final Location location)
+    {
+        return new Variable(name, select, value, required, location, type, portBinding);
+    }
 
-	public static Variable newVariable(final QName name, final Location location)
-	{
-		return new Variable(name, null, null, null, location, Type.VARIABLE, null);
-	}
+    public boolean isVariable()
+    {
+        return type == Type.VARIABLE;
+    }
 
+    public boolean isParameter()
+    {
+        return type == Type.PARAMETER;
+    }
 
-	private Variable(
-		final QName name, final String select, final String value, final Boolean required, final Location location,
-		final Type type, final PortBinding portBinding)
-	{
-		super(location);
+    public boolean isOption()
+    {
+        return type == Type.OPTION;
+    }
 
-		Preconditions.checkNotNull(name);
-		this.name = name;
+    public QName getName()
+    {
+        return name;
+    }
 
-		Preconditions.checkArgument(select == null || !select.isEmpty());
-		this.select = select;
+    public String getSelect()
+    {
+        return select;
+    }
 
-		Preconditions.checkArgument(value == null || !value.isEmpty());
-		this.value = value;
+    public Variable setSelect(final String select)
+    {
+        return new Variable(name, select, value, required, location, type, portBinding);
+    }
 
-		this.required = required;
-		this.type = type;
-		this.portBinding = portBinding;
-	}
+    public String getValue()
+    {
+        return value;
+    }
 
+    public Variable setValue(final String value)
+    {
+        return new Variable(name, select, value, required, location, type, portBinding);
+    }
 
-	public Variable setLocation(final Location location)
-	{
-		return new Variable(name, select, value, required, location, type, portBinding);
-	}
+    public Variable setRequired(final boolean required)
+    {
+        return new Variable(name, select, value, required, location, type, portBinding);
+    }
 
+    public boolean isRequired()
+    {
+        return required != null && required;
+    }
 
-	public boolean isVariable()
-	{
-		return type == Type.VARIABLE;
-	}
+    public boolean isNotRequired()
+    {
+        return required != null && !required;
+    }
 
+    @Override
+    public String toString()
+    {
+        return String.format("%s[%s]%s%s", type, name, TubularObjects.conditional(select != null, "[select=" + select
+                + "]", ""), TubularObjects.conditional(value != null, "[value=" + value + "]", ""));
+    }
 
-	public boolean isParameter()
-	{
-		return type == Type.PARAMETER;
-	}
+    @ReturnsNullable
+    public PortBinding getPortBinding()
+    {
+        return portBinding;
+    }
 
-
-	public boolean isOption()
-	{
-		return type == Type.OPTION;
-	}
-
-
-	public QName getName()
-	{
-		return name;
-	}
-
-
-	public String getSelect()
-	{
-		return select;
-	}
-
-
-	public Variable setSelect(final String select)
-	{
-		return new Variable(name, select, value, required, location, type, portBinding);
-	}
-
-
-	public String getValue()
-	{
-		return value;
-	}
-
-
-	public Variable setValue(final String value)
-	{
-		return new Variable(name, select, value, required, location, type, portBinding);
-	}
-
-
-	public Variable setRequired(final boolean required)
-	{
-		return new Variable(name, select, value, required, location, type, portBinding);
-	}
-
-
-	public boolean isRequired()
-	{
-		return required != null && required;
-	}
-
-
-	public boolean isNotRequired()
-	{
-		return required != null && !required;
-	}
-
-
-	@Override
-	public String toString()
-	{
-		return String.format("%s[%s]%s%s", type, name, TubularObjects.conditional(select != null, "[select=" + select
-			+ "]", ""), TubularObjects.conditional(value != null, "[value=" + value + "]", ""));
-	}
-
-
-	@ReturnsNullable
-	public PortBinding getPortBinding()
-	{
-		return portBinding;
-	}
-
-
-	public Variable setPortBinding(final PortBinding portBinding)
-	{
-		LOG.trace("{}", name);
-		LOG.trace("{} -> {}", this.portBinding, portBinding);
-		return new Variable(name, select, value, required, location, type, portBinding);
-	}
+    public Variable setPortBinding(final PortBinding portBinding)
+    {
+        LOG.trace("{}", name);
+        LOG.trace("{} -> {}", this.portBinding, portBinding);
+        return new Variable(name, select, value, required, location, type, portBinding);
+    }
 }

@@ -25,44 +25,39 @@ import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class PipelineResult
 {
-	private final Step pipeline;
-	private final Environment resultEnvironment;
+    private final Step pipeline;
+    private final Environment resultEnvironment;
 
+    protected PipelineResult(final Step pipeline, final Environment resultEnvironment)
+    {
+        assert pipeline != null;
+        this.pipeline = pipeline;
 
-	protected PipelineResult(final Step pipeline, final Environment resultEnvironment)
-	{
-		assert pipeline != null;
-		this.pipeline = pipeline;
+        assert resultEnvironment != null;
+        this.resultEnvironment = resultEnvironment;
+    }
 
-		assert resultEnvironment != null;
-		this.resultEnvironment = resultEnvironment;
-	}
+    public Step getPipeline()
+    {
+        return pipeline;
+    }
 
+    public List<Source> readPort(final String stepName, final String portName)
+    {
+        // TODO
+        return null;
+    }
 
-	public Step getPipeline()
-	{
-		return pipeline;
-	}
-
-
-	public List<Source> readPort(final String stepName, final String portName)
-	{
-		// TODO
-		return null;
-	}
-
-
-	public Iterable<XdmNode> readNodes(final String portName)
-	{
-		final Port declaredPort = pipeline.getPort(portName);
-		final EnvironmentPort environmentPort = resultEnvironment.getEnvironmentPort(declaredPort);
-		return environmentPort.readNodes();
-	}
+    public Iterable<XdmNode> readNodes(final String portName)
+    {
+        final Port declaredPort = pipeline.getPort(portName);
+        final EnvironmentPort environmentPort = resultEnvironment.getEnvironmentPort(declaredPort);
+        return environmentPort.readNodes();
+    }
 }

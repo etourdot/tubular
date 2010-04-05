@@ -27,12 +27,12 @@ package org.trancecode.xproc;
  */
 public interface XProcPorts
 {
-	String CURRENT = "current";
-	String ITERATION_SOURCE = "iteration-source";
-	String SOURCE = "source";
-	String RESULT = "result";
-	String PARAMETERS = "parameters";
-	String SECONDARY = "secondary";
-	String STYLESHEET = "stylesheet";
-	String XPATH_CONTEXT = "xpath-context";
+    String CURRENT = "current";
+    String ITERATION_SOURCE = "iteration-source";
+    String SOURCE = "source";
+    String RESULT = "result";
+    String PARAMETERS = "parameters";
+    String SECONDARY = "secondary";
+    String STYLESHEET = "stylesheet";
+    String XPATH_CONTEXT = "xpath-context";
 }

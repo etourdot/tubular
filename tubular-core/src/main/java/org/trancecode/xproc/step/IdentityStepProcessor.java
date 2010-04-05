@@ -25,25 +25,23 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class IdentityStepProcessor extends AbstractStepProcessor
 {
-	public static final IdentityStepProcessor INSTANCE = new IdentityStepProcessor();
+    public static final IdentityStepProcessor INSTANCE = new IdentityStepProcessor();
 
-	private static final Logger LOG = Logger.getLogger(IdentityStepProcessor.class);
+    private static final Logger LOG = Logger.getLogger(IdentityStepProcessor.class);
 
+    @Override
+    protected Environment doRun(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
+        assert step.getType().equals(XProcSteps.IDENTITY);
 
-	@Override
-	protected Environment doRun(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
-		assert step.getType().equals(XProcSteps.IDENTITY);
-
-		return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), environment.readNodes(step
-			.getPortReference(XProcPorts.SOURCE)));
-	}
+        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), environment.readNodes(step
+                .getPortReference(XProcPorts.SOURCE)));
+    }
 }

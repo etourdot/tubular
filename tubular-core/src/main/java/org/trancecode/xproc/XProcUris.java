@@ -21,12 +21,11 @@ package org.trancecode.xproc;
 
 import java.net.URI;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public interface XProcUris
 {
-	URI URI_XPROC_CORE_LIBRARY = URI.create("classpath:/org/trancecode/pipeline/xproc-1.0.xpl");
+    URI URI_XPROC_CORE_LIBRARY = URI.create("classpath:/org/trancecode/pipeline/xproc-1.0.xpl");
 }

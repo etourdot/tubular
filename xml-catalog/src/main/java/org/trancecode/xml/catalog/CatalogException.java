@@ -21,36 +21,31 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.core.BaseException;
 
-
 /**
  * @author Herve
  * @version $Revision$
  */
 public class CatalogException extends BaseException
 {
-	private static final long serialVersionUID = 7669846417649721347L;
+    private static final long serialVersionUID = 7669846417649721347L;
 
+    public CatalogException()
+    {
+        super();
+    }
 
-	public CatalogException()
-	{
-		super();
-	}
+    public CatalogException(final String message, final Object... parameters)
+    {
+        super(message, parameters);
+    }
 
+    public CatalogException(final Throwable cause, final String message, final Object... parameters)
+    {
+        super(cause, message, parameters);
+    }
 
-	public CatalogException(final String message, final Object... parameters)
-	{
-		super(message, parameters);
-	}
-
-
-	public CatalogException(final Throwable cause, final String message, final Object... parameters)
-	{
-		super(cause, message, parameters);
-	}
-
-
-	public CatalogException(final Throwable cause)
-	{
-		super(cause);
-	}
+    public CatalogException(final Throwable cause)
+    {
+        super(cause);
+    }
 }

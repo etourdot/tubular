@@ -30,7 +30,6 @@ import java.util.Collections;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
@@ -38,38 +37,35 @@ import net.sf.saxon.s9api.XdmNode;
 @Immutable
 public class InlinePortBinding extends AbstractPortBinding
 {
-	private final Logger log = Logger.getLogger(getClass());
-	private final XdmNode node;
+    private final Logger log = Logger.getLogger(getClass());
+    private final XdmNode node;
 
+    public InlinePortBinding(final XdmNode node, final Location location)
+    {
+        super(location);
 
-	public InlinePortBinding(final XdmNode node, final Location location)
-	{
-		super(location);
+        assert node != null;
+        this.node = node;
+    }
 
-		assert node != null;
-		this.node = node;
-	}
+    @Override
+    public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
+    {
+        return new AbstractEnvironmentPortBinding(location)
+        {
+            public Iterable<XdmNode> readNodes()
+            {
+                log.trace("{@method}");
+                log.trace("node = {}", SaxonUtil.nodesToString(node));
+                log.trace("node = {}", node);
+                return Collections.singletonList(node);
+            }
+        };
+    }
 
-
-	@Override
-	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
-	{
-		return new AbstractEnvironmentPortBinding(location)
-		{
-			public Iterable<XdmNode> readNodes()
-			{
-				log.trace("{@method}");
-				log.trace("node = {}", SaxonUtil.nodesToString(node));
-				log.trace("node = {}", node);
-				return Collections.singletonList(node);
-			}
-		};
-	}
-
-
-	@Override
-	public String toString()
-	{
-		return String.format("%s[%s]", getClass().getSimpleName(), node.getNodeName());
-	}
+    @Override
+    public String toString()
+    {
+        return String.format("%s[%s]", getClass().getSimpleName(), node.getNodeName());
+    }
 }

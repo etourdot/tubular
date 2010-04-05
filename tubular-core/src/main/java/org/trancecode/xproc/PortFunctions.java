@@ -21,7 +21,6 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Function;
 
-
 /**
  * {@link Function} implementations related to {@link Port}.
  * 
@@ -30,58 +29,50 @@ import com.google.common.base.Function;
  */
 public final class PortFunctions
 {
-	private PortFunctions()
-	{
-		// No instantiation
-	}
+    private PortFunctions()
+    {
+        // No instantiation
+    }
 
+    public static Function<Port, String> getPortName()
+    {
+        return GetPortNameFunction.INSTANCE;
+    }
 
-	public static Function<Port, String> getPortName()
-	{
-		return GetPortNameFunction.INSTANCE;
-	}
+    private static class GetPortNameFunction implements Function<Port, String>
+    {
+        public static final GetPortNameFunction INSTANCE = new GetPortNameFunction();
 
+        private GetPortNameFunction()
+        {
+            // Singleton
+        }
 
-	private static class GetPortNameFunction implements Function<Port, String>
-	{
-		public static final GetPortNameFunction INSTANCE = new GetPortNameFunction();
+        @Override
+        public String apply(final Port port)
+        {
+            return port.getPortName();
+        }
+    }
 
+    public static Function<HasPortReference, PortReference> getPortReference()
+    {
+        return GetPortReferenceFunction.INSTANCE;
+    }
 
-		private GetPortNameFunction()
-		{
-			// Singleton
-		}
+    private static class GetPortReferenceFunction implements Function<HasPortReference, PortReference>
+    {
+        public static final GetPortReferenceFunction INSTANCE = new GetPortReferenceFunction();
 
+        private GetPortReferenceFunction()
+        {
+            // Singleton
+        }
 
-		@Override
-		public String apply(final Port port)
-		{
-			return port.getPortName();
-		}
-	}
-
-
-	public static Function<HasPortReference, PortReference> getPortReference()
-	{
-		return GetPortReferenceFunction.INSTANCE;
-	}
-
-
-	private static class GetPortReferenceFunction implements Function<HasPortReference, PortReference>
-	{
-		public static final GetPortReferenceFunction INSTANCE = new GetPortReferenceFunction();
-
-
-		private GetPortReferenceFunction()
-		{
-			// Singleton
-		}
-
-
-		@Override
-		public PortReference apply(final HasPortReference port)
-		{
-			return port.getPortReference();
-		}
-	}
+        @Override
+        public PortReference apply(final HasPortReference port)
+        {
+            return port.getPortReference();
+        }
+    }
 }

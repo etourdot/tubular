@@ -30,57 +30,51 @@ import com.google.common.collect.Iterables;
 
 import net.sf.saxon.s9api.QName;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class Pipeline extends AbstractCompoundStepProcessor
 {
-	public static final StepProcessor INSTANCE = new Pipeline();
+    public static final StepProcessor INSTANCE = new Pipeline();
 
+    public static Step newPipeline(final QName type)
+    {
+        return Step.newStep(type, INSTANCE, true);
+    }
 
-	public static Step newPipeline(final QName type)
-	{
-		return Step.newStep(type, INSTANCE, true);
-	}
+    public static Step addImplicitPorts(final Step pipeline)
+    {
+        assert Pipeline.isPipeline(pipeline);
 
+        return addImplicitInputPort(addImplicitOutputPort(pipeline));
+    }
 
-	public static Step addImplicitPorts(final Step pipeline)
-	{
-		assert Pipeline.isPipeline(pipeline);
+    private static Step addImplicitInputPort(final Step pipeline)
+    {
+        if (Iterables.isEmpty(pipeline.getInputPorts()))
+        {
+            return pipeline.declarePort(Port
+                    .newInputPort(pipeline.getName(), XProcPorts.SOURCE, pipeline.getLocation()));
+        }
 
-		return addImplicitInputPort(addImplicitOutputPort(pipeline));
-	}
+        return pipeline;
+    }
 
+    private static Step addImplicitOutputPort(final Step pipeline)
+    {
+        if (Iterables.isEmpty(pipeline.getOutputPorts()))
+        {
+            return pipeline.declarePort(Port.newOutputPort(pipeline.getName(), XProcPorts.RESULT, pipeline
+                    .getLocation()));
+        }
 
-	private static Step addImplicitInputPort(final Step pipeline)
-	{
-		if (Iterables.isEmpty(pipeline.getInputPorts()))
-		{
-			return pipeline.declarePort(Port
-				.newInputPort(pipeline.getName(), XProcPorts.SOURCE, pipeline.getLocation()));
-		}
+        return pipeline;
+    }
 
-		return pipeline;
-	}
-
-
-	private static Step addImplicitOutputPort(final Step pipeline)
-	{
-		if (Iterables.isEmpty(pipeline.getOutputPorts()))
-		{
-			return pipeline.declarePort(Port.newOutputPort(pipeline.getName(), XProcPorts.RESULT, pipeline
-				.getLocation()));
-		}
-
-		return pipeline;
-	}
-
-
-	public static boolean isPipeline(@Nullable final Step step)
-	{
-		return step != null && step.isCompoundStep() && !XProcSteps.ALL_STEPS.contains(step.getType())
-			&& !XProcSteps.PIPELINE.equals(step.getType());
-	}
+    public static boolean isPipeline(@Nullable final Step step)
+    {
+        return step != null && step.isCompoundStep() && !XProcSteps.ALL_STEPS.contains(step.getType())
+                && !XProcSteps.PIPELINE.equals(step.getType());
+    }
 }

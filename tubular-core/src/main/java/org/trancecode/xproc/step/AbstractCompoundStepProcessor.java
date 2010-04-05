@@ -24,40 +24,37 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class AbstractCompoundStepProcessor implements StepProcessor
 {
-	private static final Logger LOG = Logger.getLogger(AbstractCompoundStepProcessor.class);
+    private static final Logger LOG = Logger.getLogger(AbstractCompoundStepProcessor.class);
 
+    @Override
+    public Environment run(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
+        assert step.isCompoundStep();
 
-	@Override
-	public Environment run(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
-		assert step.isCompoundStep();
+        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+        final Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
 
-		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-		final Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
+        return stepEnvironment.setupOutputPorts(step, resultEnvironment);
+    }
 
-		return stepEnvironment.setupOutputPorts(step, resultEnvironment);
-	}
+    protected Environment runSteps(final Iterable<Step> steps, final Environment environment)
+    {
+        LOG.trace("steps = {}", steps);
 
+        Environment currentEnvironment = environment.newChildStepEnvironment();
 
-	protected Environment runSteps(final Iterable<Step> steps, final Environment environment)
-	{
-		LOG.trace("steps = {}", steps);
+        for (final Step childStep : steps)
+        {
+            currentEnvironment = childStep.run(currentEnvironment);
+        }
 
-		Environment currentEnvironment = environment.newChildStepEnvironment();
-
-		for (final Step childStep : steps)
-		{
-			currentEnvironment = childStep.run(currentEnvironment);
-		}
-
-		return currentEnvironment;
-	}
+        return currentEnvironment;
+    }
 }

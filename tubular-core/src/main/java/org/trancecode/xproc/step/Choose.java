@@ -34,65 +34,61 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class Choose extends AbstractCompoundStepProcessor
 {
-	public static final Choose INSTANCE = new Choose();
+    public static final Choose INSTANCE = new Choose();
 
-	private static final Iterable<Port> PORTS =
-		ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT).setSequence(false).setPrimary(false));
-	public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true).declarePorts(PORTS);
+    private static final Iterable<Port> PORTS = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
+            .setSequence(false).setPrimary(false));
+    public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true).declarePorts(PORTS);
 
-	private static final Logger LOG = Logger.getLogger(Choose.class);
+    private static final Logger LOG = Logger.getLogger(Choose.class);
 
+    private Choose()
+    {
+        // single instance
+    }
 
-	private Choose()
-	{
-		// single instance
-	}
+    @Override
+    public Environment run(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
+        assert step.getType().equals(XProcSteps.CHOOSE);
+        assert step.isCompoundStep();
 
+        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+        for (final Step whenStep : step.getSubpipeline())
+        {
+            assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
+            Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);
 
-	@Override
-	public Environment run(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
-		assert step.getType().equals(XProcSteps.CHOOSE);
-		assert step.isCompoundStep();
+            if (resultEnvironment != null)
+            {
+                final List<EnvironmentPort> newPorts = Lists.newArrayList();
 
-		final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-		for (final Step whenStep : step.getSubpipeline())
-		{
-			assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
-			Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);
+                for (final Port port : whenStep.getOutputPorts())
+                {
+                    final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port.setStepName(step
+                            .getName()), stepEnvironment);
+                    newPorts.add(environmentPort.pipe(resultEnvironment.getEnvironmentPort(port)));
+                }
 
-			if (resultEnvironment != null)
-			{
-				final List<EnvironmentPort> newPorts = Lists.newArrayList();
+                resultEnvironment = resultEnvironment.addPorts(newPorts);
+                final Port primaryOutputPort = whenStep.getPrimaryOutputPort();
+                if (primaryOutputPort != null)
+                {
+                    resultEnvironment = resultEnvironment.setDefaultReadablePort(step
+                            .getPortReference(primaryOutputPort.getPortName()));
+                }
 
-				for (final Port port : whenStep.getOutputPorts())
-				{
-					final EnvironmentPort environmentPort =
-						EnvironmentPort.newEnvironmentPort(port.setStepName(step.getName()), stepEnvironment);
-					newPorts.add(environmentPort.pipe(resultEnvironment.getEnvironmentPort(port)));
-				}
+                return resultEnvironment;
+            }
+        }
 
-				resultEnvironment = resultEnvironment.addPorts(newPorts);
-				final Port primaryOutputPort = whenStep.getPrimaryOutputPort();
-				if (primaryOutputPort != null)
-				{
-					resultEnvironment =
-						resultEnvironment
-							.setDefaultReadablePort(step.getPortReference(primaryOutputPort.getPortName()));
-				}
-
-				return resultEnvironment;
-			}
-		}
-
-		throw XProcExceptions.xd0004(step.getLocation());
-	}
+        throw XProcExceptions.xd0004(step.getLocation());
+    }
 }

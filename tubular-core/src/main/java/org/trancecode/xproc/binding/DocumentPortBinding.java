@@ -31,7 +31,6 @@ import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
@@ -39,52 +38,48 @@ import net.sf.saxon.s9api.XdmNode;
 @Immutable
 public class DocumentPortBinding extends AbstractPortBinding
 {
-	private final String href;
+    private final String href;
 
+    // TODO cache support
 
-	// TODO cache support
+    public DocumentPortBinding(final String href, final Location location)
+    {
+        super(location);
 
-	public DocumentPortBinding(final String href, final Location location)
-	{
-		super(location);
+        this.href = href;
+    }
 
-		this.href = href;
-	}
+    public Iterable<XdmNode> readNodes()
+    {
+        throw new IllegalStateException();
+    }
 
+    @Override
+    public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
+    {
+        return new AbstractEnvironmentPortBinding(location)
+        {
+            public Iterable<XdmNode> readNodes()
+            {
+                try
+                {
+                    final Source source = environment.getConfiguration().getUriResolver().resolve(href,
+                            location.getSystemId());
 
-	public Iterable<XdmNode> readNodes()
-	{
-		throw new IllegalStateException();
-	}
+                    return Collections.singletonList(environment.getConfiguration().getProcessor().newDocumentBuilder()
+                            .build(source));
+                }
+                catch (final Exception e)
+                {
+                    throw new PipelineException("Error while trying to build document ; href = %s", e, href);
+                }
+            }
+        };
+    }
 
-
-	@Override
-	public EnvironmentPortBinding newEnvironmentPortBinding(final Environment environment)
-	{
-		return new AbstractEnvironmentPortBinding(location)
-		{
-			public Iterable<XdmNode> readNodes()
-			{
-				try
-				{
-					final Source source =
-						environment.getConfiguration().getUriResolver().resolve(href, location.getSystemId());
-
-					return Collections.singletonList(environment.getConfiguration().getProcessor().newDocumentBuilder()
-						.build(source));
-				}
-				catch (final Exception e)
-				{
-					throw new PipelineException("Error while trying to build document ; href = %s", e, href);
-				}
-			}
-		};
-	}
-
-
-	@Override
-	public String toString()
-	{
-		return String.format("%s[%s]", getClass().getSimpleName(), href);
-	}
+    @Override
+    public String toString()
+    {
+        return String.format("%s[%s]", getClass().getSimpleName(), href);
+    }
 }

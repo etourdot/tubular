@@ -33,7 +33,6 @@ import net.sf.saxon.s9api.Processor;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-
 /**
  * Tests for {@link CatalogParser}.
  * 
@@ -43,32 +42,29 @@ import org.testng.annotations.Test;
 @Test
 public class CatalogParserTest extends AbstractTest
 {
-	private Source getSourceFromClasspath(final String path)
-	{
-		final InputStream inputStream = getClass().getResourceAsStream(Paths.asAbsolutePath(path));
-		return new StreamSource(inputStream);
-	}
+    private Source getSourceFromClasspath(final String path)
+    {
+        final InputStream inputStream = getClass().getResourceAsStream(Paths.asAbsolutePath(path));
+        return new StreamSource(inputStream);
+    }
 
+    private Source getSourceFromTestResources(final String path)
+    {
+        return getSourceFromClasspath(getClass().getSimpleName() + Paths.asAbsolutePath(path));
+    }
 
-	private Source getSourceFromTestResources(final String path)
-	{
-		return getSourceFromClasspath(getClass().getSimpleName() + Paths.asAbsolutePath(path));
-	}
+    private Processor getProcessor()
+    {
+        return new Processor(false);
+    }
 
+    @Test
+    public void parse()
+    {
+        final Source catalogSource = getSourceFromTestResources("catalog.xml");
+        final Catalog catalog = Catalog.newCatalog(new CatalogParser(getProcessor()).parse(catalogSource));
 
-	private Processor getProcessor()
-	{
-		return new Processor(false);
-	}
-
-
-	@Test
-	public void parse()
-	{
-		final Source catalogSource = getSourceFromTestResources("catalog.xml");
-		final Catalog catalog = Catalog.newCatalog(new CatalogParser(getProcessor()).parse(catalogSource));
-
-		AssertJUnit.assertEquals(URI.create("some/rewriten/path/whatever"), catalog.resolveUri(
-			"some/path/whatever", null));
-	}
+        AssertJUnit.assertEquals(URI.create("some/rewriten/path/whatever"), catalog.resolveUri("some/path/whatever",
+                null));
+    }
 }

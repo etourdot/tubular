@@ -21,18 +21,16 @@ package org.trancecode.xml.catalog;
 
 import org.trancecode.xml.Namespace;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class XmlCatalogNamespace extends Namespace
 {
-	public static final XmlCatalogNamespace INSTANCE = new XmlCatalogNamespace();
+    public static final XmlCatalogNamespace INSTANCE = new XmlCatalogNamespace();
 
-
-	private XmlCatalogNamespace()
-	{
-		super("urn:oasis:names:tc:entity:xmlns:xml:catalog", "catalog");
-	}
+    private XmlCatalogNamespace()
+    {
+        super("urn:oasis:names:tc:entity:xmlns:xml:catalog", "catalog");
+    }
 }

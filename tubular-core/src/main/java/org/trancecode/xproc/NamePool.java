@@ -21,39 +21,34 @@ package org.trancecode.xproc;
 
 import org.trancecode.core.InterningPool;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class NamePool
 {
-	private final InterningPool<String> strings = InterningPool.newInstance();
-	private final InterningPool<PortName> portNames = InterningPool.newInstance();
-	private final InterningPool<StepName> stepNames = InterningPool.newInstance();
-	private final InterningPool<PortReference> portReferences = InterningPool.newInstance();
+    private final InterningPool<String> strings = InterningPool.newInstance();
+    private final InterningPool<PortName> portNames = InterningPool.newInstance();
+    private final InterningPool<StepName> stepNames = InterningPool.newInstance();
+    private final InterningPool<PortReference> portReferences = InterningPool.newInstance();
 
+    public String newString(final String string)
+    {
+        return strings.intern(string);
+    }
 
-	public String newString(final String string)
-	{
-		return strings.intern(string);
-	}
+    public PortName newPortName(final String name)
+    {
+        return portNames.intern(PortName.newInstance(name));
+    }
 
+    public StepName newStepName(final String name)
+    {
+        return stepNames.intern(StepName.newInstance(name));
+    }
 
-	public PortName newPortName(final String name)
-	{
-		return portNames.intern(PortName.newInstance(name));
-	}
-
-
-	public StepName newStepName(final String name)
-	{
-		return stepNames.intern(StepName.newInstance(name));
-	}
-
-
-	public PortReference newPortReference(final StepName stepName, final PortName portName)
-	{
-		return portReferences.intern(PortReference.newReference(stepName.toString(), portName.toString()));
-	}
+    public PortReference newPortReference(final StepName stepName, final PortName portName)
+    {
+        return portReferences.intern(PortReference.newReference(stepName.toString(), portName.toString()));
+    }
 }

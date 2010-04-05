@@ -33,56 +33,54 @@ import javax.xml.transform.Source;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class LoadStepProcessor extends AbstractStepProcessor
 {
-	public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
+    public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
 
-	private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
+    private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
 
+    @Override
+    protected Environment doRun(final Step step, final Environment environment)
+    {
+        LOG.trace("step = {}", step.getName());
+        assert step.getType().equals(XProcSteps.LOAD);
 
-	@Override
-	protected Environment doRun(final Step step, final Environment environment)
-	{
-		LOG.trace("step = {}", step.getName());
-		assert step.getType().equals(XProcSteps.LOAD);
+        final String href = environment.getVariable(XProcOptions.HREF);
+        assert href != null;
+        LOG.trace("href = {}", href);
 
-		final String href = environment.getVariable(XProcOptions.HREF);
-		assert href != null;
-		LOG.trace("href = {}", href);
+        final boolean validate = Boolean.parseBoolean(environment.getVariable(XProcOptions.VALIDATE));
+        LOG.trace("validate = {}", validate);
 
-		final boolean validate = Boolean.parseBoolean(environment.getVariable(XProcOptions.VALIDATE));
-		LOG.trace("validate = {}", validate);
+        final Source source;
+        try
+        {
+            source = environment.getConfiguration().getUriResolver().resolve(href, environment.getBaseUri().toString());
+        }
+        catch (final Exception e)
+        {
+            throw new PipelineException("Error while trying to read document ; href = %s ; baseUri = %s", e, href,
+                    environment.getBaseUri());
+        }
 
-		final Source source;
-		try
-		{
-			source = environment.getConfiguration().getUriResolver().resolve(href, environment.getBaseUri().toString());
-		}
-		catch (final Exception e)
-		{
-			throw new PipelineException("Error while trying to read document ; href = %s ; baseUri = %s", e, href,
-				environment.getBaseUri());
-		}
+        final XdmNode document;
+        try
+        {
+            document = environment.getConfiguration().getProcessor().newDocumentBuilder().build(source);
+        }
+        catch (final SaxonApiException e)
+        {
+            throw new PipelineException("Error while trying to build document ; href = %s", e, href);
+        }
+        finally
+        {
+            Jaxp.closeQuietly(source, LOG);
+        }
 
-		final XdmNode document;
-		try
-		{
-			document = environment.getConfiguration().getProcessor().newDocumentBuilder().build(source);
-		}
-		catch (final SaxonApiException e)
-		{
-			throw new PipelineException("Error while trying to build document ; href = %s", e, href);
-		}
-		finally
-		{
-			Jaxp.closeQuietly(source, LOG);
-		}
-
-		return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), document);
-	}
+        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), document);
+    }
 }

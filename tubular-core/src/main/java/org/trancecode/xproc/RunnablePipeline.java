@@ -36,99 +36,89 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class RunnablePipeline
 {
-	private static final Logger LOG = Logger.getLogger(RunnablePipeline.class);
+    private static final Logger LOG = Logger.getLogger(RunnablePipeline.class);
 
-	private final Processor processor;
-	private URIResolver uriResolver;
-	private OutputResolver outputResolver;
-	private Step pipeline;
+    private final Processor processor;
+    private URIResolver uriResolver;
+    private OutputResolver outputResolver;
+    private Step pipeline;
 
+    protected RunnablePipeline(final Pipeline pipeline)
+    {
+        assert pipeline != null;
+        this.pipeline = pipeline.getUnderlyingPipeline();
+        processor = pipeline.getProcessor();
+    }
 
-	protected RunnablePipeline(final Pipeline pipeline)
-	{
-		assert pipeline != null;
-		this.pipeline = pipeline.getUnderlyingPipeline();
-		processor = pipeline.getProcessor();
-	}
+    public PipelineResult run()
+    {
+        LOG.trace("pipeline = {}", pipeline);
 
+        final Configuration configuration = new Configuration(processor);
+        configuration.setOutputResolver(outputResolver);
+        configuration.setUriResolver(uriResolver);
+        final Environment environment = Environment.newEnvironment(pipeline, configuration);
 
-	public PipelineResult run()
-	{
-		LOG.trace("pipeline = {}", pipeline);
+        final Environment resultEnvironment = pipeline.run(environment);
 
-		final Configuration configuration = new Configuration(processor);
-		configuration.setOutputResolver(outputResolver);
-		configuration.setUriResolver(uriResolver);
-		final Environment environment = Environment.newEnvironment(pipeline, configuration);
+        return new PipelineResult(pipeline, resultEnvironment);
+    }
 
-		final Environment resultEnvironment = pipeline.run(environment);
+    public void withParam(final QName name, final String value)
+    {
+        LOG.trace("name = {} ; value = {}", name, value);
+        pipeline = pipeline.withParam(name, null, value, pipeline.getLocation());
+    }
 
-		return new PipelineResult(pipeline, resultEnvironment);
-	}
+    public void withOption(final QName name, final String value)
+    {
+        LOG.trace("name = {} ; value = {}", name, value);
+        pipeline = pipeline.withOptionValue(name, value);
+    }
 
+    public void setPortBinding(final String portName, final Iterable<Source> bindings)
+    {
+        final List<PortBinding> portBindings = Lists.newArrayList();
 
-	public void withParam(final QName name, final String value)
-	{
-		LOG.trace("name = {} ; value = {}", name, value);
-		pipeline = pipeline.withParam(name, null, value, pipeline.getLocation());
-	}
+        for (final Source binding : bindings)
+        {
+            try
+            {
+                final XdmNode node = processor.newDocumentBuilder().build(binding);
+                portBindings.add(new InlinePortBinding(node, null));
+            }
+            catch (final SaxonApiException e)
+            {
+                throw new PipelineException(e);
+            }
+        }
 
+        pipeline = pipeline.setPortBindings(portName, portBindings);
+    }
 
-	public void withOption(final QName name, final String value)
-	{
-		LOG.trace("name = {} ; value = {}", name, value);
-		pipeline = pipeline.withOptionValue(name, value);
-	}
+    public void setPortBinding(final String portName, final Source... bindings)
+    {
+        setPortBinding(portName, Arrays.asList(bindings));
+    }
 
+    public void setUriResolver(final URIResolver uriResolver)
+    {
+        this.uriResolver = uriResolver;
+    }
 
-	public void setPortBinding(final String portName, final Iterable<Source> bindings)
-	{
-		final List<PortBinding> portBindings = Lists.newArrayList();
+    public void setOutputResolver(final OutputResolver outputResolver)
+    {
+        this.outputResolver = outputResolver;
+    }
 
-		for (final Source binding : bindings)
-		{
-			try
-			{
-				final XdmNode node = processor.newDocumentBuilder().build(binding);
-				portBindings.add(new InlinePortBinding(node, null));
-			}
-			catch (final SaxonApiException e)
-			{
-				throw new PipelineException(e);
-			}
-		}
-
-		pipeline = pipeline.setPortBindings(portName, portBindings);
-	}
-
-
-	public void setPortBinding(final String portName, final Source... bindings)
-	{
-		setPortBinding(portName, Arrays.asList(bindings));
-	}
-
-
-	public void setUriResolver(final URIResolver uriResolver)
-	{
-		this.uriResolver = uriResolver;
-	}
-
-
-	public void setOutputResolver(final OutputResolver outputResolver)
-	{
-		this.outputResolver = outputResolver;
-	}
-
-
-	public Step getPipeline()
-	{
-		return pipeline;
-	}
+    public Step getPipeline()
+    {
+        return pipeline;
+    }
 }

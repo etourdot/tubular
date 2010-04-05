@@ -28,82 +28,71 @@ import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class Configuration
 {
-	public static final String PROPERTY_TEMPORARY_NODES_CACHING_ENABLED =
-		Configuration.class.getName() + ".temporaryNodesCachingEnabled";
+    public static final String PROPERTY_TEMPORARY_NODES_CACHING_ENABLED = Configuration.class.getName()
+            + ".temporaryNodesCachingEnabled";
 
-	private boolean temporaryNodesCachingEnabled = Boolean.parseBoolean(PROPERTY_TEMPORARY_NODES_CACHING_ENABLED);
-	private URIResolver uriResolver;
-	private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
-	private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
-	private final Processor processor;
+    private boolean temporaryNodesCachingEnabled = Boolean.parseBoolean(PROPERTY_TEMPORARY_NODES_CACHING_ENABLED);
+    private URIResolver uriResolver;
+    private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
+    private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
+    private final Processor processor;
 
+    public Configuration(final Processor processor)
+    {
+        assert processor != null;
+        this.processor = processor;
 
-	public Configuration(final Processor processor)
-	{
-		assert processor != null;
-		this.processor = processor;
+        uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
+    }
 
-		uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
-	}
+    public InputResolver getInputResolver()
+    {
+        return this.inputResolver;
+    }
 
+    public void setInputResolver(final InputResolver inputResolver)
+    {
+        this.inputResolver = inputResolver;
+    }
 
-	public InputResolver getInputResolver()
-	{
-		return this.inputResolver;
-	}
+    public boolean isTemporaryNodesCachingEnabled()
+    {
+        return temporaryNodesCachingEnabled;
+    }
 
+    public void setTemporaryNodesCachingEnabled(final boolean temporaryNodesCachingEnabled)
+    {
+        this.temporaryNodesCachingEnabled = temporaryNodesCachingEnabled;
+    }
 
-	public void setInputResolver(final InputResolver inputResolver)
-	{
-		this.inputResolver = inputResolver;
-	}
+    public URIResolver getUriResolver()
+    {
+        return uriResolver;
+    }
 
+    public void setUriResolver(final URIResolver uriResolver)
+    {
+        this.uriResolver = uriResolver;
+    }
 
-	public boolean isTemporaryNodesCachingEnabled()
-	{
-		return temporaryNodesCachingEnabled;
-	}
+    public OutputResolver getOutputResolver()
+    {
+        return this.outputResolver;
+    }
 
+    public void setOutputResolver(final OutputResolver outputResolver)
+    {
+        this.outputResolver = outputResolver;
+    }
 
-	public void setTemporaryNodesCachingEnabled(final boolean temporaryNodesCachingEnabled)
-	{
-		this.temporaryNodesCachingEnabled = temporaryNodesCachingEnabled;
-	}
-
-
-	public URIResolver getUriResolver()
-	{
-		return uriResolver;
-	}
-
-
-	public void setUriResolver(final URIResolver uriResolver)
-	{
-		this.uriResolver = uriResolver;
-	}
-
-
-	public OutputResolver getOutputResolver()
-	{
-		return this.outputResolver;
-	}
-
-
-	public void setOutputResolver(final OutputResolver outputResolver)
-	{
-		this.outputResolver = outputResolver;
-	}
-
-
-	public Processor getProcessor()
-	{
-		return processor;
-	}
+    public Processor getProcessor()
+    {
+        return processor;
+    }
 }

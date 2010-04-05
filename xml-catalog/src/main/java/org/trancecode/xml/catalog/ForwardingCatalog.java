@@ -25,58 +25,52 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingObject;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class ForwardingCatalog extends ForwardingObject implements Function<CatalogQuery, URI>
 {
-	private final Function<CatalogQuery, URI> delegate;
+    private final Function<CatalogQuery, URI> delegate;
 
+    public ForwardingCatalog(final Function<CatalogQuery, URI> delegate)
+    {
+        super();
+        Preconditions.checkNotNull(delegate);
+        this.delegate = delegate;
+    }
 
-	public ForwardingCatalog(final Function<CatalogQuery, URI> delegate)
-	{
-		super();
-		Preconditions.checkNotNull(delegate);
-		this.delegate = delegate;
-	}
+    @Override
+    protected Function<CatalogQuery, URI> delegate()
+    {
+        return delegate;
+    }
 
+    @Override
+    public URI apply(final CatalogQuery query)
+    {
+        return delegate.apply(query);
+    }
 
-	@Override
-	protected Function<CatalogQuery, URI> delegate()
-	{
-		return delegate;
-	}
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (o != null)
+        {
+            if (o instanceof ForwardingCatalog)
+            {
+                return o.equals(delegate);
+            }
 
+            return delegate.equals(o);
+        }
 
-	@Override
-	public URI apply(final CatalogQuery query)
-	{
-		return delegate.apply(query);
-	}
+        return false;
+    }
 
-
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (o != null)
-		{
-			if (o instanceof ForwardingCatalog)
-			{
-				return o.equals(delegate);
-			}
-
-			return delegate.equals(o);
-		}
-
-		return false;
-	}
-
-
-	@Override
-	public int hashCode()
-	{
-		return delegate.hashCode();
-	}
+    @Override
+    public int hashCode()
+    {
+        return delegate.hashCode();
+    }
 }

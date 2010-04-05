@@ -24,87 +24,78 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public class PortReference
 {
-	private final String step;
-	private final String port;
-	private transient int hashCode;
-	private transient String toString;
+    private final String step;
+    private final String port;
+    private transient int hashCode;
+    private transient String toString;
 
+    public static PortReference newReference(final String step, final String port)
+    {
+        return new PortReference(step, port);
+    }
 
-	public static PortReference newReference(final String step, final String port)
-	{
-		return new PortReference(step, port);
-	}
+    private PortReference(final String step, final String port)
+    {
+        Preconditions.checkArgument(step == null || !step.isEmpty());
+        this.step = step;
 
+        Preconditions.checkNotNull(port);
+        Preconditions.checkArgument(!port.isEmpty());
+        this.port = port;
+    }
 
-	private PortReference(final String step, final String port)
-	{
-		Preconditions.checkArgument(step == null || !step.isEmpty());
-		this.step = step;
+    public String step()
+    {
+        return step;
+    }
 
-		Preconditions.checkNotNull(port);
-		Preconditions.checkArgument(!port.isEmpty());
-		this.port = port;
-	}
+    public String port()
+    {
+        return port;
+    }
 
+    public PortReference setStep(final String step)
+    {
+        return new PortReference(step, port);
+    }
 
-	public String step()
-	{
-		return step;
-	}
+    @Override
+    public int hashCode()
+    {
+        if (hashCode == 0)
+        {
+            hashCode = new HashCodeBuilder(7, 13).append(step).append(port).toHashCode();
+        }
 
+        return hashCode;
+    }
 
-	public String port()
-	{
-		return port;
-	}
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (o != null && o instanceof PortReference)
+        {
+            final PortReference portReference = (PortReference) o;
+            return new EqualsBuilder().append(step, portReference.step).append(port, portReference.port).isEquals();
+        }
 
+        return false;
+    }
 
-	public PortReference setStep(final String step)
-	{
-		return new PortReference(step, port);
-	}
+    @Override
+    public String toString()
+    {
+        if (toString == null)
+        {
+            toString = step + "/" + port;
+        }
 
-
-	@Override
-	public int hashCode()
-	{
-		if (hashCode == 0)
-		{
-			hashCode = new HashCodeBuilder(7, 13).append(step).append(port).toHashCode();
-		}
-
-		return hashCode;
-	}
-
-
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (o != null && o instanceof PortReference)
-		{
-			final PortReference portReference = (PortReference)o;
-			return new EqualsBuilder().append(step, portReference.step).append(port, portReference.port).isEquals();
-		}
-
-		return false;
-	}
-
-
-	@Override
-	public String toString()
-	{
-		if (toString == null)
-		{
-			toString = step + "/" + port;
-		}
-
-		return toString;
-	}
+        return toString;
+    }
 }

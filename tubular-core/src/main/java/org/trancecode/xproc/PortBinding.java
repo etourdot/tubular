@@ -27,5 +27,5 @@ import org.trancecode.xml.HasLocation;
  */
 public interface PortBinding extends HasLocation
 {
-	EnvironmentPortBinding newEnvironmentPortBinding(Environment environment);
+    EnvironmentPortBinding newEnvironmentPortBinding(Environment environment);
 }

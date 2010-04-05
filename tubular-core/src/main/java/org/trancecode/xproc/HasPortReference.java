@@ -27,5 +27,5 @@ package org.trancecode.xproc;
  */
 public interface HasPortReference
 {
-	PortReference getPortReference();
+    PortReference getPortReference();
 }

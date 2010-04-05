@@ -24,7 +24,6 @@ import com.google.common.base.Functions;
 
 import net.sf.saxon.s9api.QName;
 
-
 /**
  * {@link Function} implementations related to {@link Variable}.
  * 
@@ -33,39 +32,34 @@ import net.sf.saxon.s9api.QName;
  */
 public final class VariableFunctions
 {
-	private VariableFunctions()
-	{
-		// No instantiation
-	}
+    private VariableFunctions()
+    {
+        // No instantiation
+    }
 
+    public static Function<Variable, QName> getName()
+    {
+        return GetNameFunction.INSTANCE;
+    }
 
-	public static Function<Variable, QName> getName()
-	{
-		return GetNameFunction.INSTANCE;
-	}
+    private static class GetNameFunction implements Function<Variable, QName>
+    {
+        public static final GetNameFunction INSTANCE = new GetNameFunction();
 
+        public GetNameFunction()
+        {
+            // Singleton
+        }
 
-	private static class GetNameFunction implements Function<Variable, QName>
-	{
-		public static final GetNameFunction INSTANCE = new GetNameFunction();
+        @Override
+        public QName apply(final Variable variable)
+        {
+            return variable.getName();
+        }
+    }
 
-
-		public GetNameFunction()
-		{
-			// Singleton
-		}
-
-
-		@Override
-		public QName apply(final Variable variable)
-		{
-			return variable.getName();
-		}
-	}
-
-
-	public static Function<Variable, Variable> identity()
-	{
-		return Functions.identity();
-	}
+    public static Function<Variable, Variable> identity()
+    {
+        return Functions.identity();
+    }
 }

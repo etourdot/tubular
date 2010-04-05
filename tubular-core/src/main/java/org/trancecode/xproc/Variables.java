@@ -28,7 +28,6 @@ import com.google.common.collect.Iterables;
 
 import net.sf.saxon.s9api.QName;
 
-
 /**
  * Utility methods related to {@link Variable}.
  * 
@@ -37,62 +36,56 @@ import net.sf.saxon.s9api.QName;
  */
 public final class Variables
 {
-	private Variables()
-	{
-		// No instantiation
-	}
+    private Variables()
+    {
+        // No instantiation
+    }
 
+    public static boolean containsVariable(final Iterable<Variable> variables, final QName name)
+    {
+        return Iterables.any(variables, VariablePredicates.isNamed(name));
+    }
 
-	public static boolean containsVariable(final Iterable<Variable> variables, final QName name)
-	{
-		return Iterables.any(variables, VariablePredicates.isNamed(name));
-	}
+    public static Variable getVariable(final Iterable<Variable> variables, final QName name)
+    {
+        return Iterables.getOnlyElement(Iterables.filter(variables, VariablePredicates.isNamed(name)));
+    }
 
+    public static Variable getOption(final Iterable<Variable> variables, final QName name)
+    {
+        return Iterables.getOnlyElement(Iterables.filter(variables, Predicates.and(VariablePredicates.isOption(),
+                VariablePredicates.isNamed(name))));
+    }
 
-	public static Variable getVariable(final Iterable<Variable> variables, final QName name)
-	{
-		return Iterables.getOnlyElement(Iterables.filter(variables, VariablePredicates.isNamed(name)));
-	}
+    public static Iterable<Variable> setVariable(final Iterable<Variable> variables, final QName name,
+            final Variable variable)
+    {
+        assert containsVariable(variables, name);
 
+        return Iterables.transform(variables, TranceCodeFunctions.conditional(Predicates.compose(Predicates
+                .equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions
+                .identity()));
+    }
 
-	public static Variable getOption(final Iterable<Variable> variables, final QName name)
-	{
-		return Iterables.getOnlyElement(Iterables.filter(variables, Predicates.and(
-			VariablePredicates.isOption(), VariablePredicates.isNamed(name))));
-	}
+    public static Iterable<Variable> setVariable(final Iterable<Variable> variables, final Variable variable)
+    {
+        assert containsVariable(variables, variable.getName());
 
+        return setVariable(variables, variable.getName(), variable);
+    }
 
-	public static Iterable<Variable> setVariable(
-		final Iterable<Variable> variables, final QName name, final Variable variable)
-	{
-		assert containsVariable(variables, name);
+    public static Iterable<Variable> setOrAddVariable(final Iterable<Variable> variables, final Variable variable)
+    {
+        if (containsVariable(variables, variable.getName()))
+        {
+            setVariable(variables, variable);
+        }
 
-		return Iterables.transform(variables, TranceCodeFunctions.conditional(Predicates.compose(Predicates
-			.equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions.identity()));
-	}
+        return TubularIterables.append(variables, variable);
+    }
 
-
-	public static Iterable<Variable> setVariable(final Iterable<Variable> variables, final Variable variable)
-	{
-		assert containsVariable(variables, variable.getName());
-
-		return setVariable(variables, variable.getName(), variable);
-	}
-
-
-	public static Iterable<Variable> setOrAddVariable(final Iterable<Variable> variables, final Variable variable)
-	{
-		if (containsVariable(variables, variable.getName()))
-		{
-			setVariable(variables, variable);
-		}
-
-		return TubularIterables.append(variables, variable);
-	}
-
-
-	public static Iterable<QName> getVariableNames(final Iterable<Variable> variables)
-	{
-		return Iterables.transform(variables, VariableFunctions.getName());
-	}
+    public static Iterable<QName> getVariableNames(final Iterable<Variable> variables)
+    {
+        return Iterables.transform(variables, VariableFunctions.getName());
+    }
 }

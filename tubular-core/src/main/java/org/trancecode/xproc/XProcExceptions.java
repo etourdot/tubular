@@ -24,60 +24,53 @@ import org.trancecode.xproc.XProcException.Type;
 
 import net.sf.saxon.s9api.QName;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public final class XProcExceptions
 {
-	private XProcExceptions()
-	{
-		// No instantiation
-	}
+    private XProcExceptions()
+    {
+        // No instantiation
+    }
 
+    public static XProcException xd0004(final Location location)
+    {
+        return newXProcException(Type.DYNAMIC, 4, location,
+                "no subpipeline is selected by the p:choose and no default is provided");
+    }
 
-	public static XProcException xd0004(final Location location)
-	{
-		return newXProcException(
-			Type.DYNAMIC, 4, location, "no subpipeline is selected by the p:choose and no default is provided");
-	}
+    public static XProcException xd0023(final Location location, final String select, final String errorMessage)
+    {
+        return newXProcException(Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select,
+                errorMessage);
+    }
 
+    public static XProcException xs0018(final Variable option)
+    {
+        return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
+                option.getName());
+    }
 
-	public static XProcException xd0023(final Location location, final String select, final String errorMessage)
-	{
-		return newXProcException(
-			Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select, errorMessage);
-	}
+    public static XProcException xs0031(final Location location, final QName optionName, final QName stepType)
+    {
+        return newXProcException(Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)",
+                optionName, stepType);
+    }
 
+    public static XProcException xc0038(final Location location, final String version)
+    {
+        return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
+    }
 
-	public static XProcException xs0018(final Variable option)
-	{
-		return newXProcException(
-			Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value", option.getName());
-	}
-
-
-	public static XProcException xs0031(final Location location, final QName optionName, final QName stepType)
-	{
-		return newXProcException(
-			Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)", optionName, stepType);
-	}
-
-
-	public static XProcException xc0038(final Location location, final String version)
-	{
-		return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
-	}
-
-
-	private static XProcException newXProcException(
-		final Type type, final int code, final Location location, final String message, final Object... parameters)
-	{
-		final XProcException exception = new XProcException(type, code, location, message, parameters);
-		final StackTraceElement[] stackTrace = new StackTraceElement[exception.getStackTrace().length - 1];
-		System.arraycopy(exception.getStackTrace(), 1, stackTrace, 0, stackTrace.length);
-		exception.setStackTrace(stackTrace);
-		return exception;
-	}
+    private static XProcException newXProcException(final Type type, final int code, final Location location,
+            final String message, final Object... parameters)
+    {
+        final XProcException exception = new XProcException(type, code, location, message, parameters);
+        final StackTraceElement[] stackTrace = new StackTraceElement[exception.getStackTrace().length - 1];
+        System.arraycopy(exception.getStackTrace(), 1, stackTrace, 0, stackTrace.length);
+        exception.setStackTrace(stackTrace);
+        return exception;
+    }
 }

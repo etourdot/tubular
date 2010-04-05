@@ -23,12 +23,11 @@ import org.trancecode.xml.HasLocation;
 
 import net.sf.saxon.s9api.XdmNode;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public interface EnvironmentPortBinding extends HasLocation
 {
-	Iterable<XdmNode> readNodes();
+    Iterable<XdmNode> readNodes();
 }

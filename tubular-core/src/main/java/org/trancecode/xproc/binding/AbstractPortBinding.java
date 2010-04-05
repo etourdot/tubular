@@ -26,21 +26,19 @@ import org.trancecode.xproc.PortBinding;
 
 import java.util.Map;
 
-
 /**
  * @author Herve Quiroz
  * @version $Revision$
  */
 public abstract class AbstractPortBinding extends AbstractHasLocation implements PortBinding
 {
-	protected AbstractPortBinding(final Location location)
-	{
-		super(location);
-	}
+    protected AbstractPortBinding(final Location location)
+    {
+        super(location);
+    }
 
-
-	public PortBinding clonePortBinding(final Map<Port, Port> portMappings)
-	{
-		return this;
-	}
+    public PortBinding clonePortBinding(final Map<Port, Port> portMappings)
+    {
+        return this;
+    }
 }
