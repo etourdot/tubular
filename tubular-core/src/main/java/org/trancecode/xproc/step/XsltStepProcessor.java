@@ -65,7 +65,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
     @Override
     protected Environment doRun(final Step step, final Environment environment)
     {
-        LOG.trace("step = {}", step.getName());
+        LOG.trace("{@method} step = {}", step.getName());
         assert step.getType().equals(XProcSteps.XSLT);
 
         final XdmNode sourceDocument = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
