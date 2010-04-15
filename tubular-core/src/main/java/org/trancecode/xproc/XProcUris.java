@@ -24,7 +24,12 @@ import java.net.URI;
 /**
  * @author Herve Quiroz
  */
-public interface XProcUris
+public final class XProcUris
 {
-    URI URI_XPROC_CORE_LIBRARY = URI.create("classpath:/org/trancecode/pipeline/xproc-1.0.xpl");
+    public static final URI URI_XPROC_CORE_LIBRARY = URI.create("classpath:/org/trancecode/pipeline/xproc-1.0.xpl");
+
+    private XProcUris()
+    {
+        // No instantiation
+    }
 }
