@@ -24,14 +24,19 @@ package org.trancecode.xproc;
  * 
  * @author Herve Quiroz
  */
-public interface XProcPorts
+public final class XProcPorts
 {
-    String CURRENT = "current";
-    String ITERATION_SOURCE = "iteration-source";
-    String SOURCE = "source";
-    String RESULT = "result";
-    String PARAMETERS = "parameters";
-    String SECONDARY = "secondary";
-    String STYLESHEET = "stylesheet";
-    String XPATH_CONTEXT = "xpath-context";
+    public static final String CURRENT = "current";
+    public static final String ITERATION_SOURCE = "iteration-source";
+    public static final String SOURCE = "source";
+    public static final String RESULT = "result";
+    public static final String PARAMETERS = "parameters";
+    public static final String SECONDARY = "secondary";
+    public static final String STYLESHEET = "stylesheet";
+    public static final String XPATH_CONTEXT = "xpath-context";
+
+    private XProcPorts()
+    {
+        // No instantiation
+    }
 }
