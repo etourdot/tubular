@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
+
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
@@ -34,14 +36,9 @@ public class Pipeline
 
     protected Pipeline(final Processor processor, final URIResolver uriResolver, final Step pipeline)
     {
-        assert processor != null;
-        this.processor = processor;
-
-        assert uriResolver != null;
-        this.uriResolver = uriResolver;
-
-        assert pipeline != null;
-        this.pipeline = pipeline;
+        this.processor = Preconditions.checkNotNull(processor);
+        this.uriResolver = Preconditions.checkNotNull(uriResolver);
+        this.pipeline = Preconditions.checkNotNull(pipeline);
     }
 
     public RunnablePipeline load()
