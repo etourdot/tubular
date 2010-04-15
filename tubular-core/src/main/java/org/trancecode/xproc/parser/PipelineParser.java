@@ -254,8 +254,6 @@ public class PipelineParser
                 }
                 return step.withOptionValue(name, value);
             }
-
-            LOG.warn("attribute not supported: " + node.getNodeName());
         }
         else if (node.getNodeKind() == XdmNodeKind.TEXT)
         {
