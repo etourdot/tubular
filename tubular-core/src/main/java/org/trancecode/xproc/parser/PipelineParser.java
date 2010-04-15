@@ -397,24 +397,25 @@ public class PipelineParser
             final String portName = portBindingNode.getAttributeValue(XProcAttributes.PORT);
             return new PipePortBinding(PortReference.newReference(stepName, portName), getLocation(portBindingNode));
         }
-        else if (portBindingNode.getNodeName().equals(XProcElements.EMPTY))
+
+        if (portBindingNode.getNodeName().equals(XProcElements.EMPTY))
         {
             return new EmptyPortBinding(getLocation(portBindingNode));
         }
-        else if (portBindingNode.getNodeName().equals(XProcElements.DOCUMENT))
+
+        if (portBindingNode.getNodeName().equals(XProcElements.DOCUMENT))
         {
             final String href = portBindingNode.getAttributeValue(XProcAttributes.HREF);
             return new DocumentPortBinding(href, getLocation(portBindingNode));
         }
-        else if (portBindingNode.getNodeName().equals(XProcElements.INLINE))
+
+        if (portBindingNode.getNodeName().equals(XProcElements.INLINE))
         {
             final XdmNode inlineNode = SaxonUtil.childElement(portBindingNode);
             return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
         }
-        else
-        {
-            throw new PipelineException("not supported: {}", portBindingNode.getNodeName());
-        }
+
+        throw new PipelineException("not supported: {}", portBindingNode.getNodeName());
     }
 
     private Step parseOption(final XdmNode node, final Step step)
