@@ -101,7 +101,7 @@ public final class Step extends AbstractHasLocation
 
     public Step setName(final String name)
     {
-        LOG.trace("{} -> {}", this.name, name);
+        LOG.trace("{@method} {} -> {}", this.name, name);
 
         if (TubularObjects.equals(this.name, name))
         {
@@ -142,14 +142,13 @@ public final class Step extends AbstractHasLocation
 
     public Step declarePort(final Port port)
     {
-        LOG.trace("port = {}", port);
-
+        LOG.trace("{@method} step = {} ; port = {}", name, port);
         return declarePorts(Collections.singleton(port));
     }
 
     public Step declarePorts(final Iterable<Port> ports)
     {
-        LOG.trace("ports = {}", ports);
+        LOG.trace("{@method} step = {} ; ports = {}", name, ports);
 
         final Map<String, Port> newPorts = Maps.newHashMap(this.ports);
         newPorts.putAll(Maps.uniqueIndex(ports, PortFunctions.getPortName()));
@@ -188,7 +187,7 @@ public final class Step extends AbstractHasLocation
 
     public Environment run(final Environment environment)
     {
-        LOG.trace("name = {} ; type = {}", name, type);
+        LOG.trace("{@method} step = {} ; type = {}", name, type);
         return stepProcessor.run(this, environment);
     }
 
@@ -425,10 +424,10 @@ public final class Step extends AbstractHasLocation
 
     public Step addChildStep(final Step step)
     {
+        LOG.trace("{@method} step = {} ; steps = {} ; childStep = {}", name, steps, step);
         Preconditions.checkNotNull(step);
         Preconditions.checkState(isCompoundStep());
 
-        LOG.trace("steps = {} ; step = {}", steps, step);
         return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
                 TubularIterables.append(steps, step));
 
@@ -442,7 +441,7 @@ public final class Step extends AbstractHasLocation
             return this;
         }
 
-        LOG.trace("steps = {}", steps);
+        LOG.trace("{@method} step = {} ; steps = {}", name, steps);
         return new Step(type, name, location, stepProcessor, compoundStep, variables, parameters, ports, steps);
     }
 
