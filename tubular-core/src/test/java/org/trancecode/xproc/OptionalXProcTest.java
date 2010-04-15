@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * @author Herve Quiroz
  */
 @Test
-public class OptionalXProcTest extends AbstractXProcTest implements XProcTestSuiteXmlModel
+public class OptionalXProcTest extends AbstractXProcTest
 {
     @Test
     public void xslFormatter001() throws Exception
