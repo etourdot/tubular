@@ -26,13 +26,18 @@ import org.trancecode.xml.Namespace;
  * 
  * @author Herve Quiroz
  */
-public interface XProcNamespaces
+public final class XProcNamespaces
 {
-    String URI_XPROC = "http://www.w3.org/ns/xproc";
-    String PREFIX_XPROC = "p";
-    Namespace XPROC = new Namespace(URI_XPROC, PREFIX_XPROC);
+    public static final String URI_XPROC = "http://www.w3.org/ns/xproc";
+    public static final String PREFIX_XPROC = "p";
+    public static final Namespace XPROC = new Namespace(URI_XPROC, PREFIX_XPROC);
 
-    String URI_XPROC_STEP = "http://www.w3.org/ns/xproc-step";
-    String PREFIX_XPROC_STEP = "c";
-    Namespace XPROC_STEP = new Namespace(URI_XPROC_STEP, PREFIX_XPROC_STEP);
+    public static final String URI_XPROC_STEP = "http://www.w3.org/ns/xproc-step";
+    public static final String PREFIX_XPROC_STEP = "c";
+    public static final Namespace XPROC_STEP = new Namespace(URI_XPROC_STEP, PREFIX_XPROC_STEP);
+
+    private XProcNamespaces()
+    {
+        // No instantiation
+    }
 }
