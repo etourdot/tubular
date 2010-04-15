@@ -176,7 +176,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
 
     public Port setSelect(final String select)
     {
-        LOG.trace("port = {} ; select = {}", portReference, select);
+        LOG.trace("{@method} port = {} ; select = {}", portReference, select);
         return new Port(portReference, location, type, primary, sequence, select, portBindings);
     }
 
@@ -208,7 +208,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
 
     public Port setPrimary(final String primary)
     {
-        LOG.trace("port = {} ; primary = {}", portReference, primary);
+        LOG.trace("{@method} port = {} ; primary = {}", portReference, primary);
 
         if (primary == null)
         {
@@ -222,16 +222,13 @@ public class Port extends AbstractHasLocation implements HasPortReference
 
     public Port setPrimary(final boolean primary)
     {
-        LOG.trace("port = {}", portReference);
-        LOG.trace("{} -> {}", this.primary, primary);
-
+        LOG.trace("{@method} port = {} ; primary = {} -> {}", portReference, this.primary, primary);
         return new Port(portReference, location, type, primary, sequence, select, portBindings);
     }
 
     public Port setSequence(final String sequence)
     {
-        LOG.trace("port = {}", portReference);
-        LOG.trace("sequence = {}", sequence);
+        LOG.trace("{@method} port = {} ; sequence = {}", portReference, sequence);
 
         if (sequence == null)
         {
@@ -245,9 +242,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
 
     public Port setSequence(final boolean sequence)
     {
-        LOG.trace("port = {}", portReference);
-        LOG.trace("{} -> {}", this.sequence, sequence);
-
+        LOG.trace("{@method} port = {} ; sequence = {} -> {}", portReference, this.sequence, sequence);
         return new Port(portReference, location, type, primary, sequence, select, portBindings);
     }
 
