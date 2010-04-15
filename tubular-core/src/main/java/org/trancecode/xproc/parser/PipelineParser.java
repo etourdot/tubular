@@ -415,7 +415,7 @@ public class PipelineParser
             return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
         }
 
-        throw new PipelineException("not supported: {}", portBindingNode.getNodeName());
+        throw new PipelineException("not supported: %s", portBindingNode.getNodeName());
     }
 
     private Step parseOption(final XdmNode node, final Step step)
