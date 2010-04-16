@@ -125,14 +125,14 @@ public class Environment
             {
                 environmentPort = environmentPort.pipe(getXPathContextPort());
             }
-            newPorts.put(port.getPortReference(), environmentPort);
+            newPorts.put(port.portReference(), environmentPort);
         }
 
         for (final Port port : step.getOutputPorts())
         {
             if (port.portBindings.isEmpty())
             {
-                newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, this));
+                newPorts.put(port.portReference(), EnvironmentPort.newEnvironmentPort(port, this));
             }
         }
 
@@ -154,9 +154,9 @@ public class Environment
 
         for (final Port port : step.getOutputPorts())
         {
-            if (!ports.containsKey(port.getPortReference()))
+            if (!ports.containsKey(port.portReference()))
             {
-                newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, sourceEnvironment));
+                newPorts.put(port.portReference(), EnvironmentPort.newEnvironmentPort(port, sourceEnvironment));
             }
         }
 
@@ -467,7 +467,7 @@ public class Environment
 
     public EnvironmentPort getEnvironmentPort(final Port port)
     {
-        return getEnvironmentPort(port.getPortReference());
+        return getEnvironmentPort(port.portReference());
     }
 
     public EnvironmentPort getEnvironmentPort(final PortReference portReference)
@@ -505,10 +505,10 @@ public class Environment
     public EnvironmentPort addEnvironmentPort(final Port port)
     {
         LOG.trace("{@method} port = {}", port);
-        assert port.getPortReference().equals(port.getPortReference());
-        assert !ports.containsKey(port.getPortReference());
+        assert port.portReference().equals(port.portReference());
+        assert !ports.containsKey(port.portReference());
         final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
-        ports.put(port.getPortReference(), environmentPort);
+        ports.put(port.portReference(), environmentPort);
         return environmentPort;
     }
 

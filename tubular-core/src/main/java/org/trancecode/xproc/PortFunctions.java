@@ -71,7 +71,7 @@ public final class PortFunctions
         @Override
         public PortReference apply(final HasPortReference port)
         {
-            return port.getPortReference();
+            return port.portReference();
         }
     }
 }

@@ -144,7 +144,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
     }
 
     @Override
-    public PortReference getPortReference()
+    public PortReference portReference()
     {
         return portReference;
     }

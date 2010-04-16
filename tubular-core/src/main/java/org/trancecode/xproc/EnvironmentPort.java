@@ -146,7 +146,7 @@ public class EnvironmentPort implements HasPortReference
         assert portBindings.isEmpty();
 
         final List<XdmNode> nodeList = ImmutableList.copyOf(nodes);
-        LOG.trace("{} nodes -> {}", nodeList.size(), declaredPort.getPortReference());
+        LOG.trace("{} nodes -> {}", nodeList.size(), declaredPort.portReference());
         final EnvironmentPortBinding portBinding = new EnvironmentPortBinding()
         {
             public Iterable<XdmNode> readNodes()
@@ -189,9 +189,9 @@ public class EnvironmentPort implements HasPortReference
     }
 
     @Override
-    public PortReference getPortReference()
+    public PortReference portReference()
     {
-        return getDeclaredPort().getPortReference();
+        return getDeclaredPort().portReference();
     }
 
     @Override
