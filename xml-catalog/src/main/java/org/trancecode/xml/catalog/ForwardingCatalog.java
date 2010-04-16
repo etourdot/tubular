@@ -34,9 +34,7 @@ public class ForwardingCatalog extends ForwardingObject implements Function<Cata
 
     public ForwardingCatalog(final Function<CatalogQuery, URI> delegate)
     {
-        super();
-        Preconditions.checkNotNull(delegate);
-        this.delegate = delegate;
+        this.delegate = Preconditions.checkNotNull(delegate);
     }
 
     @Override
