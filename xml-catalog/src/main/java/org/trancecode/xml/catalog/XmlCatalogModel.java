@@ -28,17 +28,18 @@ import net.sf.saxon.s9api.QName;
 /**
  * @author Herve Quiroz
  */
-public interface XmlCatalogModel
+public final class XmlCatalogModel
 {
-    QName ELEMENT_CATALOG = XmlCatalogNamespace.INSTANCE.newSaxonQName("catalog");
-    QName ELEMENT_GROUP = XmlCatalogNamespace.INSTANCE.newSaxonQName("group");
-    QName ELEMENT_REWRITE_SYSTEM = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteSystem");
-    QName ELEMENT_REWRITE_URI = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteURI");
+    public static final QName ELEMENT_CATALOG = XmlCatalogNamespace.INSTANCE.newSaxonQName("catalog");
+    public static final QName ELEMENT_GROUP = XmlCatalogNamespace.INSTANCE.newSaxonQName("group");
+    public static final QName ELEMENT_REWRITE_SYSTEM = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteSystem");
+    public static final QName ELEMENT_REWRITE_URI = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteURI");
 
-    Set<QName> ELEMENTS_CATALOG = ImmutableSet.of(ELEMENT_REWRITE_SYSTEM, ELEMENT_REWRITE_URI, ELEMENT_GROUP);
-    Set<QName> ELEMENTS_GROUP = ImmutableSet.of(ELEMENT_CATALOG, ELEMENT_GROUP);
+    public static final Set<QName> ELEMENTS_CATALOG = ImmutableSet.of(ELEMENT_REWRITE_SYSTEM, ELEMENT_REWRITE_URI,
+            ELEMENT_GROUP);
+    public static final Set<QName> ELEMENTS_GROUP = ImmutableSet.of(ELEMENT_CATALOG, ELEMENT_GROUP);
 
-    QName ATTRIBUTE_SYSTEM_ID_START_STRING = new QName("systemIdStartString");
-    QName ATTRIBUTE_REWRITE_PREFIX = new QName("rewritePrefix");
-    QName ATTRIBUTE_URI_START_STRING = new QName("uriStartString");
+    public static final QName ATTRIBUTE_SYSTEM_ID_START_STRING = new QName("systemIdStartString");
+    public static final QName ATTRIBUTE_REWRITE_PREFIX = new QName("rewritePrefix");
+    public static final QName ATTRIBUTE_URI_START_STRING = new QName("uriStartString");
 }
