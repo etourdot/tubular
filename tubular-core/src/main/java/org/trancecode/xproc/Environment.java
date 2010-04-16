@@ -65,7 +65,7 @@ public class Environment
 
     private static Map<PortReference, EnvironmentPort> getPortsMap(final Iterable<EnvironmentPort> ports)
     {
-        return Maps.uniqueIndex(ports, PortFunctions.getPortReference());
+        return Maps.uniqueIndex(ports, PortFunctions.portReference());
     }
 
     public static Environment newEnvironment(final Step pipeline, final Configuration configuration)

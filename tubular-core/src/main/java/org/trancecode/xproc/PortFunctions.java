@@ -54,16 +54,16 @@ public final class PortFunctions
         }
     }
 
-    public static Function<HasPortReference, PortReference> getPortReference()
+    public static Function<HasPortReference, PortReference> portReference()
     {
-        return GetPortReferenceFunction.INSTANCE;
+        return PortReferenceFunction.INSTANCE;
     }
 
-    private static class GetPortReferenceFunction implements Function<HasPortReference, PortReference>
+    private static class PortReferenceFunction implements Function<HasPortReference, PortReference>
     {
-        public static final GetPortReferenceFunction INSTANCE = new GetPortReferenceFunction();
+        public static final PortReferenceFunction INSTANCE = new PortReferenceFunction();
 
-        private GetPortReferenceFunction()
+        private PortReferenceFunction()
         {
             // Singleton
         }
