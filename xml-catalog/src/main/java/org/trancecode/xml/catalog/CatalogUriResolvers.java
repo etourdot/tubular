@@ -61,10 +61,8 @@ public final class CatalogUriResolvers
         public EntityResolverURIResolver(final InputResolver inputResolver, final Catalog catalog)
         {
             super(inputResolver, catalog);
-            Preconditions.checkNotNull(inputResolver);
-            Preconditions.checkNotNull(catalog);
-            this.inputResolver = inputResolver;
-            this.catalog = catalog;
+            this.inputResolver = Preconditions.checkNotNull(inputResolver);
+            this.catalog = Preconditions.checkNotNull(catalog);
             entityResolver = CatalogEntityResolvers.newEntityResolver(inputResolver, catalog);
         }
 
