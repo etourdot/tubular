@@ -42,4 +42,9 @@ public final class XmlCatalogModel
     public static final QName ATTRIBUTE_SYSTEM_ID_START_STRING = new QName("systemIdStartString");
     public static final QName ATTRIBUTE_REWRITE_PREFIX = new QName("rewritePrefix");
     public static final QName ATTRIBUTE_URI_START_STRING = new QName("uriStartString");
+
+    private XmlCatalogModel()
+    {
+        // No instantiation
+    }
 }
