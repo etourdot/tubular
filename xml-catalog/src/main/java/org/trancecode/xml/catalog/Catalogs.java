@@ -53,14 +53,9 @@ public final class Catalogs
         return DefaultCatalog.INSTANCE;
     }
 
-    private static class DefaultCatalog implements Function<CatalogQuery, URI>
+    private static final class DefaultCatalog implements Function<CatalogQuery, URI>
     {
         public static DefaultCatalog INSTANCE = new DefaultCatalog();
-
-        private DefaultCatalog()
-        {
-            // Singleton
-        }
 
         @Override
         public URI apply(final CatalogQuery query)
@@ -92,8 +87,7 @@ public final class Catalogs
         public RoutingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
         {
             super(catalogEntries);
-            Preconditions.checkNotNull(catalogEntries);
-            this.catalogEntries = catalogEntries;
+            this.catalogEntries = Preconditions.checkNotNull(catalogEntries);
         }
 
         @Override
@@ -124,7 +118,8 @@ public final class Catalogs
         return new RewriteSystem(systemIdStartString, rewritePrefix);
     }
 
-    private static class RewriteSystem extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
+    private static final class RewriteSystem extends AbstractImmutableHashCodeObject implements
+            Function<CatalogQuery, URI>
     {
         private final String systemIdStartString;
         private final String rewritePrefix;
@@ -154,7 +149,8 @@ public final class Catalogs
         return new RewriteUri(uriStartString, rewritePrefix);
     }
 
-    private static class RewriteUri extends AbstractImmutableHashCodeObject implements Function<CatalogQuery, URI>
+    private static final class RewriteUri extends AbstractImmutableHashCodeObject implements
+            Function<CatalogQuery, URI>
     {
         private final String uriStartString;
         private final String rewritePrefix;
