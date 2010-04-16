@@ -51,11 +51,8 @@ public final class CatalogEntityResolvers
 
         public InputResolverEntityResolver(final InputResolver inputResolver, final Catalog catalog)
         {
-            super();
-            Preconditions.checkNotNull(inputResolver);
-            Preconditions.checkNotNull(catalog);
-            this.inputResolver = inputResolver;
-            this.catalog = catalog;
+            this.inputResolver = Preconditions.checkNotNull(inputResolver);
+            this.catalog = Preconditions.checkNotNull(catalog);
         }
 
         @Override
