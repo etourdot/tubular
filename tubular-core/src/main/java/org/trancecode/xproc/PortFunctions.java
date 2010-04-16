@@ -38,14 +38,9 @@ public final class PortFunctions
         return GetPortNameFunction.INSTANCE;
     }
 
-    private static class GetPortNameFunction implements Function<Port, String>
+    private static final class GetPortNameFunction implements Function<Port, String>
     {
         public static final GetPortNameFunction INSTANCE = new GetPortNameFunction();
-
-        private GetPortNameFunction()
-        {
-            // Singleton
-        }
 
         @Override
         public String apply(final Port port)
@@ -59,14 +54,9 @@ public final class PortFunctions
         return PortReferenceFunction.INSTANCE;
     }
 
-    private static class PortReferenceFunction implements Function<HasPortReference, PortReference>
+    private static final class PortReferenceFunction implements Function<HasPortReference, PortReference>
     {
         public static final PortReferenceFunction INSTANCE = new PortReferenceFunction();
-
-        private PortReferenceFunction()
-        {
-            // Singleton
-        }
 
         @Override
         public PortReference apply(final HasPortReference port)
