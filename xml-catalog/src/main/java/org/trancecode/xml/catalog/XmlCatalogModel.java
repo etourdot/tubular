@@ -30,18 +30,23 @@ import net.sf.saxon.s9api.QName;
  */
 public final class XmlCatalogModel
 {
-    public static final QName ELEMENT_CATALOG = XmlCatalogNamespace.INSTANCE.newSaxonQName("catalog");
-    public static final QName ELEMENT_GROUP = XmlCatalogNamespace.INSTANCE.newSaxonQName("group");
-    public static final QName ELEMENT_REWRITE_SYSTEM = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteSystem");
-    public static final QName ELEMENT_REWRITE_URI = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteURI");
+    public static final class XmlCatalogElements
+    {
+        public static final QName CATALOG = XmlCatalogNamespace.INSTANCE.newSaxonQName("catalog");
+        public static final QName GROUP = XmlCatalogNamespace.INSTANCE.newSaxonQName("group");
+        public static final QName REWRITE_SYSTEM = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteSystem");
+        public static final QName REWRITE_URI = XmlCatalogNamespace.INSTANCE.newSaxonQName("rewriteURI");
 
-    public static final Set<QName> ELEMENTS_CATALOG = ImmutableSet.of(ELEMENT_REWRITE_SYSTEM, ELEMENT_REWRITE_URI,
-            ELEMENT_GROUP);
-    public static final Set<QName> ELEMENTS_GROUP = ImmutableSet.of(ELEMENT_CATALOG, ELEMENT_GROUP);
+        public static final Set<QName> ELEMENTS_CATALOG = ImmutableSet.of(REWRITE_SYSTEM, REWRITE_URI, GROUP);
+        public static final Set<QName> ELEMENTS_GROUP = ImmutableSet.of(CATALOG, GROUP);
+    }
 
-    public static final QName ATTRIBUTE_SYSTEM_ID_START_STRING = new QName("systemIdStartString");
-    public static final QName ATTRIBUTE_REWRITE_PREFIX = new QName("rewritePrefix");
-    public static final QName ATTRIBUTE_URI_START_STRING = new QName("uriStartString");
+    public static final class XmlCatalogAttributes
+    {
+        public static final QName SYSTEM_ID_START_STRING = new QName("systemIdStartString");
+        public static final QName REWRITE_PREFIX = new QName("rewritePrefix");
+        public static final QName URI_START_STRING = new QName("uriStartString");
+    }
 
     private XmlCatalogModel()
     {
