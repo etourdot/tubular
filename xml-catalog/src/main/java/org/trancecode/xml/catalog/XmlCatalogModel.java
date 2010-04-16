@@ -39,6 +39,11 @@ public final class XmlCatalogModel
 
         public static final Set<QName> ELEMENTS_CATALOG = ImmutableSet.of(REWRITE_SYSTEM, REWRITE_URI, GROUP);
         public static final Set<QName> ELEMENTS_GROUP = ImmutableSet.of(CATALOG, GROUP);
+
+        private XmlCatalogElements()
+        {
+            // No instantiation
+        }
     }
 
     public static final class XmlCatalogAttributes
@@ -46,6 +51,11 @@ public final class XmlCatalogModel
         public static final QName SYSTEM_ID_START_STRING = new QName("systemIdStartString");
         public static final QName REWRITE_PREFIX = new QName("rewritePrefix");
         public static final QName URI_START_STRING = new QName("uriStartString");
+
+        private XmlCatalogAttributes()
+        {
+            // No instantiation
+        }
     }
 
     private XmlCatalogModel()
