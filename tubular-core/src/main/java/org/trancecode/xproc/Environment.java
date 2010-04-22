@@ -121,7 +121,7 @@ public class Environment
         for (final Port port : step.getInputPorts())
         {
             EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
-            if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT))
+            if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT) && port.getPortBindings().isEmpty())
             {
                 environmentPort = environmentPort.pipe(getXPathContextPort());
             }
@@ -568,7 +568,7 @@ public class Environment
                     assert !contextNodes.hasNext();
                 }
 
-                return contextNode;
+                return SaxonUtil.asDocumentNode(contextNode, configuration.getProcessor());
             }
         }
 
