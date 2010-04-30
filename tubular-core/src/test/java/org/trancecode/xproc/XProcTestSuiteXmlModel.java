@@ -41,10 +41,13 @@ public interface XProcTestSuiteXmlModel
     QName ELEMENT_OUTPUT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("output");
     QName ELEMENT_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("pipeline");
     QName ELEMENT_COMPARE_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("compare-pipeline");
+    QName ELEMENT_TITLE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("title");
+    QName ELEMENT_DESCRIPTION = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("description");
 
     QName ATTRIBUTE_ERROR = new QName("error");
     QName ATTRIBUTE_HREF = new QName("href");
     QName ATTRIBUTE_PORT = new QName("port");
     QName ATTRIBUTE_NAME = new QName("name");
     QName ATTRIBUTE_VALUE = new QName("value");
+    QName ATTRIBUTE_IGNORE_WHITESPACE = new QName("ignore-whitespace-differences");
 }
