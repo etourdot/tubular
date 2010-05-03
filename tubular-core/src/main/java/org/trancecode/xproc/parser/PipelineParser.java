@@ -167,12 +167,13 @@ public class PipelineParser
         }
 
         step = step.setLocation(getLocation(stepNode));
-        step = parseStepChildNodes(stepNode, step);
 
         if (Pipeline.isPipeline(step))
         {
             step = Pipeline.addImplicitPorts(step);
         }
+
+        step = parseStepChildNodes(stepNode, step);
 
         declareStep(step);
         return step;
