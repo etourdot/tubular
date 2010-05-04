@@ -45,6 +45,15 @@ public final class XProcExceptions
                 errorMessage);
     }
 
+    public static XProcException xd0034(final Location location)
+    {
+        return newXProcException(
+                Type.DYNAMIC,
+                34,
+                location,
+                "It is a dynamic error to specify a new namespace or prefix if the lexical value of the specified name contains a colon (or if no wrapper is explicitly specified).");
+    }
+
     public static XProcException xs0018(final Variable option)
     {
         return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
@@ -57,9 +66,24 @@ public final class XProcExceptions
                 optionName, stepType);
     }
 
+    public static XProcException xc0023(final Location location)
+    {
+        return newXProcException(Type.STEP, 23, location,
+                "It is a dynamic error if a select expression or match pattern returns a node type that is not allowed by the step.");
+    }
+
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
+    }
+
+    public static XProcException xc0059(final Location location)
+    {
+        return newXProcException(
+                Type.STEP,
+                59,
+                location,
+                "It is a dynamic error if the QName value in the attribute-name option uses the prefix \"xmlns\" or any other prefix that resolves to the namespace name \"http://www.w3.org/2000/xmlns/\".");
     }
 
     private static XProcException newXProcException(final Type type, final int code, final Location location,
