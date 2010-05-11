@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<p:library xmlns:p="http://www.w3.org/ns/xproc">
+<!-- $Id: xproc-1.0.xpl,v 1.3 2010/02/04 17:06:39 ht Exp $ -->
+<p:library xmlns:p="http://www.w3.org/ns/xproc" version="1.0">
    <p:declare-step type="p:add-attribute" xml:id="add-attribute">
       <p:input port="source"/>
       <p:output port="result"/>
       <p:option name="match" required="true"/>
       <p:option name="attribute-name" required="true"/>
+      <p:option name="attribute-prefix"/>
+      <p:option name="attribute-namespace"/>
       <p:option name="attribute-value" required="true"/>
    </p:declare-step>
    <p:declare-step type="p:add-xml-base" xml:id="add-xml-base">
@@ -37,7 +40,10 @@
    </p:declare-step>
    <p:declare-step type="p:error" xml:id="error">
       <p:input port="source" primary="false"/>
+      <p:output port="result" sequence="true"/>
       <p:option name="code" required="true"/>
+      <p:option name="code-prefix"/>
+      <p:option name="code-namespace"/>
    </p:declare-step>
    <p:declare-step type="p:escape-markup" xml:id="escape-markup">
       <p:input port="source"/>
@@ -94,6 +100,8 @@
       <p:input port="source"/>
       <p:output port="result"/>
       <p:option name="attribute" select="'xml:id'"/>
+      <p:option name="attribute-prefix"/>
+      <p:option name="attribute-namespace"/>
       <p:option name="label" select="'concat(&#34;_&#34;,$p:index)'"/>
       <p:option name="match" select="'*'"/>
       <p:option name="replace" select="'true'"/>
@@ -121,6 +129,8 @@
       <p:input port="alternate" sequence="true"/>
       <p:output port="result" sequence="true"/>
       <p:option name="wrapper" required="true"/>
+      <p:option name="wrapper-prefix"/>
+      <p:option name="wrapper-namespace"/>
    </p:declare-step>
    <p:declare-step type="p:parameters" xml:id="parameters">
       <p:input port="parameters" kind="parameter" primary="false"/>
@@ -131,6 +141,8 @@
       <p:output port="result"/>
       <p:option name="match" required="true"/>
       <p:option name="new-name" required="true"/>
+      <p:option name="new-prefix"/>
+      <p:option name="new-namespace"/>
    </p:declare-step>
    <p:declare-step type="p:replace" xml:id="replace">
       <p:input port="source" primary="true"/>
@@ -197,6 +209,8 @@
       <p:input port="source"/>
       <p:output port="result"/>
       <p:option name="wrapper" required="true"/>
+      <p:option name="wrapper-prefix"/>
+      <p:option name="wrapper-namespace"/>
       <p:option name="match" required="true"/>
       <p:option name="group-adjacent"/>
    </p:declare-step>
@@ -204,6 +218,8 @@
       <p:input port="source" sequence="true"/>
       <p:output port="result" sequence="true"/>
       <p:option name="wrapper" required="true"/>
+      <p:option name="wrapper-prefix"/>
+      <p:option name="wrapper-namespace"/>
       <p:option name="group-adjacent"/>
    </p:declare-step>
    <p:declare-step type="p:xinclude" xml:id="xinclude">
@@ -227,6 +243,7 @@
       <p:input port="source" primary="true" sequence="true"/>
       <p:output port="result" primary="true"/>
       <p:output port="errors"/>
+      <p:output port="exit-status"/>
       <p:option name="command" required="true"/>
       <p:option name="args" select="''"/>
       <p:option name="cwd"/>
@@ -235,7 +252,9 @@
       <p:option name="wrap-result-lines" select="'false'"/>
       <p:option name="errors-is-xml" select="'false'"/>
       <p:option name="wrap-error-lines" select="'false'"/>
-      <p:option name="fix-slashes" select="'false'"/>
+      <p:option name="path-separator"/>
+      <p:option name="failure-threshold"/>
+      <p:option name="arg-separator" select="' '"/>
       <p:option name="byte-order-mark"/>
       <p:option name="cdata-section-elements" select="''"/>
       <p:option name="doctype-public"/>
