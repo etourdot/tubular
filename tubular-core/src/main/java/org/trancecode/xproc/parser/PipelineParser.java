@@ -157,7 +157,7 @@ public class PipelineParser
         if (stepProcessors.containsKey(type))
         {
             final StepProcessor stepProcessor = stepProcessors.get(type);
-            step = Step.newStep(type, stepProcessor, false);
+            step = Step.newStep(stepNode, type, stepProcessor, false);
         }
         else
         {
@@ -523,7 +523,7 @@ public class PipelineParser
         LOG.trace("name = {} ; type = {}", name, type);
 
         final Step declaredStep = getDeclaredStep(type);
-        Step step = declaredStep.setName(name).setLocation(getLocation(node));
+        Step step = declaredStep.setName(name).setLocation(getLocation(node)).setNode(node);
         LOG.trace("new instance step: {}", step);
 
         step = parseStepChildNodes(node, step);
