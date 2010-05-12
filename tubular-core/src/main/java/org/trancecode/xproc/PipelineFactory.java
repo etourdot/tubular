@@ -32,6 +32,7 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.parser.PipelineParser;
+import org.trancecode.xproc.step.AddAttributeStepProcessor;
 import org.trancecode.xproc.step.Choose;
 import org.trancecode.xproc.step.CountStepProcessor;
 import org.trancecode.xproc.step.ForEach;
@@ -142,9 +143,9 @@ public class PipelineFactory
             processors.put(XProcSteps.LOAD, LoadStepProcessor.INSTANCE);
             processors.put(XProcSteps.STORE, StoreStepProcessor.INSTANCE);
             processors.put(XProcSteps.XSLT, XsltStepProcessor.INSTANCE);
+            processors.put(XProcSteps.ADD_ATTRIBUTE, AddAttributeStepProcessor.INSTANCE);
 
             // Unsupported required steps
-            processors.put(XProcSteps.ADD_ATTRIBUTE, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.ADD_XML_BASE, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.COMPARE, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.DELETE, UNSUPPORTED_STEP_PROCESSOR);
