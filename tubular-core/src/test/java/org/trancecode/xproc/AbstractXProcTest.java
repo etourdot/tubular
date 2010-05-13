@@ -30,13 +30,13 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
@@ -65,60 +65,42 @@ public abstract class AbstractXProcTest extends AbstractTest
     {
         final PipelineFactory pipelineFactory = new PipelineFactory();
         final Processor processor = pipelineFactory.getProcessor();
-        final Source testSource = new StreamSource(testUrl.toString());
-        final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
-        documentBuilder.setLineNumbering(true);
-        final XdmNode testDocument = documentBuilder.build(testSource);
-        final XdmNode testElement = SaxonUtil.childElement(testDocument, XProcTestSuiteXmlModel.ELEMENT_TEST);
-        final String expectedError = testElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_ERROR);
-        final XdmNode pipelineElement = SaxonUtil.childElement(testElement, XProcTestSuiteXmlModel.ELEMENT_PIPELINE);
-        final XdmNode pipelineDocument;
-        if (pipelineElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF) != null)
-        {
-            final String href = pipelineElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
-            assert !href.isEmpty();
-            pipelineDocument = documentBuilder.build(processor.getUnderlyingConfiguration().getURIResolver().resolve(
-                    href, pipelineElement.getBaseURI().toString()));
-        }
-        else
-        {
-            pipelineDocument = SaxonUtil.childElement(pipelineElement);
-        }
+        final XProcTestCase test = getTest(testUrl, processor);
+
         final PipelineResult result;
         try
         {
             log.info("== parse pipeline ==");
-            final Pipeline pipeline = pipelineFactory.newPipeline(pipelineDocument.asSource());
+            final Pipeline pipeline = pipelineFactory.newPipeline(test.getPipeline().asSource());
             log.info("== pipeline parsed ==");
             final RunnablePipeline runnablePipeline = pipeline.load();
 
-            for (final XdmNode inputElement : SaxonUtil
-                    .childElements(testElement, XProcTestSuiteXmlModel.ELEMENT_INPUT))
+            // Set inputs
+            for (final String port : test.getInputs().keySet())
             {
-                final String portName = inputElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_PORT);
                 final List<Source> sources = new ArrayList<Source>();
-                for (final XdmNode node : SaxonUtil.childElements(inputElement))
+                for (final XdmNode inputDoc : test.getInputs().get(port))
                 {
-                    sources.add(getDocumentWrappedNode(node).asSource());
+                    sources.add(inputDoc.asSource());
                 }
-                runnablePipeline.setPortBinding(portName, sources);
+                runnablePipeline.setPortBinding(port, sources);
             }
 
-            for (final XdmNode optionElement : SaxonUtil.childElements(testElement,
-                    XProcTestSuiteXmlModel.ELEMENT_OPTION))
+            // Set options
+            for (final QName name : test.getOptions().keySet())
             {
-                final QName name = SaxonUtil.getAttributeAsQName(optionElement, XProcTestSuiteXmlModel.ATTRIBUTE_NAME);
-                final String value = optionElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_VALUE);
-                runnablePipeline.withOption(name, value);
+                runnablePipeline.withOption(name, test.getOptions().get(name));
             }
 
-            for (final XdmNode parameterElement : SaxonUtil.childElements(testElement,
-                    XProcTestSuiteXmlModel.ELEMENT_PARAMETER))
+            // Set parameters
+            // TODO how to deal with multiple parameter ports ?
+            for (final String port : test.getParameters().keySet())
             {
-                final QName name = SaxonUtil.getAttributeAsQName(parameterElement,
-                        XProcTestSuiteXmlModel.ATTRIBUTE_NAME);
-                final String value = parameterElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_VALUE);
-                runnablePipeline.withParam(name, value);
+                final List<Source> sources = new ArrayList<Source>();
+                for (final QName name : test.getParameters().get(port).keySet())
+                {
+                    runnablePipeline.withParam(name, test.getParameters().get(port).get(name));
+                }
             }
 
             log.info("== run pipeline ==");
@@ -127,18 +109,16 @@ public abstract class AbstractXProcTest extends AbstractTest
         }
         catch (final XProcException e)
         {
-            if (expectedError != null)
+            if (test.getError() != null)
             {
-                AssertJUnit.assertEquals(expectedError, "err:" + e.getLabel());
+                // TODO enable other error prefixes
+                AssertJUnit.assertEquals(test.getError(), "err:" + e.getLabel());
                 return;
             }
-
             throw new IllegalStateException(e);
         }
 
-        final XdmNode comparePipelineElement = Iterables.getOnlyElement(SaxonUtil.childElements(testElement,
-                XProcTestSuiteXmlModel.ELEMENT_COMPARE_PIPELINE), null);
-        if (comparePipelineElement != null)
+        if (test.getComparePipeline() != null)
         {
             // TODO parse compare-pipeline (if any)
             assert false : "TODO";
@@ -146,47 +126,47 @@ public abstract class AbstractXProcTest extends AbstractTest
 
         // TODO run compare-pipeline (if any)
 
-        for (final XdmNode outputElement : SaxonUtil.childElements(testElement, XProcTestSuiteXmlModel.ELEMENT_OUTPUT))
+        for (final String port : test.getOutputs().keySet())
         {
-            final String portName = outputElement.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_PORT);
 
-            final Iterable<XdmNode> expectedNodes = SaxonUtil.childElements(outputElement);
-            final Iterable<XdmNode> actualNodes = result.readNodes(portName);
-            AssertJUnit.assertEquals(portName + " = " + actualNodes.toString(), Iterables.size(expectedNodes),
-                    Iterables.size(actualNodes));
+            final Iterable<XdmNode> actualNodes = result.readNodes(port);
+            final Iterable<XdmNode> expectedNodes = test.getOutputs().get(port);
+            AssertJUnit.assertEquals(port + " = " + actualNodes.toString(), Iterables.size(expectedNodes), Iterables
+                    .size(actualNodes));
 
             final Iterator<XdmNode> expectedNodesIterator = expectedNodes.iterator();
             final Iterator<XdmNode> actualNodesIterator = actualNodes.iterator();
-
             while (expectedNodesIterator.hasNext())
             {
                 assert actualNodesIterator.hasNext();
-                final XdmNode expectedNode = getDocumentWrappedNode(expectedNodesIterator.next());
-                assertEquals(expectedNode, actualNodesIterator.next());
+                final XdmNode expectedNode = expectedNodesIterator.next();
+                final XdmNode actualNode = actualNodesIterator.next();
+                assertEquals(expectedNode, actualNode, processor, test.isIgnoreWhitespace());
             }
-
             assert !actualNodesIterator.hasNext();
         }
     }
 
-    private static XdmNode getDocumentWrappedNode(final XdmNode node)
+    private XProcTestCase getTest(final URL testUrl, final Processor processor)
     {
-        if (node.getNodeName().equals(XProcTestSuiteXmlModel.ELEMENT_DOCUMENT))
-        {
-            return SaxonUtil.childElement(node);
-        }
-
-        return node;
+        final Source source = new StreamSource(testUrl.toString());
+        final XProcTestParser parser = new XProcTestParser(processor, source);
+        parser.parse();
+        return parser.getTest();
     }
 
-    private static void assertEquals(final XdmNode expected, final XdmNode actual)
+    private static void assertEquals(final XdmNode expected, final XdmNode actual, final Processor processor,
+            final boolean ignoreWhitespace)
     {
         assert expected != null;
         assert actual != null;
-        final String message = String.format("expected:\n%s\nactual:\n%s", expected, actual);
+        final XdmNode docExpected = SaxonUtil.asDocumentNode(expected, processor);
+        final XdmNode docActual = SaxonUtil.asDocumentNode(actual, processor);
+        final String message = String.format("expected:\n%s\nactual:\n%s", docExpected, docActual);
         try
         {
-            XMLAssert.assertXMLEqual(message, expected.toString(), actual.toString());
+            XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
+            XMLAssert.assertXMLEqual(message, docExpected.toString(), docActual.toString());
         }
         catch (final Exception e)
         {
