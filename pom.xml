@@ -258,19 +258,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.3</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
           </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.5</version>
         </plugin>
 
         <plugin>
@@ -336,7 +330,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.5</version>
+          <version>2.6</version>
           <configuration>
             <detectLinks>true</detectLinks>
             <links>
