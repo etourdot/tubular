@@ -640,7 +640,7 @@ public class Environment
 
     public Environment writeNodes(final PortReference portReference, final XdmNode... nodes)
     {
-        return writeNodes(portReference, ImmutableList.of(nodes));
+        return writeNodes(portReference, ImmutableList.copyOf(nodes));
     }
 
     public Environment writeNodes(final PortReference portReference, final Iterable<XdmNode> nodes)

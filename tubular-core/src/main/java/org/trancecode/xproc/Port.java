@@ -248,7 +248,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
 
     public Port setPortBindings(final PortBinding... portBindings)
     {
-        return setPortBindings(ImmutableList.of(portBindings));
+        return setPortBindings(ImmutableList.copyOf(portBindings));
     }
 
     public Port setPortBindings(final Iterable<PortBinding> portBindings)

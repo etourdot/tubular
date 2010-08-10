@@ -138,7 +138,7 @@ public class EnvironmentPort implements HasPortReference
 
     public EnvironmentPort writeNodes(final XdmNode... nodes)
     {
-        return writeNodes(ImmutableList.of(nodes));
+        return writeNodes(ImmutableList.copyOf(nodes));
     }
 
     public EnvironmentPort writeNodes(final Iterable<XdmNode> nodes)
