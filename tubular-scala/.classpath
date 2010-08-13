@@ -1,0 +1,27 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/scala" including="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.4/junit-4.4.jar" sourcepath="M2_REPO/junit/junit/4.4/junit-4.4-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/rv/.m2/repository/junit/junit/4.4/junit-4.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/net/sf/saxon/saxon/9.1.0.8/saxon-9.1.0.8.jar" sourcepath="M2_REPO/net/sf/saxon/saxon/9.1.0.8/saxon-9.1.0.8-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/sf/saxon/saxon-dom/9.1.0.8/saxon-dom-9.1.0.8.jar" sourcepath="M2_REPO/net/sf/saxon/saxon-dom/9.1.0.8/saxon-dom-9.1.0.8-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/sf/saxon/saxon-s9api/9.1.0.8/saxon-s9api-9.1.0.8.jar" sourcepath="M2_REPO/net/sf/saxon/saxon-s9api/9.1.0.8/saxon-s9api-9.1.0.8-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/sf/saxon/saxon-xpath/9.1.0.8/saxon-xpath-9.1.0.8.jar" sourcepath="M2_REPO/net/sf/saxon/saxon-xpath/9.1.0.8/saxon-xpath-9.1.0.8-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/scala-lang/scala-library/2.8.0/scala-library-2.8.0.jar" sourcepath="M2_REPO/org/scala-lang/scala-library/2.8.0/scala-library-2.8.0-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/rv/.m2/repository/org/scala-lang/scala-library/2.8.0/scala-library-2.8.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/scalatest/scalatest/1.0/scalatest-1.0.jar" sourcepath="M2_REPO/org/scalatest/scalatest/1.0/scalatest-1.0-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/rv/.m2/repository/org/scalatest/scalatest/1.0/scalatest-1.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/scala-tools/testing/specs/1.4.4/specs-1.4.4.jar" sourcepath="M2_REPO/org/scala-tools/testing/specs/1.4.4/specs-1.4.4-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/testng/testng/5.10/testng-5.10-jdk15.jar"/>
+  <classpathentry kind="con" path="ch.epfl.lamp.sdt.launching.SCALA_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>
