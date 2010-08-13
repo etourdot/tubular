@@ -37,6 +37,7 @@ public class LocalXProcTestsProvider
      * The name of the property pointing to the XProc test directory
      */
     public static final String TEST_DIR_PROPERTY = "org.trancecode.xproc.TEST_DIR";
+
     /**
      * The property for an optional name filter (the provider will return only
      * the test files whose name contains the value of this property).
@@ -54,7 +55,6 @@ public class LocalXProcTestsProvider
             final File testDir = new File(testDirPath + "/" + method.getName());
             for (final File file : testDir.listFiles(new FilenameFilter()
             {
-
                 @Override
                 public boolean accept(final File dir, final String name)
                 {
@@ -67,9 +67,9 @@ public class LocalXProcTestsProvider
         }
         catch (final Exception e)
         {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
+
         return urls.toArray(new Object[][] {});
     }
-
 }

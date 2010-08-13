@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import com.google.common.collect.Iterables;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
+import org.trancecode.io.Uris;
 import org.trancecode.xml.saxon.SaxonUtil;
 
 /**
@@ -176,6 +178,12 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     protected String getTestUrlPrefix()
     {
+        final String localPath = System.getProperty(LocalXProcTestsProvider.TEST_DIR_PROPERTY);
+        if (localPath != null && !localPath.isEmpty())
+        {
+            return Uris.asDirectory(new File(localPath).toURI()).toString();
+        }
+
         return "http://svn.xproc.org/tests/";
     }
 
