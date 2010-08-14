@@ -22,7 +22,7 @@ package org.trancecode.xml.catalog;
 import org.trancecode.core.BaseException;
 
 /**
- * @author Herve
+ * @author Herve Quiroz
  */
 public class CatalogException extends BaseException
 {
