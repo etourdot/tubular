@@ -28,6 +28,48 @@ import org.testng.annotations.Test;
 public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSuiteXmlModel
 {
     @Test
+    public void addAttribute001() throws Exception
+    {
+        test("required/add-attribute-001.xml");
+    }
+
+    @Test
+    public void addAttribute002() throws Exception
+    {
+        test("required/add-attribute-002.xml");
+    }
+
+    @Test
+    public void addAttribute003() throws Exception
+    {
+        test("required/add-attribute-003.xml");
+    }
+
+    @Test
+    public void addAttribute004() throws Exception
+    {
+        test("required/add-attribute-004.xml");
+    }
+
+    @Test
+    public void addAttribute005() throws Exception
+    {
+        test("required/add-attribute-005.xml");
+    }
+
+    @Test
+    public void addAttribute006() throws Exception
+    {
+        test("required/add-attribute-006.xml");
+    }
+
+    @Test
+    public void addAttribute007() throws Exception
+    {
+        test("required/add-attribute-007.xml");
+    }
+
+    @Test
     public void choose001() throws Exception
     {
         test("required/choose-001.xml");
