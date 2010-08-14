@@ -43,6 +43,8 @@ import org.trancecode.xproc.XProcSteps;
  * Step processor for the p:add-attribute standard XProc step.
  * 
  * @author Romain Deltour
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.add-attribute">p:add-attribute</a>
  */
 public class AddAttributeStepProcessor extends AbstractStepProcessor
 {
@@ -151,8 +153,8 @@ public class AddAttributeStepProcessor extends AbstractStepProcessor
                     {
                         LOG.trace("Prefix '{}' changed to existing prefix '{}'", fixedupQName.getNamespaceURI(),
                                 inscopeNamespacePrefix);
-                        fixedupQName = new QName(inscopeNamespacePrefix, inscopeNamespaceUri, fixedupQName
-                                .getLocalName());
+                        fixedupQName = new QName(inscopeNamespacePrefix, inscopeNamespaceUri,
+                                fixedupQName.getLocalName());
                     }
                 }
                 else if (inscopeNamespacePrefix.equals(fixedupQName.getPrefix()))
