@@ -80,8 +80,7 @@ public final class Variable extends AbstractHasLocation
     {
         super(location);
 
-        Preconditions.checkNotNull(name);
-        this.name = name;
+        this.name = Preconditions.checkNotNull(name);
 
         Preconditions.checkArgument(select == null || !select.isEmpty());
         this.select = select;
@@ -157,8 +156,9 @@ public final class Variable extends AbstractHasLocation
     @Override
     public String toString()
     {
-        return String.format("%s[%s]%s%s", type, name, TubularObjects.conditional(select != null, "[select=" + select
-                + "]", ""), TubularObjects.conditional(value != null, "[value=" + value + "]", ""));
+        return String.format("%s[%s]%s%s", type, name,
+                TubularObjects.conditional(select != null, "[select=" + select + "]", ""),
+                TubularObjects.conditional(value != null, "[value=" + value + "]", ""));
     }
 
     @ReturnsNullable
