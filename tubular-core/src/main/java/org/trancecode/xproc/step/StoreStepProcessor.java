@@ -23,8 +23,8 @@ import java.io.OutputStream;
 import java.net.URI;
 
 import net.sf.saxon.s9api.Serializer;
-import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.Serializer.Property;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.io.IOUtil;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
@@ -95,8 +95,8 @@ public class StoreStepProcessor extends AbstractStepProcessor
                 new Object[] { href, mimeType, encoding, doctypePublicId, doctypeSystemId });
 
         assert environment.getConfiguration().getOutputResolver() != null;
-        final OutputStream targetOutputStream = environment.getConfiguration().getOutputResolver().resolveOutputStream(
-                href, environment.getBaseUri().toString());
+        final OutputStream targetOutputStream = environment.getConfiguration().getOutputResolver()
+                .resolveOutputStream(href, environment.getBaseUri().toString());
 
         final Serializer serializer = new Serializer();
         serializer.setOutputStream(targetOutputStream);
@@ -122,6 +122,7 @@ public class StoreStepProcessor extends AbstractStepProcessor
         try
         {
             environment.getConfiguration().getProcessor().writeXdmValue(node, serializer);
+            targetOutputStream.close();
         }
         catch (final Exception e)
         {
@@ -129,7 +130,6 @@ public class StoreStepProcessor extends AbstractStepProcessor
         }
         finally
         {
-            // FIXME should not be quiet here
             IOUtil.closeQuietly(targetOutputStream);
         }
 
