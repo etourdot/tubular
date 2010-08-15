@@ -92,7 +92,7 @@ public class StoreStepProcessor extends AbstractStepProcessor
         final boolean indent = Boolean.parseBoolean(environment.getVariable(XProcOptions.INDENT));
 
         LOG.debug("Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
-                new Object[] { href, mimeType, encoding, doctypePublicId, doctypeSystemId });
+                href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
         assert environment.getConfiguration().getOutputResolver() != null;
         final OutputStream targetOutputStream = environment.getConfiguration().getOutputResolver()
