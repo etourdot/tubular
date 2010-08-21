@@ -342,12 +342,14 @@ public class Environment
             {
                 if (variableEntry.getValue() != null)
                 {
-                    LOG.trace("  %s = %s", variableEntry.getKey(), variableEntry.getValue());
+                    LOG.trace("  {} = {}", variableEntry.getKey(), variableEntry.getValue());
                     selector.setVariable(variableEntry.getKey(), new XdmAtomicValue(variableEntry.getValue()));
                 }
             }
 
-            return selector.evaluate();
+            final XdmValue result = selector.evaluate();
+            LOG.trace("result = {}", result);
+            return result;
         }
         catch (final Exception e)
         {
