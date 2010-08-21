@@ -335,7 +335,7 @@ public class Environment
             if (xpathContextNode != null)
             {
                 LOG.trace("xpathContextNode = {}", xpathContextNode);
-                selector.setContextItem(xpathContextNode);
+                selector.setContextItem(processor.newDocumentBuilder().build(xpathContextNode.asSource()));
             }
 
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
