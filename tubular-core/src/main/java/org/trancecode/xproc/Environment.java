@@ -342,6 +342,7 @@ public class Environment
             {
                 if (variableEntry.getValue() != null)
                 {
+                    LOG.trace("  %s = %s", variableEntry.getKey(), variableEntry.getValue());
                     selector.setVariable(variableEntry.getKey(), new XdmAtomicValue(variableEntry.getValue()));
                 }
             }
