@@ -466,6 +466,24 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
     }
 
     @Test
+    public void sink001() throws Exception
+    {
+        test("required/sink-001.xml");
+    }
+
+    @Test
+    public void sink002() throws Exception
+    {
+        test("required/sink-002.xml");
+    }
+
+    @Test
+    public void sink003() throws Exception
+    {
+        test("required/sink-003.xml");
+    }
+
+    @Test
     public void store001() throws Exception
     {
         test("required/store-001.xml");

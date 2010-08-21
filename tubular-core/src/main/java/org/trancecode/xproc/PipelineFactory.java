@@ -38,6 +38,7 @@ import org.trancecode.xproc.step.CountStepProcessor;
 import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
+import org.trancecode.xproc.step.SinkStepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
 import org.trancecode.xproc.step.When;
 import org.trancecode.xproc.step.XsltStepProcessor;
@@ -115,8 +116,8 @@ public class PipelineFactory
     {
         if (defaultLibrary == null)
         {
-            final Source defaultLibrarySource = new StreamSource(PipelineFactory.class
-                    .getResourceAsStream(RESOURCE_PATH_XPROC_LIBRARY_1_0));
+            final Source defaultLibrarySource = new StreamSource(
+                    PipelineFactory.class.getResourceAsStream(RESOURCE_PATH_XPROC_LIBRARY_1_0));
             final PipelineParser parser = new PipelineParser(new Processor(false), defaultLibrarySource, CORE_LIBRARY,
                     getDefaultProcessors());
             parser.parse();
@@ -141,6 +142,7 @@ public class PipelineFactory
             processors.put(XProcSteps.COUNT, CountStepProcessor.INSTANCE);
             processors.put(XProcSteps.IDENTITY, IdentityStepProcessor.INSTANCE);
             processors.put(XProcSteps.LOAD, LoadStepProcessor.INSTANCE);
+            processors.put(XProcSteps.SINK, SinkStepProcessor.INSTANCE);
             processors.put(XProcSteps.STORE, StoreStepProcessor.INSTANCE);
             processors.put(XProcSteps.XSLT, XsltStepProcessor.INSTANCE);
             processors.put(XProcSteps.ADD_ATTRIBUTE, AddAttributeStepProcessor.INSTANCE);
@@ -163,7 +165,6 @@ public class PipelineFactory
             processors.put(XProcSteps.RENAME, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.REPLACE, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.SET_ATTRIBUTES, UNSUPPORTED_STEP_PROCESSOR);
-            processors.put(XProcSteps.SINK, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.SPLIT_SEQUENCE, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.STRING_REPLACE, UNSUPPORTED_STEP_PROCESSOR);
             processors.put(XProcSteps.UNESCAPE_MARKUP, UNSUPPORTED_STEP_PROCESSOR);
