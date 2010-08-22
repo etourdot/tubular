@@ -140,6 +140,7 @@ public class PipelineFactory
 
             // Required steps
             // TODO
+            processors.put(XProcSteps.ADD_ATTRIBUTE, AddAttributeStepProcessor.INSTANCE);
             processors.put(XProcSteps.COUNT, CountStepProcessor.INSTANCE);
             processors.put(XProcSteps.IDENTITY, IdentityStepProcessor.INSTANCE);
             processors.put(XProcSteps.LOAD, LoadStepProcessor.INSTANCE);
@@ -147,7 +148,6 @@ public class PipelineFactory
             processors.put(XProcSteps.STORE, StoreStepProcessor.INSTANCE);
             processors.put(XProcSteps.WRAP_SEQUENCE, WrapSequenceStepProcessor.INSTANCE);
             processors.put(XProcSteps.XSLT, XsltStepProcessor.INSTANCE);
-            processors.put(XProcSteps.ADD_ATTRIBUTE, AddAttributeStepProcessor.INSTANCE);
 
             // Unsupported required steps
             processors.put(XProcSteps.ADD_XML_BASE, UNSUPPORTED_STEP_PROCESSOR);
