@@ -40,6 +40,7 @@ public final class XProcOptions
     public static final QName DTD_VALIDATE = new QName("dtd-validate");
     public static final QName ENCODING = new QName("encoding");
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
+    public static final QName GROUP_ADJACENT = new QName("group-adjacent");
     public static final QName HREF = new QName("href");
     public static final QName INCLUDE_CONTENT_TYPE = new QName("include-content-type");
     public static final QName INDENT = new QName("indent");
@@ -61,6 +62,9 @@ public final class XProcOptions
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
     public static final QName VALIDATE = new QName("validate");
     public static final QName VERSION = new QName("version");
+    public static final QName WRAPPER = new QName("wrapper");
+    public static final QName WRAPPER_PREFIX = new QName("wrapper-prefix");
+    public static final QName WRAPPER_NAMESPACE = new QName("wrapper-namespace");
 
     private XProcOptions()
     {

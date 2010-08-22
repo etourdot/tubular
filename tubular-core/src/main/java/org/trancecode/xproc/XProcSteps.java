@@ -75,6 +75,7 @@ public final class XProcSteps
     public static final QName UNESCAPE_MARKUP = XProcNamespaces.XPROC.newSaxonQName("unescape-markup");
     public static final QName UNWRAP = XProcNamespaces.XPROC.newSaxonQName("unwrap");
     public static final QName WRAP = XProcNamespaces.XPROC.newSaxonQName("wrap");
+    public static final QName WRAP_SEQUENCE = XProcNamespaces.XPROC.newSaxonQName("wrap-sequence");
     public static final QName XINCLUDE = XProcNamespaces.XPROC.newSaxonQName("xinclude");
     public static final QName XSLT = XProcNamespaces.XPROC.newSaxonQName("xslt");
 

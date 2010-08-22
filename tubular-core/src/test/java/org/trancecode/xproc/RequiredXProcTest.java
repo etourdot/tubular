@@ -526,6 +526,36 @@ public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSui
     }
 
     @Test
+    public void wrapSequence001() throws Exception
+    {
+        test("required/wrap-sequence-001.xml");
+    }
+
+    @Test
+    public void wrapSequence002() throws Exception
+    {
+        test("required/wrap-sequence-002.xml");
+    }
+
+    @Test
+    public void wrapSequence003() throws Exception
+    {
+        test("required/wrap-sequence-003.xml");
+    }
+
+    @Test
+    public void wrapSequence004() throws Exception
+    {
+        test("required/wrap-sequence-004.xml");
+    }
+
+    @Test
+    public void wrapSequence005() throws Exception
+    {
+        test("required/wrap-sequence-005.xml");
+    }
+
+    @Test
     public void xslt001() throws Exception
     {
         test("required/xslt-001.xml");

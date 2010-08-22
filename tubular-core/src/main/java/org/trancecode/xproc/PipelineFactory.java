@@ -41,6 +41,7 @@ import org.trancecode.xproc.step.LoadStepProcessor;
 import org.trancecode.xproc.step.SinkStepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
 import org.trancecode.xproc.step.When;
+import org.trancecode.xproc.step.WrapSequenceStepProcessor;
 import org.trancecode.xproc.step.XsltStepProcessor;
 
 /**
@@ -144,6 +145,7 @@ public class PipelineFactory
             processors.put(XProcSteps.LOAD, LoadStepProcessor.INSTANCE);
             processors.put(XProcSteps.SINK, SinkStepProcessor.INSTANCE);
             processors.put(XProcSteps.STORE, StoreStepProcessor.INSTANCE);
+            processors.put(XProcSteps.WRAP_SEQUENCE, WrapSequenceStepProcessor.INSTANCE);
             processors.put(XProcSteps.XSLT, XsltStepProcessor.INSTANCE);
             processors.put(XProcSteps.ADD_ATTRIBUTE, AddAttributeStepProcessor.INSTANCE);
 
