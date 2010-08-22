@@ -60,7 +60,7 @@ public class AddAttributeStepProcessor extends AbstractStepProcessor
     @Override
     protected Environment doRun(final Step step, final Environment environment)
     {
-        LOG.trace("step = {}", step.getName());
+        LOG.trace("{@method} step = {}", step.getName());
         assert step.getType().equals(XProcSteps.ADD_ATTRIBUTE);
 
         final String match = environment.getVariable(MATCH_OPTION);
