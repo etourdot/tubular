@@ -36,6 +36,7 @@ import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
 
@@ -49,11 +50,6 @@ import org.trancecode.xproc.XProcSteps;
 public class AddAttributeStepProcessor extends AbstractStepProcessor
 {
     public static final AddAttributeStepProcessor INSTANCE = new AddAttributeStepProcessor();
-    public static final QName MATCH_OPTION = new QName("match");
-    public static final QName ATTR_NAME_OPTION = new QName("attribute-name");
-    public static final QName ATTR_PREFIX_OPTION = new QName("attribute-prefix");
-    public static final QName ATTR_NS_OPTION = new QName("attribute-namespace");
-    public static final QName ATTR_VALUE_OPTION = new QName("attribute-value");
 
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
 
@@ -63,11 +59,11 @@ public class AddAttributeStepProcessor extends AbstractStepProcessor
         LOG.trace("{@method} step = {}", step.getName());
         assert step.getType().equals(XProcSteps.ADD_ATTRIBUTE);
 
-        final String match = environment.getVariable(MATCH_OPTION);
-        final String attributeName = environment.getVariable(ATTR_NAME_OPTION);
-        final String attributePrefix = environment.getVariable(ATTR_PREFIX_OPTION);
-        final String attributeNamespace = environment.getVariable(ATTR_NS_OPTION);
-        final String attributeValue = environment.getVariable(ATTR_VALUE_OPTION);
+        final String match = environment.getVariable(XProcOptions.MATCH);
+        final String attributeName = environment.getVariable(XProcOptions.ATTRIBUTE_NAME);
+        final String attributePrefix = environment.getVariable(XProcOptions.ATTRIBUTE_PREFIX);
+        final String attributeNamespace = environment.getVariable(XProcOptions.ATTRIBUTE_NAMESPACE);
+        final String attributeValue = environment.getVariable(XProcOptions.ATTRIBUTE_VALUE);
 
         // Check required attributes are set
         assert match != null;

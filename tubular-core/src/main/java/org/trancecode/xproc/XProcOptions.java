@@ -32,6 +32,11 @@ import net.sf.saxon.s9api.QName;
 public final class XProcOptions
 {
     public static final Map<QName, Object> EMPTY_OPTIONS_MAP = Collections.emptyMap();
+
+    public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
+    public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
+    public static final QName ATTRIBUTE_NAMESPACE = new QName("attribute-namespace");
+    public static final QName ATTRIBUTE_VALUE = new QName("attribute-value");
     public static final QName BYTE_ORDER_MARK = new QName("byte-order-mark");
     public static final QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
     public static final QName CONTENT_TYPE = new QName("content-type");
@@ -46,6 +51,7 @@ public final class XProcOptions
     public static final QName INDENT = new QName("indent");
     public static final QName INITIAL_MODE = new QName("initial-mode");
     public static final QName LIMIT = new QName("limit");
+    public static final QName MATCH = new QName("match");
     public static final QName MEDIA_TYPE = new QName("media-type");
     public static final QName METHOD = new QName("method");
     public static final QName NORMALIZATION_FORM = new QName("normalization-form");
