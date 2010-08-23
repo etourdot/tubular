@@ -17,56 +17,59 @@
  */
 package org.trancecode.xproc;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import javax.xml.transform.stream.StreamSource;
+
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.XdmNode;
 import org.testng.annotations.DataProvider;
+import org.testng.collections.Lists;
+import org.trancecode.xml.saxon.SaxonUtil;
 
 /**
  * Provides the list of URLs to the XProc test files hosted on
- * http://svn.xproc.org/tests/ .
+ * http://tests.xproc.org/testsuite/ .
  * <p>
- * This provider finds the test URLs by scraping the HTML returned by an HTTP
- * GET request on the Subversion repository URL.
+ * This provider finds the test URLs by parsing the XML returned by an HTTP GET
+ * request on the test suite URL.
  * </p>
  * 
  * @author Romain Deltour
+ * @author Herve Quiroz
  */
 public class RemoteXProcTestsProvider
 {
-
-    public final static String testBaseURI = "http://svn.xproc.org/tests/";
+    private final static String TEST_SUITE_URI_PATTERN = "http://tests.xproc.org/tests/%s/test-suite.xml";
 
     @DataProvider(name = "xprocTests")
-    public static Object[][] listTests(final Method method)
+    public static Object[][] listTests(final Method method) throws Exception
     {
-        final List<Object[]> testFiles = new ArrayList<Object[]>();
+        final List<Object[]> testUrls = Lists.newArrayList();
+
+        final URI testSuiteUri = URI.create(String.format(TEST_SUITE_URI_PATTERN, method.getName()));
+        final InputStream inputStream = testSuiteUri.toURL().openStream();
         try
         {
-            final URL url = new URL(testBaseURI + method.getName());
-            final java.net.URLConnection con = url.openConnection();
-            con.connect();
-            final java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(con
-                    .getInputStream()));
-            String line;
-            final Pattern pattern = Pattern.compile(".*<a href=\"(.*)\\.xml\".*");
-            while ((line = in.readLine()) != null)
+            final Processor processor = new Processor(false);
+            final XdmNode testSuiteDocument = processor.newDocumentBuilder().build(new StreamSource(inputStream));
+            final XdmNode testSuite = SaxonUtil.childElement(testSuiteDocument,
+                    XProcTestSuiteXmlModel.ELEMENT_TEST_SUITE);
+            for (final XdmNode test : SaxonUtil.childElements(testSuite, XProcTestSuiteXmlModel.ELEMENT_TEST))
             {
-                final Matcher matcher = pattern.matcher(line);
-                if (matcher.matches())
-                {
-                    testFiles.add(new String[] { method.getName() + "/" + matcher.group(1) + ".xml" });
-                }
+                final String href = test.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
+                final URI testUri = testSuiteUri.resolve(href);
+                testUrls.add(new Object[] { testUri.toURL() });
             }
         }
-        catch (final Exception e)
+        finally
         {
-            e.printStackTrace();
+            inputStream.close();
         }
-        return testFiles.toArray(new Object[][] {});
+
+        return testUrls.toArray(new Object[][] {});
     }
 }
