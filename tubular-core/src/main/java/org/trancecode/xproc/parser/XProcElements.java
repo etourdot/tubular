@@ -22,15 +22,12 @@ package org.trancecode.xproc.parser;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-import java.io.StringReader;
 import java.util.Set;
-
-import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcNamespaces;
 
 /**
@@ -82,31 +79,31 @@ public final class XProcElements
 
     public static XdmNode newParameterElement(final QName name, final String value, final Processor processor)
     {
-        // TODO use s9api directly
-        final String document = String.format("<c:param xmlns:c=\"%s\" name=\"%s\" value=\"%s\"/>",
-                XProcNamespaces.URI_XPROC_STEP, name, value);
-        try
-        {
-            return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
-        }
-        catch (final SaxonApiException e)
-        {
-            throw new IllegalStateException(e);
-        }
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
+        builder.startDocument();
+        // TODO use constants
+        builder.startElement(XProcNamespaces.XPROC_STEP.newSaxonQName("param"));
+        builder.namespace(XProcNamespaces.XPROC_STEP.prefix, XProcNamespaces.XPROC_STEP.uri);
+        builder.attribute(new QName("name"), name.toString());
+        builder.attribute(new QName("value"), value.toString());
+        builder.text(value);
+        builder.endElement();
+        builder.endDocument();
+
+        return builder.getNode();
     }
 
     public static XdmNode newResultElement(final String value, final Processor processor)
     {
-        // TODO use s9api directly
-        final String document = String.format("<c:result xmlns:c=\"%s\">%s</c:result>", XProcNamespaces.URI_XPROC_STEP,
-                value);
-        try
-        {
-            return processor.newDocumentBuilder().build(new StreamSource(new StringReader(document)));
-        }
-        catch (final SaxonApiException e)
-        {
-            throw new IllegalStateException(e);
-        }
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
+        builder.startDocument();
+        // TODO use constants
+        builder.startElement(XProcNamespaces.XPROC_STEP.newSaxonQName("result"));
+        builder.namespace(XProcNamespaces.XPROC_STEP.prefix, XProcNamespaces.XPROC_STEP.uri);
+        builder.text(value);
+        builder.endElement();
+        builder.endDocument();
+
+        return builder.getNode();
     }
 }
