@@ -83,7 +83,7 @@ public final class XProcElements
         builder.startDocument();
         // TODO use constants
         builder.startElement(XProcNamespaces.XPROC_STEP.newSaxonQName("param"));
-        builder.namespace(XProcNamespaces.XPROC_STEP.prefix, XProcNamespaces.XPROC_STEP.uri);
+        builder.namespace(XProcNamespaces.XPROC_STEP.prefix(), XProcNamespaces.XPROC_STEP.uri());
         builder.attribute(new QName("name"), name.toString());
         builder.attribute(new QName("value"), value.toString());
         builder.text(value);
@@ -99,7 +99,7 @@ public final class XProcElements
         builder.startDocument();
         // TODO use constants
         builder.startElement(XProcNamespaces.XPROC_STEP.newSaxonQName("result"));
-        builder.namespace(XProcNamespaces.XPROC_STEP.prefix, XProcNamespaces.XPROC_STEP.uri);
+        builder.namespace(XProcNamespaces.XPROC_STEP.prefix(), XProcNamespaces.XPROC_STEP.uri());
         builder.text(value);
         builder.endElement();
         builder.endDocument();
