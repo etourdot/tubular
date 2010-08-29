@@ -36,4 +36,14 @@ public final class Tubular
     {
         return VERSION;
     }
+
+    public static String xprocVersion()
+    {
+        return "1.0";
+    }
+
+    public static String xpathVersion()
+    {
+        return "2.0";
+    }
 }
