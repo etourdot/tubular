@@ -25,29 +25,34 @@ import org.trancecode.xml.Namespace;
 /**
  * @author Herve Quiroz
  */
-public interface XProcTestSuiteXmlModel
+public final class XProcTestSuiteXmlModel
 {
-    String NAMESPACE_XPROC_TEST_SUITE_PREFIX = "t";
-    String NAMESPACE_XPROC_TEST_SUITE_URI = "http://xproc.org/ns/testsuite";
-    Namespace NAMESPACE_XPROC_TEST_SUITE = new Namespace(NAMESPACE_XPROC_TEST_SUITE_URI,
+    public static final String NAMESPACE_XPROC_TEST_SUITE_PREFIX = "t";
+    public static final String NAMESPACE_XPROC_TEST_SUITE_URI = "http://xproc.org/ns/testsuite";
+    public static final Namespace NAMESPACE_XPROC_TEST_SUITE = new Namespace(NAMESPACE_XPROC_TEST_SUITE_URI,
             NAMESPACE_XPROC_TEST_SUITE_PREFIX);
 
-    QName ELEMENT_TEST_SUITE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("test-suite");
-    QName ELEMENT_TEST = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("test");
-    QName ELEMENT_DOCUMENT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("document");
-    QName ELEMENT_INPUT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("input");
-    QName ELEMENT_PARAMETER = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("parameter");
-    QName ELEMENT_OPTION = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("option");
-    QName ELEMENT_OUTPUT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("output");
-    QName ELEMENT_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("pipeline");
-    QName ELEMENT_COMPARE_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("compare-pipeline");
-    QName ELEMENT_TITLE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("title");
-    QName ELEMENT_DESCRIPTION = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("description");
+    public static final QName ELEMENT_TEST_SUITE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("test-suite");
+    public static final QName ELEMENT_TEST = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("test");
+    public static final QName ELEMENT_DOCUMENT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("document");
+    public static final QName ELEMENT_INPUT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("input");
+    public static final QName ELEMENT_PARAMETER = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("parameter");
+    public static final QName ELEMENT_OPTION = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("option");
+    public static final QName ELEMENT_OUTPUT = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("output");
+    public static final QName ELEMENT_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("pipeline");
+    public static final QName ELEMENT_COMPARE_PIPELINE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("compare-pipeline");
+    public static final QName ELEMENT_TITLE = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("title");
+    public static final QName ELEMENT_DESCRIPTION = NAMESPACE_XPROC_TEST_SUITE.newSaxonQName("description");
 
-    QName ATTRIBUTE_ERROR = new QName("error");
-    QName ATTRIBUTE_HREF = new QName("href");
-    QName ATTRIBUTE_PORT = new QName("port");
-    QName ATTRIBUTE_NAME = new QName("name");
-    QName ATTRIBUTE_VALUE = new QName("value");
-    QName ATTRIBUTE_IGNORE_WHITESPACE = new QName("ignore-whitespace-differences");
+    public static final QName ATTRIBUTE_ERROR = new QName("error");
+    public static final QName ATTRIBUTE_HREF = new QName("href");
+    public static final QName ATTRIBUTE_PORT = new QName("port");
+    public static final QName ATTRIBUTE_NAME = new QName("name");
+    public static final QName ATTRIBUTE_VALUE = new QName("value");
+    public static final QName ATTRIBUTE_IGNORE_WHITESPACE = new QName("ignore-whitespace-differences");
+
+    private XProcTestSuiteXmlModel()
+    {
+        // No instantiation
+    }
 }
