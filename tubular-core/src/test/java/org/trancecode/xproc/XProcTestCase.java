@@ -27,11 +27,11 @@ import net.sf.saxon.s9api.XdmNode;
 
 /**
  * Represents an XProc test description.
+ * 
  * @author Romain Deltour
  */
 public class XProcTestCase
 {
-
     private final String title;
     private final XdmNode description;
     private final boolean ignoreWhitespace;
@@ -48,7 +48,6 @@ public class XProcTestCase
             final Map<String, Map<QName, String>> parameters, final QName error,
             final Map<String, List<XdmNode>> outputs, final XdmNode comparePipeline)
     {
-        super();
         this.title = title;
         this.description = description;
         this.ignoreWhitespace = ignoreWhitespace;
@@ -110,5 +109,4 @@ public class XProcTestCase
     {
         return this.comparePipeline;
     }
-
 }
