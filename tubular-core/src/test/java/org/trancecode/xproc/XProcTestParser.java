@@ -39,7 +39,8 @@ import org.trancecode.xml.saxon.SaxonUtil;
 import org.xml.sax.InputSource;
 
 /**
- * Parses a {http://xproc.org/ns/testsuite}test element into an XProcTestCase.
+ * Parses a {http://xproc.org/ns/testsuite}test element into an
+ * {@link XProcTestCase}.
  * 
  * @author Romain Deltour
  */
