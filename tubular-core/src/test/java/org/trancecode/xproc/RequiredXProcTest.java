@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * @author Herve Quiroz
  */
 @Test
-public class RequiredXProcTest extends AbstractXProcTest implements XProcTestSuiteXmlModel
+public class RequiredXProcTest extends AbstractXProcTest
 {
     @Test
     public void addAttribute001() throws Exception
