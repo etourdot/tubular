@@ -19,15 +19,24 @@
  */
 package org.trancecode.xproc;
 
+import net.sf.saxon.s9api.QName;
 import org.trancecode.core.BaseException;
 import org.trancecode.xml.Location;
+import org.trancecode.xml.Namespace;
 
 /**
  * @author Herve Quiroz
  */
-public class XProcException extends BaseException
+public final class XProcException extends BaseException
 {
     private static final long serialVersionUID = 4809656109440340746L;
+
+    private static final Namespace NAMESPACE = new Namespace("http://www.w3.org/ns/xproc-error", "err");
+
+    public static Namespace namespace()
+    {
+        return NAMESPACE;
+    }
 
     public static enum Type {
         STATIC
@@ -56,9 +65,10 @@ public class XProcException extends BaseException
         }
     };
 
-    protected final Type type;
-    protected final int code;
-    protected final Location location;
+    private final Type type;
+    private final int code;
+    private final Location location;
+    private final QName name;
 
     public XProcException(final Type type, final int code, final Location location, final String message,
             final Object... parameters)
@@ -68,6 +78,22 @@ public class XProcException extends BaseException
         this.type = type;
         this.code = code;
         this.location = location;
+        this.name = namespace().newSaxonQName(getLabel());
+    }
+
+    public QName name()
+    {
+        return name;
+    }
+
+    public int code()
+    {
+        return code;
+    }
+
+    public Location location()
+    {
+        return location;
     }
 
     public String getLabel()
