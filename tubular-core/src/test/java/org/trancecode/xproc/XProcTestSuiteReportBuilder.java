@@ -130,6 +130,10 @@ public final class XProcTestSuiteReportBuilder
         for (final String testSuite : results.keySet())
         {
             builder.startElement(Elements.TEST_SUITE);
+            builder.startElement(Elements.TITLE);
+            builder.text(testSuite);
+            builder.endElement();
+
             for (final TestResult result : results.get(testSuite))
             {
                 assert result.test.testSuite().equals(testSuite);
