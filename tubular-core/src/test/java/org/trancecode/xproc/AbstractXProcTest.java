@@ -112,14 +112,20 @@ public abstract class AbstractXProcTest extends AbstractTest
         }
         catch (final XProcException e)
         {
-            if (test.getError() != null && e.name().equals(test.getError()))
+            if (e.name().equals(test.getError()))
             {
                 reportBuilder.pass(test, e.getMessage());
                 return;
             }
 
             reportBuilder.fail(test, e.name(), e.getMessage());
-            Assert.fail(String.format("expected error: %s ; actual: %s", test.getError(), e.name()), e);
+
+            if (test.getError() != null)
+            {
+                Assert.fail(String.format("expected error: %s ; actual: %s", test.getError(), e.name()), e);
+            }
+
+            throw e;
         }
         catch (final Throwable e)
         {
