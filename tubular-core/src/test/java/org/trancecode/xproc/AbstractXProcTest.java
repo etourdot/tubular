@@ -68,7 +68,7 @@ public abstract class AbstractXProcTest extends AbstractTest
     {
         final File reportFile;
         final String explicitReportFile = System.getProperty(PROPERTY_REPORT_FILE);
-        if (explicitReportFile != null)
+        if (explicitReportFile != null && !explicitReportFile.isEmpty())
         {
             reportFile = new File(explicitReportFile);
         }
