@@ -17,6 +17,7 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -51,6 +52,7 @@ public class XProcTestParser
 
     private final Processor processor;
     private final Source source;
+    private final String testSuite;
 
     private String title;
     private XdmNode description;
@@ -63,10 +65,11 @@ public class XProcTestParser
     private final Map<String, List<XdmNode>> outputs = Maps.newHashMap();
     private XdmNode comparePipeline;
 
-    public XProcTestParser(final Processor processor, final Source source)
+    public XProcTestParser(final Processor processor, final Source source, final String testSuite)
     {
-        this.processor = processor;
-        this.source = source;
+        this.testSuite = testSuite;
+        this.processor = Preconditions.checkNotNull(processor);
+        this.source = Preconditions.checkNotNull(source);
     }
 
     public void parse()
@@ -319,8 +322,8 @@ public class XProcTestParser
 
     public XProcTestCase getTest()
     {
-        return new XProcTestCase(title, description, ignoreWhitespace, pipeline, inputs, options, parameters, error,
-                outputs, comparePipeline);
+        return new XProcTestCase(testSuite, title, description, ignoreWhitespace, pipeline, inputs, options,
+                parameters, error, outputs, comparePipeline);
     }
 
     private void unsupportedElement(final XdmNode node)

@@ -29,12 +29,12 @@ public class XProcTests extends AbstractXProcTest
     @Test(dataProvider = "xprocTests", dataProviderClass = RemoteXProcTestsProvider.class)
     public void required(final URL url) throws Exception
     {
-        test(url);
+        test(url, "required");
     }
 
     @Test(dataProvider = "xprocTests", dataProviderClass = RemoteXProcTestsProvider.class)
     public void optional(final URL url) throws Exception
     {
-        test(url);
+        test(url, "optional");
     }
 }

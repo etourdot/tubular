@@ -38,7 +38,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Uris;
@@ -49,6 +51,36 @@ import org.trancecode.xml.saxon.SaxonUtil;
  */
 public abstract class AbstractXProcTest extends AbstractTest
 {
+    public static final String PROPERTY_REPORT_FILE = "xproc.tests.report";
+
+    private static final org.trancecode.logging.Logger LOG = org.trancecode.logging.Logger
+            .getLogger(AbstractXProcTest.class);
+    private static XProcTestSuiteReportBuilder reportBuilder;
+
+    @BeforeClass
+    public static void setupReportBuilder()
+    {
+        reportBuilder = new XProcTestSuiteReportBuilder();
+    }
+
+    @AfterClass
+    public static void writeReportToFile() throws Exception
+    {
+        final File reportFile;
+        final String explicitReportFile = System.getProperty(PROPERTY_REPORT_FILE);
+        if (explicitReportFile != null)
+        {
+            reportFile = new File(explicitReportFile);
+        }
+        else
+        {
+            reportFile = File.createTempFile("report", ".xml");
+        }
+
+        reportBuilder.write(reportFile);
+        LOG.info("report file: {}", reportFile);
+    }
+
     @BeforeClass
     public static void setupLoggingLevel()
     {
@@ -65,60 +97,83 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     protected void test(final URL testUrl) throws Exception
     {
+        test(testUrl, null);
+    }
+
+    protected void test(final URL testUrl, final String testSuite) throws Exception
+    {
         final PipelineFactory pipelineFactory = new PipelineFactory();
         final Processor processor = pipelineFactory.getProcessor();
-        final XProcTestCase test = getTest(testUrl, processor);
+        final XProcTestCase test = getTest(testUrl, processor, testSuite);
 
-        final PipelineResult result;
         try
         {
-            log.info("== parse pipeline ==");
-            final Pipeline pipeline = pipelineFactory.newPipeline(test.getPipeline().asSource());
-            log.info("== pipeline parsed ==");
-            final RunnablePipeline runnablePipeline = pipeline.load();
-
-            // Set inputs
-            for (final String port : test.getInputs().keySet())
-            {
-                final List<Source> sources = new ArrayList<Source>();
-                for (final XdmNode inputDoc : test.getInputs().get(port))
-                {
-                    sources.add(inputDoc.asSource());
-                }
-                runnablePipeline.setPortBinding(port, sources);
-            }
-
-            // Set options
-            for (final QName name : test.getOptions().keySet())
-            {
-                runnablePipeline.withOption(name, test.getOptions().get(name));
-            }
-
-            // Set parameters
-            // TODO how to deal with multiple parameter ports ?
-            for (final String port : test.getParameters().keySet())
-            {
-                final List<Source> sources = new ArrayList<Source>();
-                for (final QName name : test.getParameters().get(port).keySet())
-                {
-                    runnablePipeline.withParam(name, test.getParameters().get(port).get(name));
-                }
-            }
-
-            log.info("== run pipeline ==");
-            result = runnablePipeline.run();
-            log.info("== pipeline run ==");
+            test(test, pipelineFactory);
         }
         catch (final XProcException e)
         {
-            if (test.getError() != null)
+            if (test.getError() != null && e.name().equals(test.getError()))
             {
-                // TODO enable other error prefixes
-                AssertJUnit.assertEquals(test.getError(), "err:" + e.getLabel());
+                reportBuilder.pass(test, e.getMessage());
                 return;
             }
-            throw new IllegalStateException(e);
+
+            reportBuilder.fail(test, e.name(), e.getMessage());
+            Assert.fail(String.format("expected error: %s ; actual: %s", test.getError(), e.name()), e);
         }
+        catch (final Throwable e)
+        {
+            reportBuilder.fail(test, new QName(e.getClass().getSimpleName()), e.getMessage());
+            if (e instanceof RuntimeException)
+            {
+                throw (RuntimeException) e;
+            }
+
+            Assert.fail(e.getMessage(), e);
+        }
+
+        reportBuilder.pass(test, null);
+    }
+
+    private void test(final XProcTestCase test, final PipelineFactory pipelineFactory)
+    {
+        final Processor processor = pipelineFactory.getProcessor();
+        log.info("== parse pipeline ==");
+        final Pipeline pipeline = pipelineFactory.newPipeline(test.getPipeline().asSource());
+        log.info("== pipeline parsed ==");
+        final RunnablePipeline runnablePipeline = pipeline.load();
+
+        // Set inputs
+        for (final String port : test.getInputs().keySet())
+        {
+            final List<Source> sources = new ArrayList<Source>();
+            for (final XdmNode inputDoc : test.getInputs().get(port))
+            {
+                sources.add(inputDoc.asSource());
+            }
+            runnablePipeline.setPortBinding(port, sources);
+        }
+
+        // Set options
+        for (final QName name : test.getOptions().keySet())
+        {
+            runnablePipeline.withOption(name, test.getOptions().get(name));
+        }
+
+        // Set parameters
+        // TODO how to deal with multiple parameter ports ?
+        for (final String port : test.getParameters().keySet())
+        {
+            final List<Source> sources = new ArrayList<Source>();
+            for (final QName name : test.getParameters().get(port).keySet())
+            {
+                runnablePipeline.withParam(name, test.getParameters().get(port).get(name));
+            }
+        }
+
+        log.info("== run pipeline ==");
+        final PipelineResult result = runnablePipeline.run();
+        log.info("== pipeline run ==");
 
         if (test.getComparePipeline() != null)
         {
@@ -133,8 +188,8 @@ public abstract class AbstractXProcTest extends AbstractTest
 
             final Iterable<XdmNode> actualNodes = result.readNodes(port);
             final Iterable<XdmNode> expectedNodes = test.getOutputs().get(port);
-            AssertJUnit.assertEquals(port + " = " + actualNodes.toString(), Iterables.size(expectedNodes), Iterables
-                    .size(actualNodes));
+            AssertJUnit.assertEquals(port + " = " + actualNodes.toString(), Iterables.size(expectedNodes),
+                    Iterables.size(actualNodes));
 
             final Iterator<XdmNode> expectedNodesIterator = expectedNodes.iterator();
             final Iterator<XdmNode> actualNodesIterator = actualNodes.iterator();
@@ -149,10 +204,10 @@ public abstract class AbstractXProcTest extends AbstractTest
         }
     }
 
-    private XProcTestCase getTest(final URL testUrl, final Processor processor)
+    private XProcTestCase getTest(final URL testUrl, final Processor processor, final String testSuite)
     {
         final Source source = new StreamSource(testUrl.toString());
-        final XProcTestParser parser = new XProcTestParser(processor, source);
+        final XProcTestParser parser = new XProcTestParser(processor, source, testSuite);
         parser.parse();
         return parser.getTest();
     }
