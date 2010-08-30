@@ -329,6 +329,10 @@
                 <name>org.trancecode.AbstractTest.QUIET</name>
                 <value>true</value>
               </property>
+              <property>
+                <name>xproc.tests.report</name>
+                <value>${xproc.tests.report}</value>
+              </property>
             </systemProperties>
           </configuration>
         </plugin>
