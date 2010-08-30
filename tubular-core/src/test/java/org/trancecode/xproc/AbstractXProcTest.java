@@ -77,8 +77,8 @@ public abstract class AbstractXProcTest extends AbstractTest
             reportFile = File.createTempFile("report", ".xml");
         }
 
+        System.err.println("report file: " + reportFile);
         reportBuilder.write(reportFile);
-        LOG.info("report file: {}", reportFile);
     }
 
     @BeforeClass
