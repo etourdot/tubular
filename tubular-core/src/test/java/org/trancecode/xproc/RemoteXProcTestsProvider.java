@@ -43,12 +43,16 @@ import org.trancecode.xml.saxon.SaxonUtil;
  */
 public class RemoteXProcTestsProvider
 {
+    public static final String PROPERTY_TEST_NAME_FILTER = "xproc.tests.filter";
+
     private final static String TEST_SUITE_URI_PATTERN = "http://tests.xproc.org/tests/%s/test-suite.xml";
 
     @DataProvider(name = "xprocTests")
     public static Object[][] listTests(final Method method) throws Exception
     {
         final List<Object[]> testUrls = Lists.newArrayList();
+
+        final String testNameFilter = System.getProperty(PROPERTY_TEST_NAME_FILTER);
 
         final URI testSuiteUri = URI.create(String.format(TEST_SUITE_URI_PATTERN, method.getName()));
         final InputStream inputStream = testSuiteUri.toURL().openStream();
@@ -61,8 +65,11 @@ public class RemoteXProcTestsProvider
             for (final XdmNode test : SaxonUtil.childElements(testSuite, XProcTestSuiteXmlModel.ELEMENT_TEST))
             {
                 final String href = test.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
-                final URI testUri = testSuiteUri.resolve(href);
-                testUrls.add(new Object[] { testUri.toURL() });
+                if (testNameFilter == null || testNameFilter.isEmpty() || href.matches(testNameFilter))
+                {
+                    final URI testUri = testSuiteUri.resolve(href);
+                    testUrls.add(new Object[] { testUri.toURL() });
+                }
             }
         }
         finally
