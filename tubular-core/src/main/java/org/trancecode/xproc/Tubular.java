@@ -23,7 +23,7 @@ package org.trancecode.xproc;
 public final class Tubular
 {
     private static final int VERSION_MAJOR = 0;
-    private static final int VERSION_MINOR = 0;
+    private static final int VERSION_MINOR = 1;
     private static final boolean SNAPSHOT = true;
     private static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + (SNAPSHOT ? "-SNAPSHOT" : "");
 
