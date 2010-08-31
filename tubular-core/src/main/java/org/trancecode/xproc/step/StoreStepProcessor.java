@@ -19,13 +19,14 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.io.Closeables;
+
 import java.io.OutputStream;
 import java.net.URI;
 
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.io.IOUtil;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
@@ -130,7 +131,7 @@ public class StoreStepProcessor extends AbstractStepProcessor
         }
         finally
         {
-            IOUtil.closeQuietly(targetOutputStream);
+            Closeables.closeQuietly(targetOutputStream);
         }
 
         final XdmNode resultNode = XProcElements.newResultElement(outputUri.toString(), environment.getConfiguration()

@@ -20,6 +20,7 @@ package org.trancecode.xproc;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.io.Closeables;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -32,7 +33,6 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import org.trancecode.io.Files;
-import org.trancecode.io.IOUtil;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcTestReportXmlModel.Attributes;
 import org.trancecode.xproc.XProcTestReportXmlModel.Elements;
@@ -211,7 +211,7 @@ public final class XProcTestSuiteReportBuilder
         }
         finally
         {
-            IOUtil.closeQuietly(reportOut);
+            Closeables.closeQuietly(reportOut);
         }
     }
 }
