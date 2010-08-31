@@ -146,7 +146,7 @@ public final class XProcTestSuiteReportBuilder
                     builder.startElement(Elements.PASS);
                 }
 
-                builder.attribute(Attributes.URI, "TODO");
+                builder.attribute(Attributes.URI, result.test.url().toString());
                 builder.startElement(Elements.TITLE);
                 builder.text(result.test.getTitle());
                 builder.endElement();

@@ -17,8 +17,10 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ import net.sf.saxon.s9api.XdmNode;
  */
 public class XProcTestCase
 {
+    private final URL url;
     private final String testSuite;
     private final String title;
     private final XdmNode description;
@@ -44,12 +47,12 @@ public class XProcTestCase
     private final Map<String, List<XdmNode>> outputs;
     private final XdmNode comparePipeline;
 
-    public XProcTestCase(final String testSuite, final String title, final XdmNode description,
+    public XProcTestCase(final URL url, final String testSuite, final String title, final XdmNode description,
             final boolean ignoreWhitespace, final XdmNode pipeline, final Map<String, List<XdmNode>> inputs,
             final Map<QName, String> options, final Map<String, Map<QName, String>> parameters, final QName error,
             final Map<String, List<XdmNode>> outputs, final XdmNode comparePipeline)
     {
-        // TODO test URL
+        this.url = Preconditions.checkNotNull(url);
         this.testSuite = testSuite;
         this.title = title;
         this.description = description;
@@ -61,6 +64,11 @@ public class XProcTestCase
         this.error = error;
         this.outputs = ImmutableMap.copyOf(outputs);
         this.comparePipeline = comparePipeline;
+    }
+
+    public URL url()
+    {
+        return url;
     }
 
     public String testSuite()

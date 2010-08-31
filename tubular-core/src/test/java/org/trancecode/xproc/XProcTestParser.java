@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -53,6 +55,7 @@ public class XProcTestParser
     private final Processor processor;
     private final Source source;
     private final String testSuite;
+    private final URL url;
 
     private String title;
     private XdmNode description;
@@ -65,11 +68,12 @@ public class XProcTestParser
     private final Map<String, List<XdmNode>> outputs = Maps.newHashMap();
     private XdmNode comparePipeline;
 
-    public XProcTestParser(final Processor processor, final Source source, final String testSuite)
+    public XProcTestParser(final Processor processor, final URL url, final String testSuite)
     {
-        this.testSuite = testSuite;
         this.processor = Preconditions.checkNotNull(processor);
-        this.source = Preconditions.checkNotNull(source);
+        this.url = url;
+        this.testSuite = testSuite;
+        this.source = new StreamSource(url.toString());
     }
 
     public void parse()
@@ -322,7 +326,7 @@ public class XProcTestParser
 
     public XProcTestCase getTest()
     {
-        return new XProcTestCase(testSuite, title, description, ignoreWhitespace, pipeline, inputs, options,
+        return new XProcTestCase(url, testSuite, title, description, ignoreWhitespace, pipeline, inputs, options,
                 parameters, error, outputs, comparePipeline);
     }
 

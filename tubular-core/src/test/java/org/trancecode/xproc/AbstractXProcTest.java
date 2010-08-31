@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -212,8 +211,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     private XProcTestCase getTest(final URL testUrl, final Processor processor, final String testSuite)
     {
-        final Source source = new StreamSource(testUrl.toString());
-        final XProcTestParser parser = new XProcTestParser(processor, source, testSuite);
+        final XProcTestParser parser = new XProcTestParser(processor, testUrl, testSuite);
         parser.parse();
         return parser.getTest();
     }
