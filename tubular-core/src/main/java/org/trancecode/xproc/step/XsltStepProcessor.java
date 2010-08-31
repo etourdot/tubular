@@ -39,7 +39,7 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltTransformer;
-import org.trancecode.collection.TubularMaps;
+import org.trancecode.collection.TcMaps;
 import org.trancecode.io.Uris;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
@@ -119,7 +119,7 @@ public class XsltStepProcessor extends AbstractStepProcessor
         final List<XdmNode> secondaryPortNodes = Lists.newArrayList();
         transformer.getUnderlyingController().setOutputURIResolver(new OutputURIResolver()
         {
-            final Map<URI, XdmDestination> destinations = TubularMaps.newSmallWriteOnceMap();
+            final Map<URI, XdmDestination> destinations = TcMaps.newSmallWriteOnceMap();
 
             public void close(final Result result) throws TransformerException
             {

@@ -26,7 +26,7 @@ import com.google.common.collect.Iterables;
 import java.util.Collections;
 
 import org.trancecode.function.Pair;
-import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.function.TcFunctions;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Port;
@@ -59,7 +59,7 @@ public class InvokeStep implements StepProcessor
                 ImmutableList.of(invokedStep));
 
         // declare ports from invoked step
-        invokeStep = TranceCodeFunctions.apply(invokeStep, invokedStep.getPorts().values(),
+        invokeStep = TcFunctions.apply(invokeStep, invokedStep.getPorts().values(),
                 new Function<Pair<Step, Port>, Step>()
                 {
                     @Override
@@ -77,7 +77,7 @@ public class InvokeStep implements StepProcessor
                 });
 
         // declare variables from invoked step
-        invokeStep = TranceCodeFunctions.apply(invokeStep, invokedStep.getVariables(),
+        invokeStep = TcFunctions.apply(invokeStep, invokedStep.getVariables(),
                 new Function<Pair<Step, Variable>, Step>()
                 {
                     @Override
@@ -96,7 +96,7 @@ public class InvokeStep implements StepProcessor
     {
         final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
-        return TranceCodeFunctions.apply(invokedStep, invokedStep.getPorts().values(),
+        return TcFunctions.apply(invokedStep, invokedStep.getPorts().values(),
                 new Function<Pair<Step, Port>, Step>()
                 {
                     @Override

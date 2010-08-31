@@ -29,10 +29,10 @@ import com.google.common.collect.Iterables;
 import java.net.URI;
 
 import org.trancecode.annotation.Nullable;
-import org.trancecode.collection.TubularIterables;
+import org.trancecode.collection.TcIterables;
 import org.trancecode.core.AbstractImmutableHashCodeObject;
 import org.trancecode.core.AbstractImmutableObject;
-import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.function.TcFunctions;
 import org.trancecode.io.UriFunctions;
 import org.trancecode.io.Uris;
 
@@ -93,7 +93,7 @@ public final class Catalogs
         @Override
         public URI apply(final CatalogQuery query)
         {
-            return Iterables.find(TubularIterables.applyFunctions(catalogEntries, query), Predicates.notNull());
+            return Iterables.find(TcIterables.applyFunctions(catalogEntries, query), Predicates.notNull());
         }
     }
 
@@ -110,7 +110,7 @@ public final class Catalogs
 
     public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
     {
-        return TranceCodeFunctions.cache(catalog);
+        return TcFunctions.cache(catalog);
     }
 
     public static Function<CatalogQuery, URI> rewriteSystem(final String systemIdStartString, final String rewritePrefix)

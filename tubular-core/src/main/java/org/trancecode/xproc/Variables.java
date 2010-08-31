@@ -23,8 +23,8 @@ import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import net.sf.saxon.s9api.QName;
-import org.trancecode.collection.TubularIterables;
-import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.collection.TcIterables;
+import org.trancecode.function.TcFunctions;
 
 /**
  * Utility methods related to {@link Variable}.
@@ -59,7 +59,7 @@ public final class Variables
     {
         assert containsVariable(variables, name);
 
-        return Iterables.transform(variables, TranceCodeFunctions.conditional(Predicates.compose(Predicates
+        return Iterables.transform(variables, TcFunctions.conditional(Predicates.compose(Predicates
                 .equalTo(name), VariableFunctions.getName()), Functions.constant(variable), VariableFunctions
                 .identity()));
     }
@@ -78,7 +78,7 @@ public final class Variables
             setVariable(variables, variable);
         }
 
-        return TubularIterables.append(variables, variable);
+        return TcIterables.append(variables, variable);
     }
 
     public static Iterable<QName> getVariableNames(final Iterable<Variable> variables)

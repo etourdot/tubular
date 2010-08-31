@@ -41,7 +41,7 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.collection.TubularMaps;
+import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonUtil;
@@ -381,7 +381,7 @@ public class Environment
     {
         final Map<QName, String> variables = ImmutableMap.of();
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-                xpathContextPort, TubularMaps.merge(inheritedVariables, localVariables), variables);
+                xpathContextPort, TcMaps.merge(inheritedVariables, localVariables), variables);
     }
 
     public Environment setLocalVariables(final Map<QName, String> localVariables)
@@ -389,7 +389,7 @@ public class Environment
         assert localVariables != null;
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-                xpathContextPort, inheritedVariables, TubularMaps.merge(this.localVariables, localVariables));
+                xpathContextPort, inheritedVariables, TcMaps.merge(this.localVariables, localVariables));
     }
 
     public void setLocalVariable(final QName name, final String value)
@@ -502,7 +502,7 @@ public class Environment
         assert ports != null;
         LOG.trace("{@method} ports = {}", ports);
 
-        return new Environment(pipeline, configuration, TubularMaps.merge(this.ports, ports), defaultReadablePort,
+        return new Environment(pipeline, configuration, TcMaps.merge(this.ports, ports), defaultReadablePort,
                 defaultParametersPort, xpathContextPort, inheritedVariables, localVariables);
     }
 
@@ -597,7 +597,7 @@ public class Environment
         LOG.trace("{@method} select = {}", select);
 
         // TODO slow
-        final Map<QName, String> variables = TubularMaps.merge(inheritedVariables, localVariables);
+        final Map<QName, String> variables = TcMaps.merge(inheritedVariables, localVariables);
 
         try
         {
@@ -675,7 +675,7 @@ public class Environment
 
     public Map<QName, String> readParameters(final PortReference portReference)
     {
-        final Map<QName, String> parameters = TubularMaps.newSmallWriteOnceMap();
+        final Map<QName, String> parameters = TcMaps.newSmallWriteOnceMap();
         for (final XdmNode parameterNode : readNodes(portReference))
         {
             final XPathCompiler xpathCompiler = getConfiguration().getProcessor().newXPathCompiler();

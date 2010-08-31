@@ -35,10 +35,10 @@ import java.util.Map;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.collection.TubularIterables;
-import org.trancecode.collection.TubularMaps;
-import org.trancecode.core.TubularObjects;
-import org.trancecode.function.TranceCodeFunctions;
+import org.trancecode.collection.TcIterables;
+import org.trancecode.collection.TcMaps;
+import org.trancecode.core.TcObjects;
+import org.trancecode.function.TcFunctions;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
@@ -113,7 +113,7 @@ public final class Step extends AbstractHasLocation
     {
         LOG.trace("{@method} {} -> {}", this.name, name);
 
-        if (TubularObjects.equals(this.name, name))
+        if (TcObjects.equals(this.name, name))
         {
             return this;
         }
@@ -137,13 +137,13 @@ public final class Step extends AbstractHasLocation
     {
         assert !Variables.containsVariable(variables, variable.getName()) : "step = " + name + " ; variable = "
                 + variable.getName() + " ; variables = " + variables;
-        return new Step(node, type, name, location, stepProcessor, compoundStep, TubularIterables.append(variables,
+        return new Step(node, type, name, location, stepProcessor, compoundStep, TcIterables.append(variables,
                 variable), parameters, ports, steps);
     }
 
     public Step declareVariables(final Iterable<Variable> variables)
     {
-        return TranceCodeFunctions.apply(this, variables, StepFunctions.declareVariable());
+        return TcFunctions.apply(this, variables, StepFunctions.declareVariable());
     }
 
     public String getName()
@@ -413,7 +413,7 @@ public final class Step extends AbstractHasLocation
     {
         assert ports.containsKey(port.getPortName());
 
-        return new Step(node, type, name, location, stepProcessor, compoundStep, variables, parameters, TubularMaps
+        return new Step(node, type, name, location, stepProcessor, compoundStep, variables, parameters, TcMaps
                 .copyAndPut(ports, port.getPortName(), port), steps);
     }
 
@@ -438,7 +438,7 @@ public final class Step extends AbstractHasLocation
 
     public Step setNode(final XdmNode node)
     {
-        if (TubularObjects.equals(this.node, node))
+        if (TcObjects.equals(this.node, node))
         {
             return this;
         }
@@ -457,14 +457,14 @@ public final class Step extends AbstractHasLocation
         Preconditions.checkState(isCompoundStep());
 
         return new Step(node, type, name, location, stepProcessor, compoundStep, variables, parameters, ports,
-                TubularIterables.append(steps, step));
+                TcIterables.append(steps, step));
 
     }
 
     public Step setSubpipeline(final Iterable<Step> steps)
     {
         assert steps != null;
-        if (TubularObjects.equals(this.steps, steps))
+        if (TcObjects.equals(this.steps, steps))
         {
             return this;
         }
@@ -480,7 +480,7 @@ public final class Step extends AbstractHasLocation
 
     public Step setLocation(final Location location)
     {
-        if (TubularObjects.equals(this.location, location))
+        if (TcObjects.equals(this.location, location))
         {
             return this;
         }

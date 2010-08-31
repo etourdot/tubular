@@ -25,7 +25,7 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
-import org.trancecode.collection.TubularIterables;
+import org.trancecode.collection.TcIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
@@ -73,7 +73,7 @@ public class When extends AbstractCompoundStepProcessor
 
         if (Iterables.isEmpty(step.getOutputPorts()))
         {
-            final Step lastStep = TubularIterables.getLast(step.getSubpipeline());
+            final Step lastStep = TcIterables.getLast(step.getSubpipeline());
 
             final Port primaryOutputPort = lastStep.getPrimaryOutputPort();
             if (primaryOutputPort != null)

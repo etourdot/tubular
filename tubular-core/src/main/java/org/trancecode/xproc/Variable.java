@@ -22,7 +22,7 @@ package org.trancecode.xproc;
 import com.google.common.base.Preconditions;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.annotation.ReturnsNullable;
-import org.trancecode.core.TubularObjects;
+import org.trancecode.core.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
@@ -157,8 +157,8 @@ public final class Variable extends AbstractHasLocation
     public String toString()
     {
         return String.format("%s[%s]%s%s", type, name,
-                TubularObjects.conditional(select != null, "[select=" + select + "]", ""),
-                TubularObjects.conditional(value != null, "[value=" + value + "]", ""));
+                TcObjects.conditional(select != null, "[select=" + select + "]", ""),
+                TcObjects.conditional(value != null, "[value=" + value + "]", ""));
     }
 
     @ReturnsNullable
