@@ -23,7 +23,8 @@ import com.google.common.collect.Multimap;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -129,7 +130,7 @@ public final class XProcTestSuiteReportBuilder
         builder.endElement();
 
         builder.startElement(Elements.DATE);
-        builder.text(Calendar.getInstance().toString());
+        builder.text(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()));
         builder.endElement();
 
         writeProcessorInformation(builder);
