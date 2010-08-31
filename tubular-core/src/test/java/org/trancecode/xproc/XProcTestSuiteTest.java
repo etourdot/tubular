@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 /**
  * @author Romain Deltour
  */
-public class XProcTests extends AbstractXProcTest
+public class XProcTestSuiteTest extends AbstractXProcTest
 {
     @Test(dataProvider = "xprocTests", dataProviderClass = RemoteXProcTestsProvider.class)
     public void required(final URL url) throws Exception
