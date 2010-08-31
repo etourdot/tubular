@@ -17,11 +17,12 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.testng.annotations.DataProvider;
@@ -47,7 +48,7 @@ public class LocalXProcTestsProvider
     @DataProvider(name = "xprocTests")
     public static Object[][] getData(final Method method)
     {
-        final List<URL[]> urls = new ArrayList<URL[]>();
+        final List<URL[]> urls = Lists.newArrayList();
         try
         {
             final String testDirPath = System.getProperty(TEST_DIR_PROPERTY);

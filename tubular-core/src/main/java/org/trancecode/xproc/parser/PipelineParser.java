@@ -24,10 +24,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +49,7 @@ import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
+import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
@@ -56,7 +57,6 @@ import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.Port.Type;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
 import org.trancecode.xproc.binding.InlinePortBinding;
@@ -510,7 +510,7 @@ public class PipelineParser
     private Collection<QName> getSupportedStepTypes()
     {
         // TODO improve performance
-        final Collection<QName> types = new ArrayList<QName>();
+        final Collection<QName> types = Lists.newArrayList();
         types.addAll(localLibrary.keySet());
         types.addAll(importedLibrary.keySet());
         return types;

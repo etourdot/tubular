@@ -20,11 +20,11 @@
 package org.trancecode.xproc;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -151,7 +151,7 @@ public abstract class AbstractXProcTest extends AbstractTest
         // Set inputs
         for (final String port : test.getInputs().keySet())
         {
-            final List<Source> sources = new ArrayList<Source>();
+            final List<Source> sources = Lists.newArrayList();
             for (final XdmNode inputDoc : test.getInputs().get(port))
             {
                 sources.add(inputDoc.asSource());
@@ -169,7 +169,6 @@ public abstract class AbstractXProcTest extends AbstractTest
         // TODO how to deal with multiple parameter ports ?
         for (final String port : test.getParameters().keySet())
         {
-            final List<Source> sources = new ArrayList<Source>();
             for (final QName name : test.getParameters().get(port).keySet())
             {
                 runnablePipeline.withParam(name, test.getParameters().get(port).get(name));
