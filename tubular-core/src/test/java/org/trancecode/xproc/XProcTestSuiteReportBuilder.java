@@ -23,6 +23,7 @@ import com.google.common.collect.Multimap;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.Calendar;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -122,8 +123,14 @@ public final class XProcTestSuiteReportBuilder
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
         builder.startElement(Elements.TEST_REPORT);
+
         builder.startElement(Elements.TITLE);
         builder.text("XProc Test Results for Tubular");
+        builder.endElement();
+
+        builder.startElement(Elements.DATE);
+        builder.text(Calendar.getInstance().toString());
+        builder.endElement();
 
         writeProcessorInformation(builder);
 
