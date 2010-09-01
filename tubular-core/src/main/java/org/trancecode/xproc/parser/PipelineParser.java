@@ -330,7 +330,7 @@ public class PipelineParser
     {
         // TODO cache locations per node (slower at parsing but less memory
         // used)
-        return new SaxonLocation(node);
+        return SaxonLocation.of(node);
     }
 
     private Step getDeclaredStep(final QName name)
