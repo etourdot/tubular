@@ -19,7 +19,8 @@
  */
 package org.trancecode.xproc;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 
 import net.sf.saxon.s9api.QName;
@@ -31,7 +32,7 @@ import net.sf.saxon.s9api.QName;
  */
 public final class XProcOptions
 {
-    public static final Map<QName, Object> EMPTY_OPTIONS_MAP = Collections.emptyMap();
+    public static final Map<QName, Object> EMPTY_OPTIONS_MAP = ImmutableMap.of();
 
     public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
     public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
