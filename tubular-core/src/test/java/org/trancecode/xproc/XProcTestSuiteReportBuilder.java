@@ -159,6 +159,20 @@ public final class XProcTestSuiteReportBuilder
                 builder.text(result.test.getTitle());
                 builder.endElement();
 
+                if (result.actualError != null)
+                {
+                    builder.startElement(Elements.ERROR);
+                    builder.text(result.actualError.toString());
+                    builder.endElement();
+                }
+
+                if (result.message != null)
+                {
+                    builder.startElement(Elements.MESSAGE);
+                    builder.text(result.message);
+                    builder.endElement();
+                }
+
                 if (result.test.getError() != null)
                 {
                     builder.startElement(Elements.EXPECTED);
@@ -171,19 +185,6 @@ public final class XProcTestSuiteReportBuilder
                         builder.text(result.actualError.toString());
                         builder.endElement();
                     }
-                }
-                else if (result.actualError != null)
-                {
-                    builder.startElement(Elements.ERROR);
-                    builder.text(result.actualError.toString());
-                    builder.endElement();
-                }
-
-                if (result.message != null)
-                {
-                    builder.startElement(Elements.MESSAGE);
-                    builder.text(result.message);
-                    builder.endElement();
                 }
 
                 builder.endElement();
