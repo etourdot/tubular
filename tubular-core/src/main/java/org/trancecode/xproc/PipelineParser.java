@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc.parser;
+package org.trancecode.xproc;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -44,14 +44,9 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
+import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
-import org.trancecode.xml.saxon.Saxon;
-import org.trancecode.xproc.PipelineException;
-import org.trancecode.xproc.Step;
-import org.trancecode.xproc.StepProcessor;
-import org.trancecode.xproc.Variable;
-import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel.Attributes;
 import org.trancecode.xproc.XProcXmlModel.Elements;
 import org.trancecode.xproc.binding.DocumentPortBinding;
@@ -60,9 +55,9 @@ import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.Port;
+import org.trancecode.xproc.port.Port.Type;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
-import org.trancecode.xproc.port.Port.Type;
 import org.trancecode.xproc.step.Pipeline;
 
 /**
@@ -248,8 +243,8 @@ public class PipelineParser
             final QName name = node.getNodeName();
             final String value = node.getStringValue();
 
-            if (name.getNamespaceURI().isEmpty() && !name.equals(Attributes.NAME)
-                    && !name.equals(Attributes.TYPE) && !name.equals(Attributes.VERSION))
+            if (name.getNamespaceURI().isEmpty() && !name.equals(Attributes.NAME) && !name.equals(Attributes.TYPE)
+                    && !name.equals(Attributes.VERSION))
             {
                 if (!step.hasOptionDeclared(name))
                 {

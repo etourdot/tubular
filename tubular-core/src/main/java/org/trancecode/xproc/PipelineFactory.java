@@ -31,7 +31,6 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.parser.PipelineParser;
 import org.trancecode.xproc.step.AddAttributeStepProcessor;
 import org.trancecode.xproc.step.Choose;
 import org.trancecode.xproc.step.CountStepProcessor;
