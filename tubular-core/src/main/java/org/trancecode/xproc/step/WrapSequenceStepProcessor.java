@@ -20,8 +20,8 @@ package org.trancecode.xproc.step;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
@@ -70,7 +70,7 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 
         for (final XdmNode inputDocument : environment.readNodes(step.getPortReference(XProcPorts.SOURCE)))
         {
-            builder.nodes(SaxonUtil.childElement(inputDocument));
+            builder.nodes(SaxonAxis.childElement(inputDocument));
         }
 
         builder.endElement();

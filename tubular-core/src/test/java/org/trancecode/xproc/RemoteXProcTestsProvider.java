@@ -28,7 +28,7 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.XdmNode;
 import org.testng.annotations.DataProvider;
 import org.testng.collections.Lists;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.SaxonAxis;
 
 /**
  * Provides the list of URLs to the XProc test files hosted on
@@ -60,9 +60,9 @@ public class RemoteXProcTestsProvider
         {
             final Processor processor = new Processor(false);
             final XdmNode testSuiteDocument = processor.newDocumentBuilder().build(new StreamSource(inputStream));
-            final XdmNode testSuite = SaxonUtil.childElement(testSuiteDocument,
+            final XdmNode testSuite = SaxonAxis.childElement(testSuiteDocument,
                     XProcTestSuiteXmlModel.ELEMENT_TEST_SUITE);
-            for (final XdmNode test : SaxonUtil.childElements(testSuite, XProcTestSuiteXmlModel.ELEMENT_TEST))
+            for (final XdmNode test : SaxonAxis.childElements(testSuite, XProcTestSuiteXmlModel.ELEMENT_TEST))
             {
                 final String href = test.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
                 if (testNameFilter == null || testNameFilter.isEmpty() || href.matches(testNameFilter))

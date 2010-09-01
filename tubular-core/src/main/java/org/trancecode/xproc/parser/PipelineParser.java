@@ -112,7 +112,7 @@ public class PipelineParser
             final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
             documentBuilder.setLineNumbering(true);
             final XdmNode pipelineDocument = documentBuilder.build(source);
-            rootNode = SaxonUtil.childElement(pipelineDocument, XProcElements.ELEMENTS_ROOT);
+            rootNode = SaxonAxis.childElement(pipelineDocument, XProcElements.ELEMENTS_ROOT);
 
             parseImports(rootNode);
 
@@ -142,7 +142,7 @@ public class PipelineParser
 
     private void parseDeclareSteps(final XdmNode node)
     {
-        for (final XdmNode stepNode : SaxonUtil.childElements(node, XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE))
+        for (final XdmNode stepNode : SaxonAxis.childElements(node, XProcElements.ELEMENTS_DECLARE_STEP_OR_PIPELINE))
         {
             parseDeclareStep(stepNode);
         }
@@ -310,7 +310,7 @@ public class PipelineParser
 
     private Iterable<PortBinding> parsePortBindings(final XdmNode portNode)
     {
-        return Iterables.transform(SaxonUtil.childElements(portNode, XProcElements.ELEMENTS_PORT_BINDINGS),
+        return Iterables.transform(SaxonAxis.childElements(portNode, XProcElements.ELEMENTS_PORT_BINDINGS),
                 new Function<XdmNode, PortBinding>()
                 {
                     @Override
@@ -412,7 +412,7 @@ public class PipelineParser
 
         if (portBindingNode.getNodeName().equals(XProcElements.INLINE))
         {
-            final XdmNode inlineNode = SaxonUtil.childElement(portBindingNode);
+            final XdmNode inlineNode = SaxonAxis.childElement(portBindingNode);
             return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
         }
 
@@ -473,7 +473,7 @@ public class PipelineParser
 
     private void parseImports(final XdmNode node)
     {
-        for (final XdmNode importNode : SaxonUtil.childElements(node, XProcElements.IMPORT))
+        for (final XdmNode importNode : SaxonAxis.childElements(node, XProcElements.IMPORT))
         {
             parseImport(importNode);
         }
@@ -568,7 +568,7 @@ public class PipelineParser
             return 1;
         }
 
-        final List<XdmNode> childNodes = ImmutableList.copyOf(SaxonUtil.childElements(parentNode, getStepElements()));
+        final List<XdmNode> childNodes = ImmutableList.copyOf(SaxonAxis.childElements(parentNode, getStepElements()));
         assert childNodes.contains(node) : node.getNodeName();
         return childNodes.indexOf(node) + 1;
     }

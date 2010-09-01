@@ -38,6 +38,7 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.xml.sax.InputSource;
 
@@ -82,7 +83,7 @@ public class XProcTestParser
         {
             final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
             final XdmNode pipelineDocument = documentBuilder.build(source);
-            final XdmNode rootNode = SaxonUtil.childElement(pipelineDocument);
+            final XdmNode rootNode = SaxonAxis.childElement(pipelineDocument);
             parseTest(rootNode);
         }
         catch (final SaxonApiException e)
@@ -97,18 +98,18 @@ public class XProcTestParser
         {
             unsupportedElement(node);
         }
-        parseTitle(SaxonUtil.childElement(node, XProcTestSuiteXmlModel.ELEMENT_TITLE));
+        parseTitle(SaxonAxis.childElement(node, XProcTestSuiteXmlModel.ELEMENT_TITLE));
         parseIgnoreWhitespace(node);
         parseError(node);
-        parseDescription(SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_DESCRIPTION));
-        parseInputs(SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_INPUT));
-        parseOptions(SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_OPTION));
-        parseParameters(SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_PARAMETER));
-        parsePipeline(SaxonUtil.childElement(node, XProcTestSuiteXmlModel.ELEMENT_PIPELINE));
+        parseDescription(SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_DESCRIPTION));
+        parseInputs(SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_INPUT));
+        parseOptions(SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_OPTION));
+        parseParameters(SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_PARAMETER));
+        parsePipeline(SaxonAxis.childElement(node, XProcTestSuiteXmlModel.ELEMENT_PIPELINE));
         if (error == null)
         {
-            parseComparePipeline(SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_COMPARE_PIPELINE));
-            parseOutputs(SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_OUTPUT));
+            parseComparePipeline(SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_COMPARE_PIPELINE));
+            parseOutputs(SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_OUTPUT));
         }
 
     }
@@ -258,7 +259,7 @@ public class XProcTestParser
         }
         else
         {
-            Iterator<XdmNode> iter = SaxonUtil.childElements(node, XProcTestSuiteXmlModel.ELEMENT_DOCUMENT).iterator();
+            Iterator<XdmNode> iter = SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_DOCUMENT).iterator();
             if (iter.hasNext())
             {
                 while (iter.hasNext())
@@ -272,14 +273,14 @@ public class XProcTestParser
                     }
                     else
                     {
-                        documents.add(SaxonUtil.asDocumentNode(SaxonUtil.childElement(documentNode), processor));
+                        documents.add(SaxonUtil.asDocumentNode(SaxonAxis.childElement(documentNode), processor));
                         LOG.trace("New wrapped document");
                     }
                 }
             }
             else
             {
-                iter = SaxonUtil.childElements(node).iterator();
+                iter = SaxonAxis.childElements(node).iterator();
                 if (iter.hasNext())
                 {
                     documents.add(SaxonUtil.asDocumentNode(iter.next(), processor));
@@ -304,7 +305,7 @@ public class XProcTestParser
         }
         else
         {
-            return SaxonUtil.asDocumentNode(SaxonUtil.childElement(node), processor);
+            return SaxonUtil.asDocumentNode(SaxonAxis.childElement(node), processor);
         }
     }
 

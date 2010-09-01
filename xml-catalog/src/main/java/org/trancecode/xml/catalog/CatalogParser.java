@@ -37,7 +37,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.XmlAttributes;
 import org.trancecode.xml.catalog.XmlCatalogModel.XmlCatalogAttributes;
 import org.trancecode.xml.catalog.XmlCatalogModel.XmlCatalogElements;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.SaxonAxis;
 
 /**
  * @author Herve Quiroz
@@ -73,7 +73,7 @@ public class CatalogParser
         final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
         documentBuilder.setLineNumbering(true);
         final XdmNode document = documentBuilder.build(source);
-        final XdmNode catalogNode = SaxonUtil.childElement(document, XmlCatalogElements.CATALOG);
+        final XdmNode catalogNode = SaxonAxis.childElement(document, XmlCatalogElements.CATALOG);
 
         return parse(catalogNode);
     }
@@ -113,7 +113,7 @@ public class CatalogParser
     {
         assert catalogNode != null;
 
-        final List<Function<CatalogQuery, URI>> catalogs = ImmutableList.copyOf(Iterables.transform(SaxonUtil
+        final List<Function<CatalogQuery, URI>> catalogs = ImmutableList.copyOf(Iterables.transform(SaxonAxis
                 .childElements(catalogNode, XmlCatalogElements.ELEMENTS_CATALOG),
                 new Function<XdmNode, Function<CatalogQuery, URI>>()
                 {
