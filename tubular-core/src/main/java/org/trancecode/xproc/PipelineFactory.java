@@ -38,9 +38,12 @@ import org.trancecode.xproc.step.ForEach;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
 import org.trancecode.xproc.step.SinkStepProcessor;
+import org.trancecode.xproc.step.Step;
+import org.trancecode.xproc.step.StepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
 import org.trancecode.xproc.step.When;
 import org.trancecode.xproc.step.WrapSequenceStepProcessor;
+import org.trancecode.xproc.step.XProcSteps;
 import org.trancecode.xproc.step.XsltStepProcessor;
 
 /**

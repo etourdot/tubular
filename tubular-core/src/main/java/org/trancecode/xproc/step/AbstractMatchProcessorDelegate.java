@@ -22,7 +22,6 @@ import java.util.EnumSet;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
-import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
 
 /**

@@ -22,6 +22,7 @@ package org.trancecode.xproc;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 import org.trancecode.AbstractTest;
+import org.trancecode.xproc.step.XProcSteps;
 
 /**
  * Tests for {@link PipelineFactory}.

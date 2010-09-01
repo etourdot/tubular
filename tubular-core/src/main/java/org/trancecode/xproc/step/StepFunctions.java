@@ -21,7 +21,6 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import org.trancecode.function.Pair;
-import org.trancecode.xproc.Step;
 import org.trancecode.xproc.Variable;
 
 /**

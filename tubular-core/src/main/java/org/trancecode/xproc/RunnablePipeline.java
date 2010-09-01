@@ -35,6 +35,7 @@ import org.trancecode.io.OutputResolver;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
+import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz

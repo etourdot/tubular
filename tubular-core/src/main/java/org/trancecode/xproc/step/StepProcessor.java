@@ -17,7 +17,9 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.step;
+
+import org.trancecode.xproc.Environment;
 
 /**
  * @author Herve Quiroz

@@ -59,6 +59,8 @@ import org.trancecode.xproc.port.Port.Type;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.Pipeline;
+import org.trancecode.xproc.step.Step;
+import org.trancecode.xproc.step.StepProcessor;
 
 /**
  * @author Herve Quiroz

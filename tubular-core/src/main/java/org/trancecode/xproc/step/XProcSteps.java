@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -25,6 +25,7 @@ import com.google.common.collect.Iterables;
 import java.util.Set;
 
 import net.sf.saxon.s9api.QName;
+import org.trancecode.xproc.XProcXmlModel;
 
 /**
  * Standard XProc steps.

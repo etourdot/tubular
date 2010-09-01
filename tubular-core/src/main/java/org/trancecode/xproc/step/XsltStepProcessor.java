@@ -44,10 +44,8 @@ import org.trancecode.io.Uris;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
-import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcOptions;
-import org.trancecode.xproc.XProcSteps;
 import org.trancecode.xproc.port.XProcPorts;
 
 /**

@@ -24,6 +24,7 @@ import com.google.common.base.Preconditions;
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
+import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz

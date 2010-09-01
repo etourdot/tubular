@@ -19,7 +19,6 @@ package org.trancecode.xproc.step;
 
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Step;
 
 /**
  * {@code p:sink}.
