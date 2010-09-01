@@ -34,7 +34,6 @@ import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
-import org.trancecode.xproc.parser.XProcElements;
 
 /**
  * @author Herve Quiroz
@@ -134,8 +133,7 @@ public class StoreStepProcessor extends AbstractStepProcessor
             Closeables.closeQuietly(targetOutputStream);
         }
 
-        final XdmNode resultNode = XProcElements.newResultElement(outputUri.toString(), environment.getConfiguration()
-                .getProcessor());
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), resultNode);
+        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT),
+                environment.newResultElement(outputUri.toString()));
     }
 }

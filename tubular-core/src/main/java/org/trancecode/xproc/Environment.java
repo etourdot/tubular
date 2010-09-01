@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -45,7 +46,7 @@ import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
-import org.trancecode.xproc.parser.XProcElements;
+import org.trancecode.xml.saxon.SaxonBuilder;
 
 /**
  * @author Herve Quiroz
@@ -53,6 +54,11 @@ import org.trancecode.xproc.parser.XProcElements;
 public class Environment
 {
     private static final Logger LOG = Logger.getLogger(Environment.class);
+
+    private static final QName ATTRIBUTE_NAME = new QName("name");
+    private static final QName ATTRIBUTE_VALUE = new QName("value");
+    private static final QName ELEMENT_PARAM = XProcXmlModel.xprocStepNamespace().newSaxonQName("param");
+    private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
 
     private final EnvironmentPort defaultReadablePort;
     private final Map<QName, String> inheritedVariables;
@@ -288,8 +294,7 @@ public class Environment
             {
                 if (variable.isParameter())
                 {
-                    final XdmNode parameterNode = XProcElements.newParameterElement(variable.getName(), value,
-                            getConfiguration().getProcessor());
+                    final XdmNode parameterNode = newParameterElement(variable.getName(), value);
                     newParameterNodes.add(parameterNode);
                 }
                 else
@@ -697,5 +702,38 @@ public class Environment
         }
 
         return parameters;
+    }
+
+    public XdmNode newParameterElement(final QName name, final String value)
+    {
+        Preconditions.checkNotNull(name);
+        Preconditions.checkNotNull(value);
+
+        final SaxonBuilder builder = new SaxonBuilder(configuration.getProcessor().getUnderlyingConfiguration());
+        builder.startDocument();
+        builder.startElement(ELEMENT_PARAM);
+        builder.namespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel.xprocStepNamespace().uri());
+        builder.attribute(ATTRIBUTE_NAME, name.toString());
+        builder.attribute(ATTRIBUTE_VALUE, value);
+        builder.text(value);
+        builder.endElement();
+        builder.endDocument();
+
+        return builder.getNode();
+    }
+
+    public XdmNode newResultElement(final String value)
+    {
+        Preconditions.checkNotNull(value);
+
+        final SaxonBuilder builder = new SaxonBuilder(configuration.getProcessor().getUnderlyingConfiguration());
+        builder.startDocument();
+        builder.startElement(ELEMENT_RESULT);
+        builder.namespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel.xprocStepNamespace().uri());
+        builder.text(value);
+        builder.endElement();
+        builder.endDocument();
+
+        return builder.getNode();
     }
 }

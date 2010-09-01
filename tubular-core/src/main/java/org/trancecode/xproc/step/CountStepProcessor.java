@@ -26,7 +26,6 @@ import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
-import org.trancecode.xproc.parser.XProcElements;
 
 /**
  * {@code p:count}.
@@ -54,8 +53,7 @@ public class CountStepProcessor extends AbstractStepProcessor
         final int result = (limit > 0 ? Math.min(count, limit) : count);
         LOG.trace("  result = {}", result);
 
-        return environment
-                .writeNodes(step.getPortReference(XProcPorts.RESULT), XProcElements.newResultElement(
-                        Integer.toString(result), environment.getConfiguration().getProcessor()));
+        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT),
+                environment.newResultElement(Integer.toString(result)));
     }
 }
