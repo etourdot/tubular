@@ -65,6 +65,7 @@ public final class XProcTestReportXmlModel
 
     public static final class Attributes
     {
+        public static final QName EXPECTED = namespace().newSaxonQName("expected");
         public static final QName URI = namespace().newSaxonQName("uri");
 
         private Attributes()
