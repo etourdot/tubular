@@ -31,7 +31,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xml.saxon.SaxonIterables;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
@@ -132,7 +132,7 @@ public class AddAttributeStepProcessor extends AbstractStepProcessor
             QName fixedupQName = attributeQName;
             boolean isNamespaceDeclared = false;
             boolean shouldChangePrefix = false;
-            final Iterator<XdmNode> inscopeNamespaces = SaxonIterables.namespaces(node).iterator();
+            final Iterator<XdmNode> inscopeNamespaces = SaxonAxis.namespaces(node).iterator();
             final List<String> inscopePrefixes = Lists.newLinkedList();
             // Check if the namespace is already declared...
             while (!isNamespaceDeclared && inscopeNamespaces.hasNext())
@@ -198,7 +198,7 @@ public class AddAttributeStepProcessor extends AbstractStepProcessor
             builder.attribute(fixedupQName, attributeValue);
 
             // Add all the other attributes
-            for (final XdmNode attribute : SaxonIterables.attributes(node))
+            for (final XdmNode attribute : SaxonAxis.attributes(node))
             {
                 if (!attribute.getNodeName().equals(fixedupQName))
                 {

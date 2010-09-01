@@ -44,7 +44,7 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
-import org.trancecode.xml.saxon.SaxonIterables;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonUtil;
 import org.trancecode.xproc.PipelineException;
@@ -182,7 +182,7 @@ public class PipelineParser
     private Step parseStepChildNodes(final XdmNode stepNode, final Step step)
     {
         Step configuredStep = step;
-        for (final XdmNode node : SaxonIterables.childNodes(stepNode))
+        for (final XdmNode node : SaxonAxis.childNodes(stepNode))
         {
             configuredStep = parseStepChildNode(node, configuredStep);
         }
