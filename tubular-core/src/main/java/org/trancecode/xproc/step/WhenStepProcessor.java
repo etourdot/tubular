@@ -37,9 +37,9 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class When extends AbstractCompoundStepProcessor
+public class WhenStepProcessor extends AbstractCompoundStepProcessor
 {
-    public static final When INSTANCE = new When();
+    public static final WhenStepProcessor INSTANCE = new WhenStepProcessor();
 
     private static final Iterable<Port> PORTS = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
             .setSequence(false).setPrimary(false));
@@ -47,9 +47,9 @@ public class When extends AbstractCompoundStepProcessor
             .declareVariable(Variable.newOption(XProcOptions.TEST).setRequired(true));
     public static final Step STEP_OTHERWISE = Step.newStep(XProcSteps.OTHERWISE, INSTANCE, true).declarePorts(PORTS);
 
-    private static final Logger LOG = Logger.getLogger(When.class);
+    private static final Logger LOG = Logger.getLogger(WhenStepProcessor.class);
 
-    private When()
+    private WhenStepProcessor()
     {
         // single instance
     }

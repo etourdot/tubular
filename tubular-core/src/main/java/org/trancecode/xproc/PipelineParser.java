@@ -58,7 +58,7 @@ import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.Port.Type;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
-import org.trancecode.xproc.step.Pipeline;
+import org.trancecode.xproc.step.PipelineStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
 
@@ -161,15 +161,15 @@ public class PipelineParser
         else
         {
             final String name = getStepName(stepNode);
-            step = Pipeline.newPipeline(type);
+            step = PipelineStepProcessor.newPipeline(type);
             step = step.setName(name);
         }
 
         step = step.setLocation(getLocation(stepNode));
 
-        if (Pipeline.isPipeline(step))
+        if (PipelineStepProcessor.isPipeline(step))
         {
-            step = Pipeline.addImplicitPorts(step);
+            step = PipelineStepProcessor.addImplicitPorts(step);
         }
 
         step = parseStepChildNodes(stepNode, step);

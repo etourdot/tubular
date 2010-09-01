@@ -28,9 +28,9 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class Pipeline extends AbstractCompoundStepProcessor
+public class PipelineStepProcessor extends AbstractCompoundStepProcessor
 {
-    public static final StepProcessor INSTANCE = new Pipeline();
+    public static final StepProcessor INSTANCE = new PipelineStepProcessor();
 
     public static Step newPipeline(final QName type)
     {
@@ -39,7 +39,7 @@ public class Pipeline extends AbstractCompoundStepProcessor
 
     public static Step addImplicitPorts(final Step pipeline)
     {
-        assert Pipeline.isPipeline(pipeline);
+        assert PipelineStepProcessor.isPipeline(pipeline);
 
         return addImplicitInputPort(addImplicitOutputPort(pipeline));
     }

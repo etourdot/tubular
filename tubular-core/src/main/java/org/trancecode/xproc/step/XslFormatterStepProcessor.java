@@ -41,13 +41,13 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class XslFormatter extends AbstractStepProcessor
+public class XslFormatterStepProcessor extends AbstractStepProcessor
 {
     public static final String DEFAULT_CONTENT_TYPE = "application/pdf";
 
-    public static final XslFormatter INSTANCE = new XslFormatter();
+    public static final XslFormatterStepProcessor INSTANCE = new XslFormatterStepProcessor();
 
-    private static final Logger LOG = Logger.getLogger(XslFormatter.class);
+    private static final Logger LOG = Logger.getLogger(XslFormatterStepProcessor.class);
 
     @Override
     protected Environment doRun(final Step step, final Environment environment) throws Exception

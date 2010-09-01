@@ -32,16 +32,16 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.step.AddAttributeStepProcessor;
-import org.trancecode.xproc.step.Choose;
+import org.trancecode.xproc.step.ChooseStepProcessor;
 import org.trancecode.xproc.step.CountStepProcessor;
-import org.trancecode.xproc.step.ForEach;
+import org.trancecode.xproc.step.ForEachStepProcessor;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
 import org.trancecode.xproc.step.SinkStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
 import org.trancecode.xproc.step.StoreStepProcessor;
-import org.trancecode.xproc.step.When;
+import org.trancecode.xproc.step.WhenStepProcessor;
 import org.trancecode.xproc.step.WrapSequenceStepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
 import org.trancecode.xproc.step.XsltStepProcessor;
@@ -105,10 +105,10 @@ public class PipelineFactory
     {
         final Map<QName, Step> coreSteps = Maps.newHashMap();
 
-        coreSteps.put(XProcSteps.CHOOSE, Choose.STEP);
-        coreSteps.put(XProcSteps.FOR_EACH, ForEach.STEP);
-        coreSteps.put(XProcSteps.OTHERWISE, When.STEP_OTHERWISE);
-        coreSteps.put(XProcSteps.WHEN, When.STEP_WHEN);
+        coreSteps.put(XProcSteps.CHOOSE, ChooseStepProcessor.STEP);
+        coreSteps.put(XProcSteps.FOR_EACH, ForEachStepProcessor.STEP);
+        coreSteps.put(XProcSteps.OTHERWISE, WhenStepProcessor.STEP_OTHERWISE);
+        coreSteps.put(XProcSteps.WHEN, WhenStepProcessor.STEP_WHEN);
         // coreSteps.put(XProcSteps.GROUP, null);
         // coreSteps.put(XProcSteps.TRY, null);
 

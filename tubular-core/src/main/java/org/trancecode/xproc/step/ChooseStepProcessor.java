@@ -35,17 +35,17 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class Choose extends AbstractCompoundStepProcessor
+public class ChooseStepProcessor extends AbstractCompoundStepProcessor
 {
-    public static final Choose INSTANCE = new Choose();
+    public static final ChooseStepProcessor INSTANCE = new ChooseStepProcessor();
 
     private static final Iterable<Port> PORTS = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
             .setSequence(false).setPrimary(false));
     public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true).declarePorts(PORTS);
 
-    private static final Logger LOG = Logger.getLogger(Choose.class);
+    private static final Logger LOG = Logger.getLogger(ChooseStepProcessor.class);
 
-    private Choose()
+    private ChooseStepProcessor()
     {
         // single instance
     }
