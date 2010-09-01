@@ -44,7 +44,7 @@ import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xproc.parser.XProcElements;
 
 /**
@@ -572,11 +572,11 @@ public class Environment
                     assert !contextNodes.hasNext();
                 }
 
-                return SaxonUtil.asDocumentNode(contextNode, configuration.getProcessor());
+                return Saxon.asDocumentNode(contextNode, configuration.getProcessor());
             }
         }
 
-        return SaxonUtil.getEmptyDocument(configuration.getProcessor());
+        return Saxon.getEmptyDocument(configuration.getProcessor());
     }
 
     public XdmValue evaluateXPath(final String select)
@@ -623,7 +623,7 @@ public class Environment
                 if (variableEntry.getValue() != null)
                 {
                     selector.setVariable(variableEntry.getKey(),
-                            SaxonUtil.getUntypedXdmItem(variableEntry.getValue(), configuration.getProcessor()));
+                            Saxon.getUntypedXdmItem(variableEntry.getValue(), configuration.getProcessor()));
                 }
             }
 

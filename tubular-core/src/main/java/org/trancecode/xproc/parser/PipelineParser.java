@@ -46,7 +46,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Port.Type;
@@ -150,7 +150,7 @@ public class PipelineParser
 
     private Step parseDeclareStep(final XdmNode stepNode)
     {
-        final QName type = SaxonUtil.getAttributeAsQName(stepNode, XProcAttributes.TYPE);
+        final QName type = Saxon.getAttributeAsQName(stepNode, XProcAttributes.TYPE);
         LOG.trace("new step type: {}", type);
 
         Step step;

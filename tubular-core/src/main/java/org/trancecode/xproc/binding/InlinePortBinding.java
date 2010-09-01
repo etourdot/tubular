@@ -25,7 +25,7 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.Immutable;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPortBinding;
 
@@ -54,7 +54,7 @@ public class InlinePortBinding extends AbstractPortBinding
             public Iterable<XdmNode> readNodes()
             {
                 log.trace("{@method}");
-                log.trace("node = {}", SaxonUtil.nodesToString(node));
+                log.trace("node = {}", Saxon.nodesToString(node));
                 log.trace("node = {}", node);
                 return Collections.singletonList(node);
             }

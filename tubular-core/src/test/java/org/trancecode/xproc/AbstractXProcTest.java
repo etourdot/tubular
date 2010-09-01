@@ -43,7 +43,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Uris;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.Saxon;
 
 /**
  * @author Herve Quiroz
@@ -220,8 +220,8 @@ public abstract class AbstractXProcTest extends AbstractTest
     {
         assert expected != null;
         assert actual != null;
-        final XdmNode docExpected = SaxonUtil.asDocumentNode(expected, processor);
-        final XdmNode docActual = SaxonUtil.asDocumentNode(actual, processor);
+        final XdmNode docExpected = Saxon.asDocumentNode(expected, processor);
+        final XdmNode docActual = Saxon.asDocumentNode(actual, processor);
         final String message = String.format("expected:\n%s\nactual:\n%s", docExpected, docActual);
         try
         {

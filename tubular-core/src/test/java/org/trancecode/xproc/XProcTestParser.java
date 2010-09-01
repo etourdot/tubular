@@ -39,7 +39,7 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
-import org.trancecode.xml.saxon.SaxonUtil;
+import org.trancecode.xml.saxon.Saxon;
 import org.xml.sax.InputSource;
 
 /**
@@ -145,7 +145,7 @@ public class XProcTestParser
         final Iterator<XdmNode> iter = nodes.iterator();
         if (iter.hasNext())
         {
-            description = SaxonUtil.asDocumentNode(iter.next(), processor);
+            description = Saxon.asDocumentNode(iter.next(), processor);
             LOG.trace("Description: parsed");
         }
         if (iter.hasNext())
@@ -273,7 +273,7 @@ public class XProcTestParser
                     }
                     else
                     {
-                        documents.add(SaxonUtil.asDocumentNode(SaxonAxis.childElement(documentNode), processor));
+                        documents.add(Saxon.asDocumentNode(SaxonAxis.childElement(documentNode), processor));
                         LOG.trace("New wrapped document");
                     }
                 }
@@ -283,7 +283,7 @@ public class XProcTestParser
                 iter = SaxonAxis.childElements(node).iterator();
                 if (iter.hasNext())
                 {
-                    documents.add(SaxonUtil.asDocumentNode(iter.next(), processor));
+                    documents.add(Saxon.asDocumentNode(iter.next(), processor));
                     LOG.trace("New inline document");
                 }
                 else
@@ -305,7 +305,7 @@ public class XProcTestParser
         }
         else
         {
-            return SaxonUtil.asDocumentNode(SaxonAxis.childElement(node), processor);
+            return Saxon.asDocumentNode(SaxonAxis.childElement(node), processor);
         }
     }
 
