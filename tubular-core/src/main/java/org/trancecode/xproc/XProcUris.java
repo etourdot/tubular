@@ -26,7 +26,7 @@ import java.net.URI;
  */
 public final class XProcUris
 {
-    public static final URI URI_XPROC_CORE_LIBRARY = URI.create("classpath:/org/trancecode/pipeline/xproc-1.0.xpl");
+    public static final URI XPROC_CORE_LIBRARY = URI.create("classpath:/org/trancecode/pipeline/xproc-1.0.xpl");
 
     private XProcUris()
     {
