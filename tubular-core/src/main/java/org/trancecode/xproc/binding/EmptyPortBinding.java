@@ -25,7 +25,6 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.Immutable;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.EnvironmentPortBinding;
 
 /**
  * @author Herve Quiroz

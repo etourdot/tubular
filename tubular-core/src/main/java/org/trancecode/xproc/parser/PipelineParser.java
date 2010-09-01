@@ -50,7 +50,6 @@ import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Port;
 import org.trancecode.xproc.Port.Type;
-import org.trancecode.xproc.PortBinding;
 import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
@@ -63,6 +62,7 @@ import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
+import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.step.Pipeline;
 
 /**

@@ -34,6 +34,8 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
+import org.trancecode.xproc.binding.EnvironmentPortBinding;
+import org.trancecode.xproc.binding.PortBinding;
 
 /**
  * @author Herve Quiroz

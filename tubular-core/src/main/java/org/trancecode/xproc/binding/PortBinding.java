@@ -17,9 +17,10 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.binding;
 
 import org.trancecode.xml.HasLocation;
+import org.trancecode.xproc.Environment;
 
 /**
  * @author Herve Quiroz

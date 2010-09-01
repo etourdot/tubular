@@ -25,7 +25,6 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.EnvironmentPort;
-import org.trancecode.xproc.EnvironmentPortBinding;
 import org.trancecode.xproc.PortReference;
 
 /**

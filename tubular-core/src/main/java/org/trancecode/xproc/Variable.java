@@ -26,6 +26,7 @@ import org.trancecode.core.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
+import org.trancecode.xproc.binding.PortBinding;
 
 /**
  * @author Herve Quiroz

@@ -47,6 +47,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xproc.binding.PortBinding;
 
 /**
  * @author Herve Quiroz

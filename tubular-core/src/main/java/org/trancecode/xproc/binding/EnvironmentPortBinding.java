@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.binding;
 
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.xml.HasLocation;

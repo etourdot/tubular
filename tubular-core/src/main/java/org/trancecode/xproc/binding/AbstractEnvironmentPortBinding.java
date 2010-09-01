@@ -21,7 +21,6 @@ package org.trancecode.xproc.binding;
 
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
-import org.trancecode.xproc.EnvironmentPortBinding;
 
 /**
  * @author Herve Quiroz
