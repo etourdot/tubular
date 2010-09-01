@@ -130,7 +130,7 @@ public final class XProcTestSuiteReportBuilder
         builder.endElement();
 
         builder.startElement(Elements.DATE);
-        builder.text(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()));
+        builder.text(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date()));
         builder.endElement();
 
         writeProcessorInformation(builder);
