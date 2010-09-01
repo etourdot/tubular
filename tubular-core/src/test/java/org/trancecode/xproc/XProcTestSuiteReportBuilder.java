@@ -168,7 +168,7 @@ public final class XProcTestSuiteReportBuilder
                         builder.attribute(Attributes.EXPECTED, result.test.getError().toString());
                     }
 
-                    builder.text(result.actualError.toString());
+                    builder.text(result.actualError.getClarkName());
                     builder.endElement();
                 }
 
