@@ -24,6 +24,8 @@ import java.util.List;
 import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.xproc.port.EnvironmentPort;
+import org.trancecode.xproc.port.Port;
 
 /**
  * @author Herve Quiroz

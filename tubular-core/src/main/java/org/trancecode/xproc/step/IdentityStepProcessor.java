@@ -22,8 +22,8 @@ package org.trancecode.xproc.step;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
-import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * @author Herve Quiroz

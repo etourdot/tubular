@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.port;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -34,6 +34,8 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
+import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.binding.EnvironmentPortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 
@@ -45,7 +47,7 @@ public class EnvironmentPort implements HasPortReference
     private static final Logger LOG = Logger.getLogger(EnvironmentPort.class);
 
     private final Port declaredPort;
-    protected final List<EnvironmentPortBinding> portBindings;
+    private final List<EnvironmentPortBinding> portBindings;
     private final XPathExecutable select;
 
     public static EnvironmentPort newEnvironmentPort(final Port declaredPort, final Environment environment)
@@ -55,15 +57,15 @@ public class EnvironmentPort implements HasPortReference
         LOG.trace("declaredPort = {}", declaredPort);
         LOG.trace("portBindings = {}", declaredPort.getPortBindings());
 
-        final List<EnvironmentPortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(declaredPort
-                .getPortBindings(), new Function<PortBinding, EnvironmentPortBinding>()
-        {
-            @Override
-            public EnvironmentPortBinding apply(final PortBinding portBinding)
-            {
-                return portBinding.newEnvironmentPortBinding(environment);
-            }
-        }));
+        final List<EnvironmentPortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(
+                declaredPort.getPortBindings(), new Function<PortBinding, EnvironmentPortBinding>()
+                {
+                    @Override
+                    public EnvironmentPortBinding apply(final PortBinding portBinding)
+                    {
+                        return portBinding.newEnvironmentPortBinding(environment);
+                    }
+                }));
 
         final String declaredPortSelect = declaredPort.getSelect();
         final XPathExecutable select;
@@ -92,6 +94,11 @@ public class EnvironmentPort implements HasPortReference
         this.declaredPort = declaredPort;
         this.portBindings = ImmutableList.copyOf(portBindings);
         this.select = select;
+    }
+
+    public final List<EnvironmentPortBinding> portBindings()
+    {
+        return portBindings;
     }
 
     public Port getDeclaredPort()
@@ -123,8 +130,8 @@ public class EnvironmentPort implements HasPortReference
                     }
                     catch (final SaxonApiException e)
                     {
-                        throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(), e
-                                .getMessage());
+                        throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(),
+                                e.getMessage());
                     }
                 }
                 else
@@ -199,7 +206,7 @@ public class EnvironmentPort implements HasPortReference
     @Override
     public String toString()
     {
-        return String.format("%s[%s/%s]", getClass().getSimpleName(), declaredPort.getStepName(), declaredPort
-                .getPortName());
+        return String.format("%s[%s/%s]", getClass().getSimpleName(), declaredPort.getStepName(),
+                declaredPort.getPortName());
     }
 }

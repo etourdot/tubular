@@ -43,6 +43,11 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.binding.PortBinding;
+import org.trancecode.xproc.port.Port;
+import org.trancecode.xproc.port.PortFunctions;
+import org.trancecode.xproc.port.PortPredicates;
+import org.trancecode.xproc.port.PortReference;
+import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.StepFunctions;
 
 /**

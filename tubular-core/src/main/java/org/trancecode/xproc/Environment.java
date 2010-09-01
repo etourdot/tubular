@@ -48,6 +48,11 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.binding.PortBinding;
+import org.trancecode.xproc.port.EnvironmentPort;
+import org.trancecode.xproc.port.Port;
+import org.trancecode.xproc.port.PortFunctions;
+import org.trancecode.xproc.port.PortReference;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * @author Herve Quiroz
@@ -138,7 +143,7 @@ public class Environment
 
         for (final Port port : step.getOutputPorts())
         {
-            if (port.portBindings.isEmpty())
+            if (port.portBindings().isEmpty())
             {
                 newPorts.put(port.portReference(), EnvironmentPort.newEnvironmentPort(port, this));
             }
@@ -188,7 +193,7 @@ public class Environment
         // if port is empty then pipe to existing default readable port
         final EnvironmentPort environmentPort = getEnvironmentPort(primaryInputPort);
         final EnvironmentPort nonEmptyEnvironmentPort;
-        if (Iterables.isEmpty(environmentPort.portBindings) && getDefaultReadablePort() != null)
+        if (Iterables.isEmpty(environmentPort.portBindings()) && getDefaultReadablePort() != null)
         {
             nonEmptyEnvironmentPort = environmentPort.pipe(getDefaultReadablePort());
         }
@@ -215,7 +220,7 @@ public class Environment
 
         final EnvironmentPort environmentPort = getEnvironmentPort(primaryOutputPort);
         final EnvironmentPort nonEmptyEnvironmentPort;
-        if (Iterables.isEmpty(environmentPort.portBindings))
+        if (Iterables.isEmpty(environmentPort.portBindings()))
         {
             nonEmptyEnvironmentPort = environmentPort.pipe(sourceEnvironment.getDefaultReadablePort());
         }

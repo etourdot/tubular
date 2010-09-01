@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.port;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -41,7 +41,7 @@ public class Port extends AbstractHasLocation implements HasPortReference
     private final Type type;
     private final Boolean primary;
     private final Boolean sequence;
-    protected final List<PortBinding> portBindings;
+    private final List<PortBinding> portBindings;
     private final String select;
     private final PortReference portReference;
 
@@ -102,6 +102,11 @@ public class Port extends AbstractHasLocation implements HasPortReference
         this.select = select;
         Preconditions.checkNotNull(portBindings);
         this.portBindings = ImmutableList.copyOf(portBindings);
+    }
+
+    public List<PortBinding> portBindings()
+    {
+        return portBindings;
     }
 
     public Port setLocation(final Location location)

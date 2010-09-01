@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.port;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.EqualsBuilder;

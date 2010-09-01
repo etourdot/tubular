@@ -20,6 +20,8 @@
 package org.trancecode.xproc;
 
 import org.trancecode.core.InterningPool;
+import org.trancecode.xproc.port.PortName;
+import org.trancecode.xproc.port.PortReference;
 
 /**
  * @author Herve Quiroz

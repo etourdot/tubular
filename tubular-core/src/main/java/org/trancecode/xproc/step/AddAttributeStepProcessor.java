@@ -37,8 +37,8 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcOptions;
-import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * Step processor for the p:add-attribute standard XProc step.

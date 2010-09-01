@@ -48,14 +48,10 @@ import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xproc.PipelineException;
-import org.trancecode.xproc.Port;
-import org.trancecode.xproc.Port.Type;
-import org.trancecode.xproc.PortReference;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.StepProcessor;
 import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.XProcExceptions;
-import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcXmlModel.Attributes;
 import org.trancecode.xproc.XProcXmlModel.Elements;
 import org.trancecode.xproc.binding.DocumentPortBinding;
@@ -63,6 +59,10 @@ import org.trancecode.xproc.binding.EmptyPortBinding;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
+import org.trancecode.xproc.port.Port;
+import org.trancecode.xproc.port.PortReference;
+import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.port.Port.Type;
 import org.trancecode.xproc.step.Pipeline;
 
 /**

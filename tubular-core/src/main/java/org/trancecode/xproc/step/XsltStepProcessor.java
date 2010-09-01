@@ -47,8 +47,8 @@ import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcOptions;
-import org.trancecode.xproc.XProcPorts;
 import org.trancecode.xproc.XProcSteps;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * @author Herve Quiroz

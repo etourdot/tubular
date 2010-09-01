@@ -17,14 +17,26 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.port;
 
 /**
- * For {@link Port} and {@link EnvironmentPort}.
+ * Common XProc ports.
  * 
  * @author Herve Quiroz
  */
-public interface HasPortReference
+public final class XProcPorts
 {
-    PortReference portReference();
+    public static final String CURRENT = "current";
+    public static final String ITERATION_SOURCE = "iteration-source";
+    public static final String SOURCE = "source";
+    public static final String RESULT = "result";
+    public static final String PARAMETERS = "parameters";
+    public static final String SECONDARY = "secondary";
+    public static final String STYLESHEET = "stylesheet";
+    public static final String XPATH_CONTEXT = "xpath-context";
+
+    private XProcPorts()
+    {
+        // No instantiation
+    }
 }

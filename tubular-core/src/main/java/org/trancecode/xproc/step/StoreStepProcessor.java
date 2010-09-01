@@ -33,7 +33,7 @@ import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.Step;
 import org.trancecode.xproc.XProcOptions;
-import org.trancecode.xproc.XProcPorts;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * @author Herve Quiroz

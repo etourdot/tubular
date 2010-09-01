@@ -24,8 +24,8 @@ import org.trancecode.annotation.Immutable;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.EnvironmentPort;
-import org.trancecode.xproc.PortReference;
+import org.trancecode.xproc.port.EnvironmentPort;
+import org.trancecode.xproc.port.PortReference;
 
 /**
  * @author Herve Quiroz
