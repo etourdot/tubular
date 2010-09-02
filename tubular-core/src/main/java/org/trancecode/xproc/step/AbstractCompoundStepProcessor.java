@@ -25,7 +25,7 @@ import org.trancecode.xproc.Environment;
 /**
  * @author Herve Quiroz
  */
-public class AbstractCompoundStepProcessor implements StepProcessor
+public abstract class AbstractCompoundStepProcessor implements StepProcessor
 {
     private static final Logger LOG = Logger.getLogger(AbstractCompoundStepProcessor.class);
 
