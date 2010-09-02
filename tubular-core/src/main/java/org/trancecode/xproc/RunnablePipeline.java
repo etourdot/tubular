@@ -19,8 +19,9 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 
 import java.util.List;
 
@@ -29,12 +30,11 @@ import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.io.OutputResolver;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.binding.InlinePortBinding;
+import org.trancecode.xml.saxon.SaxonFunctions;
 import org.trancecode.xproc.binding.PortBinding;
+import org.trancecode.xproc.binding.PortBindingFunctions;
 import org.trancecode.xproc.step.Step;
 
 /**
@@ -84,20 +84,8 @@ public class RunnablePipeline
 
     public void setPortBinding(final String portName, final Iterable<Source> bindings)
     {
-        final List<PortBinding> portBindings = Lists.newArrayList();
-
-        for (final Source binding : bindings)
-        {
-            try
-            {
-                final XdmNode node = processor.newDocumentBuilder().build(binding);
-                portBindings.add(new InlinePortBinding(node, null));
-            }
-            catch (final SaxonApiException e)
-            {
-                throw new PipelineException(e);
-            }
-        }
+        final List<PortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(bindings,
+                Functions.compose(PortBindingFunctions.toPortBinding(), SaxonFunctions.buildDocument(processor))));
 
         pipeline = pipeline.setPortBindings(portName, portBindings);
     }
