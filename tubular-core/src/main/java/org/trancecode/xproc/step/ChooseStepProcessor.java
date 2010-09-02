@@ -36,7 +36,7 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class ChooseStepProcessor extends AbstractCompoundStepProcessor
+public final class ChooseStepProcessor extends AbstractCompoundStepProcessor
 {
     public static final ChooseStepProcessor INSTANCE = new ChooseStepProcessor();
 

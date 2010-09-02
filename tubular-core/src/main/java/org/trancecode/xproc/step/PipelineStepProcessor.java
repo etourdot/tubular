@@ -28,13 +28,18 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class PipelineStepProcessor extends AbstractCompoundStepProcessor
+public final class PipelineStepProcessor extends AbstractCompoundStepProcessor
 {
     public static final StepProcessor INSTANCE = new PipelineStepProcessor();
 
     public static Step newPipeline(final QName type)
     {
         return Step.newStep(type, INSTANCE, true);
+    }
+
+    private PipelineStepProcessor()
+    {
+        // Singleton
     }
 
     @Override

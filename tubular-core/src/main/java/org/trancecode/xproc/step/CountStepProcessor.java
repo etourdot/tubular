@@ -32,11 +32,16 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.count">p:count</a>
  */
-public class CountStepProcessor extends AbstractStepProcessor
+public final class CountStepProcessor extends AbstractStepProcessor
 {
     public static final CountStepProcessor INSTANCE = new CountStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(CountStepProcessor.class);
+
+    private CountStepProcessor()
+    {
+        // Singleton
+    }
 
     @Override
     public QName stepType()

@@ -42,13 +42,18 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
-public class XslFormatterStepProcessor extends AbstractStepProcessor
+public final class XslFormatterStepProcessor extends AbstractStepProcessor
 {
     public static final String DEFAULT_CONTENT_TYPE = "application/pdf";
 
     public static final XslFormatterStepProcessor INSTANCE = new XslFormatterStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(XslFormatterStepProcessor.class);
+
+    private XslFormatterStepProcessor()
+    {
+        // Singleton
+    }
 
     @Override
     public QName stepType()
@@ -59,6 +64,7 @@ public class XslFormatterStepProcessor extends AbstractStepProcessor
     @Override
     protected Environment doRun(final Step step, final Environment environment) throws Exception
     {
+        LOG.trace("{@method} step = {}", step);
         final XdmNode source = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
 
         final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);

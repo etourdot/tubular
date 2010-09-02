@@ -45,11 +45,16 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.add-attribute">p:add-attribute</a>
  */
-public class AddAttributeStepProcessor extends AbstractStepProcessor
+public final class AddAttributeStepProcessor extends AbstractStepProcessor
 {
     public static final AddAttributeStepProcessor INSTANCE = new AddAttributeStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
+
+    private AddAttributeStepProcessor()
+    {
+        // Singleton
+    }
 
     @Override
     public QName stepType()

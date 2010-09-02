@@ -37,7 +37,7 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public class ForEachStepProcessor extends AbstractCompoundStepProcessor
+public final class ForEachStepProcessor extends AbstractCompoundStepProcessor
 {
     public static final ForEachStepProcessor INSTANCE = new ForEachStepProcessor();
 

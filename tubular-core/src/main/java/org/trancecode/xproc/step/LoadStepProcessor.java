@@ -34,11 +34,16 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
-public class LoadStepProcessor extends AbstractStepProcessor
+public final class LoadStepProcessor extends AbstractStepProcessor
 {
     public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
+
+    private LoadStepProcessor()
+    {
+        // Singleton
+    }
 
     @Override
     public QName stepType()

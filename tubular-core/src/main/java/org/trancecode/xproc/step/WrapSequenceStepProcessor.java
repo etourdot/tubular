@@ -39,6 +39,11 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 
     private static final Logger LOG = Logger.getLogger(WrapSequenceStepProcessor.class);
 
+    private WrapSequenceStepProcessor()
+    {
+        // Singleton
+    }
+
     @Override
     public QName stepType()
     {

@@ -38,7 +38,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
-public class WhenStepProcessor extends AbstractCompoundStepProcessor
+public final class WhenStepProcessor extends AbstractCompoundStepProcessor
 {
     public static final WhenStepProcessor INSTANCE = new WhenStepProcessor();
 

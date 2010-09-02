@@ -32,6 +32,11 @@ public final class SinkStepProcessor extends AbstractStepProcessor
     public static final SinkStepProcessor INSTANCE = new SinkStepProcessor();
     private static final Logger LOG = Logger.getLogger(SinkStepProcessor.class);
 
+    private SinkStepProcessor()
+    {
+        // Singleton
+    }
+
     @Override
     public QName stepType()
     {
