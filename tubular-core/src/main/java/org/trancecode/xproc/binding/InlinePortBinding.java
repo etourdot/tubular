@@ -19,8 +19,8 @@
  */
 package org.trancecode.xproc.binding;
 
-import java.util.Collections;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.Immutable;
 import org.trancecode.logging.Logger;
@@ -40,9 +40,7 @@ public class InlinePortBinding extends AbstractPortBinding
     public InlinePortBinding(final XdmNode node, final Location location)
     {
         super(location);
-
-        assert node != null;
-        this.node = node;
+        this.node = Preconditions.checkNotNull(node);
     }
 
     @Override
@@ -52,10 +50,8 @@ public class InlinePortBinding extends AbstractPortBinding
         {
             public Iterable<XdmNode> readNodes()
             {
-                log.trace("{@method}");
-                log.trace("node = {}", Saxon.nodesToString(node));
-                log.trace("node = {}", node);
-                return Collections.singletonList(node);
+                log.trace("{@method} node = {}", Saxon.nodesToString(node));
+                return ImmutableList.of(node);
             }
         };
     }
