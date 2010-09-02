@@ -25,6 +25,7 @@ import com.google.common.collect.Iterables;
 import java.util.Set;
 
 import net.sf.saxon.s9api.QName;
+import org.trancecode.xproc.Tubular;
 import org.trancecode.xproc.XProcXmlModel;
 
 /**
@@ -34,6 +35,9 @@ import org.trancecode.xproc.XProcXmlModel;
  */
 public final class XProcSteps
 {
+    // Internal steps
+    public static final QName ANY = Tubular.namespace().newSaxonQName("any");
+
     // Core steps
     public static final QName CHOOSE = XProcXmlModel.xprocNamespace().newSaxonQName("choose");
     public static final QName FOR_EACH = XProcXmlModel.xprocNamespace().newSaxonQName("for-each");
