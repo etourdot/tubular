@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
@@ -52,6 +53,12 @@ public class WhenStepProcessor extends AbstractCompoundStepProcessor
     private WhenStepProcessor()
     {
         // single instance
+    }
+
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.WHEN;
     }
 
     @Override

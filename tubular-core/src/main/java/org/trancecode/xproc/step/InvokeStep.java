@@ -25,6 +25,7 @@ import com.google.common.collect.Iterables;
 
 import java.util.Collections;
 
+import net.sf.saxon.s9api.QName;
 import org.trancecode.function.Pair;
 import org.trancecode.function.TcFunctions;
 import org.trancecode.logging.Logger;
@@ -47,6 +48,13 @@ public class InvokeStep implements StepProcessor
     private InvokeStep()
     {
         // single instance
+    }
+
+    @Override
+    public QName stepType()
+    {
+        // TODO
+        throw new IllegalStateException();
     }
 
     public static Step newInvokeStep(final Step invokedStep)
@@ -94,30 +102,28 @@ public class InvokeStep implements StepProcessor
     {
         final Step invokedStep = Iterables.getOnlyElement(invokeStep.getSubpipeline());
 
-        return TcFunctions.apply(invokedStep, invokedStep.getPorts().values(),
-                new Function<Pair<Step, Port>, Step>()
+        return TcFunctions.apply(invokedStep, invokedStep.getPorts().values(), new Function<Pair<Step, Port>, Step>()
+        {
+            @Override
+            public Step apply(final Pair<Step, Port> arguments)
+            {
+                final Step step = arguments.left();
+                final Port port = arguments.right();
+                if (port.isInput())
                 {
-                    @Override
-                    public Step apply(final Pair<Step, Port> arguments)
-                    {
-                        final Step step = arguments.left();
-                        final Port port = arguments.right();
-                        if (port.isInput())
-                        {
-                            final PortReference localPortReference = PortReference.newReference(invokedStep.getName(),
-                                    port.getPortName());
-                            LOG.trace("{} -> {}", localPortReference, port.portReference());
-                            final Iterable<PortBinding> portBindings = Collections
-                                    .singleton((PortBinding) new PipePortBinding(localPortReference, invokeStep
-                                            .getLocation()));
-                            return step.setPortBindings(port.getPortName(), portBindings);
-                        }
-                        else
-                        {
-                            return step;
-                        }
-                    }
-                });
+                    final PortReference localPortReference = PortReference.newReference(invokedStep.getName(),
+                            port.getPortName());
+                    LOG.trace("{} -> {}", localPortReference, port.portReference());
+                    final Iterable<PortBinding> portBindings = Collections.singleton((PortBinding) new PipePortBinding(
+                            localPortReference, invokeStep.getLocation()));
+                    return step.setPortBindings(port.getPortName(), portBindings);
+                }
+                else
+                {
+                    return step;
+                }
+            }
+        });
     }
 
     private Step getInvokedStep(final Step invokeStep)

@@ -61,6 +61,12 @@ public class XsltStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(XsltStepProcessor.class);
 
     @Override
+    public QName stepType()
+    {
+        return XProcSteps.XSLT;
+    }
+
+    @Override
     protected Environment doRun(final Step step, final Environment environment)
     {
         LOG.trace("{@method} step = {}", step.getName());

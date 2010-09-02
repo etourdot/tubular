@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.Iterables;
+import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.port.XProcPorts;
@@ -36,6 +37,12 @@ public class CountStepProcessor extends AbstractStepProcessor
     public static final CountStepProcessor INSTANCE = new CountStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(CountStepProcessor.class);
+
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.COUNT;
+    }
 
     @Override
     protected Environment doRun(final Step step, final Environment environment)

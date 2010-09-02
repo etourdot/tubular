@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 
+import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
@@ -51,6 +52,12 @@ public class ChooseStepProcessor extends AbstractCompoundStepProcessor
     }
 
     @Override
+    public QName stepType()
+    {
+        return XProcSteps.CHOOSE;
+    }
+
+    @Override
     public Environment run(final Step step, final Environment environment)
     {
         LOG.trace("step = {}", step.getName());
@@ -69,8 +76,8 @@ public class ChooseStepProcessor extends AbstractCompoundStepProcessor
 
                 for (final Port port : whenStep.getOutputPorts())
                 {
-                    final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port.setStepName(step
-                            .getName()), stepEnvironment);
+                    final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(
+                            port.setStepName(step.getName()), stepEnvironment);
                     newPorts.add(environmentPort.pipe(resultEnvironment.getEnvironmentPort(port)));
                 }
 

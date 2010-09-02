@@ -24,6 +24,7 @@ import com.google.common.io.Closeables;
 import java.io.OutputStream;
 import java.net.URI;
 
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import net.sf.saxon.s9api.XdmNode;
@@ -54,6 +55,12 @@ public class StoreStepProcessor extends AbstractStepProcessor
     public static final StoreStepProcessor INSTANCE = new StoreStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(StoreStepProcessor.class);
+
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.STORE;
+    }
 
     @Override
     protected Environment doRun(final Step step, final Environment environment)

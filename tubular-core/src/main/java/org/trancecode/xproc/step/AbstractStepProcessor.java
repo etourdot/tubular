@@ -33,7 +33,8 @@ public abstract class AbstractStepProcessor implements StepProcessor
     @Override
     public Environment run(final Step step, final Environment environment)
     {
-        LOG.trace("step = {}", step.getName());
+        LOG.trace("{@method} step = {}", step.getName());
+        assert stepType().equals(step.getType()) || stepType().equals(XProcSteps.ANY);
 
         try
         {

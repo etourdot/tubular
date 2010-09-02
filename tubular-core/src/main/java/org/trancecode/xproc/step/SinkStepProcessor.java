@@ -17,6 +17,7 @@
  */
 package org.trancecode.xproc.step;
 
+import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 
@@ -32,10 +33,15 @@ public final class SinkStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(SinkStepProcessor.class);
 
     @Override
+    public QName stepType()
+    {
+        return XProcSteps.SINK;
+    }
+
+    @Override
     protected Environment doRun(final Step step, final Environment environment) throws Exception
     {
         LOG.trace("{@method} step = {}", step.getName());
         return environment;
     }
-
 }

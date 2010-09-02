@@ -58,6 +58,12 @@ public class PipelineFactory
     protected static final StepProcessor UNSUPPORTED_STEP_PROCESSOR = new StepProcessor()
     {
         @Override
+        public QName stepType()
+        {
+            return XProcSteps.ANY;
+        }
+
+        @Override
         public Environment run(final Step step, final Environment environment)
         {
             throw new UnsupportedOperationException(step.getType().toString());

@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
@@ -51,10 +52,16 @@ public class ForEachStepProcessor extends AbstractCompoundStepProcessor
         // single instance
     }
 
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.FOR_EACH;
+    }
+
     private Port newIterationPort(final Step step, final XdmNode node)
     {
-        return Port.newInputPort(step.getName(), XProcPorts.CURRENT, step.getLocation()).setPrimary(false).setSequence(
-                false).setPortBindings(new InlinePortBinding(node, step.getLocation()));
+        return Port.newInputPort(step.getName(), XProcPorts.CURRENT, step.getLocation()).setPrimary(false)
+                .setSequence(false).setPortBindings(new InlinePortBinding(node, step.getLocation()));
     }
 
     @Override
@@ -71,9 +78,9 @@ public class ForEachStepProcessor extends AbstractCompoundStepProcessor
         {
             LOG.trace("new iteration: {}", node);
             final Port iterationPort = newIterationPort(step, node);
-            final Environment iterationEnvironment = environment.newChildStepEnvironment().addPorts(
-                    EnvironmentPort.newEnvironmentPort(iterationPort, environment)).setDefaultReadablePort(
-                    step.getPortReference(XProcPorts.CURRENT));
+            final Environment iterationEnvironment = environment.newChildStepEnvironment()
+                    .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
+                    .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT));
 
             final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
             Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());

@@ -29,6 +29,7 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -50,14 +51,20 @@ public class XslFormatterStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(XslFormatterStepProcessor.class);
 
     @Override
+    public QName stepType()
+    {
+        return XProcSteps.XSL_FORMATTER;
+    }
+
+    @Override
     protected Environment doRun(final Step step, final Environment environment) throws Exception
     {
         final XdmNode source = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
 
         final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);
         assert href != null;
-        final OutputStream resultOutputStream = environment.getConfiguration().getOutputResolver().resolveOutputStream(
-                href, source.getBaseURI().toString());
+        final OutputStream resultOutputStream = environment.getConfiguration().getOutputResolver()
+                .resolveOutputStream(href, source.getBaseURI().toString());
 
         final String contentType = environment.getVariable(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
         final FopFactory fopFactory = FopFactory.newInstance();
@@ -68,8 +75,8 @@ public class XslFormatterStepProcessor extends AbstractStepProcessor
             public Source resolve(final String href, final String base) throws TransformerException
             {
                 final URI uri = Uris.resolve(href, base);
-                final InputStream inputStream = environment.getConfiguration().getInputResolver().resolveInputStream(
-                        href, base);
+                final InputStream inputStream = environment.getConfiguration().getInputResolver()
+                        .resolveInputStream(href, base);
                 return new StreamSource(inputStream, uri.toString());
             }
         });

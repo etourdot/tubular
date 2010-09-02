@@ -37,6 +37,12 @@ public class PipelineStepProcessor extends AbstractCompoundStepProcessor
         return Step.newStep(type, INSTANCE, true);
     }
 
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.ANY;
+    }
+
     public static Step addImplicitPorts(final Step pipeline)
     {
         assert PipelineStepProcessor.isPipeline(pipeline);
@@ -48,8 +54,8 @@ public class PipelineStepProcessor extends AbstractCompoundStepProcessor
     {
         if (Iterables.isEmpty(pipeline.getInputPorts()))
         {
-            return pipeline.declarePort(Port
-                    .newInputPort(pipeline.getName(), XProcPorts.SOURCE, pipeline.getLocation()));
+            return pipeline
+                    .declarePort(Port.newInputPort(pipeline.getName(), XProcPorts.SOURCE, pipeline.getLocation()));
         }
 
         return pipeline;
@@ -59,8 +65,8 @@ public class PipelineStepProcessor extends AbstractCompoundStepProcessor
     {
         if (Iterables.isEmpty(pipeline.getOutputPorts()))
         {
-            return pipeline.declarePort(Port.newOutputPort(pipeline.getName(), XProcPorts.RESULT, pipeline
-                    .getLocation()));
+            return pipeline.declarePort(Port.newOutputPort(pipeline.getName(), XProcPorts.RESULT,
+                    pipeline.getLocation()));
         }
 
         return pipeline;

@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import net.sf.saxon.s9api.QName;
 import org.trancecode.xproc.Environment;
 
 /**
@@ -26,5 +27,7 @@ import org.trancecode.xproc.Environment;
  */
 public interface StepProcessor
 {
+    QName stepType();
+
     Environment run(Step step, Environment environment);
 }

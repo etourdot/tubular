@@ -40,6 +40,12 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(WrapSequenceStepProcessor.class);
 
     @Override
+    public QName stepType()
+    {
+        return XProcSteps.WRAP_SEQUENCE;
+    }
+
+    @Override
     protected Environment doRun(final Step step, final Environment environment) throws Exception
     {
         LOG.trace("{@method} step = {}", step.getName());

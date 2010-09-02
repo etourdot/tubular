@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import javax.xml.transform.Source;
 
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
@@ -38,6 +39,12 @@ public class LoadStepProcessor extends AbstractStepProcessor
     public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
+
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.LOAD;
+    }
 
     @Override
     protected Environment doRun(final Step step, final Environment environment)

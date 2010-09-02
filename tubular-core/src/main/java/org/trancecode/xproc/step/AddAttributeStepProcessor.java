@@ -30,8 +30,8 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
-import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
@@ -50,6 +50,12 @@ public class AddAttributeStepProcessor extends AbstractStepProcessor
     public static final AddAttributeStepProcessor INSTANCE = new AddAttributeStepProcessor();
 
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
+
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.ADD_ATTRIBUTE;
+    }
 
     @Override
     protected Environment doRun(final Step step, final Environment environment)
