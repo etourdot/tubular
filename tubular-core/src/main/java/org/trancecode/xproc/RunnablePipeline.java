@@ -58,7 +58,7 @@ public class RunnablePipeline
 
     public PipelineResult run()
     {
-        LOG.trace("pipeline = {}", pipeline);
+        LOG.trace("{@method} pipeline = {}", pipeline);
 
         final Configuration configuration = new Configuration(processor);
         configuration.setOutputResolver(outputResolver);
@@ -72,13 +72,13 @@ public class RunnablePipeline
 
     public void withParam(final QName name, final String value)
     {
-        LOG.trace("name = {} ; value = {}", name, value);
+        LOG.trace("{@method} name = {} ; value = {}", name, value);
         pipeline = pipeline.withParam(name, null, value, pipeline.getLocation());
     }
 
     public void withOption(final QName name, final String value)
     {
-        LOG.trace("name = {} ; value = {}", name, value);
+        LOG.trace("{@method} name = {} ; value = {}", name, value);
         pipeline = pipeline.withOptionValue(name, value);
     }
 
