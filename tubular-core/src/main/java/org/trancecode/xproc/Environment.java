@@ -54,6 +54,8 @@ import org.trancecode.xproc.port.PortFunctions;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.Step;
+import org.trancecode.xproc.variable.Variable;
+import org.trancecode.xproc.variable.Variables;
 
 /**
  * @author Herve Quiroz

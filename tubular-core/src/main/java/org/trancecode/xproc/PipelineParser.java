@@ -61,6 +61,7 @@ import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.PipelineStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
+import org.trancecode.xproc.variable.Variable;
 
 /**
  * @author Herve Quiroz

@@ -28,11 +28,11 @@ import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Variable;
-import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.Variable;
+import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * @author Herve Quiroz

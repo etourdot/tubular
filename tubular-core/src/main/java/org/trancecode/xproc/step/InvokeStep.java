@@ -29,11 +29,11 @@ import org.trancecode.function.Pair;
 import org.trancecode.function.TcFunctions;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Variable;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.PortReference;
+import org.trancecode.xproc.variable.Variable;
 
 /**
  * @author Herve Quiroz

@@ -17,7 +17,7 @@
  *
  * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.xproc.variable;
 
 import com.google.common.base.Predicate;
 import net.sf.saxon.s9api.QName;

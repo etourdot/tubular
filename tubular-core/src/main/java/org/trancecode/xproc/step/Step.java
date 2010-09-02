@@ -43,15 +43,15 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Variable;
-import org.trancecode.xproc.VariablePredicates;
-import org.trancecode.xproc.Variables;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.PortFunctions;
 import org.trancecode.xproc.port.PortPredicates;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.Variable;
+import org.trancecode.xproc.variable.VariablePredicates;
+import org.trancecode.xproc.variable.Variables;
 
 /**
  * @author Herve Quiroz

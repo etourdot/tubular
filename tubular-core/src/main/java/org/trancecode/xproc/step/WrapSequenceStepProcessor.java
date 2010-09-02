@@ -23,8 +23,8 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XProcOptions;
 import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * {@code p:wrap-sequence}.
