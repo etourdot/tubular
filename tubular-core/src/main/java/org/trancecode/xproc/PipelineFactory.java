@@ -141,7 +141,6 @@ public class PipelineFactory
             final Map<QName, StepProcessor> processors = Maps.newHashMap();
 
             // Required steps
-            // TODO
             processors.put(XProcSteps.ADD_ATTRIBUTE, AddAttributeStepProcessor.INSTANCE);
             processors.put(XProcSteps.COUNT, CountStepProcessor.INSTANCE);
             processors.put(XProcSteps.IDENTITY, IdentityStepProcessor.INSTANCE);
