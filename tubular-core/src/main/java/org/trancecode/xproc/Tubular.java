@@ -17,6 +17,8 @@
  */
 package org.trancecode.xproc;
 
+import org.trancecode.xml.Namespace;
+
 /**
  * @author Herve Quiroz
  */
@@ -26,6 +28,8 @@ public final class Tubular
     private static final int VERSION_MINOR = 1;
     private static final boolean SNAPSHOT = true;
     private static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + (SNAPSHOT ? "-SNAPSHOT" : "");
+
+    private static final Namespace NAMESPACE = new Namespace("http://www.trancecode.org/tubular/1/", "tubular");
 
     private Tubular()
     {
@@ -45,5 +49,10 @@ public final class Tubular
     public static String xpathVersion()
     {
         return "2.0";
+    }
+
+    public static Namespace namespace()
+    {
+        return NAMESPACE;
     }
 }
