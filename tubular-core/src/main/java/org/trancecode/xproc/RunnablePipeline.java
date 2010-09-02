@@ -19,9 +19,9 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.transform.Source;
@@ -104,7 +104,7 @@ public class RunnablePipeline
 
     public void setPortBinding(final String portName, final Source... bindings)
     {
-        setPortBinding(portName, Arrays.asList(bindings));
+        setPortBinding(portName, ImmutableList.copyOf(bindings));
     }
 
     public void setUriResolver(final URIResolver uriResolver)
