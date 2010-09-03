@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
@@ -34,11 +35,8 @@ public class PipelineResult
 
     protected PipelineResult(final Step pipeline, final Environment resultEnvironment)
     {
-        assert pipeline != null;
-        this.pipeline = pipeline;
-
-        assert resultEnvironment != null;
-        this.resultEnvironment = resultEnvironment;
+        this.pipeline = Preconditions.checkNotNull(pipeline);
+        this.resultEnvironment = Preconditions.checkNotNull(resultEnvironment);
     }
 
     public Step getPipeline()
