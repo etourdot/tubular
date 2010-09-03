@@ -19,10 +19,6 @@
  */
 package org.trancecode.xproc;
 
-import java.util.List;
-
-import javax.xml.transform.Source;
-
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
@@ -48,12 +44,6 @@ public class PipelineResult
     public Step getPipeline()
     {
         return pipeline;
-    }
-
-    public List<Source> readPort(final String stepName, final String portName)
-    {
-        // TODO
-        return null;
     }
 
     public Iterable<XdmNode> readNodes(final String portName)
