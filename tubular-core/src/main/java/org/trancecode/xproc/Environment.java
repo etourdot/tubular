@@ -60,7 +60,7 @@ import org.trancecode.xproc.variable.Variables;
 /**
  * @author Herve Quiroz
  */
-public class Environment implements Configurable
+public class Environment implements HasPipelineContext
 {
     private static final Logger LOG = Logger.getLogger(Environment.class);
 
@@ -290,7 +290,7 @@ public class Environment implements Configurable
                     xpathContextNode = getXPathContextNode();
                 }
 
-                final XdmValue result = evaluateXPath(variable.getSelect(), getConfiguration().getProcessor(),
+                final XdmValue result = evaluateXPath(variable.getSelect(), getPipelineContext().getProcessor(),
                         xpathContextNode, allVariables, variable.getLocation());
                 final XdmItem resultNode = Iterables.getOnlyElement(result);
 
@@ -430,7 +430,7 @@ public class Environment implements Configurable
                 xpathContextPort, inheritedVariables, localVariables);
     }
 
-    public PipelineContext getConfiguration()
+    public PipelineContext getPipelineContext()
     {
         return configuration;
     }
@@ -692,7 +692,7 @@ public class Environment implements Configurable
         final Map<QName, String> parameters = TcMaps.newSmallWriteOnceMap();
         for (final XdmNode parameterNode : readNodes(portReference))
         {
-            final XPathCompiler xpathCompiler = getConfiguration().getProcessor().newXPathCompiler();
+            final XPathCompiler xpathCompiler = getPipelineContext().getProcessor().newXPathCompiler();
             try
             {
                 final XPathSelector nameSelector = xpathCompiler.compile("string(//@name)").load();

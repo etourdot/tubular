@@ -56,7 +56,7 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         LOG.trace("{@method} step = {}", step.getName());
         assert step.getType().equals(XProcSteps.WRAP_SEQUENCE);
 
-        final SaxonBuilder builder = new SaxonBuilder(environment.getConfiguration().getProcessor()
+        final SaxonBuilder builder = new SaxonBuilder(environment.getPipelineContext().getProcessor()
                 .getUnderlyingConfiguration());
 
         final String wrapperLocalName = environment.getVariable(XProcOptions.WRAPPER);

@@ -67,7 +67,7 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final Source source;
         try
         {
-            source = environment.getConfiguration().getUriResolver().resolve(href, environment.getBaseUri().toString());
+            source = environment.getPipelineContext().getUriResolver().resolve(href, environment.getBaseUri().toString());
         }
         catch (final Exception e)
         {
@@ -78,7 +78,7 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final XdmNode document;
         try
         {
-            document = environment.getConfiguration().getProcessor().newDocumentBuilder().build(source);
+            document = environment.getPipelineContext().getProcessor().newDocumentBuilder().build(source);
         }
         catch (final SaxonApiException e)
         {

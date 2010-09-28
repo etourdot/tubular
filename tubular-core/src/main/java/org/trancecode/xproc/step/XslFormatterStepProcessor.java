@@ -69,7 +69,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
 
         final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);
         assert href != null;
-        final OutputStream resultOutputStream = environment.getConfiguration().getOutputResolver()
+        final OutputStream resultOutputStream = environment.getPipelineContext().getOutputResolver()
                 .resolveOutputStream(href, source.getBaseURI().toString());
 
         final String contentType = environment.getVariable(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
@@ -81,7 +81,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
             public Source resolve(final String href, final String base) throws TransformerException
             {
                 final URI uri = Uris.resolve(href, base);
-                final InputStream inputStream = environment.getConfiguration().getInputResolver()
+                final InputStream inputStream = environment.getPipelineContext().getInputResolver()
                         .resolveInputStream(href, base);
                 return new StreamSource(inputStream, uri.toString());
             }

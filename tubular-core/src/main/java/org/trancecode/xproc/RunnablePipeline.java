@@ -48,7 +48,7 @@ public class RunnablePipeline
     protected RunnablePipeline(final Pipeline pipeline)
     {
         Preconditions.checkNotNull(pipeline);
-        this.context = pipeline.getConfiguration();
+        this.context = pipeline.getPipelineContext();
         this.pipeline = pipeline.getUnderlyingPipeline();
     }
 

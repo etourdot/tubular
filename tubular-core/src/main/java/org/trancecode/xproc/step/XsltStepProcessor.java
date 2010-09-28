@@ -105,7 +105,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         final XdmNode stylesheet = environment.readNode(step.getPortReference(XProcPorts.STYLESHEET));
         assert stylesheet != null;
 
-        final Processor processor = environment.getConfiguration().getProcessor();
+        final Processor processor = environment.getPipelineContext().getProcessor();
 
         // TODO pipeline logging
         final XsltTransformer transformer;

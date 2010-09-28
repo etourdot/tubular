@@ -20,7 +20,7 @@ package org.trancecode.xproc;
 /**
  * @author Herve Quiroz
  */
-public interface Configurable
+public interface HasPipelineContext
 {
-    public PipelineContext getConfiguration();
+    public PipelineContext getPipelineContext();
 }

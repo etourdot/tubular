@@ -25,7 +25,7 @@ import org.trancecode.xproc.step.Step;
 /**
  * @author Herve Quiroz
  */
-public class Pipeline implements Configurable
+public class Pipeline implements HasPipelineContext
 {
     private final PipelineContext context;
     private final Step pipeline;
@@ -46,7 +46,7 @@ public class Pipeline implements Configurable
         return pipeline;
     }
 
-    public PipelineContext getConfiguration()
+    public PipelineContext getPipelineContext()
     {
         return context;
     }

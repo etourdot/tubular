@@ -100,8 +100,8 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         LOG.debug("Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
                 href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
-        assert environment.getConfiguration().getOutputResolver() != null;
-        final OutputStream targetOutputStream = environment.getConfiguration().getOutputResolver()
+        assert environment.getPipelineContext().getOutputResolver() != null;
+        final OutputStream targetOutputStream = environment.getPipelineContext().getOutputResolver()
                 .resolveOutputStream(href, environment.getBaseUri().toString());
 
         final Serializer serializer = new Serializer();
@@ -127,7 +127,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
 
         try
         {
-            environment.getConfiguration().getProcessor().writeXdmValue(node, serializer);
+            environment.getPipelineContext().getProcessor().writeXdmValue(node, serializer);
             targetOutputStream.close();
         }
         catch (final Exception e)

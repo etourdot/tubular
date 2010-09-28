@@ -60,10 +60,10 @@ public class DocumentPortBinding extends AbstractPortBinding
             {
                 try
                 {
-                    final Source source = environment.getConfiguration().getUriResolver().resolve(href,
+                    final Source source = environment.getPipelineContext().getUriResolver().resolve(href,
                             location.getSystemId());
 
-                    return Collections.singletonList(environment.getConfiguration().getProcessor().newDocumentBuilder()
+                    return Collections.singletonList(environment.getPipelineContext().getProcessor().newDocumentBuilder()
                             .build(source));
                 }
                 catch (final Exception e)

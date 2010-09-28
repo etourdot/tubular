@@ -73,7 +73,7 @@ public class EnvironmentPort implements HasPortReference
         {
             try
             {
-                select = environment.getConfiguration().getProcessor().newXPathCompiler().compile(declaredPortSelect);
+                select = environment.getPipelineContext().getProcessor().newXPathCompiler().compile(declaredPortSelect);
             }
             catch (final SaxonApiException e)
             {
