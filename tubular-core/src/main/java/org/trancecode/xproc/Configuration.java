@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Preconditions;
+
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
@@ -26,29 +28,30 @@ import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
+import org.trancecode.xproc.step.StepProcessor;
 
 /**
  * @author Herve Quiroz
  */
-public class Configuration
+public final class Configuration implements PipelineContext
 {
-    public static final String PROPERTY_TEMPORARY_NODES_CACHING_ENABLED = Configuration.class.getName()
-            + ".temporaryNodesCachingEnabled";
-
-    private boolean temporaryNodesCachingEnabled = Boolean.parseBoolean(PROPERTY_TEMPORARY_NODES_CACHING_ENABLED);
     private URIResolver uriResolver;
     private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
     private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
     private final Processor processor;
 
+    public Configuration()
+    {
+        this(new Processor(false));
+    }
+
     public Configuration(final Processor processor)
     {
-        assert processor != null;
-        this.processor = processor;
-
+        this.processor = Preconditions.checkNotNull(processor);
         uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
     }
 
+    @Override
     public InputResolver getInputResolver()
     {
         return this.inputResolver;
@@ -56,19 +59,10 @@ public class Configuration
 
     public void setInputResolver(final InputResolver inputResolver)
     {
-        this.inputResolver = inputResolver;
+        this.inputResolver = Preconditions.checkNotNull(inputResolver);
     }
 
-    public boolean isTemporaryNodesCachingEnabled()
-    {
-        return temporaryNodesCachingEnabled;
-    }
-
-    public void setTemporaryNodesCachingEnabled(final boolean temporaryNodesCachingEnabled)
-    {
-        this.temporaryNodesCachingEnabled = temporaryNodesCachingEnabled;
-    }
-
+    @Override
     public URIResolver getUriResolver()
     {
         return uriResolver;
@@ -76,9 +70,10 @@ public class Configuration
 
     public void setUriResolver(final URIResolver uriResolver)
     {
-        this.uriResolver = uriResolver;
+        this.uriResolver = Preconditions.checkNotNull(uriResolver);
     }
 
+    @Override
     public OutputResolver getOutputResolver()
     {
         return this.outputResolver;
@@ -86,11 +81,24 @@ public class Configuration
 
     public void setOutputResolver(final OutputResolver outputResolver)
     {
-        this.outputResolver = outputResolver;
+        this.outputResolver = Preconditions.checkNotNull(outputResolver);
     }
 
+    @Override
     public Processor getProcessor()
     {
         return processor;
+    }
+
+    public void registerStepProcessor(final StepProcessor stepProcessor)
+    {
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    public void registerPipelineLibrary(final PipelineLibrary library)
+    {
+        // TODO
+        throw new UnsupportedOperationException();
     }
 }

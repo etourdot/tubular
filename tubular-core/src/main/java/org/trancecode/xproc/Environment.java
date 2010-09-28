@@ -72,7 +72,7 @@ public class Environment implements Configurable
     private final EnvironmentPort defaultReadablePort;
     private final Map<QName, String> inheritedVariables;
     private final Map<QName, String> localVariables;
-    private final Configuration configuration;
+    private final PipelineContext configuration;
     private final Map<PortReference, EnvironmentPort> ports;
     private final Step pipeline;
     private final EnvironmentPort defaultParametersPort;
@@ -83,14 +83,14 @@ public class Environment implements Configurable
         return Maps.uniqueIndex(ports, PortFunctions.portReference());
     }
 
-    public static Environment newEnvironment(final Step pipeline, final Configuration configuration)
+    public static Environment newEnvironment(final Step pipeline, final PipelineContext configuration)
     {
         final Map<QName, String> variables = ImmutableMap.of();
         final Iterable<EnvironmentPort> ports = ImmutableList.of();
         return new Environment(pipeline, configuration, ports, null, null, null, variables, variables);
     }
 
-    private Environment(final Step pipeline, final Configuration configuration, final Iterable<EnvironmentPort> ports,
+    private Environment(final Step pipeline, final PipelineContext configuration, final Iterable<EnvironmentPort> ports,
             final EnvironmentPort defaultReadablePort, final EnvironmentPort defaultParametersPort,
             final EnvironmentPort xpathContextPort, final Map<QName, String> inheritedVariables,
             final Map<QName, String> localVariables)
@@ -99,7 +99,7 @@ public class Environment implements Configurable
                 inheritedVariables, localVariables);
     }
 
-    private Environment(final Step pipeline, final Configuration configuration,
+    private Environment(final Step pipeline, final PipelineContext configuration,
             final Map<PortReference, EnvironmentPort> ports, final EnvironmentPort defaultReadablePort,
             final EnvironmentPort defaultParametersPort, final EnvironmentPort xpathContextPort,
             final Map<QName, String> inheritedVariables, final Map<QName, String> localVariables)
@@ -430,7 +430,7 @@ public class Environment implements Configurable
                 xpathContextPort, inheritedVariables, localVariables);
     }
 
-    public Configuration getConfiguration()
+    public PipelineContext getConfiguration()
     {
         return configuration;
     }

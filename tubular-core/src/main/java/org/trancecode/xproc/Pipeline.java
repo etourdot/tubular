@@ -20,34 +20,25 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
-
-import javax.xml.transform.URIResolver;
-
-import net.sf.saxon.s9api.Processor;
 import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz
  */
-public class Pipeline
+public class Pipeline implements Configurable
 {
-    private final Processor processor;
-    private final URIResolver uriResolver;
+    private final PipelineContext context;
     private final Step pipeline;
 
-    protected Pipeline(final Processor processor, final URIResolver uriResolver, final Step pipeline)
+    protected Pipeline(final PipelineContext context, final Step pipeline)
     {
-        this.processor = Preconditions.checkNotNull(processor);
-        this.uriResolver = Preconditions.checkNotNull(uriResolver);
+        this.context = Preconditions.checkNotNull(context);
         this.pipeline = Preconditions.checkNotNull(pipeline);
     }
 
     public RunnablePipeline load()
     {
-        final RunnablePipeline pipeline = new RunnablePipeline(this);
-        pipeline.setUriResolver(uriResolver);
-
-        return pipeline;
+        return new RunnablePipeline(this);
     }
 
     protected Step getUnderlyingPipeline()
@@ -55,8 +46,8 @@ public class Pipeline
         return pipeline;
     }
 
-    public Processor getProcessor()
+    public PipelineContext getConfiguration()
     {
-        return processor;
+        return context;
     }
 }

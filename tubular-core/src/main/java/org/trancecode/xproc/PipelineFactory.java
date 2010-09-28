@@ -99,7 +99,7 @@ public class PipelineFactory
         }
 
         // TODO pass the parsed pipeline to the runnable pipeline
-        return new Pipeline(processor, uriResolver, pipeline);
+        return new Pipeline(new Configuration(processor), pipeline);
     }
 
     public Map<QName, StepProcessor> getStepProcessors()

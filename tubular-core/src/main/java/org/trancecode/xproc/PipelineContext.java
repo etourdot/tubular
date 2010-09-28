@@ -17,10 +17,22 @@
  */
 package org.trancecode.xproc;
 
+import javax.xml.transform.URIResolver;
+
+import net.sf.saxon.s9api.Processor;
+import org.trancecode.io.InputResolver;
+import org.trancecode.io.OutputResolver;
+
 /**
  * @author Herve Quiroz
  */
-public interface Configurable
+public interface PipelineContext
 {
-    public PipelineContext getConfiguration();
+    InputResolver getInputResolver();
+
+    OutputResolver getOutputResolver();
+
+    Processor getProcessor();
+
+    URIResolver getUriResolver();
 }

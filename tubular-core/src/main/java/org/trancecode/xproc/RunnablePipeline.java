@@ -20,17 +20,15 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.util.List;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.URIResolver;
 
-import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
-import org.trancecode.io.OutputResolver;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonFunctions;
 import org.trancecode.xproc.binding.PortBinding;
@@ -44,29 +42,21 @@ public class RunnablePipeline
 {
     private static final Logger LOG = Logger.getLogger(RunnablePipeline.class);
 
-    private final Processor processor;
-    private URIResolver uriResolver;
-    private OutputResolver outputResolver;
+    private final PipelineContext context;
     private Step pipeline;
 
     protected RunnablePipeline(final Pipeline pipeline)
     {
-        assert pipeline != null;
+        Preconditions.checkNotNull(pipeline);
+        this.context = pipeline.getConfiguration();
         this.pipeline = pipeline.getUnderlyingPipeline();
-        processor = pipeline.getProcessor();
     }
 
     public PipelineResult run()
     {
         LOG.trace("{@method} pipeline = {}", pipeline);
-
-        final Configuration configuration = new Configuration(processor);
-        configuration.setOutputResolver(outputResolver);
-        configuration.setUriResolver(uriResolver);
-        final Environment environment = Environment.newEnvironment(pipeline, configuration);
-
+        final Environment environment = Environment.newEnvironment(pipeline, context);
         final Environment resultEnvironment = pipeline.run(environment);
-
         return new PipelineResult(pipeline, resultEnvironment);
     }
 
@@ -84,8 +74,10 @@ public class RunnablePipeline
 
     public void setPortBinding(final String portName, final Iterable<Source> bindings)
     {
-        final List<PortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(bindings,
-                Functions.compose(PortBindingFunctions.toPortBinding(), SaxonFunctions.buildDocument(processor))));
+        final List<PortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(
+                bindings,
+                Functions.compose(PortBindingFunctions.toPortBinding(),
+                        SaxonFunctions.buildDocument(context.getProcessor()))));
 
         pipeline = pipeline.setPortBindings(portName, portBindings);
     }
@@ -93,16 +85,6 @@ public class RunnablePipeline
     public void setPortBinding(final String portName, final Source... bindings)
     {
         setPortBinding(portName, ImmutableList.copyOf(bindings));
-    }
-
-    public void setUriResolver(final URIResolver uriResolver)
-    {
-        this.uriResolver = uriResolver;
-    }
-
-    public void setOutputResolver(final OutputResolver outputResolver)
-    {
-        this.outputResolver = outputResolver;
     }
 
     public Step getPipeline()
