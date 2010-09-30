@@ -20,14 +20,14 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
 import net.sf.saxon.s9api.DocumentBuilder;
-import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
@@ -69,47 +68,34 @@ import org.trancecode.xproc.variable.Variable;
 public class PipelineParser
 {
     private static final Logger LOG = Logger.getLogger(PipelineParser.class);
-    private static Set<String> EMPTY_LIBRARIES = ImmutableSet.of();
 
-    private final Processor processor;
+    private final URI baseUri;
+    private final PipelineContext context;
     private final Source source;
-    private final Map<QName, Step> importedLibrary;
+    private PipelineLibrary library;
     private final Map<QName, Step> localLibrary = Maps.newHashMap();
-    private final Map<QName, StepProcessor> stepProcessors;
-    private final Set<String> libraries = Sets.newHashSet();
 
     private Step mainPipeline;
     private XdmNode rootNode;
 
-    public PipelineParser(final Processor processor, final Source source, final Map<QName, Step> library,
-            final Map<QName, StepProcessor> stepProcessors)
+    public PipelineParser(final PipelineContext context, final Source source)
     {
-        this(processor, source, library, stepProcessors, EMPTY_LIBRARIES);
+        this(context, source, context.getPipelineLibrary());
     }
 
-    private PipelineParser(final Processor processor, final Source source, final Map<QName, Step> library,
-            final Map<QName, StepProcessor> stepProcessors, final Set<String> libraries)
+    private PipelineParser(final PipelineContext context, final Source source, final PipelineLibrary library)
     {
-        assert processor != null;
-        this.processor = processor;
-
-        assert source != null;
-        this.source = source;
-
-        assert library != null;
-        this.importedLibrary = library;
-
-        assert stepProcessors != null;
-        this.stepProcessors = stepProcessors;
-
-        this.libraries.addAll(libraries);
+        this.context = Preconditions.checkNotNull(context);
+        this.source = Preconditions.checkNotNull(source);
+        this.library = Preconditions.checkNotNull(library);
+        baseUri = URI.create(source.getSystemId());
     }
 
     public void parse()
     {
         try
         {
-            final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
+            final DocumentBuilder documentBuilder = context.getProcessor().newDocumentBuilder();
             documentBuilder.setLineNumbering(true);
             final XdmNode pipelineDocument = documentBuilder.build(source);
             rootNode = SaxonAxis.childElement(pipelineDocument, Elements.ELEMENTS_ROOT);
@@ -154,9 +140,9 @@ public class PipelineParser
         LOG.trace("new step type: {}", type);
 
         Step step;
-        if (stepProcessors.containsKey(type))
+        if (context.getStepProcessors().containsKey(type))
         {
-            final StepProcessor stepProcessor = stepProcessors.get(type);
+            final StepProcessor stepProcessor = context.getStepProcessor(type);
             step = Step.newStep(stepNode, type, stepProcessor, false);
         }
         else
@@ -341,13 +327,7 @@ public class PipelineParser
             return fromLocalLibrary;
         }
 
-        final Step fromImportedLibrary = importedLibrary.get(name);
-        if (fromImportedLibrary != null)
-        {
-            return fromImportedLibrary;
-        }
-
-        throw new UnsupportedOperationException(name.toString());
+        return library.newStep(name);
     }
 
     private Step parseDeclarePort(final XdmNode portNode, final Step step)
@@ -483,37 +463,33 @@ public class PipelineParser
     {
         final String href = node.getAttributeValue(Attributes.HREF);
         assert href != null;
-        LOG.trace("href = {}", href);
-        final Source librarySource;
-        try
+        LOG.trace("{@method} href = {}", href);
+        final URI libraryUri = baseUri.resolve(href);
+        LOG.trace("libraryUri = {} ; libraries = {}", libraryUri, library.importedUris());
+        if (!library.importedUris().contains(libraryUri))
         {
-            librarySource = processor.getUnderlyingConfiguration().getURIResolver().resolve(href, source.getSystemId());
-        }
-        catch (final TransformerException e)
-        {
-            throw new PipelineException(e, "href = %s", href);
-        }
-        final String librarySystemId = librarySource.getSystemId();
-        LOG.trace("librarySystemId = {} ; libraries = {}", librarySystemId, libraries);
-        if (!libraries.contains(librarySystemId))
-        {
-            libraries.add(librarySystemId);
-            final PipelineParser parser = new PipelineParser(processor, librarySource, importedLibrary, stepProcessors,
-                    libraries);
+            final Source librarySource;
+            try
+            {
+                librarySource = context.getProcessor().getUnderlyingConfiguration().getURIResolver()
+                        .resolve(href, source.getSystemId());
+            }
+            catch (final TransformerException e)
+            {
+                throw XProcExceptions.xs0052(SaxonLocation.of(node), libraryUri);
+            }
+
+            final PipelineParser parser = new PipelineParser(context, librarySource, library);
             parser.parse();
-            final Map<QName, Step> newLibrary = parser.getLibrary();
-            LOG.trace("new steps = {}", newLibrary.keySet());
-            localLibrary.putAll(newLibrary);
+            final PipelineLibrary newLibrary = parser.getLibrary();
+            LOG.trace("new steps = {}", newLibrary.stepTypes());
+            library = library.importLibrary(newLibrary);
         }
     }
 
     private Collection<QName> getSupportedStepTypes()
     {
-        // TODO improve performance
-        final Collection<QName> types = Lists.newArrayList();
-        types.addAll(localLibrary.keySet());
-        types.addAll(importedLibrary.keySet());
-        return types;
+        return Sets.union(library.stepTypes(), localLibrary.keySet());
     }
 
     private Step parseInstanceStep(final XdmNode node)
@@ -583,9 +559,10 @@ public class PipelineParser
         return elements;
     }
 
-    public Map<QName, Step> getLibrary()
+    public PipelineLibrary getLibrary()
     {
-        return ImmutableMap.copyOf(localLibrary);
+        final Set<URI> uris = ImmutableSet.of();
+        return new PipelineLibrary(baseUri, localLibrary, uris).importLibrary(library);
     }
 
     public Step getPipeline()

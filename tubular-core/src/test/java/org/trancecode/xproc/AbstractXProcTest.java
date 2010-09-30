@@ -90,7 +90,7 @@ public abstract class AbstractXProcTest extends AbstractTest
     public static void parseStandardLibrary()
     {
         Logger.getLogger("org.trancecode").setLevel(Level.INFO);
-        new PipelineFactory();
+        new Configuration();
         Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
     }
 
@@ -101,13 +101,13 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     protected void test(final URL testUrl, final String testSuite) throws Exception
     {
-        final PipelineFactory pipelineFactory = new PipelineFactory();
-        final Processor processor = pipelineFactory.getProcessor();
-        final XProcTestCase test = getTest(testUrl, processor, testSuite);
+        final Configuration configuration = new Configuration();
+        final PipelineProcessor pipelineProcessor = new PipelineProcessor(configuration);
+        final XProcTestCase test = getTest(testUrl, configuration.getProcessor(), testSuite);
 
         try
         {
-            test(test, pipelineFactory);
+            test(test, pipelineProcessor);
         }
         catch (final XProcException e)
         {
@@ -140,11 +140,10 @@ public abstract class AbstractXProcTest extends AbstractTest
         reportBuilder.pass(test, null);
     }
 
-    private void test(final XProcTestCase test, final PipelineFactory pipelineFactory)
+    private void test(final XProcTestCase test, final PipelineProcessor pipelineProcessor)
     {
-        final Processor processor = pipelineFactory.getProcessor();
         log.info("== parse pipeline ==");
-        final Pipeline pipeline = pipelineFactory.newPipeline(test.getPipeline().asSource());
+        final Pipeline pipeline = pipelineProcessor.buildPipeline(test.getPipeline().asSource());
         log.info("== pipeline parsed ==");
         final RunnablePipeline runnablePipeline = pipeline.load();
 
@@ -202,7 +201,8 @@ public abstract class AbstractXProcTest extends AbstractTest
                 assert actualNodesIterator.hasNext();
                 final XdmNode expectedNode = expectedNodesIterator.next();
                 final XdmNode actualNode = actualNodesIterator.next();
-                assertEquals(expectedNode, actualNode, processor, test.isIgnoreWhitespace());
+                assertEquals(expectedNode, actualNode, pipelineProcessor.context().getProcessor(),
+                        test.isIgnoreWhitespace());
             }
             assert !actualNodesIterator.hasNext();
         }

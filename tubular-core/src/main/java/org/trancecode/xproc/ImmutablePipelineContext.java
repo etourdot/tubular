@@ -17,11 +17,18 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
+import org.trancecode.xproc.step.StepProcessor;
 
 /**
  * @author Herve Quiroz
@@ -30,7 +37,9 @@ public final class ImmutablePipelineContext implements PipelineContext
 {
     private final InputResolver inputResolver;
     private final OutputResolver outputResolver;
+    private final PipelineLibrary pipelineLibrary;
     private final Processor processor;
+    private final Map<QName, StepProcessor> stepProcessors;
     private final URIResolver uriResolver;
 
     public static ImmutablePipelineContext copyOf(final PipelineContext context)
@@ -41,16 +50,20 @@ public final class ImmutablePipelineContext implements PipelineContext
         }
 
         return new ImmutablePipelineContext(context.getProcessor(), context.getInputResolver(),
-                context.getOutputResolver(), context.getUriResolver());
+                context.getOutputResolver(), context.getUriResolver(), context.getStepProcessors(),
+                context.getPipelineLibrary());
     }
 
     private ImmutablePipelineContext(final Processor processor, final InputResolver inputResolver,
-            final OutputResolver outputResolver, final URIResolver uriResolver)
+            final OutputResolver outputResolver, final URIResolver uriResolver,
+            final Map<QName, StepProcessor> stepProcessors, final PipelineLibrary pipelineLibrary)
     {
         this.inputResolver = inputResolver;
         this.outputResolver = outputResolver;
+        this.pipelineLibrary = pipelineLibrary;
         this.processor = processor;
         this.uriResolver = uriResolver;
+        this.stepProcessors = ImmutableMap.copyOf(stepProcessors);
     }
 
     @Override
@@ -66,6 +79,12 @@ public final class ImmutablePipelineContext implements PipelineContext
     }
 
     @Override
+    public PipelineLibrary getPipelineLibrary()
+    {
+        return pipelineLibrary;
+    }
+
+    @Override
     public Processor getProcessor()
     {
         return processor;
@@ -75,5 +94,23 @@ public final class ImmutablePipelineContext implements PipelineContext
     public URIResolver getUriResolver()
     {
         return uriResolver;
+    }
+
+    @Override
+    public StepProcessor getStepProcessor(final QName step)
+    {
+        if (stepProcessors.containsKey(step))
+        {
+            return stepProcessors.get(step);
+        }
+
+        // TODO XProc error?
+        throw new NoSuchElementException(step.toString());
+    }
+
+    @Override
+    public Map<QName, StepProcessor> getStepProcessors()
+    {
+        return stepProcessors;
     }
 }

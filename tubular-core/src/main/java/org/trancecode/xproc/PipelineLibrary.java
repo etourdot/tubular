@@ -61,6 +61,11 @@ public final class PipelineLibrary
         return importedUris;
     }
 
+    public Set<QName> stepTypes()
+    {
+        return steps.keySet();
+    }
+
     public Step newStep(final QName type)
     {
         LOG.trace("{@method} type = {}", type);
@@ -68,6 +73,7 @@ public final class PipelineLibrary
         final Step step = steps.get(Preconditions.checkNotNull(type));
         if (step == null)
         {
+            // TODO use some XProc error here
             throw new NoSuchElementException(type.toString());
         }
         return step;

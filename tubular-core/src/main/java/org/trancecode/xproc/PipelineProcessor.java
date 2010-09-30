@@ -17,32 +17,41 @@
  */
 package org.trancecode.xproc;
 
-import java.util.Map;
-
-import javax.xml.transform.URIResolver;
-
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
-import org.trancecode.io.InputResolver;
-import org.trancecode.io.OutputResolver;
-import org.trancecode.xproc.step.StepProcessor;
+import javax.xml.transform.Source;
 
 /**
  * @author Herve Quiroz
  */
-public interface PipelineContext
+public final class PipelineProcessor
 {
-    InputResolver getInputResolver();
+    private final PipelineContext context;
 
-    OutputResolver getOutputResolver();
+    public PipelineProcessor()
+    {
+        this(new Configuration());
+    }
 
-    Processor getProcessor();
+    public PipelineProcessor(final PipelineContext context)
+    {
+        this.context = ImmutablePipelineContext.copyOf(context);
+    }
 
-    URIResolver getUriResolver();
+    public PipelineContext context()
+    {
+        return context;
+    }
 
-    StepProcessor getStepProcessor(QName step);
+    public PipelineLibrary buildPipelineLibrary(final Source source)
+    {
+        final PipelineParser parser = new PipelineParser(context, source);
+        parser.parse();
+        return parser.getLibrary();
+    }
 
-    Map<QName, StepProcessor> getStepProcessors();
-
-    PipelineLibrary getPipelineLibrary();
+    public Pipeline buildPipeline(final Source source)
+    {
+        final PipelineParser parser = new PipelineParser(context, source);
+        parser.parse();
+        return new Pipeline(context, parser.getPipeline());
+    }
 }
