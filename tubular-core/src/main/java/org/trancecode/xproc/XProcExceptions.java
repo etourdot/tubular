@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import java.net.URI;
+
 import net.sf.saxon.s9api.QName;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.XProcException.Type;
@@ -65,6 +67,16 @@ public final class XProcExceptions
     {
         return newXProcException(Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)",
                 optionName, stepType);
+    }
+
+    public static XProcException xs0052(final Location location, final URI uri)
+    {
+        return newXProcException(
+                Type.STATIC,
+                52,
+                location,
+                "%s cannot be retrieved or if, once retrieved, it does not point to a p:library, p:declare-step, or p:pipeline",
+                uri);
     }
 
     public static XProcException xc0023(final Location location)
