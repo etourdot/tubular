@@ -18,6 +18,7 @@
 package org.trancecode.xproc;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import javax.xml.transform.URIResolver;
 
@@ -32,6 +33,8 @@ import org.trancecode.xproc.step.StepProcessor;
  */
 public interface PipelineContext
 {
+    ExecutorService getExecutorService();
+
     InputResolver getInputResolver();
 
     OutputResolver getOutputResolver();

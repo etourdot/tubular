@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
 
 import javax.xml.transform.URIResolver;
 
@@ -35,6 +36,7 @@ import org.trancecode.xproc.step.StepProcessor;
  */
 public final class ImmutablePipelineContext implements PipelineContext
 {
+    private final ExecutorService executorService;
     private final InputResolver inputResolver;
     private final OutputResolver outputResolver;
     private final PipelineLibrary pipelineLibrary;
@@ -49,21 +51,28 @@ public final class ImmutablePipelineContext implements PipelineContext
             return (ImmutablePipelineContext) context;
         }
 
-        return new ImmutablePipelineContext(context.getProcessor(), context.getInputResolver(),
-                context.getOutputResolver(), context.getUriResolver(), context.getStepProcessors(),
-                context.getPipelineLibrary());
+        return new ImmutablePipelineContext(context.getProcessor(), context.getExecutorService(),
+                context.getInputResolver(), context.getOutputResolver(), context.getUriResolver(),
+                context.getStepProcessors(), context.getPipelineLibrary());
     }
 
-    private ImmutablePipelineContext(final Processor processor, final InputResolver inputResolver,
-            final OutputResolver outputResolver, final URIResolver uriResolver,
+    private ImmutablePipelineContext(final Processor processor, final ExecutorService executorService,
+            final InputResolver inputResolver, final OutputResolver outputResolver, final URIResolver uriResolver,
             final Map<QName, StepProcessor> stepProcessors, final PipelineLibrary pipelineLibrary)
     {
+        this.executorService = executorService;
         this.inputResolver = inputResolver;
         this.outputResolver = outputResolver;
         this.pipelineLibrary = pipelineLibrary;
         this.processor = processor;
         this.uriResolver = uriResolver;
         this.stepProcessors = ImmutableMap.copyOf(stepProcessors);
+    }
+
+    @Override
+    public ExecutorService getExecutorService()
+    {
+        return executorService;
     }
 
     @Override

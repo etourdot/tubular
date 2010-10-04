@@ -34,6 +34,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
@@ -71,6 +73,7 @@ public final class Configuration implements PipelineContext
     private static final URI DEFAULT_LIBRARY_URI = URI.create("trancecode:tubular:default-library.xpl");
     private static final Set<URI> EMPTY_SET_OF_URIS = ImmutableSet.of();
 
+    private ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private URIResolver uriResolver;
     private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
     private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
@@ -85,6 +88,12 @@ public final class Configuration implements PipelineContext
             private final Processor processor = new Processor(false);
             private final PipelineLibrary library = new PipelineLibrary(DEFAULT_LIBRARY_URI, CORE_LIBRARY,
                     EMPTY_SET_OF_URIS);
+
+            @Override
+            public ExecutorService getExecutorService()
+            {
+                return Executors.newSingleThreadScheduledExecutor();
+            }
 
             @Override
             public InputResolver getInputResolver()
@@ -246,6 +255,17 @@ public final class Configuration implements PipelineContext
     {
         this.processor = Preconditions.checkNotNull(processor);
         uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
+    }
+
+    @Override
+    public ExecutorService getExecutorService()
+    {
+        return executorService;
+    }
+
+    public void setExecutorService(final ExecutorService executorService)
+    {
+        this.executorService = executorService;
     }
 
     @Override
