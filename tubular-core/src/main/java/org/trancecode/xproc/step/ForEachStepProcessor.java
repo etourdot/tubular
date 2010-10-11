@@ -19,15 +19,13 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-import java.util.List;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
+import org.trancecode.parallel.ParallelIterables;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
@@ -70,25 +68,29 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor
         LOG.trace("step = {}", step.getName());
         assert step.getType().equals(XProcSteps.FOR_EACH);
 
-        final List<XdmNode> nodes = Lists.newArrayList();
-
         final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
 
-        for (final XdmNode node : stepEnvironment.readNodes(step.getPortReference(XProcPorts.ITERATION_SOURCE)))
+        final Function<XdmNode, Iterable<XdmNode>> loopFunction = new Function<XdmNode, Iterable<XdmNode>>()
         {
-            LOG.trace("new iteration: {}", node);
-            final Port iterationPort = newIterationPort(step, node);
-            final Environment iterationEnvironment = environment.newChildStepEnvironment()
-                    .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
-                    .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT));
+            @Override
+            public Iterable<XdmNode> apply(final XdmNode node)
+            {
+                LOG.trace("new iteration: {}", node);
+                final Port iterationPort = newIterationPort(step, node);
+                final Environment iterationEnvironment = environment.newChildStepEnvironment()
+                        .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
+                        .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT));
 
-            final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
-            Iterables.addAll(nodes, resultEnvironment.getDefaultReadablePort().readNodes());
-        }
+                final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
+                return resultEnvironment.getDefaultReadablePort().readNodes();
+            }
+        };
 
-        final Environment resultEnvironment = stepEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT),
-                nodes);
+        final Iterable<XdmNode> inputNodes = stepEnvironment.readNodes(step
+                .getPortReference(XProcPorts.ITERATION_SOURCE));
+        final Iterable<XdmNode> resultNodes = ImmutableList.copyOf(Iterables.concat(ParallelIterables.transform(
+                inputNodes, loopFunction, environment.getPipelineContext().getExecutorService())));
 
-        return resultEnvironment.setupOutputPorts(step);
+        return stepEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT), resultNodes).setupOutputPorts(step);
     }
 }
