@@ -321,7 +321,7 @@
             <forkMode>once</forkMode>
             <reportFormat>brief</reportFormat>
             <testFailureIgnore>true</testFailureIgnore>
-            <argLine>-Xmx128m</argLine>
+            <argLine>-Xms128m -Xmx128m</argLine>
             <workingDirectory>${basedir}/target</workingDirectory>
             <systemProperties>
               <property>
