@@ -110,7 +110,7 @@ public final class Catalogs
 
     public static Function<CatalogQuery, URI> addCache(final Function<CatalogQuery, URI> catalog)
     {
-        return TcFunctions.cache(catalog);
+        return TcFunctions.memoize(catalog);
     }
 
     public static Function<CatalogQuery, URI> rewriteSystem(final String systemIdStartString, final String rewritePrefix)
