@@ -170,7 +170,7 @@ public class EnvironmentPort implements HasPortReference
             }
         };
 
-        return new EnvironmentPort(declaredPort, Collections.singleton(portBinding), select);
+        return new EnvironmentPort(declaredPort, ImmutableList.of(portBinding), select);
     }
 
     public EnvironmentPort pipe(final EnvironmentPort port)
@@ -194,7 +194,7 @@ public class EnvironmentPort implements HasPortReference
             }
         };
 
-        return new EnvironmentPort(declaredPort, Collections.singleton(portBinding), select);
+        return new EnvironmentPort(declaredPort, ImmutableList.of(portBinding), select);
     }
 
     @Override

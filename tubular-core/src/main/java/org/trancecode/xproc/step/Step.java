@@ -163,7 +163,7 @@ public final class Step extends AbstractHasLocation
     public Step declarePort(final Port port)
     {
         LOG.trace("{@method} step = {} ; port = {}", name, port);
-        return declarePorts(Collections.singleton(port));
+        return declarePorts(ImmutableList.of(port));
     }
 
     public Step declarePorts(final Iterable<Port> ports)

@@ -19,7 +19,7 @@
  */
 package org.trancecode.xproc.binding;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 
 import javax.xml.transform.Source;
 
@@ -60,10 +60,10 @@ public class DocumentPortBinding extends AbstractPortBinding
             {
                 try
                 {
-                    final Source source = environment.getPipelineContext().getUriResolver().resolve(href,
-                            location.getSystemId());
+                    final Source source = environment.getPipelineContext().getUriResolver()
+                            .resolve(href, location.getSystemId());
 
-                    return Collections.singletonList(environment.getPipelineContext().getProcessor().newDocumentBuilder()
+                    return ImmutableList.of(environment.getPipelineContext().getProcessor().newDocumentBuilder()
                             .build(source));
                 }
                 catch (final Exception e)

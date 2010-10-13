@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import java.util.Collections;
 import java.util.List;
 
 import net.sf.saxon.s9api.QName;
@@ -68,7 +67,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor
         for (final Step whenStep : step.getSubpipeline())
         {
             assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
-            Environment resultEnvironment = runSteps(Collections.singleton(whenStep), stepEnvironment);
+            Environment resultEnvironment = runSteps(ImmutableList.of(whenStep), stepEnvironment);
 
             if (resultEnvironment != null)
             {
