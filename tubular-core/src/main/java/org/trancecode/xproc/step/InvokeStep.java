@@ -22,9 +22,6 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
-import java.util.Collections;
-
 import net.sf.saxon.s9api.QName;
 import org.trancecode.function.Pair;
 import org.trancecode.function.TcFunctions;
