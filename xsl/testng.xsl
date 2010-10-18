@@ -40,4 +40,29 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="test-method[not(@is-config = 'true')]">
+    <xsl:copy>
+      <xsl:copy-of select="@*[not(name() = 'name')]" />
+      <xsl:attribute name="name">
+            <xsl:choose>
+              <xsl:when test="params">
+                <xsl:value-of select="@name" />
+                <xsl:text>(</xsl:text>
+                <xsl:for-each select="params/param/value">
+                  <xsl:if test="position() != 1">
+                    <xsl:text>,</xsl:text>
+                  </xsl:if>
+                  <xsl:value-of select="replace(., '[ &#xA;]', '')" />
+                </xsl:for-each>
+                <xsl:text>)</xsl:text>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:copy-of select="@name" />
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
+      <xsl:copy-of select="*" />
+    </xsl:copy>
+  </xsl:template>
+
 </xsl:stylesheet>
