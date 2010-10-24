@@ -106,6 +106,29 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>augment-surefire-reports</id>
+            <phase>test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="saxon.jar" value="${maven.dependency.net.sf.saxon.saxon-he.jar.path}" />
+                <java dir="." fork="true" jar="${saxon.jar}">
+                  <arg line="-xsl:${basedir}/../xsl/testng.xsl -s:${project.build.directory}/surefire-reports/TEST-TestSuite.xml -o:${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged testng-results=${project.build.directory}/surefire-reports/testng-results.xml" />
+                </java>
+                <move file="${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged" tofile="${project.build.directory}/surefire-reports/TEST-TestSuite.xml" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
