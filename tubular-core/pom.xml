@@ -118,7 +118,8 @@
               <tasks>
                 <property name="saxon.jar" value="${maven.dependency.net.sf.saxon.saxon-he.jar.path}" />
                 <java dir="." fork="true" jar="${saxon.jar}">
-                  <arg line="-xsl:${basedir}/../xsl/testng.xsl -s:${project.build.directory}/surefire-reports/TEST-TestSuite.xml -o:${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged testng-results=${project.build.directory}/surefire-reports/testng-results.xml" />
+                  <arg
+                    line="-xsl:${basedir}/../xsl/testng.xsl -s:${project.build.directory}/surefire-reports/TEST-TestSuite.xml -o:${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged testng-results=${project.build.directory}/surefire-reports/testng-results.xml" />
                 </java>
                 <move file="${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged" tofile="${project.build.directory}/surefire-reports/TEST-TestSuite.xml" />
               </tasks>
