@@ -24,6 +24,7 @@ import java.net.URI;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.XProcException.Type;
+import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.variable.Variable;
 
 /**
@@ -40,6 +41,11 @@ public final class XProcExceptions
     {
         return newXProcException(Type.DYNAMIC, 4, location,
                 "no subpipeline is selected by the p:choose and no default is provided");
+    }
+
+    public static XProcException xd0006(final Location location, final PortReference port)
+    {
+        return newXProcException(Type.DYNAMIC, 6, location, "wrong number of input documents in port %s", port);
     }
 
     public static XProcException xd0023(final Location location, final String select, final String errorMessage)
