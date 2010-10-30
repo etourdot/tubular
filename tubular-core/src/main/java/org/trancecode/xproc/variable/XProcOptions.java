@@ -34,13 +34,16 @@ public final class XProcOptions
 {
     public static final Map<QName, Object> EMPTY_OPTIONS_MAP = ImmutableMap.of();
 
+    public static final QName ARGS = new QName("args");
     public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
     public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
     public static final QName ATTRIBUTE_NAMESPACE = new QName("attribute-namespace");
     public static final QName ATTRIBUTE_VALUE = new QName("attribute-value");
     public static final QName BYTE_ORDER_MARK = new QName("byte-order-mark");
     public static final QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
+    public static final QName COMMAND = new QName("command");
     public static final QName CONTENT_TYPE = new QName("content-type");
+    public static final QName CWD = new QName("cwd");
     public static final QName DOCTYPE_PUBLIC = new QName("doctype-public");
     public static final QName DOCTYPE_SYSTEM = new QName("doctype-system");
     public static final QName DTD_VALIDATE = new QName("dtd-validate");
