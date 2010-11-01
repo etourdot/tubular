@@ -99,6 +99,7 @@
 
   <modules>
     <module>trancecode-util</module>
+    <module>tubular-cli</module>
     <module>tubular-core</module>
     <module>xml-catalog</module>
   </modules>
