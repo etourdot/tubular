@@ -85,7 +85,7 @@ public final class CommandLineExecutor
             }
             final Configuration configurationPipelineContext = new Configuration();
             final PipelineProcessor pipelineProcessor = new PipelineProcessor(configurationPipelineContext);
-            for (final String library : librariesOption.getValues())
+            for (final String library : getValues(librariesOption))
             {
                 pipelineProcessor.buildPipelineLibrary(new StreamSource(library));
             }
@@ -127,5 +127,22 @@ public final class CommandLineExecutor
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
         printWriter.flush();
         printWriter.close();
+    }
+
+    /**
+     * Same as {@link Option#getValues()} but returns an empty array rather than
+     * {@code null}.
+     * 
+     * @see Option#getValues()
+     */
+    private static String[] getValues(final Option option)
+    {
+        final String[] values = option.getValues();
+        if (values != null)
+        {
+            return values;
+        }
+
+        return new String[0];
     }
 }
