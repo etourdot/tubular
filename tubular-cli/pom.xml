@@ -27,11 +27,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.trancecode</groupId>
-      <artifactId>trancecode-util</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.trancecode.logging</groupId>
       <artifactId>tc-logging-log4j</artifactId>
     </dependency>
@@ -39,11 +34,6 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-he</artifactId>
     </dependency>
 
     <dependency>
