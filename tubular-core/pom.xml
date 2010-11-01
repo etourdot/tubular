@@ -3,189 +3,120 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.trancecode</groupId>
-        <artifactId>tubular</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.trancecode</groupId>
+    <artifactId>tubular</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
 
-    <artifactId>tubular-core</artifactId>
-    <packaging>jar</packaging>
-    <name>${project.artifactId}</name>
-    <description>TranceCode XProc pipeline processor</description>
+  <artifactId>tubular-core</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  <description>TranceCode XProc pipeline processor</description>
 
   <!-- ===================================================================== -->
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.trancecode</groupId>
-            <artifactId>trancecode-util</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.trancecode</groupId>
+      <artifactId>trancecode-util</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.trancecode</groupId>
-            <artifactId>trancecode-util</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.trancecode</groupId>
+      <artifactId>trancecode-util</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.trancecode</groupId>
-            <artifactId>xml-catalog</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.trancecode</groupId>
+      <artifactId>xml-catalog</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>fop</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>fop</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>com.google.code.guice</groupId>
-            <artifactId>guice</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-he</artifactId>
-            <version>${saxon9.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-he</artifactId>
+      <version>${saxon9.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.trancecode.logging</groupId>
-            <artifactId>tc-logging-core</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.trancecode.logging</groupId>
+      <artifactId>tc-logging-core</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.trancecode.logging</groupId>
-            <artifactId>tc-logging-log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.trancecode.logging</groupId>
+      <artifactId>tc-logging-log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
-        </dependency>
-    </dependencies>
+  </dependencies>
 
-    <build>
-        <plugins>
+  <build>
+    <plugins>
 
-      <!-- FIXME does not work the way it is supposed to
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
-            <id>augment-surefire-reports</id>
-            <phase>test</phase>
             <goals>
-              <goal>run</goal>
+              <goal>test-jar</goal>
             </goals>
-            <configuration>
-              <tasks>
-                <property name="saxon.jar" value="${maven.dependency.net.sf.saxon.saxon-he.jar.path}" />
-                <java dir="." fork="true" jar="${saxon.jar}">
-                  <arg
-                    line="-xsl:${basedir}/../xsl/testng.xsl -s:${project.build.directory}/surefire-reports/TEST-TestSuite.xml -o:${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged testng-results=${project.build.directory}/surefire-reports/testng-results.xml" />
-                </java>
-                <move file="${project.build.directory}/surefire-reports/TEST-TestSuite.xml.merged" tofile="${project.build.directory}/surefire-reports/TEST-TestSuite.xml" />
-              </tasks>
-            </configuration>
           </execution>
         </executions>
       </plugin>
-      -->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+    </plugins>
+  </build>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.trancecode.xproc.cli.CommandLineExecutor</mainClass>
-                                </transformer>
-                            </transformers>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>cli</shadedClassifierName>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>xalan:xalan</exclude>
-                                    <exclude>xml-apis:xml-apis</exclude>
-                                    <exclude>xml-apis:xml-apis-ext</exclude>
-                                </excludes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
