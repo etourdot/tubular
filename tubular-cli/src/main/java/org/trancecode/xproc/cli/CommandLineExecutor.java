@@ -65,6 +65,10 @@ public final class CommandLineExecutor
                 "XProc pipeline library to load");
         final Option xplOption = new Option("x", "xpl", true,
                 "XProc pipeline to load and run");
+        final Option primaryInputPortOption = new Option("i", "input-port", true,
+                "Passes the primary input port");
+        final Option primaryOutputPortOption = new Option("r", "output-port", true,
+                "Passes the primary output port");
         final Option helpOption = new Option("h", "help", false, "Print help");
 
         xplOption.setArgName("uri");
@@ -82,11 +86,19 @@ public final class CommandLineExecutor
         librariesOption.setArgName("uri");
         librariesOption.setArgs(Option.UNLIMITED_VALUES);
         librariesOption.setType(URL.class);
+        primaryInputPortOption.setArgName("name=uri");
+        primaryInputPortOption.setArgs(2);
+        primaryInputPortOption.setValueSeparator('=');
+        primaryOutputPortOption.setArgName("name=uri");
+        primaryOutputPortOption.setArgs(2);
+        primaryOutputPortOption.setValueSeparator('=');
         options.addOption(portBindingOption);
         options.addOption(optionOption);
         options.addOption(paramOption);
         options.addOption(xplOption);
         options.addOption(librariesOption);
+        options.addOption(primaryInputPortOption);
+        options.addOption(primaryOutputPortOption);
         options.addOption(helpOption);
 
         final GnuParser parser = new GnuParser();
@@ -125,44 +137,14 @@ public final class CommandLineExecutor
                 System.exit(2);
             } else
             {
-                URL xplURL;
-
-                try
-                {
-                    xplURL = new URL(xplValue);
-                } catch (final MalformedURLException ex)
-                {
-                    xplURL = null;
-                }
-
-                final File xplFile = new File(xplValue);
-
-                if (xplURL == null)
-                {
-                    try
-                    {
-                        xplURL = xplFile.toURI().toURL();
-                    } catch (final MalformedURLException ex)
-                    {
-                    }
-                }
-
-                Source xplSource = null;
-
-                if (xplURL != null)
-                {
-                    xplSource = new StreamSource(xplURL.toExternalForm());
-                } else if (xplFile != null)
-                {
-                    xplSource = new StreamSource(xplFile);
-                }
+                final Source xplSource = portParamValueToSource(xplValue);
 
                 if (xplSource != null)
                 {
                     final Pipeline buildPipeline = pipelineProcessor.buildPipeline(xplSource);
                     final RunnablePipeline runnablePipeline = buildPipeline.load();
-                    final Properties portBindingProperties = commandLine.getOptionProperties(optionOption.getOpt());
 
+                    final Properties portBindingProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String portBindingName : portBindingProperties.stringPropertyNames())
                     {
                         final String portBindingValue = portBindingProperties.getProperty(portBindingName);
@@ -170,8 +152,28 @@ public final class CommandLineExecutor
                                 new StreamSource(portBindingValue));
                     }
 
-                    final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
+                    final String primaryInputPortValue = commandLine.getOptionValue(primaryInputPortOption.getOpt());
+                    if (primaryInputPortValue != null)
+                    {
+                        final Source primaryInputSource = portParamValueToSource(primaryInputPortValue);
+                        if (primaryInputSource != null)
+                        {
+                            runnablePipeline.setPortBinding(runnablePipeline.getPipeline().getPrimaryInputPort().getPortName(), primaryInputSource);
+                        }
+                    }
 
+                    final String primaryOutputPortValue = commandLine.getOptionValue(primaryOutputPortOption.getOpt());
+                    if (primaryOutputPortValue != null)
+                    {
+                        // FIXME TK: Cannot be a Source, have to understand Tubular API better
+                        final Source primaryOutputSource = portParamValueToSource(primaryOutputPortValue);
+                        if (primaryOutputSource != null)
+                        {
+                            runnablePipeline.setPortBinding(runnablePipeline.getPipeline().getPrimaryOutputPort().getPortName(), primaryOutputSource);
+                        }
+                    }
+
+                    final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String optionName : optionProperties.stringPropertyNames())
                     {
                         final String optionValue = optionProperties.getProperty(optionName);
@@ -180,7 +182,6 @@ public final class CommandLineExecutor
                     }
 
                     final Properties paramProperties = commandLine.getOptionProperties(paramOption.getOpt());
-
                     for (final String paramName : paramProperties.stringPropertyNames())
                     {
                         final String paramValue = paramProperties.getProperty(paramName);
@@ -204,6 +205,37 @@ public final class CommandLineExecutor
         }
     }
 
+    private static Source portParamValueToSource(String portParamValue)
+    {
+        URL url;
+        try
+        {
+            url = new URL(portParamValue);
+        } catch (final MalformedURLException ex)
+        {
+            url = null;
+        }
+        final File file = new File(portParamValue);
+        if (url == null)
+        {
+            try
+            {
+                url = file.toURI().toURL();
+            } catch (final MalformedURLException ex)
+            {
+            }
+        }
+        Source source = null;
+        if (url != null)
+        {
+            source = new StreamSource(url.toExternalForm());
+        } else if (file != null)
+        {
+            source = new StreamSource(file);
+        }
+        return source;
+    }
+
     private static void printHelp(final Options options)
     {
         final HelpFormatter helpFormatter = new HelpFormatter();
@@ -214,23 +246,5 @@ public final class CommandLineExecutor
                 null, true);
         printWriter.flush();
         printWriter.close();
-    }
-
-    /**
-     * Same as {@link Option#getValues()} but returns an empty array rather than
-     * {@code null}.
-     *
-     * @see Option#getValues()
-     */
-    private static String[] getValues(final Option option)
-    {
-        final String[] values = option.getValues();
-
-        if (values != null)
-        {
-            return values;
-        }
-
-        return new String[0];
     }
 }
