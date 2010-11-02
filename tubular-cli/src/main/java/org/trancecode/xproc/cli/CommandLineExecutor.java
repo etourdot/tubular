@@ -17,9 +17,12 @@
  */
 package org.trancecode.xproc.cli;
 
+import java.io.File;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import javax.xml.transform.Source;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -40,10 +43,9 @@ import org.trancecode.xproc.RunnablePipeline;
  * @author Herve Quiroz
  * @author Torsten Knodt
  */
-public final class CommandLineExecutor
-{
-    public static void main(final String[] args)
-    {
+public final class CommandLineExecutor {
+
+    public static void main(final String[] args) {
         final Options options = new Options();
         final Option portBindingOption = new Option("b", "port-binding", true,
                 "Passes a port binding to the given XProc pipeline");
@@ -75,52 +77,78 @@ public final class CommandLineExecutor
         options.addOption(librariesOption);
         options.addOption(helpOption);
         final GnuParser parser = new GnuParser();
-        try
-        {
+        try {
             final CommandLine commandLine = parser.parse(options, args);
-            if (commandLine.hasOption(helpOption.getOpt()))
-            {
+            if (commandLine.hasOption(helpOption.getOpt())) {
                 printHelp(options);
                 System.exit(0);
             }
             final Configuration configurationPipelineContext = new Configuration();
             final PipelineProcessor pipelineProcessor = new PipelineProcessor(configurationPipelineContext);
-            for (final String library : librariesOption.getValues())
-            {
-                pipelineProcessor.buildPipelineLibrary(new StreamSource(library));
+            final String[] libraries = commandLine.getOptionValues(librariesOption.getOpt());
+            if (libraries != null) {
+                for (final String library : libraries) {
+                    pipelineProcessor.buildPipelineLibrary(new StreamSource(library));
+                }
             }
             // configurationPipelineContext.registerStepProcessor(null);
-            final Pipeline buildPipeline = pipelineProcessor.buildPipeline(new StreamSource(xplOption.getValue()));
-            final RunnablePipeline runnablePipeline = buildPipeline.load();
-            final Properties portBindingProperties = commandLine.getOptionProperties(optionOption.getOpt());
-            for (final String portBindingName : portBindingProperties.stringPropertyNames())
-            {
-                final String portBindingValue = portBindingProperties.getProperty(portBindingName);
-                runnablePipeline.setPortBinding(portBindingName, new StreamSource(portBindingValue));
+            String xplValue = commandLine.getOptionValue(xplOption.getOpt());
+            if (xplValue == null) {
+                System.err.println("Required pipeline given using the --" + xplOption.getLongOpt() + " option.");
+                printHelp(options);
+                System.exit(2);
+            } else {
+                URL xplURL;
+                try {
+                    xplURL = new URL(xplValue);
+                } catch (final MalformedURLException ex) {
+                    xplURL = null;
+                }
+                final File xplFile = new File(xplValue);
+                if (xplURL == null) {
+                    try {
+                        xplURL = xplFile.toURI().toURL();
+                    } catch (final MalformedURLException ex) {
+                    }
+                }
+                Source xplSource = null;
+                if (xplURL != null) {
+                    xplSource = new StreamSource(xplURL.toExternalForm());
+                } else if (xplFile != null) {
+                    xplSource = new StreamSource(xplFile);
+                }
+                if (xplSource != null) {
+                    final Pipeline buildPipeline = pipelineProcessor.buildPipeline(xplSource);
+                    final RunnablePipeline runnablePipeline = buildPipeline.load();
+                    final Properties portBindingProperties = commandLine.getOptionProperties(optionOption.getOpt());
+                    for (final String portBindingName : portBindingProperties.stringPropertyNames()) {
+                        final String portBindingValue = portBindingProperties.getProperty(portBindingName);
+                        runnablePipeline.setPortBinding(portBindingName, new StreamSource(portBindingValue));
+                    }
+                    final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
+                    for (final String optionName : optionProperties.stringPropertyNames()) {
+                        final String optionValue = optionProperties.getProperty(optionName);
+                        runnablePipeline.withOption(new QName(optionName), optionValue);
+                    }
+                    final Properties paramProperties = commandLine.getOptionProperties(paramOption.getOpt());
+                    for (final String paramName : paramProperties.stringPropertyNames()) {
+                        final String paramValue = paramProperties.getProperty(paramName);
+                        runnablePipeline.withOption(new QName(paramName), paramValue);
+                    }
+                    final PipelineResult run = runnablePipeline.run();
+                } else {
+                    System.err.println("Argument given to option --xpl is neither a URL nor or a file.");
+                    printHelp(options);
+                    System.exit(3);
+                }
             }
-            final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
-            for (final String optionName : optionProperties.stringPropertyNames())
-            {
-                final String optionValue = optionProperties.getProperty(optionName);
-                runnablePipeline.withOption(new QName(optionName), optionValue);
-            }
-            final Properties paramProperties = commandLine.getOptionProperties(paramOption.getOpt());
-            for (final String paramName : paramProperties.stringPropertyNames())
-            {
-                final String paramValue = paramProperties.getProperty(paramName);
-                runnablePipeline.withOption(new QName(paramName), paramValue);
-            }
-            final PipelineResult run = runnablePipeline.run();
-        }
-        catch (final ParseException ex)
-        {
+        } catch (final ParseException ex) {
             printHelp(options);
             System.exit(1);
         }
     }
 
-    private static void printHelp(final Options options)
-    {
+    private static void printHelp(final Options options) {
         final HelpFormatter helpFormatter = new HelpFormatter();
         final PrintWriter printWriter = new PrintWriter(System.err);
         helpFormatter.printHelp(printWriter, helpFormatter.getWidth(), "java -jar tubular-cli.jar", null, options,

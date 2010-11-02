@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:pipeline xmlns:p="http://www.w3.org/ns/xproc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/ns/xproc http://www.w3.org/TR/xproc/schemas/xproc.xsd">
+    <p:xslt>
+        <!-- Simple XML Source (inline) -->
+        <p:input port="source">
+            <p:inline>
+                <xml>Inline XML conversion with inline XSLT using XProc</xml>
+            </p:inline>
+        </p:input>
+ 
+        <!-- XSLT Transform (inline) -->
+        <p:input port="stylesheet">
+            <p:inline>
+                <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                    version="2.0">
+                    <xsl:output method="xml" indent="yes" encoding="UTF-8" />
+                    <!--
+                        <xsl:output method="xhtml"
+                        doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-
+                        transitional.dtd" doctype-public="-//W3C//DTD XHTML 1.0
+                        Transitional// EN" indent="yes" />
+                    -->
+                    <xsl:template match="/xml">
+                        <html>
+                            <head>
+                                <title>XSLT to XHTML via XProc</title>
+                            </head>
+                            <body>
+                                <h1>
+                                    <xsl:value-of select="." />
+                                </h1>
+                            </body>
+                        </html>
+                    </xsl:template>
+                </xsl:stylesheet>
+            </p:inline>
+        </p:input>
+    </p:xslt>
+</p:pipeline>
