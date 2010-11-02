@@ -42,6 +42,7 @@ import java.util.Properties;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * @author Herve Quiroz
@@ -52,6 +53,7 @@ public final class CommandLineExecutor
 
     public static void main(final String[] args)
     {
+        BasicConfigurator.configure();
         final Options options = new Options();
         final Option portBindingOption = new Option("b", "port-binding", true,
                 "Passes a port binding to the given XProc pipeline");
