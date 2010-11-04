@@ -45,6 +45,7 @@ import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.PipelineProcessor;
 import org.trancecode.xproc.PipelineResult;
 import org.trancecode.xproc.RunnablePipeline;
+import org.trancecode.xproc.Tubular;
 
 /**
  * @author Herve Quiroz
@@ -69,6 +70,7 @@ public final class CommandLineExecutor
         final Option primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
         final Option helpOption = new Option("h", "help", false, "Print help");
         final Option verboseOption = new Option("v", "verbose", false, "Display more information");
+        final Option versionOption = new Option("V", "version", false, "Print version and exit");
 
         xplOption.setArgName("uri");
         xplOption.setRequired(true);
@@ -100,6 +102,7 @@ public final class CommandLineExecutor
         options.addOption(primaryOutputPortOption);
         options.addOption(helpOption);
         options.addOption(verboseOption);
+        options.addOption(versionOption);
 
         final GnuParser parser = new GnuParser();
 
@@ -110,6 +113,12 @@ public final class CommandLineExecutor
             if (commandLine.hasOption(helpOption.getOpt()))
             {
                 printHelp(options);
+                System.exit(0);
+            }
+
+            if (commandLine.hasOption(versionOption.getOpt()))
+            {
+                System.err.println(Tubular.productInformation());
                 System.exit(0);
             }
 
