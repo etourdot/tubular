@@ -17,7 +17,11 @@
  */
 package org.trancecode.xproc.cli;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -25,6 +29,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import org.apache.log4j.BasicConfigurator;
 
 import org.trancecode.xproc.Configuration;
 import org.trancecode.xproc.Pipeline;
@@ -42,7 +48,7 @@ import java.util.Properties;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.log4j.BasicConfigurator;
+import net.sf.saxon.s9api.Serializer;
 
 /**
  * @author Herve Quiroz
@@ -162,17 +168,6 @@ public final class CommandLineExecutor
                         }
                     }
 
-                    final String primaryOutputPortValue = commandLine.getOptionValue(primaryOutputPortOption.getOpt());
-                    if (primaryOutputPortValue != null)
-                    {
-                        // FIXME TK: Cannot be a Source, have to understand Tubular API better
-                        final Source primaryOutputSource = portParamValueToSource(primaryOutputPortValue);
-                        if (primaryOutputSource != null)
-                        {
-                            runnablePipeline.setPortBinding(runnablePipeline.getPipeline().getPrimaryOutputPort().getPortName(), primaryOutputSource);
-                        }
-                    }
-
                     final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String optionName : optionProperties.stringPropertyNames())
                     {
@@ -189,7 +184,19 @@ public final class CommandLineExecutor
                                 paramValue);
                     }
 
-                    final PipelineResult run = runnablePipeline.run();
+                    final PipelineResult pipelineResult = runnablePipeline.run();
+                    final Serializer serializer = new Serializer();
+                    serializer.setOutputStream(System.out); // TODO Use primary output port binding option
+                    for (final XdmNode xdmNode : pipelineResult.readNodes(pipelineResult.getPipeline().getPrimaryOutputPort().getPortName()))
+                    {
+                        try
+                        {
+                            configurationPipelineContext.getProcessor().writeXdmValue(xdmNode, serializer);
+                        } catch (final SaxonApiException ex)
+                        {
+                            // FIXME Logger.getLogger(CommandLineExecutor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 } else
                 {
                     System.err.println(
