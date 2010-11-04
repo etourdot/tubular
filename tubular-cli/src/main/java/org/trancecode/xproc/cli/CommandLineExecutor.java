@@ -205,9 +205,7 @@ public final class CommandLineExecutor
                         }
                         catch (final SaxonApiException ex)
                         {
-                            // FIXME
-                            // Logger.getLogger(CommandLineExecutor.class.getName()).log(Level.SEVERE,
-                            // null, ex);
+                            throw new IllegalStateException("error serializing node from output port", ex);
                         }
                     }
                     System.out.println();
