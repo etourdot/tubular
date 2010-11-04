@@ -36,7 +36,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.trancecode.xproc.Configuration;
 import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.PipelineProcessor;
@@ -51,7 +54,10 @@ public final class CommandLineExecutor
 {
     public static void main(final String[] args)
     {
-        BasicConfigurator.configure();
+        Logger.getRootLogger().removeAllAppenders();
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
+        Logger.getRootLogger().setLevel(Level.INFO);
+
         final Options options = new Options();
         final Option portBindingOption = new Option("b", "port-binding", true,
                 "Passes a port binding to the given XProc pipeline");
