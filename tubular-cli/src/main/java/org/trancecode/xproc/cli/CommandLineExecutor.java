@@ -17,10 +17,9 @@
  */
 package org.trancecode.xproc.cli;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
 
 import org.apache.commons.cli.CommandLine;
@@ -41,14 +40,13 @@ import org.trancecode.xproc.RunnablePipeline;
 import java.io.File;
 import java.io.PrintWriter;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.Properties;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import net.sf.saxon.s9api.Serializer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
 
 /**
  * @author Herve Quiroz
@@ -120,6 +118,7 @@ public final class CommandLineExecutor
             }
 
             final Configuration configurationPipelineContext = new Configuration();
+            final URIResolver uriResolver = configurationPipelineContext.getUriResolver();
             final PipelineProcessor pipelineProcessor = new PipelineProcessor(configurationPipelineContext);
             final String[] libraries = commandLine.getOptionValues(librariesOption.getOpt());
 
@@ -127,8 +126,7 @@ public final class CommandLineExecutor
             {
                 for (final String library : libraries)
                 {
-                    pipelineProcessor.buildPipelineLibrary(new StreamSource(
-                            library));
+                    pipelineProcessor.buildPipelineLibrary(optionValueToSource(uriResolver, library));
                 }
             }
 
@@ -143,7 +141,7 @@ public final class CommandLineExecutor
                 System.exit(2);
             } else
             {
-                final Source xplSource = portParamValueToSource(xplValue);
+                final Source xplSource = optionValueToSource(uriResolver, xplValue);
 
                 if (xplSource != null)
                 {
@@ -155,19 +153,22 @@ public final class CommandLineExecutor
                     {
                         final String portBindingValue = portBindingProperties.getProperty(portBindingName);
                         runnablePipeline.setPortBinding(portBindingName,
-                                new StreamSource(portBindingValue));
+                                optionValueToSource(uriResolver, portBindingValue));
                     }
 
                     final String primaryInputPortValue = commandLine.getOptionValue(primaryInputPortOption.getOpt());
                     if (primaryInputPortValue != null)
                     {
-                        final Source primaryInputSource = portParamValueToSource(primaryInputPortValue);
+                        final Source primaryInputSource = optionValueToSource(uriResolver, primaryInputPortValue);
                         if (primaryInputSource != null)
                         {
                             runnablePipeline.setPortBinding(runnablePipeline.getPipeline().getPrimaryInputPort().getPortName(), primaryInputSource);
                         }
                     }
 
+                    final String primaryOutputPortValue = commandLine.getOptionValue(primaryOutputPortOption.getOpt());
+                    // TODO TK: final Result resolve = configurationPipelineContext.getProcessor().getUnderlyingConfiguration().getOutputURIResolver().resolve(primaryOutputPortValue, null);
+                    
                     final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String optionName : optionProperties.stringPropertyNames())
                     {
@@ -180,7 +181,7 @@ public final class CommandLineExecutor
                     for (final String paramName : paramProperties.stringPropertyNames())
                     {
                         final String paramValue = paramProperties.getProperty(paramName);
-                        runnablePipeline.withOption(new QName(paramName),
+                        runnablePipeline.withParam(new QName(paramName),
                                 paramValue);
                     }
 
@@ -197,6 +198,7 @@ public final class CommandLineExecutor
                             // FIXME Logger.getLogger(CommandLineExecutor.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    System.out.println();
                 } else
                 {
                     System.err.println(
@@ -212,33 +214,26 @@ public final class CommandLineExecutor
         }
     }
 
-    private static Source portParamValueToSource(String portParamValue)
+    private static Source optionValueToSource(final URIResolver uriResolver, final String portParamValue)
     {
-        URL url;
+        Source source = null;
         try
         {
-            url = new URL(portParamValue);
-        } catch (final MalformedURLException ex)
+            source = uriResolver.resolve(portParamValue, null);
+        } catch (final TransformerException ex)
         {
-            url = null;
+            // Ignore, no URI, probably a file name
         }
-        final File file = new File(portParamValue);
-        if (url == null)
+        if (source == null)
         {
+            final File file = new File(portParamValue);
             try
             {
-                url = file.toURI().toURL();
-            } catch (final MalformedURLException ex)
+                source = uriResolver.resolve(file.toURI().toString(), null);
+            } catch (TransformerException ex)
             {
+                // Neither URI nor file name
             }
-        }
-        Source source = null;
-        if (url != null)
-        {
-            source = new StreamSource(url.toExternalForm());
-        } else if (file != null)
-        {
-            source = new StreamSource(file);
         }
         return source;
     }
