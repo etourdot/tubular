@@ -68,6 +68,7 @@ public final class CommandLineExecutor
         final Option primaryInputPortOption = new Option("i", "input-port", true, "Passes the primary input port");
         final Option primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
         final Option helpOption = new Option("h", "help", false, "Print help");
+        final Option verboseOption = new Option("v", "verbose", false, "Display more information");
 
         xplOption.setArgName("uri");
         xplOption.setRequired(true);
@@ -98,6 +99,7 @@ public final class CommandLineExecutor
         options.addOption(primaryInputPortOption);
         options.addOption(primaryOutputPortOption);
         options.addOption(helpOption);
+        options.addOption(verboseOption);
 
         final GnuParser parser = new GnuParser();
 
@@ -109,6 +111,11 @@ public final class CommandLineExecutor
             {
                 printHelp(options);
                 System.exit(0);
+            }
+
+            if (commandLine.hasOption(verboseOption.getOpt()))
+            {
+                Logger.getRootLogger().setLevel(Level.DEBUG);
             }
 
             final Configuration configurationPipelineContext = new Configuration();
