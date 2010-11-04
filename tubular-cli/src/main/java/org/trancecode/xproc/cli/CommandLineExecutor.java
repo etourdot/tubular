@@ -127,6 +127,9 @@ public final class CommandLineExecutor
             {
                 for (final String library : libraries)
                 {
+                    // FIXME this will not really have any effect has the parsed
+                    // library is returned and the pipeline processor stays
+                    // unchanged
                     pipelineProcessor.buildPipelineLibrary(newSource(uriResolver, library,
                             "Cannot read library from %s", library));
                 }
