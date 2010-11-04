@@ -120,7 +120,8 @@ public final class CommandLineExecutor
             {
                 for (final String library : libraries)
                 {
-                    pipelineProcessor.buildPipelineLibrary(optionValueToSource(uriResolver, library));
+                    pipelineProcessor.buildPipelineLibrary(newSource(uriResolver, library,
+                            "Cannot read library from %s", library));
                 }
             }
 
@@ -135,7 +136,7 @@ public final class CommandLineExecutor
             }
             else
             {
-                final Source xplSource = optionValueToSource(uriResolver, xplValue);
+                final Source xplSource = newSource(uriResolver, xplValue, "Cannot read pipeline from %s", xplValue);
 
                 if (xplSource != null)
                 {
@@ -146,14 +147,17 @@ public final class CommandLineExecutor
                     for (final String portBindingName : portBindingProperties.stringPropertyNames())
                     {
                         final String portBindingValue = portBindingProperties.getProperty(portBindingName);
-                        runnablePipeline.setPortBinding(portBindingName,
-                                optionValueToSource(uriResolver, portBindingValue));
+                        runnablePipeline.setPortBinding(
+                                portBindingName,
+                                newSource(uriResolver, portBindingValue, "Cannot bind port to resource from %s",
+                                        portBindingValue));
                     }
 
                     final String primaryInputPortValue = commandLine.getOptionValue(primaryInputPortOption.getOpt());
                     if (primaryInputPortValue != null)
                     {
-                        final Source primaryInputSource = optionValueToSource(uriResolver, primaryInputPortValue);
+                        final Source primaryInputSource = newSource(uriResolver, primaryInputPortValue,
+                                "Cannot bind port to resource from %s", primaryInputPortValue);
                         if (primaryInputSource != null)
                         {
                             runnablePipeline.setPortBinding(runnablePipeline.getPipeline().getPrimaryInputPort()
@@ -216,30 +220,24 @@ public final class CommandLineExecutor
         }
     }
 
-    private static Source optionValueToSource(final URIResolver uriResolver, final String portParamValue)
+    private static Source newSource(final URIResolver uriResolver, final String uri, final String errorMessage,
+            final Object... args)
     {
-        Source source = null;
         try
         {
-            source = uriResolver.resolve(portParamValue, null);
+            return uriResolver.resolve(uri, "");
         }
-        catch (final TransformerException ex)
+        catch (final TransformerException resolverError)
         {
-            // Ignore, no URI, probably a file name
-        }
-        if (source == null)
-        {
-            final File file = new File(portParamValue);
             try
             {
-                source = uriResolver.resolve(file.toURI().toString(), null);
+                return uriResolver.resolve(new File(uri).toURI().toString(), "");
             }
-            catch (final TransformerException ex)
+            catch (final TransformerException fileError)
             {
-                // Neither URI nor file name
+                throw new IllegalArgumentException(String.format(errorMessage, args), resolverError);
             }
         }
-        return source;
     }
 
     private static void printHelp(final Options options)
