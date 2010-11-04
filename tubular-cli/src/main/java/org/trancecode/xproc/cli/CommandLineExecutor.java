@@ -61,6 +61,9 @@ public final class CommandLineExecutor
 
         final Options options = new Options();
 
+        final Option helpOption = new Option("h", "help", false, "Print help");
+        options.addOption(helpOption);
+
         final Option librariesOption = new Option("l", "library", true, "XProc pipeline library to load");
         librariesOption.setArgName("uri");
         librariesOption.setArgs(Option.UNLIMITED_VALUES);
@@ -78,9 +81,6 @@ public final class CommandLineExecutor
         paramOption.setArgs(2);
         paramOption.setValueSeparator('=');
         options.addOption(paramOption);
-
-        final Option helpOption = new Option("h", "help", false, "Print help");
-        options.addOption(helpOption);
 
         final Option portBindingOption = new Option("b", "port-binding", true,
                 "Passes a port binding to the given XProc pipeline");
