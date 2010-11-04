@@ -60,49 +60,58 @@ public final class CommandLineExecutor
         Logger.getRootLogger().setLevel(Level.INFO);
 
         final Options options = new Options();
-        final Option portBindingOption = new Option("b", "port-binding", true,
-                "Passes a port binding to the given XProc pipeline");
-        final Option optionOption = new Option("o", "option", true, "Passes a option to the given XProc pipeline");
-        final Option paramOption = new Option("p", "param", true, "Passes a parameter to the given XProc pipeline");
-        final Option librariesOption = new Option("l", "library", true, "XProc pipeline library to load");
-        final Option xplOption = new Option("x", "xpl", true, "XProc pipeline to load and run");
-        final Option primaryInputPortOption = new Option("i", "input-port", true, "Passes the primary input port");
-        final Option primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
-        final Option helpOption = new Option("h", "help", false, "Print help");
-        final Option verboseOption = new Option("v", "verbose", false, "Display more information");
-        final Option versionOption = new Option("V", "version", false, "Print version and exit");
 
-        xplOption.setArgName("uri");
-        xplOption.setRequired(true);
-        xplOption.setType(URL.class);
-        portBindingOption.setArgName("name=uri");
-        portBindingOption.setArgs(2);
-        portBindingOption.setValueSeparator('=');
-        optionOption.setArgName("name=value");
-        optionOption.setArgs(2);
-        optionOption.setValueSeparator('=');
-        paramOption.setArgName("name=value");
-        paramOption.setArgs(2);
-        paramOption.setValueSeparator('=');
+        final Option librariesOption = new Option("l", "library", true, "XProc pipeline library to load");
         librariesOption.setArgName("uri");
         librariesOption.setArgs(Option.UNLIMITED_VALUES);
         librariesOption.setType(URL.class);
+        options.addOption(librariesOption);
+
+        final Option optionOption = new Option("o", "option", true, "Passes a option to the given XProc pipeline");
+        optionOption.setArgName("name=value");
+        optionOption.setArgs(2);
+        optionOption.setValueSeparator('=');
+        options.addOption(optionOption);
+
+        final Option paramOption = new Option("p", "param", true, "Passes a parameter to the given XProc pipeline");
+        paramOption.setArgName("name=value");
+        paramOption.setArgs(2);
+        paramOption.setValueSeparator('=');
+        options.addOption(paramOption);
+
+        final Option helpOption = new Option("h", "help", false, "Print help");
+        options.addOption(helpOption);
+
+        final Option portBindingOption = new Option("b", "port-binding", true,
+                "Passes a port binding to the given XProc pipeline");
+        portBindingOption.setArgName("name=uri");
+        portBindingOption.setArgs(2);
+        portBindingOption.setValueSeparator('=');
+        options.addOption(portBindingOption);
+
+        final Option primaryInputPortOption = new Option("i", "input-port", true, "Passes the primary input port");
         primaryInputPortOption.setArgName("name=uri");
         primaryInputPortOption.setArgs(2);
         primaryInputPortOption.setValueSeparator('=');
+        options.addOption(primaryInputPortOption);
+
+        final Option primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
         primaryOutputPortOption.setArgName("name=uri");
         primaryOutputPortOption.setArgs(2);
         primaryOutputPortOption.setValueSeparator('=');
-        options.addOption(portBindingOption);
-        options.addOption(optionOption);
-        options.addOption(paramOption);
-        options.addOption(xplOption);
-        options.addOption(librariesOption);
-        options.addOption(primaryInputPortOption);
         options.addOption(primaryOutputPortOption);
-        options.addOption(helpOption);
+
+        final Option verboseOption = new Option("v", "verbose", false, "Display more information");
         options.addOption(verboseOption);
+
+        final Option versionOption = new Option("V", "version", false, "Print version and exit");
         options.addOption(versionOption);
+
+        final Option xplOption = new Option("x", "xpl", true, "XProc pipeline to load and run");
+        xplOption.setArgName("uri");
+        xplOption.setRequired(true);
+        xplOption.setType(URL.class);
+        options.addOption(xplOption);
 
         final GnuParser parser = new GnuParser();
 
