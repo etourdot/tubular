@@ -20,8 +20,7 @@ package org.trancecode.xproc.cli;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -44,18 +43,23 @@ public final class CommandLineExecutorTest
                     "--xpl", getClass().getResource("xproc-1.0.xml").toString()
                 });
         final Process process = processBuilder.start();
+        process.getOutputStream().flush();
+        process.getOutputStream().close();
         final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         boolean outputOKFlag = false;
+        boolean outputFoundFlag = false;
         while (br.ready())
         {
             final String line = br.readLine();
+            outputFoundFlag = true;
             if (line.contains("Inline XML conversion with inline XSLT using XProc"))
             {
                 outputOKFlag = true;
             }
         }
-        assert process.waitFor() == 0;
         br.close();
-        assert outputOKFlag;
+        // FIXME currently blocking: Assert.assertEquals(process.waitFor(), 0, "Checking exit value of tubular process");
+        Assert.assertTrue(outputFoundFlag, "Did not find any output string");
+        Assert.assertTrue(outputOKFlag, "Did not find expected output string");
     }
 }
