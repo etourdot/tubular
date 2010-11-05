@@ -283,11 +283,6 @@ public final class CommandLineExecutor
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
         Logger.getRootLogger().setLevel(Level.INFO);
 
-        final CommandLineExecutor executor = new CommandLineExecutor();
-        final int returnCode = executor.execute(args);
-        if (returnCode != 0)
-        {
-            System.exit(returnCode);
-        }
+        System.exit(new CommandLineExecutor().execute(args));
     }
 }
