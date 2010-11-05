@@ -287,10 +287,16 @@ public final class CommandLineExecutor
     {
         final HelpFormatter helpFormatter = new HelpFormatter();
         final PrintWriter printWriter = new PrintWriter(destination);
-        helpFormatter.printHelp(printWriter, helpFormatter.getWidth(), "java -jar tubular-cli.jar", null, options,
-                helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
-        printWriter.flush();
-        printWriter.close();
+        try
+        {
+            helpFormatter.printHelp(printWriter, helpFormatter.getWidth(), "java -jar tubular-cli.jar", null, options,
+                    helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
+        }
+        finally
+        {
+            printWriter.flush();
+            printWriter.close();
+        }
     }
 
     public static void main(final String[] args)
