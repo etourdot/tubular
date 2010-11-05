@@ -32,6 +32,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
+ * Tests for {@link CommandLineExecutor}.
+ * 
  * @author Herve Quiroz
  * @author Torsten Knodt
  */
