@@ -55,10 +55,6 @@ public final class CommandLineExecutor
 {
     private int execute(final String[] args)
     {
-        Logger.getRootLogger().removeAllAppenders();
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
-        Logger.getRootLogger().setLevel(Level.INFO);
-
         final Options options = new Options();
 
         final Option helpOption = new Option("h", "help", false, "Print help");
@@ -283,6 +279,10 @@ public final class CommandLineExecutor
 
     public static void main(final String[] args)
     {
+        Logger.getRootLogger().removeAllAppenders();
+        Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
+        Logger.getRootLogger().setLevel(Level.INFO);
+
         final CommandLineExecutor executor = new CommandLineExecutor();
         final int returnCode = executor.execute(args);
         if (returnCode != 0)
