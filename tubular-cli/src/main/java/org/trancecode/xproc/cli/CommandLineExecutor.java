@@ -18,6 +18,8 @@
 package org.trancecode.xproc.cli;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Properties;
@@ -53,62 +55,76 @@ import org.trancecode.xproc.Tubular;
  */
 public final class CommandLineExecutor
 {
-    private int execute(final String[] args)
-    {
-        final Options options = new Options();
+    private final Options options;
+    private final Option helpOption;
+    private final Option librariesOption;
+    private final Option optionOption;
+    private final Option paramOption;
+    private final Option portBindingOption;
+    private final Option primaryInputPortOption;
+    private final Option primaryOutputPortOption;
+    private final Option verboseOption;
+    private final Option versionOption;
+    private final Option xplOption;
 
-        final Option helpOption = new Option("h", "help", false, "Print help");
+    protected CommandLineExecutor()
+    {
+        options = new Options();
+
+        helpOption = new Option("h", "help", false, "Print help");
         options.addOption(helpOption);
 
-        final Option librariesOption = new Option("l", "library", true, "XProc pipeline library to load");
+        librariesOption = new Option("l", "library", true, "XProc pipeline library to load");
         librariesOption.setArgName("uri");
         librariesOption.setArgs(Option.UNLIMITED_VALUES);
         librariesOption.setType(URL.class);
         options.addOption(librariesOption);
 
-        final Option optionOption = new Option("o", "option", true, "Passes a option to the given XProc pipeline");
+        optionOption = new Option("o", "option", true, "Passes a option to the given XProc pipeline");
         optionOption.setArgName("name=value");
         optionOption.setArgs(2);
         optionOption.setValueSeparator('=');
         options.addOption(optionOption);
 
-        final Option paramOption = new Option("p", "param", true, "Passes a parameter to the given XProc pipeline");
+        paramOption = new Option("p", "param", true, "Passes a parameter to the given XProc pipeline");
         paramOption.setArgName("name=value");
         paramOption.setArgs(2);
         paramOption.setValueSeparator('=');
         options.addOption(paramOption);
 
-        final Option portBindingOption = new Option("b", "port-binding", true,
-                "Passes a port binding to the given XProc pipeline");
+        portBindingOption = new Option("b", "port-binding", true, "Passes a port binding to the given XProc pipeline");
         portBindingOption.setArgName("name=uri");
         portBindingOption.setArgs(2);
         portBindingOption.setValueSeparator('=');
         options.addOption(portBindingOption);
 
-        final Option primaryInputPortOption = new Option("i", "input-port", true, "Passes the primary input port");
+        primaryInputPortOption = new Option("i", "input-port", true, "Passes the primary input port");
         primaryInputPortOption.setArgName("name=uri");
         primaryInputPortOption.setArgs(2);
         primaryInputPortOption.setValueSeparator('=');
         options.addOption(primaryInputPortOption);
 
-        final Option primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
+        primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
         primaryOutputPortOption.setArgName("name=uri");
         primaryOutputPortOption.setArgs(2);
         primaryOutputPortOption.setValueSeparator('=');
         options.addOption(primaryOutputPortOption);
 
-        final Option verboseOption = new Option("v", "verbose", false, "Display more information");
+        verboseOption = new Option("v", "verbose", false, "Display more information");
         options.addOption(verboseOption);
 
-        final Option versionOption = new Option("V", "version", false, "Print version and exit");
+        versionOption = new Option("V", "version", false, "Print version and exit");
         options.addOption(versionOption);
 
-        final Option xplOption = new Option("x", "xpl", true, "XProc pipeline to load and run");
+        xplOption = new Option("x", "xpl", true, "XProc pipeline to load and run");
         xplOption.setArgName("uri");
         xplOption.setRequired(true);
         xplOption.setType(URL.class);
         options.addOption(xplOption);
+    }
 
+    private int execute(final String[] args, final InputStream stdin, final PrintStream stdout, final PrintStream stderr)
+    {
         final GnuParser parser = new GnuParser();
 
         try
@@ -117,7 +133,7 @@ public final class CommandLineExecutor
 
             if (commandLine.hasOption(helpOption.getOpt()))
             {
-                printHelp(options);
+                printHelp(stderr);
                 return 0;
             }
 
@@ -154,8 +170,8 @@ public final class CommandLineExecutor
 
             if (xplValue == null)
             {
-                System.err.println("Required pipeline given using the --" + xplOption.getLongOpt() + " option.");
-                printHelp(options);
+                stderr.println("Required pipeline given using the --" + xplOption.getLongOpt() + " option.");
+                printHelp(stderr);
                 return 2;
             }
             else
@@ -214,9 +230,9 @@ public final class CommandLineExecutor
 
                     final PipelineResult pipelineResult = runnablePipeline.run();
                     final Serializer serializer = new Serializer();
-                    serializer.setOutputStream(System.out); // TODO Use primary
-                                                            // output port
-                                                            // binding option
+                    serializer.setOutputStream(stdout); // TODO Use primary
+                                                        // output port
+                                                        // binding option
                     for (final XdmNode xdmNode : pipelineResult.readNodes(pipelineResult.getPipeline()
                             .getPrimaryOutputPort().getPortName()))
                     {
@@ -229,19 +245,19 @@ public final class CommandLineExecutor
                             throw new IllegalStateException("error serializing node from output port", ex);
                         }
                     }
-                    System.out.println();
+                    stdout.println();
                 }
                 else
                 {
-                    System.err.println("Argument given to option --xpl is neither a URL nor or a file.");
-                    printHelp(options);
+                    stderr.println("Argument given to option --xpl is neither a URL nor or a file.");
+                    printHelp(stderr);
                     return 3;
                 }
             }
         }
         catch (final ParseException ex)
         {
-            printHelp(options);
+            printHelp(stderr);
             return 1;
         }
         return 0;
@@ -267,10 +283,10 @@ public final class CommandLineExecutor
         }
     }
 
-    private static void printHelp(final Options options)
+    private void printHelp(final PrintStream destination)
     {
         final HelpFormatter helpFormatter = new HelpFormatter();
-        final PrintWriter printWriter = new PrintWriter(System.err);
+        final PrintWriter printWriter = new PrintWriter(destination);
         helpFormatter.printHelp(printWriter, helpFormatter.getWidth(), "java -jar tubular-cli.jar", null, options,
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
         printWriter.flush();
@@ -283,6 +299,6 @@ public final class CommandLineExecutor
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
         Logger.getRootLogger().setLevel(Level.INFO);
 
-        System.exit(new CommandLineExecutor().execute(args));
+        System.exit(new CommandLineExecutor().execute(args, System.in, System.out, System.err));
     }
 }
