@@ -139,7 +139,7 @@ public final class CommandLineExecutor
 
             if (commandLine.hasOption(versionOption.getOpt()))
             {
-                System.err.println(Tubular.productInformation());
+                stderr.println(Tubular.productInformation());
                 return 0;
             }
 
