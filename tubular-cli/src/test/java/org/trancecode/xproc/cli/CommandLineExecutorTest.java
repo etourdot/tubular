@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,38 +37,31 @@ import org.testng.annotations.Test;
  */
 public final class CommandLineExecutorTest
 {
-
     @Test
     public void standardIOTest() throws IOException, InterruptedException, ExecutionException
     {
-        final String output = abstractTest(new String[]
-                {
-                    "--xpl", getClass().getResource("xproc-1.0.xml").toString()
-                }, 0);
+        final String output = abstractTest(
+                new String[] { "--xpl", getClass().getResource("xproc-1.0.xml").toString() }, 0);
         Assert.assertTrue(!output.isEmpty(), "Did not find any output string");
-        Assert.assertTrue(output.contains("Inline XML conversion with inline XSLT using XProc"), "Did not find expected output string");
+        Assert.assertTrue(output.contains("Inline XML conversion with inline XSLT using XProc"),
+                "Did not find expected output string");
     }
 
     @Test
     public void invalidArgumentShouldOutputHelpTest() throws IOException, InterruptedException, ExecutionException
     {
-        final String output = abstractTest(new String[]
-                {
-                    "--blub", getClass().getResource("xproc-1.0.xml").toString()
-                }, 1);
+        final String output = abstractTest(
+                new String[] { "--blub", getClass().getResource("xproc-1.0.xml").toString() }, 1);
         Assert.assertTrue(!output.isEmpty(), "Did not find any output string");
         Assert.assertTrue(output.contains("--xpl"), "Did not find expected output string");
     }
 
-    private String abstractTest(final String[] commandLineArgs, final int expectedExitCode) throws IOException, InterruptedException, ExecutionException
+    private String abstractTest(final String[] commandLineArgs, final int expectedExitCode) throws IOException,
+            InterruptedException, ExecutionException
     {
         final List<String> commandLineArgsList = new LinkedList<String>();
-        commandLineArgsList.addAll(Arrays.asList(new String[]
-                {
-                    "java",
-                    "-cp", System.getProperty("java.class.path"),
-                    CommandLineExecutor.class.getName()
-                }));
+        commandLineArgsList.addAll(Arrays.asList(new String[] { "java", "-cp", System.getProperty("java.class.path"),
+                CommandLineExecutor.class.getName() }));
         commandLineArgsList.addAll(Arrays.asList(commandLineArgs));
         final ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgsList.toArray(new String[0]));
         processBuilder.redirectErrorStream(true);
@@ -75,8 +69,10 @@ public final class CommandLineExecutorTest
         process.getOutputStream().flush();
         process.getOutputStream().close();
         process.getErrorStream().close();
-        final FutureTask<String> bufferedInputStreamReaderFutureTask = new FutureTask<String>(new BufferedInputStreamReaderCallable(process.getInputStream()));
-        final FutureTask<String> bufferedErrorStreamReaderFutureTask = new FutureTask<String>(new BufferedInputStreamReaderCallable(process.getErrorStream()));
+        final FutureTask<String> bufferedInputStreamReaderFutureTask = new FutureTask<String>(
+                new BufferedInputStreamReaderCallable(process.getInputStream()));
+        final FutureTask<String> bufferedErrorStreamReaderFutureTask = new FutureTask<String>(
+                new BufferedInputStreamReaderCallable(process.getErrorStream()));
         new Thread(bufferedInputStreamReaderFutureTask, "Output Handler").start();
         new Thread(bufferedErrorStreamReaderFutureTask, "Error Handler").start();
         final String output = bufferedInputStreamReaderFutureTask.get();
