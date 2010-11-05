@@ -1,0 +1,13 @@
+[repository]
+native = LF
+
+[patterns]
+.hgtags = native
+.hgeol = native
+.hgignore = native
+**.java = native
+**.xml = native
+**.xpl = native
+**.prefs = native
+**.class = BIN
+**.jar = BIN
