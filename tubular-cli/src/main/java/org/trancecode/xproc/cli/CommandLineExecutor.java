@@ -123,7 +123,8 @@ public final class CommandLineExecutor
         options.addOption(xplOption);
     }
 
-    private int execute(final String[] args, final InputStream stdin, final PrintStream stdout, final PrintStream stderr)
+    protected int execute(final String[] args, final InputStream stdin, final PrintStream stdout,
+            final PrintStream stderr)
     {
         final GnuParser parser = new GnuParser();
 
