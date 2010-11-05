@@ -53,18 +53,9 @@ import org.trancecode.xproc.Tubular;
  */
 public final class CommandLineExecutor
 {
-    public static void main(final String[] args)
-    {    
-        final int returnCode = main_internal(args);
-        if (returnCode != 0)
-        {
-            System.exit(returnCode);
-        }
-    }
-
-    public static int main_internal(final String[] args)
+    private int execute(final String[] args)
     {
-    	Logger.getRootLogger().removeAllAppenders();
+        Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
         Logger.getRootLogger().setLevel(Level.INFO);
 
@@ -203,10 +194,13 @@ public final class CommandLineExecutor
                     }
 
                     final String primaryOutputPortValue = commandLine.getOptionValue(primaryOutputPortOption.getOpt());
-                    /* @todo TK: final Result resolve =
-                     * configurationPipelineContext.getProcessor().getUnderlyingConfiguration().getOutputURIResolver().resolve(primaryOutputPortValue,
+                    /*
+                     * @todo TK: final Result resolve =
+                     * configurationPipelineContext
+                     * .getProcessor().getUnderlyingConfiguration
+                     * ().getOutputURIResolver().resolve(primaryOutputPortValue,
                      * null);
-                    */
+                     */
 
                     final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String optionName : optionProperties.stringPropertyNames())
@@ -285,5 +279,15 @@ public final class CommandLineExecutor
                 helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
         printWriter.flush();
         printWriter.close();
+    }
+
+    public static void main(final String[] args)
+    {
+        final CommandLineExecutor executor = new CommandLineExecutor();
+        final int returnCode = executor.execute(args);
+        if (returnCode != 0)
+        {
+            System.exit(returnCode);
+        }
     }
 }
