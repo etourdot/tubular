@@ -19,7 +19,11 @@ package org.trancecode.xproc.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,7 +35,7 @@ public final class CommandLineExecutorTest
 {
 
     @Test
-    public void standardIOTest() throws IOException, InterruptedException
+    public void standardIOTest() throws IOException, InterruptedException, ExecutionException
     {
 
         final ProcessBuilder processBuilder = new ProcessBuilder(new String[]
@@ -39,27 +43,44 @@ public final class CommandLineExecutorTest
                     "java",
                     "-cp", System.getProperty("java.class.path"),
                     CommandLineExecutor.class.getName(),
-                    "--",
                     "--xpl", getClass().getResource("xproc-1.0.xml").toString()
                 });
         final Process process = processBuilder.start();
         process.getOutputStream().flush();
         process.getOutputStream().close();
-        final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        boolean outputOKFlag = false;
-        boolean outputFoundFlag = false;
-        while (br.ready())
+        process.getErrorStream().close();
+        final FutureTask<String> bufferedInputStreamReaderFutureTask = new FutureTask<String>(new BufferedInputStreamReaderCallable(process.getInputStream()));
+        final FutureTask<String> bufferedErrorStreamReaderFutureTask = new FutureTask<String>(new BufferedInputStreamReaderCallable(process.getErrorStream()));
+        new Thread(bufferedInputStreamReaderFutureTask, "standardIOTest Output Handler").start();
+        new Thread(bufferedErrorStreamReaderFutureTask, "standardIOTest Error Handler").start();
+        final String output = bufferedInputStreamReaderFutureTask.get();
+        Assert.assertEquals(process.waitFor(), 0, "Checking exit value of tubular process");
+        process.destroy();
+        Assert.assertTrue(!output.isEmpty(), "Did not find any output string");
+        Assert.assertTrue(output.contains("Inline XML conversion with inline XSLT using XProc"), "Did not find expected output string");
+    }
+
+    private class BufferedInputStreamReaderCallable implements Callable<String>
+    {
+
+        private final BufferedReader br;
+        private final StringBuilder sb = new StringBuilder();
+
+        public BufferedInputStreamReaderCallable(final InputStream inputStream)
         {
-            final String line = br.readLine();
-            outputFoundFlag = true;
-            if (line.contains("Inline XML conversion with inline XSLT using XProc"))
-            {
-                outputOKFlag = true;
-            }
+            br = new BufferedReader(new InputStreamReader(inputStream));
         }
-        br.close();
-        // FIXME currently blocking: Assert.assertEquals(process.waitFor(), 0, "Checking exit value of tubular process");
-        Assert.assertTrue(outputFoundFlag, "Did not find any output string");
-        Assert.assertTrue(outputOKFlag, "Did not find expected output string");
+
+        @Override
+        public final String call() throws Exception
+        {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                System.out.println(line);
+            }
+            br.close();
+            return sb.toString();
+        }
     }
 }
