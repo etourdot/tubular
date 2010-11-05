@@ -54,8 +54,17 @@ import org.trancecode.xproc.Tubular;
 public final class CommandLineExecutor
 {
     public static void main(final String[] args)
+    {    
+        final int returnCode = main_internal(args);
+        if (returnCode != 0)
+        {
+            System.exit(returnCode);
+        }
+    }
+
+    public static int main_internal(final String[] args)
     {
-        Logger.getRootLogger().removeAllAppenders();
+    	Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
         Logger.getRootLogger().setLevel(Level.INFO);
 
@@ -122,13 +131,13 @@ public final class CommandLineExecutor
             if (commandLine.hasOption(helpOption.getOpt()))
             {
                 printHelp(options);
-                System.exit(0);
+                return 0;
             }
 
             if (commandLine.hasOption(versionOption.getOpt()))
             {
                 System.err.println(Tubular.productInformation());
-                System.exit(0);
+                return 0;
             }
 
             if (commandLine.hasOption(verboseOption.getOpt()))
@@ -160,7 +169,7 @@ public final class CommandLineExecutor
             {
                 System.err.println("Required pipeline given using the --" + xplOption.getLongOpt() + " option.");
                 printHelp(options);
-                System.exit(2);
+                return 2;
             }
             else
             {
@@ -194,9 +203,10 @@ public final class CommandLineExecutor
                     }
 
                     final String primaryOutputPortValue = commandLine.getOptionValue(primaryOutputPortOption.getOpt());
-                    // TODO TK: final Result resolve =
-                    // configurationPipelineContext.getProcessor().getUnderlyingConfiguration().getOutputURIResolver().resolve(primaryOutputPortValue,
-                    // null);
+                    /* @todo TK: final Result resolve =
+                     * configurationPipelineContext.getProcessor().getUnderlyingConfiguration().getOutputURIResolver().resolve(primaryOutputPortValue,
+                     * null);
+                    */
 
                     final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String optionName : optionProperties.stringPropertyNames())
@@ -235,15 +245,16 @@ public final class CommandLineExecutor
                 {
                     System.err.println("Argument given to option --xpl is neither a URL nor or a file.");
                     printHelp(options);
-                    System.exit(3);
+                    return 3;
                 }
             }
         }
         catch (final ParseException ex)
         {
             printHelp(options);
-            System.exit(1);
+            return 1;
         }
+        return 0;
     }
 
     private static Source newSource(final URIResolver uriResolver, final String uri, final String errorMessage,
