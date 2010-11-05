@@ -87,7 +87,6 @@ public final class CommandLineExecutorTest
 
     private class BufferedInputStreamReaderCallable implements Callable<String>
     {
-
         private final BufferedReader br;
         private final StringBuilder sb = new StringBuilder();
 
