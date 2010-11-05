@@ -43,7 +43,8 @@ public final class CommandLineExecutorTest
     public void standardIOTest() throws IOException, InterruptedException, ExecutionException
     {
         final String output = abstractTest(
-                new String[] { "--xpl", getClass().getResource("xproc-1.0.xml").toString() }, 0);
+                new String[] { "--xpl", getClass().getResource("/org/trancecode/xproc/cli/xproc-1.0.xml").toString() },
+                0);
         Assert.assertTrue(!output.isEmpty(), "Did not find any output string");
         Assert.assertTrue(output.contains("Inline XML conversion with inline XSLT using XProc"),
                 "Did not find expected output string");
@@ -53,7 +54,8 @@ public final class CommandLineExecutorTest
     public void invalidArgumentShouldOutputHelpTest() throws IOException, InterruptedException, ExecutionException
     {
         final String output = abstractTest(
-                new String[] { "--blub", getClass().getResource("xproc-1.0.xml").toString() }, 1);
+                new String[] { "--blub", getClass().getResource("/org/trancecode/xproc/cli/xproc-1.0.xml").toString() },
+                1);
         Assert.assertTrue(!output.isEmpty(), "Did not find any output string");
         Assert.assertTrue(output.contains("--xpl"), "Did not find expected output string");
     }
