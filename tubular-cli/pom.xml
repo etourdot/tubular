@@ -22,6 +22,13 @@
 
     <dependency>
       <groupId>org.trancecode</groupId>
+      <artifactId>trancecode-util</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.trancecode</groupId>
       <artifactId>tubular-core</artifactId>
     </dependency>
 
@@ -45,6 +52,13 @@
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
