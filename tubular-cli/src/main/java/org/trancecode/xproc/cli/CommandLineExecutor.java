@@ -29,6 +29,7 @@ import java.util.Properties;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -62,8 +63,6 @@ public final class CommandLineExecutor
     private final Option optionOption;
     private final Option paramOption;
     private final Option portBindingOption;
-    private final Option primaryInputPortOption;
-    private final Option primaryOutputPortOption;
     private final Option verboseOption;
     private final Option versionOption;
     private final Option xplOption;
@@ -98,18 +97,6 @@ public final class CommandLineExecutor
         portBindingOption.setArgs(2);
         portBindingOption.setValueSeparator('=');
         options.addOption(portBindingOption);
-
-        primaryInputPortOption = new Option("i", "input-port", true, "Passes the primary input port");
-        primaryInputPortOption.setArgName("name=uri");
-        primaryInputPortOption.setArgs(2);
-        primaryInputPortOption.setValueSeparator('=');
-        options.addOption(primaryInputPortOption);
-
-        primaryOutputPortOption = new Option("r", "output-port", true, "Passes the primary output port");
-        primaryOutputPortOption.setArgName("name=uri");
-        primaryOutputPortOption.setArgs(2);
-        primaryOutputPortOption.setValueSeparator('=');
-        options.addOption(primaryOutputPortOption);
 
         verboseOption = new Option("v", "verbose", false, "Display more information");
         options.addOption(verboseOption);
@@ -195,26 +182,12 @@ public final class CommandLineExecutor
                                         portBindingValue));
                     }
 
-                    final String primaryInputPortValue = commandLine.getOptionValue(primaryInputPortOption.getOpt());
-                    if (primaryInputPortValue != null)
+                    final Port primaryInputPort = runnablePipeline.getPipeline().getPrimaryInputPort();
+                    if (primaryInputPort != null
+                            && !portBindingProperties.stringPropertyNames().contains(primaryInputPort.getPortName()))
                     {
-                        final Source primaryInputSource = newSource(uriResolver, primaryInputPortValue,
-                                "Cannot bind port to resource from %s", primaryInputPortValue);
-                        if (primaryInputSource != null)
-                        {
-                            runnablePipeline.setPortBinding(runnablePipeline.getPipeline().getPrimaryInputPort()
-                                    .getPortName(), primaryInputSource);
-                        }
+                        runnablePipeline.setPortBinding(primaryInputPort.getPortName(), new StreamSource(stdin));
                     }
-
-                    final String primaryOutputPortValue = commandLine.getOptionValue(primaryOutputPortOption.getOpt());
-                    /*
-                     * @todo TK: final Result resolve =
-                     * configurationPipelineContext
-                     * .getProcessor().getUnderlyingConfiguration
-                     * ().getOutputURIResolver().resolve(primaryOutputPortValue,
-                     * null);
-                     */
 
                     final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
                     for (final String optionName : optionProperties.stringPropertyNames())
