@@ -232,7 +232,6 @@ public final class CommandLineExecutor
 
                     final PipelineResult pipelineResult = runnablePipeline.run();
                     final Port primaryOutputPort = pipelineResult.getPipeline().getPrimaryOutputPort();
-                    System.err.println("primaryOutputPort = " + primaryOutputPort);
                     if (primaryOutputPort != null
                             && !portBindingProperties.stringPropertyNames().contains(primaryOutputPort.getPortName()))
                     {
