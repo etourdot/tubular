@@ -29,7 +29,6 @@ import java.util.Properties;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
-import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -57,6 +56,9 @@ import org.trancecode.xproc.port.Port;
  */
 public final class CommandLineExecutor
 {
+    private static final org.trancecode.logging.Logger LOG = org.trancecode.logging.Logger
+            .getLogger(CommandLineExecutor.class);
+
     private final Options options;
     private final Option helpOption;
     private final Option librariesOption;
@@ -172,24 +174,19 @@ public final class CommandLineExecutor
                     final Pipeline buildPipeline = pipelineProcessor.buildPipeline(xplSource);
                     final RunnablePipeline runnablePipeline = buildPipeline.load();
 
-                    final Properties portBindingProperties = commandLine.getOptionProperties(optionOption.getOpt());
+                    final Properties portBindingProperties = commandLine
+                            .getOptionProperties(portBindingOption.getOpt());
                     for (final String portBindingName : portBindingProperties.stringPropertyNames())
                     {
                         final String portBindingValue = portBindingProperties.getProperty(portBindingName);
                         if (runnablePipeline.getPipeline().getPort(portBindingName).isInput())
                         {
+                            LOG.debug("input port binding: {} = {}", portBindingName, portBindingValue);
                             runnablePipeline.setPortBinding(
                                     portBindingName,
                                     newSource(uriResolver, portBindingValue, "Cannot bind port to resource from %s",
                                             portBindingValue));
                         }
-                    }
-
-                    final Port primaryInputPort = runnablePipeline.getPipeline().getPrimaryInputPort();
-                    if (primaryInputPort != null
-                            && !portBindingProperties.stringPropertyNames().contains(primaryInputPort.getPortName()))
-                    {
-                        runnablePipeline.setPortBinding(primaryInputPort.getPortName(), new StreamSource(stdin));
                     }
 
                     final Properties optionProperties = commandLine.getOptionProperties(optionOption.getOpt());
