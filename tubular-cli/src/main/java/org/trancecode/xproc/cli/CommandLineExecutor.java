@@ -176,10 +176,13 @@ public final class CommandLineExecutor
                     for (final String portBindingName : portBindingProperties.stringPropertyNames())
                     {
                         final String portBindingValue = portBindingProperties.getProperty(portBindingName);
-                        runnablePipeline.setPortBinding(
-                                portBindingName,
-                                newSource(uriResolver, portBindingValue, "Cannot bind port to resource from %s",
-                                        portBindingValue));
+                        if (runnablePipeline.getPipeline().getPort(portBindingName).isInput())
+                        {
+                            runnablePipeline.setPortBinding(
+                                    portBindingName,
+                                    newSource(uriResolver, portBindingValue, "Cannot bind port to resource from %s",
+                                            portBindingValue));
+                        }
                     }
 
                     final Port primaryInputPort = runnablePipeline.getPipeline().getPrimaryInputPort();
