@@ -17,6 +17,8 @@
  */
 package org.trancecode.xproc.cli;
 
+import com.google.common.collect.Iterables;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -29,8 +31,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -48,6 +48,7 @@ import org.trancecode.xproc.PipelineProcessor;
 import org.trancecode.xproc.PipelineResult;
 import org.trancecode.xproc.RunnablePipeline;
 import org.trancecode.xproc.Tubular;
+import org.trancecode.xproc.port.Port;
 
 /**
  * @author Herve Quiroz
@@ -230,23 +231,18 @@ public final class CommandLineExecutor
                     }
 
                     final PipelineResult pipelineResult = runnablePipeline.run();
-                    final Serializer serializer = new Serializer();
-                    serializer.setOutputStream(stdout); // TODO Use primary
-                                                        // output port
-                                                        // binding option
-                    for (final XdmNode xdmNode : pipelineResult.readNodes(pipelineResult.getPipeline()
-                            .getPrimaryOutputPort().getPortName()))
+                    final Port primaryOutputPort = pipelineResult.getPipeline().getPrimaryOutputPort();
+                    System.err.println("primaryOutputPort = " + primaryOutputPort);
+                    if (primaryOutputPort != null
+                            && !portBindingProperties.stringPropertyNames().contains(primaryOutputPort.getPortName()))
                     {
-                        try
+                        final XdmNode node = Iterables.getOnlyElement(
+                                pipelineResult.readNodes(primaryOutputPort.getPortName()), null);
+                        if (node != null)
                         {
-                            configurationPipelineContext.getProcessor().writeXdmValue(xdmNode, serializer);
-                        }
-                        catch (final SaxonApiException ex)
-                        {
-                            throw new IllegalStateException("error serializing node from output port", ex);
+                            stdout.println(node);
                         }
                     }
-                    stdout.println();
                 }
                 else
                 {
