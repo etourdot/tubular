@@ -35,6 +35,7 @@ public final class XProcOptions
     public static final Map<QName, Object> EMPTY_OPTIONS_MAP = ImmutableMap.of();
 
     public static final QName ARGS = new QName("args");
+    public static final QName ARG_SEPARATOR = new QName("arg-separator");
     public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
     public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
     public static final QName ATTRIBUTE_NAMESPACE = new QName("attribute-namespace");
@@ -63,6 +64,7 @@ public final class XProcOptions
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
     public static final QName RESULT_BASE_URI = new QName("result-base-uri");
     public static final QName RESULT_DOCUMENT_URI = new QName("result-document-uri");
+    public static final QName RESULT_IS_XML = new QName("result-is-xml");
     public static final QName SOURCE_BASE_URI = new QName("source-base-uri");
     public static final QName SOURCE_DOCUMENT_URI = new QName("source-document-uri");
     public static final QName STANDALONE = new QName("standalone");
@@ -72,6 +74,7 @@ public final class XProcOptions
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
     public static final QName VALIDATE = new QName("validate");
     public static final QName VERSION = new QName("version");
+    public static final QName WRAP_RESULT_LINEs = new QName("wrap-result-lines");
     public static final QName WRAPPER = new QName("wrapper");
     public static final QName WRAPPER_PREFIX = new QName("wrapper-prefix");
     public static final QName WRAPPER_NAMESPACE = new QName("wrapper-namespace");

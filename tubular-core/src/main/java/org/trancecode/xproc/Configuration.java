@@ -50,6 +50,7 @@ import org.trancecode.io.OutputResolver;
 import org.trancecode.xproc.step.AddAttributeStepProcessor;
 import org.trancecode.xproc.step.ChooseStepProcessor;
 import org.trancecode.xproc.step.CountStepProcessor;
+import org.trancecode.xproc.step.ExecStepProcessor;
 import org.trancecode.xproc.step.ForEachStepProcessor;
 import org.trancecode.xproc.step.IdentityStepProcessor;
 import org.trancecode.xproc.step.LoadStepProcessor;
@@ -167,6 +168,9 @@ public final class Configuration implements PipelineContext
         processors.add(WrapSequenceStepProcessor.INSTANCE);
         processors.add(XsltStepProcessor.INSTANCE);
 
+        // Optional steps
+        processors.add(ExecStepProcessor.instance());
+
         // Unsupported required steps
         processors.add(newUnsupportedStepProcessor(XProcSteps.ADD_XML_BASE));
         processors.add(newUnsupportedStepProcessor(XProcSteps.COMPARE));
@@ -193,7 +197,6 @@ public final class Configuration implements PipelineContext
         processors.add(newUnsupportedStepProcessor(XProcSteps.XINCLUDE));
 
         // Unsupported optional steps
-        processors.add(newUnsupportedStepProcessor(XProcSteps.EXEC));
         processors.add(newUnsupportedStepProcessor(XProcSteps.HASH));
         processors.add(newUnsupportedStepProcessor(XProcSteps.UUID));
         processors.add(newUnsupportedStepProcessor(XProcSteps.VALIDATE_WITH_RELANXNG));

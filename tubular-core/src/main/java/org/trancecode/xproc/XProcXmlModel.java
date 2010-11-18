@@ -55,11 +55,13 @@ public final class XProcXmlModel
         public static final QName INPUT = xprocNamespace().newSaxonQName("input");
         public static final QName ITERATION_SOURCE = xprocNamespace().newSaxonQName("iteration-source");
         public static final QName LIBRARY = xprocNamespace().newSaxonQName("library");
+        public static final QName LINE = xprocStepNamespace().newSaxonQName("line");
         public static final QName OPTION = xprocNamespace().newSaxonQName("option");
         public static final QName OTHERWISE = xprocNamespace().newSaxonQName("otherwise");
         public static final QName OUTPUT = xprocNamespace().newSaxonQName("output");
         public static final QName PIPE = xprocNamespace().newSaxonQName("pipe");
         public static final QName PIPELINE = xprocNamespace().newSaxonQName("pipeline");
+        public static final QName RESULT = xprocStepNamespace().newSaxonQName("result");
         public static final QName VARIABLE = xprocNamespace().newSaxonQName("variable");
         public static final QName WHEN = xprocNamespace().newSaxonQName("when");
         public static final QName WITH_OPTION = xprocNamespace().newSaxonQName("with-option");
