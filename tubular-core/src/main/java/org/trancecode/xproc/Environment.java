@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -90,10 +89,10 @@ public class Environment implements HasPipelineContext
         return new Environment(pipeline, configuration, ports, null, null, null, variables, variables);
     }
 
-    private Environment(final Step pipeline, final PipelineContext configuration, final Iterable<EnvironmentPort> ports,
-            final EnvironmentPort defaultReadablePort, final EnvironmentPort defaultParametersPort,
-            final EnvironmentPort xpathContextPort, final Map<QName, String> inheritedVariables,
-            final Map<QName, String> localVariables)
+    private Environment(final Step pipeline, final PipelineContext configuration,
+            final Iterable<EnvironmentPort> ports, final EnvironmentPort defaultReadablePort,
+            final EnvironmentPort defaultParametersPort, final EnvironmentPort xpathContextPort,
+            final Map<QName, String> inheritedVariables, final Map<QName, String> localVariables)
     {
         this(pipeline, configuration, getPortsMap(ports), defaultReadablePort, defaultParametersPort, xpathContextPort,
                 inheritedVariables, localVariables);
@@ -496,7 +495,7 @@ public class Environment implements HasPipelineContext
 
     public Environment addPorts(final EnvironmentPort... ports)
     {
-        return addPorts(Arrays.asList(ports));
+        return addPorts(ImmutableList.copyOf(ports));
     }
 
     public Environment addPorts(final Iterable<EnvironmentPort> ports)
