@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,8 +60,8 @@ public final class Step extends AbstractHasLocation
     private static final Logger LOG = Logger.getLogger(Step.class);
     private static final List<Variable> EMPTY_VARIABLE_LIST = ImmutableList.of();
     private static final Map<QName, Variable> EMPTY_PARAMETER_MAP = ImmutableMap.of();
-    private static final Map<String, Port> EMPTY_PORT_MAP = Collections.emptyMap();
-    private static final List<Step> EMPTY_STEP_LIST = Collections.emptyList();
+    private static final Map<String, Port> EMPTY_PORT_MAP = ImmutableMap.of();
+    private static final List<Step> EMPTY_STEP_LIST = ImmutableList.of();
 
     private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
     {
@@ -146,8 +145,8 @@ public final class Step extends AbstractHasLocation
     {
         assert !Variables.containsVariable(variables, variable.getName()) : "step = " + name + " ; variable = "
                 + variable.getName() + " ; variables = " + variables;
-        return new Step(node, type, name, location, stepProcessor, compoundStep, TcIterables.append(variables,
-                variable), parameters, ports, steps);
+        return new Step(node, type, name, location, stepProcessor, compoundStep,
+                TcIterables.append(variables, variable), parameters, ports, steps);
     }
 
     public Step declareVariables(final Iterable<Variable> variables)
@@ -366,8 +365,8 @@ public final class Step extends AbstractHasLocation
     {
         assert !parameters.containsKey(name);
 
-        final Iterable<Variable> newVariables = Variables.setOrAddVariable(variables, Variable.newParameter(name,
-                location).setSelect(select).setValue(value));
+        final Iterable<Variable> newVariables = Variables.setOrAddVariable(variables,
+                Variable.newParameter(name, location).setSelect(select).setValue(value));
 
         return new Step(node, type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports,
                 steps);
@@ -422,15 +421,15 @@ public final class Step extends AbstractHasLocation
     {
         assert ports.containsKey(port.getPortName());
 
-        return new Step(node, type, name, location, stepProcessor, compoundStep, variables, parameters, TcMaps
-                .copyAndPut(ports, port.getPortName(), port), steps);
+        return new Step(node, type, name, location, stepProcessor, compoundStep, variables, parameters,
+                TcMaps.copyAndPut(ports, port.getPortName(), port), steps);
     }
 
     @ReturnsNullable
     public Port getXPathContextPort()
     {
-        final Port xpathContextPort = Iterables.getOnlyElement(Iterables.filter(getInputPorts(),
-                PREDICATE_IS_XPATH_CONTEXT_PORT), null);
+        final Port xpathContextPort = Iterables.getOnlyElement(
+                Iterables.filter(getInputPorts(), PREDICATE_IS_XPATH_CONTEXT_PORT), null);
         LOG.trace("XPath context port = {}", xpathContextPort);
         return xpathContextPort;
     }
