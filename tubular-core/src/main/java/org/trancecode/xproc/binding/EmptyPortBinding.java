@@ -19,8 +19,7 @@
  */
 package org.trancecode.xproc.binding;
 
-import java.util.Collections;
-
+import com.google.common.collect.ImmutableList;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.Immutable;
 import org.trancecode.xml.Location;
@@ -45,7 +44,7 @@ public class EmptyPortBinding extends AbstractPortBinding
             @Override
             public Iterable<XdmNode> readNodes()
             {
-                return Collections.emptyList();
+                return ImmutableList.of();
             }
         };
     }
