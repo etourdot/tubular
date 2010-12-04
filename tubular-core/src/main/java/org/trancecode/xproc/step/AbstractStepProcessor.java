@@ -49,8 +49,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         }
         catch (final Exception e)
         {
-            // TODO handle exception
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(String.format("Error while executing step %s", step.getName()), e);
         }
     }
 
