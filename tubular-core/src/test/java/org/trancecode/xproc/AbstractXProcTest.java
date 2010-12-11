@@ -33,6 +33,7 @@ import javax.xml.transform.Source;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
@@ -41,6 +42,7 @@ import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Uris;
 import org.trancecode.xml.saxon.Saxon;
@@ -50,11 +52,13 @@ import org.trancecode.xml.saxon.Saxon;
  */
 public abstract class AbstractXProcTest extends AbstractTest
 {
-    public static final String PROPERTY_REPORT_FILE = "xproc.tests.report";
+    public static final String PROPERTY_TARGET_DIRECTORY = "project.build.directory";
+    public static final String DEFAULT_TARGET_DIRECTORY = "target";
 
     private static final org.trancecode.logging.Logger LOG = org.trancecode.logging.Logger
             .getLogger(AbstractXProcTest.class);
     private static XProcTestSuiteReportBuilder reportBuilder;
+    private static Class<?> testClass;
 
     @BeforeClass
     public static void setupReportBuilder()
@@ -62,21 +66,21 @@ public abstract class AbstractXProcTest extends AbstractTest
         reportBuilder = new XProcTestSuiteReportBuilder();
     }
 
+    @BeforeTest
+    public void setClass()
+    {
+        testClass = getClass();
+    }
+
     @AfterClass
     public static void writeReportToFile() throws Exception
     {
-        final File reportFile;
-        final String explicitReportFile = System.getProperty(PROPERTY_REPORT_FILE);
-        if (explicitReportFile != null && !explicitReportFile.isEmpty())
-        {
-            reportFile = new File(explicitReportFile);
-        }
-        else
-        {
-            reportFile = File.createTempFile("report", ".xml");
-        }
-
-        System.err.println("report file: " + reportFile);
+        final String reportDirectoryPath = System.getProperty(PROPERTY_TARGET_DIRECTORY, DEFAULT_TARGET_DIRECTORY);
+        final File reportDirectory = new File(reportDirectoryPath, "xproc-test-reports");
+        FileUtils.forceMkdir(reportDirectory);
+        LOG.info("report directory: {}", reportDirectory.getAbsolutePath());
+        final File reportFile = new File(reportDirectory, testClass.getSimpleName() + ".xml");
+        LOG.info("report file: {}", reportFile.getAbsolutePath());
         reportBuilder.write(reportFile);
     }
 
