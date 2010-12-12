@@ -19,21 +19,20 @@ package org.trancecode.xproc;
 
 import java.net.URL;
 
-import org.testng.annotations.Test;
-
 /**
  * @author Romain Deltour
  */
-@Test(enabled = false)
 public final class ProvidedXProcTestSuiteTest extends AbstractXProcTest
 {
-    @Test(dataProvider = "xprocTests", dataProviderClass = RemoteXProcTestsProvider.class)
+    // @Test(dataProvider = "xprocTests", dataProviderClass =
+    // RemoteXProcTestsProvider.class)
     public void required(final URL url) throws Exception
     {
         test(url, "required");
     }
 
-    @Test(dataProvider = "xprocTests", dataProviderClass = RemoteXProcTestsProvider.class)
+    // @Test(dataProvider = "xprocTests", dataProviderClass =
+    // RemoteXProcTestsProvider.class)
     public void optional(final URL url) throws Exception
     {
         test(url, "optional");
