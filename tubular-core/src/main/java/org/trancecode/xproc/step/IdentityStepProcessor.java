@@ -29,14 +29,7 @@ import org.trancecode.xproc.port.XProcPorts;
  */
 public final class IdentityStepProcessor extends AbstractStepProcessor
 {
-    public static final IdentityStepProcessor INSTANCE = new IdentityStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(IdentityStepProcessor.class);
-
-    private IdentityStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()

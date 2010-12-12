@@ -36,14 +36,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class LoadStepProcessor extends AbstractStepProcessor
 {
-    public static final LoadStepProcessor INSTANCE = new LoadStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
-
-    private LoadStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()
@@ -67,7 +60,8 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final Source source;
         try
         {
-            source = environment.getPipelineContext().getUriResolver().resolve(href, environment.getBaseUri().toString());
+            source = environment.getPipelineContext().getUriResolver()
+                    .resolve(href, environment.getBaseUri().toString());
         }
         catch (final Exception e)
         {

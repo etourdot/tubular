@@ -53,17 +53,10 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class XsltStepProcessor extends AbstractStepProcessor
 {
-    public static final XsltStepProcessor INSTANCE = new XsltStepProcessor();
-
     private static final String DEFAULT_VERSION = "2.0";
     private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("2.0");
 
     private static final Logger LOG = Logger.getLogger(XsltStepProcessor.class);
-
-    private XsltStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()

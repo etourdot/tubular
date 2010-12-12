@@ -23,16 +23,15 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,21 +46,12 @@ import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
-import org.trancecode.xproc.step.AddAttributeStepProcessor;
 import org.trancecode.xproc.step.ChooseStepProcessor;
-import org.trancecode.xproc.step.CountStepProcessor;
-import org.trancecode.xproc.step.ExecStepProcessor;
 import org.trancecode.xproc.step.ForEachStepProcessor;
-import org.trancecode.xproc.step.IdentityStepProcessor;
-import org.trancecode.xproc.step.LoadStepProcessor;
-import org.trancecode.xproc.step.SinkStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
-import org.trancecode.xproc.step.StoreStepProcessor;
 import org.trancecode.xproc.step.WhenStepProcessor;
-import org.trancecode.xproc.step.WrapSequenceStepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
-import org.trancecode.xproc.step.XsltStepProcessor;
 
 /**
  * @author Herve Quiroz
@@ -156,57 +146,7 @@ public final class Configuration implements PipelineContext
 
     private static Map<QName, StepProcessor> getDefaultStepProcessors()
     {
-        final Collection<StepProcessor> processors = Lists.newArrayList();
-
-        // Required steps
-        processors.add(AddAttributeStepProcessor.INSTANCE);
-        processors.add(CountStepProcessor.INSTANCE);
-        processors.add(IdentityStepProcessor.INSTANCE);
-        processors.add(LoadStepProcessor.INSTANCE);
-        processors.add(SinkStepProcessor.INSTANCE);
-        processors.add(StoreStepProcessor.INSTANCE);
-        processors.add(WrapSequenceStepProcessor.INSTANCE);
-        processors.add(XsltStepProcessor.INSTANCE);
-
-        // Optional steps
-        processors.add(ExecStepProcessor.instance());
-
-        // Unsupported required steps
-        processors.add(newUnsupportedStepProcessor(XProcSteps.ADD_XML_BASE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.COMPARE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.DELETE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.DIRECTORY_LIST));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.ERROR));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.ESCAPE_MARKUP));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.FILTER));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.HTTP_REQUEST));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.INSERT));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.LABEL_ELEMENT));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.MAKE_ABSOLUTE_URIS));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.NAMESPACE_RENAME));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.PACK));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.PARAMETERS));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.RENAME));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.REPLACE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.SET_ATTRIBUTES));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.SPLIT_SEQUENCE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.STRING_REPLACE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.UNESCAPE_MARKUP));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.UNWRAP));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.WRAP));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.XINCLUDE));
-
-        // Unsupported optional steps
-        processors.add(newUnsupportedStepProcessor(XProcSteps.HASH));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.UUID));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.VALIDATE_WITH_RELANXNG));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.VALIDATE_WITH_SCHEMATRON));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.VALIDATE_WITH_SCHEMA));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.WWW_FORM_URL_DECODE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.WWW_FORM_URL_ENCODE));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.XQUERY));
-        processors.add(newUnsupportedStepProcessor(XProcSteps.XSL_FORMATTER));
-
+        final Iterable<StepProcessor> processors = ServiceLoader.load(StepProcessor.class);
         return ImmutableMap.copyOf(Maps.uniqueIndex(processors, new Function<StepProcessor, QName>()
         {
             @Override
@@ -229,24 +169,6 @@ public final class Configuration implements PipelineContext
         // TODO coreSteps.put(XProcSteps.TRY, null);
 
         return ImmutableMap.copyOf(coreSteps);
-    }
-
-    private static StepProcessor newUnsupportedStepProcessor(final QName step)
-    {
-        return new StepProcessor()
-        {
-            @Override
-            public QName stepType()
-            {
-                return step;
-            }
-
-            @Override
-            public Environment run(final Step step, final Environment environment)
-            {
-                throw new UnsupportedOperationException(step.getType().toString());
-            }
-        };
     }
 
     public Configuration()

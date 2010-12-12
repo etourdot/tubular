@@ -34,14 +34,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class CountStepProcessor extends AbstractStepProcessor
 {
-    public static final CountStepProcessor INSTANCE = new CountStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(CountStepProcessor.class);
-
-    private CountStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()

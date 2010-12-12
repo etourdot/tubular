@@ -47,14 +47,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class AddAttributeStepProcessor extends AbstractStepProcessor
 {
-    public static final AddAttributeStepProcessor INSTANCE = new AddAttributeStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
-
-    private AddAttributeStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()

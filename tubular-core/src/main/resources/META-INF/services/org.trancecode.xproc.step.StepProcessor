@@ -1,0 +1,9 @@
+org.trancecode.xproc.step.AddAttributeStepProcessor
+org.trancecode.xproc.step.CountStepProcessor
+org.trancecode.xproc.step.ExecStepProcessor
+org.trancecode.xproc.step.IdentityStepProcessor
+org.trancecode.xproc.step.LoadStepProcessor
+org.trancecode.xproc.step.SinkStepProcessor
+org.trancecode.xproc.step.StoreStepProcessor
+org.trancecode.xproc.step.WrapSequenceStepProcessor
+org.trancecode.xproc.step.XsltStepProcessor

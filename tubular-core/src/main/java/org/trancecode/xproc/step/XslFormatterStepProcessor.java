@@ -46,14 +46,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
 {
     public static final String DEFAULT_CONTENT_TYPE = "application/pdf";
 
-    public static final XslFormatterStepProcessor INSTANCE = new XslFormatterStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(XslFormatterStepProcessor.class);
-
-    private XslFormatterStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()

@@ -35,14 +35,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 {
-    public static final WrapSequenceStepProcessor INSTANCE = new WrapSequenceStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(WrapSequenceStepProcessor.class);
-
-    private WrapSequenceStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()

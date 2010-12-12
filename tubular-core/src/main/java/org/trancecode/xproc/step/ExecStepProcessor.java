@@ -51,18 +51,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class ExecStepProcessor extends AbstractStepProcessor
 {
-    private static final ExecStepProcessor INSTANCE = new ExecStepProcessor();
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
-
-    public static final ExecStepProcessor instance()
-    {
-        return INSTANCE;
-    }
-
-    private ExecStepProcessor()
-    {
-        // No instantiation
-    }
 
     @Override
     public QName stepType()

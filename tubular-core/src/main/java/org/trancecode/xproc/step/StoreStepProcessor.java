@@ -40,8 +40,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class StoreStepProcessor extends AbstractStepProcessor
 {
-    public static final StoreStepProcessor INSTANCE = new StoreStepProcessor();
-
     private static final String DEFAULT_ENCODING = "UTF-8";
     private static final String DEFAULT_OMIT_XML_DECLARATION = "no";
     private static final String DEFAULT_DOCTYPE_PUBLIC = null;
@@ -50,11 +48,6 @@ public final class StoreStepProcessor extends AbstractStepProcessor
     private static final String DEFAULT_MIMETYPE = MediaTypes.MEDIA_TYPE_XML;
 
     private static final Logger LOG = Logger.getLogger(StoreStepProcessor.class);
-
-    private StoreStepProcessor()
-    {
-        // Singleton
-    }
 
     @Override
     public QName stepType()
