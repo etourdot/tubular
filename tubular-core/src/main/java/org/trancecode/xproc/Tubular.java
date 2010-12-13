@@ -26,8 +26,10 @@ public final class Tubular
 {
     private static final int VERSION_MAJOR = 0;
     private static final int VERSION_MINOR = 1;
+    private static final int REVISION = 0;
     private static final boolean SNAPSHOT = true;
-    private static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + (SNAPSHOT ? "-SNAPSHOT" : "");
+    private static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + "." + REVISION
+            + (SNAPSHOT ? "-SNAPSHOT" : "");
 
     private static final Namespace NAMESPACE = new Namespace("http://www.trancecode.org/tubular/1/", "tubular");
 
