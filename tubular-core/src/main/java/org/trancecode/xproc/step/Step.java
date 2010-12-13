@@ -181,6 +181,11 @@ public final class Step extends AbstractHasLocation
         return ports.get(name);
     }
 
+    public boolean hasPortDeclared(final String name)
+    {
+        return ports.containsKey(name);
+    }
+
     public Map<String, Port> getPorts()
     {
         return ports;
