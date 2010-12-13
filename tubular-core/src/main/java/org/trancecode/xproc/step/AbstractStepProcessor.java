@@ -37,7 +37,6 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.port.PortReference;
 
 /**
  * @author Herve Quiroz
@@ -56,7 +55,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         {
             final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
 
-            final StepInput input = new StepInput(step, environment);
+            final StepInput input = new StepInput(step, stepEnvironment);
             final StepOutput output = new StepOutput(step);
             execute(input, output);
 
@@ -113,12 +112,12 @@ public abstract class AbstractStepProcessor implements StepProcessor
 
         public XdmNode readNode(final String portName)
         {
-            return environment.readNode(PortReference.newReference(step.getName(), portName));
+            return environment.readNode(step.getPortReference(portName));
         }
 
         public Iterable<XdmNode> readNodes(final String portName)
         {
-            return environment.readNodes(PortReference.newReference(step.getName(), portName));
+            return environment.readNodes(step.getPortReference(portName));
         }
 
         public String getOptionValue(final QName name)
