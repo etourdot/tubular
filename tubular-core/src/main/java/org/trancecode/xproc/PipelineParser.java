@@ -224,6 +224,11 @@ public class PipelineParser
                 return step;
             }
 
+            if (Elements.ELEMENTS_IGNORED.contains(node.getNodeName()))
+            {
+                return step;
+            }
+
             LOG.warn("child element not supported: {}", node.getNodeName());
         }
         else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)

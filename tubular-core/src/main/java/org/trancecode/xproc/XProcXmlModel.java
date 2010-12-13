@@ -48,6 +48,7 @@ public final class XProcXmlModel
         public static final QName CHOOSE = xprocNamespace().newSaxonQName("choose");
         public static final QName DECLARE_STEP = xprocNamespace().newSaxonQName("declare-step");
         public static final QName DOCUMENT = xprocNamespace().newSaxonQName("document");
+        public static final QName DOCUMENTATION = xprocNamespace().newSaxonQName("documentation");
         public static final QName EMPTY = xprocNamespace().newSaxonQName("empty");
         public static final QName FOR_EACH = xprocNamespace().newSaxonQName("for-each");
         public static final QName IMPORT = xprocNamespace().newSaxonQName("import");
@@ -60,6 +61,7 @@ public final class XProcXmlModel
         public static final QName OTHERWISE = xprocNamespace().newSaxonQName("otherwise");
         public static final QName OUTPUT = xprocNamespace().newSaxonQName("output");
         public static final QName PIPE = xprocNamespace().newSaxonQName("pipe");
+        public static final QName PIPEINFO = xprocNamespace().newSaxonQName("pipeinfo");
         public static final QName PIPELINE = xprocNamespace().newSaxonQName("pipeline");
         public static final QName RESULT = xprocStepNamespace().newSaxonQName("result");
         public static final QName VARIABLE = xprocNamespace().newSaxonQName("variable");
@@ -70,6 +72,7 @@ public final class XProcXmlModel
 
         public static final Set<QName> ELEMENTS_CORE_STEPS = ImmutableSet.of(FOR_EACH, CHOOSE);
         public static final Set<QName> ELEMENTS_DECLARE_STEP_OR_PIPELINE = ImmutableSet.of(DECLARE_STEP, PIPELINE);
+        public static final Set<QName> ELEMENTS_IGNORED = ImmutableSet.of(DOCUMENTATION, PIPEINFO);
         public static final Set<QName> ELEMENTS_IN_PIPELINE = ImmutableSet.of(IMPORT, PIPELINE);
         public static final Set<QName> ELEMENTS_IN_PIPELINE_LIBRARY = ImmutableSet.of(IMPORT, DECLARE_STEP, PIPELINE);
         public static final Set<QName> ELEMENTS_PORT_BINDINGS = ImmutableSet.of(INLINE, DOCUMENT, EMPTY, PIPE);
