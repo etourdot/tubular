@@ -20,8 +20,6 @@
 package org.trancecode.xproc.step;
 
 import net.sf.saxon.s9api.QName;
-import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.port.XProcPorts;
 
 /**
@@ -29,8 +27,6 @@ import org.trancecode.xproc.port.XProcPorts;
  */
 public final class IdentityStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(IdentityStepProcessor.class);
-
     @Override
     public QName stepType()
     {
@@ -38,12 +34,9 @@ public final class IdentityStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment)
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.IDENTITY);
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT),
-                environment.readNodes(step.getPortReference(XProcPorts.SOURCE)));
+        output.writeNodes(XProcPorts.RESULT, input.readNodes(XProcPorts.SOURCE));
     }
 }

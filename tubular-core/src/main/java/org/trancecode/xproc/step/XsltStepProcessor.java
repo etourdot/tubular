@@ -42,7 +42,6 @@ import net.sf.saxon.s9api.XsltTransformer;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.io.Uris;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
@@ -65,15 +64,12 @@ public final class XsltStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment)
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("{@method} step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.XSLT);
-
-        final XdmNode sourceDocument = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
+        final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
         assert sourceDocument != null;
 
-        final String providedOutputBaseUri = environment.getVariable(XProcOptions.OUTPUT_BASE_URI);
+        final String providedOutputBaseUri = input.getOptionValue(XProcOptions.OUTPUT_BASE_URI);
         final URI outputBaseUri;
         if (providedOutputBaseUri != null && providedOutputBaseUri.length() > 0)
         {
@@ -85,20 +81,20 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         }
         else
         {
-            outputBaseUri = environment.getBaseUri();
+            outputBaseUri = input.baseUri();
         }
         assert outputBaseUri != null;
 
-        final String version = environment.getVariable(XProcOptions.VERSION, DEFAULT_VERSION);
+        final String version = input.getOptionValue(XProcOptions.VERSION, DEFAULT_VERSION);
 
         if (!SUPPORTED_VERSIONS.contains(version))
         {
-            throw XProcExceptions.xc0038(step.getLocation(), version);
+            throw XProcExceptions.xc0038(input.step().getLocation(), version);
         }
-        final XdmNode stylesheet = environment.readNode(step.getPortReference(XProcPorts.STYLESHEET));
+        final XdmNode stylesheet = input.readNode(XProcPorts.STYLESHEET);
         assert stylesheet != null;
 
-        final Processor processor = environment.getPipelineContext().getProcessor();
+        final Processor processor = input.pipelineContext().getProcessor();
 
         // TODO pipeline logging
         final XsltTransformer transformer;
@@ -155,14 +151,14 @@ public final class XsltStepProcessor extends AbstractStepProcessor
             }
         });
 
-        final String initialMode = environment.getVariable(XProcOptions.INITIAL_MODE, null);
+        final String initialMode = input.getOptionValue(XProcOptions.INITIAL_MODE, null);
         if (initialMode != null)
         {
             // FIXME does not handle namespaces
             transformer.setInitialMode(new QName(initialMode));
         }
 
-        final Map<QName, String> parameters = environment.readParameters(step.getPortReference(XProcPorts.PARAMETERS));
+        final Map<QName, String> parameters = input.parameters(XProcPorts.PARAMETERS);
         LOG.debug("parameters = {}", parameters);
         for (final Map.Entry<QName, String> parameter : parameters.entrySet())
         {
@@ -179,7 +175,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
             throw new PipelineException(e);
         }
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.SECONDARY), secondaryPortNodes).writeNodes(
-                step.getPortReference(XProcPorts.RESULT), result.getXdmNode());
+        output.writeNodes(XProcPorts.SECONDARY, secondaryPortNodes);
+        output.writeNodes(XProcPorts.RESULT, result.getXdmNode());
     }
 }

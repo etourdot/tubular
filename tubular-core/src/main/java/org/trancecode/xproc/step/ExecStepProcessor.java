@@ -37,7 +37,6 @@ import org.trancecode.io.TcByteStreams;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.port.XProcPorts;
@@ -60,20 +59,17 @@ public final class ExecStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment) throws Exception
+    protected void execute(final StepInput input, final StepOutput output) throws Exception
     {
-        LOG.trace("{@method} step = {}", step.getName());
+        final String command = input.getOptionValue(XProcOptions.COMMAND);
+        final String argSeparator = input.getOptionValue(XProcOptions.ARG_SEPARATOR, " ");
+        final Iterable<String> args = TcStrings.split(input.getOptionValue(XProcOptions.ARGS), argSeparator);
+        final String cwd = input.getOptionValue(XProcOptions.CWD);
 
-        final String command = environment.getVariable(XProcOptions.COMMAND);
-        final String argSeparator = environment.getVariable(XProcOptions.ARG_SEPARATOR, " ");
-        final Iterable<String> args = TcStrings.split(environment.getVariable(XProcOptions.ARGS), argSeparator);
-        final String cwd = environment.getVariable(XProcOptions.CWD);
-
-        final List<XdmNode> inputDocuments = ImmutableList.copyOf(environment.readNodes(step
-                .getPortReference(XProcPorts.SOURCE)));
+        final List<XdmNode> inputDocuments = ImmutableList.copyOf(input.readNodes(XProcPorts.SOURCE));
         if (inputDocuments.size() > 1)
         {
-            throw XProcExceptions.xd0006(step.getLocation(), step.getPortReference(XProcPorts.SOURCE));
+            throw XProcExceptions.xd0006(input.step().getLocation(), input.step().getPortReference(XProcPorts.SOURCE));
         }
 
         final List<String> commandLine = Lists.newArrayList();
@@ -119,21 +115,19 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final File stderrFile = stderr.get();
         process.destroy();
 
-        final SaxonBuilder builder = new SaxonBuilder(environment.getPipelineContext().getProcessor()
+        final SaxonBuilder builder = new SaxonBuilder(input.pipelineContext().getProcessor()
                 .getUnderlyingConfiguration());
         builder.startDocument();
-        builder.startElement(XProcXmlModel.Elements.RESULT, step.getNode());
-        final boolean isResultXml = Boolean.parseBoolean(environment.getVariable(XProcOptions.RESULT_IS_XML));
+        builder.startElement(XProcXmlModel.Elements.RESULT, input.step().getNode());
+        final boolean isResultXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
         if (isResultXml)
         {
-            final XdmNode resultNode = environment.getPipelineContext().getProcessor().newDocumentBuilder()
-                    .build(stdoutFile);
+            final XdmNode resultNode = input.pipelineContext().getProcessor().newDocumentBuilder().build(stdoutFile);
             builder.nodes(SaxonAxis.childElement(resultNode));
         }
         else
         {
-            final boolean wrapResultLines = Boolean.parseBoolean(environment
-                    .getVariable(XProcOptions.WRAP_RESULT_LINEs));
+            final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINEs));
             if (wrapResultLines)
             {
                 @SuppressWarnings("unchecked")
@@ -154,6 +148,6 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         builder.endElement();
         builder.endDocument();
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), builder.getNode());
+        output.writeNodes(XProcPorts.RESULT, builder.getNode());
     }
 }

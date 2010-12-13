@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import com.google.common.collect.Iterables;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -43,20 +42,16 @@ public final class CountStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment)
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("{@method} step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.COUNT);
-
         // TODO improve performance with "limit" option
-        final int count = Iterables.size(environment.readNodes(step.getPortReference(XProcPorts.SOURCE)));
+        final int count = Iterables.size(input.readNodes(XProcPorts.SOURCE));
         LOG.trace("  count = {}", count);
-        final int limit = Integer.parseInt(environment.getVariable(XProcOptions.LIMIT));
+        final int limit = Integer.parseInt(input.getOptionValue(XProcOptions.LIMIT));
         LOG.trace("  limit = {}", limit);
         final int result = (limit > 0 ? Math.min(count, limit) : count);
         LOG.trace("  result = {}", result);
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT),
-                environment.newResultElement(Integer.toString(result)));
+        output.writeNodes(XProcPorts.RESULT, input.newResultElement(Integer.toString(result)));
     }
 }

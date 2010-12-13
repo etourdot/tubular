@@ -19,10 +19,8 @@ package org.trancecode.xproc.step;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -35,8 +33,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(WrapSequenceStepProcessor.class);
-
     @Override
     public QName stepType()
     {
@@ -44,21 +40,18 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment) throws Exception
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("{@method} step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.WRAP_SEQUENCE);
-
-        final SaxonBuilder builder = new SaxonBuilder(environment.getPipelineContext().getProcessor()
+        final SaxonBuilder builder = new SaxonBuilder(input.pipelineContext().getProcessor()
                 .getUnderlyingConfiguration());
 
-        final String wrapperLocalName = environment.getVariable(XProcOptions.WRAPPER);
-        final String wrapperPrefix = environment.getVariable(XProcOptions.WRAPPER_PREFIX, null);
-        final String wrapperNamespaceUri = environment.getVariable(XProcOptions.WRAPPER_NAMESPACE, null);
+        final String wrapperLocalName = input.getOptionValue(XProcOptions.WRAPPER);
+        final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
+        final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
         final QName wrapper;
         if (wrapperPrefix == null || wrapperNamespaceUri == null)
         {
-            wrapper = new QName(wrapperLocalName, step.getNode());
+            wrapper = new QName(wrapperLocalName, input.step().getNode());
         }
         else
         {
@@ -68,9 +61,9 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         // TODO handle 'group-adjacent' option
 
         builder.startDocument();
-        builder.startElement(wrapper, step.getNode());
+        builder.startElement(wrapper, input.step().getNode());
 
-        for (final XdmNode inputDocument : environment.readNodes(step.getPortReference(XProcPorts.SOURCE)))
+        for (final XdmNode inputDocument : input.readNodes(XProcPorts.SOURCE))
         {
             builder.nodes(SaxonAxis.childElement(inputDocument));
         }
@@ -78,6 +71,6 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         builder.endElement();
         builder.endDocument();
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), builder.getNode());
+        output.writeNodes(XProcPorts.RESULT, builder.getNode());
     }
 }

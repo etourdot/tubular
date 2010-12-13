@@ -26,7 +26,6 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Jaxp;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -45,34 +44,30 @@ public final class LoadStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment)
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.LOAD);
-
-        final String href = environment.getVariable(XProcOptions.HREF);
+        final String href = input.getOptionValue(XProcOptions.HREF);
         assert href != null;
         LOG.trace("href = {}", href);
 
-        final boolean validate = Boolean.parseBoolean(environment.getVariable(XProcOptions.VALIDATE));
+        final boolean validate = Boolean.parseBoolean(input.getOptionValue(XProcOptions.VALIDATE));
         LOG.trace("validate = {}", validate);
 
         final Source source;
         try
         {
-            source = environment.getPipelineContext().getUriResolver()
-                    .resolve(href, environment.getBaseUri().toString());
+            source = input.pipelineContext().getUriResolver().resolve(href, input.baseUri().toString());
         }
         catch (final Exception e)
         {
             throw new PipelineException("Error while trying to read document ; href = %s ; baseUri = %s", e, href,
-                    environment.getBaseUri());
+                    input.baseUri());
         }
 
         final XdmNode document;
         try
         {
-            document = environment.getPipelineContext().getProcessor().newDocumentBuilder().build(source);
+            document = input.pipelineContext().getProcessor().newDocumentBuilder().build(source);
         }
         catch (final SaxonApiException e)
         {
@@ -83,6 +78,6 @@ public final class LoadStepProcessor extends AbstractStepProcessor
             Jaxp.closeQuietly(source, LOG);
         }
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), document);
+        output.writeNodes(XProcPorts.RESULT, document);
     }
 }

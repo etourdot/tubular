@@ -35,7 +35,6 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.trancecode.io.Uris;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -55,17 +54,16 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment) throws Exception
+    protected void execute(final StepInput input, final StepOutput output) throws Exception
     {
-        LOG.trace("{@method} step = {}", step);
-        final XdmNode source = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
+        final XdmNode source = input.readNode(XProcPorts.SOURCE);
 
-        final String href = environment.getVariable(XProcOptions.CONTENT_TYPE, null);
+        final String href = input.getOptionValue(XProcOptions.CONTENT_TYPE, null);
         assert href != null;
-        final OutputStream resultOutputStream = environment.getPipelineContext().getOutputResolver()
+        final OutputStream resultOutputStream = input.pipelineContext().getOutputResolver()
                 .resolveOutputStream(href, source.getBaseURI().toString());
 
-        final String contentType = environment.getVariable(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
+        final String contentType = input.getOptionValue(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
         final FopFactory fopFactory = FopFactory.newInstance();
         final Fop fop = fopFactory.newFop(contentType, resultOutputStream);
         fop.getUserAgent().setURIResolver(new URIResolver()
@@ -74,7 +72,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
             public Source resolve(final String href, final String base) throws TransformerException
             {
                 final URI uri = Uris.resolve(href, base);
-                final InputStream inputStream = environment.getPipelineContext().getInputResolver()
+                final InputStream inputStream = input.pipelineContext().getInputResolver()
                         .resolveInputStream(href, base);
                 return new StreamSource(inputStream, uri.toString());
             }
@@ -85,6 +83,5 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
 
         // TODO run FOP
         // TODO build result
-        return null;
     }
 }

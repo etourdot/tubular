@@ -33,7 +33,6 @@ import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -56,16 +55,13 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment)
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("{@method} step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.ADD_ATTRIBUTE);
-
-        final String match = environment.getVariable(XProcOptions.MATCH);
-        final String attributeName = environment.getVariable(XProcOptions.ATTRIBUTE_NAME);
-        final String attributePrefix = environment.getVariable(XProcOptions.ATTRIBUTE_PREFIX);
-        final String attributeNamespace = environment.getVariable(XProcOptions.ATTRIBUTE_NAMESPACE);
-        final String attributeValue = environment.getVariable(XProcOptions.ATTRIBUTE_VALUE);
+        final String match = input.getOptionValue(XProcOptions.MATCH);
+        final String attributeName = input.getOptionValue(XProcOptions.ATTRIBUTE_NAME);
+        final String attributePrefix = input.getOptionValue(XProcOptions.ATTRIBUTE_PREFIX);
+        final String attributeNamespace = input.getOptionValue(XProcOptions.ATTRIBUTE_NAMESPACE);
+        final String attributeValue = input.getOptionValue(XProcOptions.ATTRIBUTE_VALUE);
 
         // Check required attributes are set
         assert match != null;
@@ -79,7 +75,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         // @attribute-namespace ?
         if ((attributeNamespace != null || attributePrefix != null) && attributeName.contains(":"))
         {
-            throw XProcExceptions.xd0034(step.getLocation());
+            throw XProcExceptions.xd0034(input.step().getLocation());
         }
 
         // Create the attribute QName
@@ -91,25 +87,25 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         }
         else
         {
-            attributeQName = new QName(attributeName, step.getNode());
+            attributeQName = new QName(attributeName, input.step().getNode());
         }
 
         // Check the step is not used for a new namespace declaration
         if ("http://www.w3.org/2000/xmlns/".equals(attributeQName.getNamespaceURI())
                 || ("xmlns".equals(attributeQName.toString())))
         {
-            throw XProcExceptions.xc0059(step.getLocation());
+            throw XProcExceptions.xc0059(input.step().getLocation());
         }
 
         // TODO catch IllegalArgumentException to statically check the
         // XSLTMatchPattern ?
-        final SaxonProcessor matchProcessor = new SaxonProcessor(environment.getPipelineContext().getProcessor(),
-                new MatchSaxonProcessorDelegate(environment.getPipelineContext().getProcessor(), match,
-                        new AddAttributeProcessorDelegate(step, attributeQName, attributeValue),
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
+                new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match,
+                        new AddAttributeProcessorDelegate(input.step(), attributeQName, attributeValue),
                         new CopyingSaxonProcessorDelegate()));
-        final XdmNode inputDoc = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
+        final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
         final XdmNode result = matchProcessor.apply(inputDoc);
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT), result);
+        output.writeNodes(XProcPorts.RESULT, result);
     }
 
     private static class AddAttributeProcessorDelegate extends AbstractMatchProcessorDelegate

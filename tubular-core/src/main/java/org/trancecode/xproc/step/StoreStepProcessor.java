@@ -30,7 +30,6 @@ import net.sf.saxon.s9api.Serializer.Property;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -56,13 +55,13 @@ public final class StoreStepProcessor extends AbstractStepProcessor
     }
 
     @Override
-    protected Environment doRun(final Step step, final Environment environment)
+    protected void execute(final StepInput input, final StepOutput output)
     {
-        final XdmNode node = environment.readNode(step.getPortReference(XProcPorts.SOURCE));
+        final XdmNode node = input.readNode(XProcPorts.SOURCE);
         assert node != null;
 
-        final URI baseUri = environment.getBaseUri();
-        final String providedHref = environment.getVariable(XProcOptions.HREF);
+        final URI baseUri = input.baseUri();
+        final String providedHref = input.getOptionValue(XProcOptions.HREF);
         final String href;
         if (providedHref != null)
         {
@@ -75,27 +74,20 @@ public final class StoreStepProcessor extends AbstractStepProcessor
 
         final URI outputUri = baseUri.resolve(href);
 
-        final String mimeType = environment.getVariable(XProcOptions.MEDIA_TYPE, DEFAULT_MIMETYPE);
-
-        final String encoding = environment.getVariable(XProcOptions.ENCODING, DEFAULT_ENCODING);
-
-        final String omitXmlDeclaration = environment.getVariable(XProcOptions.OMIT_XML_DECLARATION,
+        final String mimeType = input.getOptionValue(XProcOptions.MEDIA_TYPE, DEFAULT_MIMETYPE);
+        final String encoding = input.getOptionValue(XProcOptions.ENCODING, DEFAULT_ENCODING);
+        final String omitXmlDeclaration = input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION,
                 DEFAULT_OMIT_XML_DECLARATION);
-
-        final String doctypePublicId = environment.getVariable(XProcOptions.DOCTYPE_PUBLIC, DEFAULT_DOCTYPE_PUBLIC);
-
-        final String doctypeSystemId = environment.getVariable(XProcOptions.DOCTYPE_SYSTEM, DEFAULT_DOCTYPE_SYSTEM);
-
-        final String method = environment.getVariable(XProcOptions.METHOD, DEFAULT_METHOD);
-
-        final boolean indent = Boolean.parseBoolean(environment.getVariable(XProcOptions.INDENT));
+        final String doctypePublicId = input.getOptionValue(XProcOptions.DOCTYPE_PUBLIC, DEFAULT_DOCTYPE_PUBLIC);
+        final String doctypeSystemId = input.getOptionValue(XProcOptions.DOCTYPE_SYSTEM, DEFAULT_DOCTYPE_SYSTEM);
+        final String method = input.getOptionValue(XProcOptions.METHOD, DEFAULT_METHOD);
+        final boolean indent = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INDENT));
 
         LOG.debug("Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
                 href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
-        assert environment.getPipelineContext().getOutputResolver() != null;
-        final OutputStream targetOutputStream = environment.getPipelineContext().getOutputResolver()
-                .resolveOutputStream(href, environment.getBaseUri().toString());
+        final OutputStream targetOutputStream = input.pipelineContext().getOutputResolver()
+                .resolveOutputStream(href, input.baseUri().toString());
 
         final Serializer serializer = new Serializer();
         serializer.setOutputStream(targetOutputStream);
@@ -120,7 +112,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
 
         try
         {
-            environment.getPipelineContext().getProcessor().writeXdmValue(node, serializer);
+            input.pipelineContext().getProcessor().writeXdmValue(node, serializer);
             targetOutputStream.close();
         }
         catch (final Exception e)
@@ -132,7 +124,6 @@ public final class StoreStepProcessor extends AbstractStepProcessor
             Closeables.closeQuietly(targetOutputStream);
         }
 
-        return environment.writeNodes(step.getPortReference(XProcPorts.RESULT),
-                environment.newResultElement(outputUri.toString()));
+        output.writeNodes(XProcPorts.RESULT, input.newResultElement(outputUri.toString()));
     }
 }
