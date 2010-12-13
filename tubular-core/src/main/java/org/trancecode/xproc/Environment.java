@@ -709,7 +709,7 @@ public class Environment implements HasPipelineContext
             }
         }
 
-        return parameters;
+        return ImmutableMap.copyOf(parameters);
     }
 
     public XdmNode newParameterElement(final QName name, final String value)
