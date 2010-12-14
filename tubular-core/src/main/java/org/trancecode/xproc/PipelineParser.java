@@ -229,7 +229,7 @@ public class PipelineParser
                 return step;
             }
 
-            LOG.warn("child element not supported: {}", node.getNodeName());
+            throw XProcExceptions.xs0044(node);
         }
         else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
         {

@@ -22,7 +22,9 @@ package org.trancecode.xproc;
 import java.net.URI;
 
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.xml.Location;
+import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcException.Type;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.variable.Variable;
@@ -73,6 +75,12 @@ public final class XProcExceptions
     {
         return newXProcException(Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)",
                 optionName, stepType);
+    }
+
+    public static XProcException xs0044(final XdmNode element)
+    {
+        return newXProcException(Type.STATIC, 44, SaxonLocation.of(element), "Unsupported element: %s",
+                element.getNodeName());
     }
 
     public static XProcException xs0052(final Location location, final URI uri)
