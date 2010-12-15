@@ -46,11 +46,13 @@ import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
+import org.trancecode.xproc.step.CatchStepProcessor;
 import org.trancecode.xproc.step.ChooseStepProcessor;
 import org.trancecode.xproc.step.ForEachStepProcessor;
 import org.trancecode.xproc.step.GroupStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
+import org.trancecode.xproc.step.TryStepProcessor;
 import org.trancecode.xproc.step.WhenStepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
 
@@ -162,12 +164,13 @@ public final class Configuration implements PipelineContext
     {
         final Map<QName, Step> coreSteps = Maps.newHashMap();
 
+        coreSteps.put(XProcSteps.CATCH, CatchStepProcessor.STEP);
         coreSteps.put(XProcSteps.CHOOSE, ChooseStepProcessor.STEP);
         coreSteps.put(XProcSteps.FOR_EACH, ForEachStepProcessor.STEP);
         coreSteps.put(XProcSteps.GROUP, GroupStepProcessor.STEP);
         coreSteps.put(XProcSteps.OTHERWISE, WhenStepProcessor.STEP_OTHERWISE);
+        coreSteps.put(XProcSteps.TRY, TryStepProcessor.STEP);
         coreSteps.put(XProcSteps.WHEN, WhenStepProcessor.STEP_WHEN);
-        // TODO coreSteps.put(XProcSteps.TRY, null);
 
         return ImmutableMap.copyOf(coreSteps);
     }

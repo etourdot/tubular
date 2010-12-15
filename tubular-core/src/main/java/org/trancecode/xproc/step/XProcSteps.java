@@ -39,6 +39,7 @@ public final class XProcSteps
     public static final QName ANY = Tubular.namespace().newSaxonQName("any");
 
     // Core steps
+    public static final QName CATCH = XProcXmlModel.xprocNamespace().newSaxonQName("catch");
     public static final QName CHOOSE = XProcXmlModel.xprocNamespace().newSaxonQName("choose");
     public static final QName FOR_EACH = XProcXmlModel.xprocNamespace().newSaxonQName("for-each");
     public static final QName GROUP = XProcXmlModel.xprocNamespace().newSaxonQName("group");
@@ -47,8 +48,8 @@ public final class XProcSteps
     public static final QName TRY = XProcXmlModel.xprocNamespace().newSaxonQName("try");
     public static final QName WHEN = XProcXmlModel.xprocNamespace().newSaxonQName("when");
 
-    public static final Set<QName> CORE_STEPS = ImmutableSet
-            .of(CHOOSE, FOR_EACH, GROUP, OTHERWISE, PIPELINE, TRY, WHEN);
+    public static final Set<QName> CORE_STEPS = ImmutableSet.of(CATCH, CHOOSE, FOR_EACH, GROUP, OTHERWISE, PIPELINE,
+            TRY, WHEN);
     public static final Set<QName> WHEN_STEPS = ImmutableSet.of(OTHERWISE, WHEN);
 
     // Required steps
