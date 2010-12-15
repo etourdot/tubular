@@ -42,7 +42,6 @@ import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Uris;
 import org.trancecode.xml.saxon.Saxon;
@@ -57,29 +56,22 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     private static final org.trancecode.logging.Logger LOG = org.trancecode.logging.Logger
             .getLogger(AbstractXProcTest.class);
-    private static XProcTestSuiteReportBuilder reportBuilder;
-    private static Class<?> testClass;
+    private XProcTestSuiteReportBuilder reportBuilder;
 
     @BeforeClass
-    public static void setupReportBuilder()
+    public void setupReportBuilder()
     {
         reportBuilder = new XProcTestSuiteReportBuilder();
     }
 
-    @BeforeTest
-    public void setClass()
-    {
-        testClass = getClass();
-    }
-
     @AfterClass
-    public static void writeReportToFile() throws Exception
+    public void writeReportToFile() throws Exception
     {
         final String reportDirectoryPath = System.getProperty(PROPERTY_TARGET_DIRECTORY, DEFAULT_TARGET_DIRECTORY);
         final File reportDirectory = new File(reportDirectoryPath, "xproc-test-reports");
         FileUtils.forceMkdir(reportDirectory);
         LOG.info("report directory: {}", reportDirectory.getAbsolutePath());
-        final File reportFile = new File(reportDirectory, testClass.getSimpleName() + ".xml");
+        final File reportFile = new File(reportDirectory, getClass().getSimpleName() + ".xml");
         LOG.info("report file: {}", reportFile.getAbsolutePath());
         reportBuilder.write(reportFile);
     }
