@@ -510,4 +510,9 @@ public final class Step extends AbstractHasLocation
     {
         return PortReference.newReference(name, portName);
     }
+
+    public StepProcessor getStepProcessor()
+    {
+        return stepProcessor;
+    }
 }
