@@ -42,6 +42,9 @@ public final class XProcOptions
     public static final QName ATTRIBUTE_VALUE = new QName("attribute-value");
     public static final QName BYTE_ORDER_MARK = new QName("byte-order-mark");
     public static final QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
+    public static final QName CODE = new QName("code");
+    public static final QName CODE_PREFIX = new QName("code-prefix");
+    public static final QName CODE_NAMESPACE = new QName("code-namespace");
     public static final QName COMMAND = new QName("command");
     public static final QName CONTENT_TYPE = new QName("content-type");
     public static final QName CWD = new QName("cwd");
