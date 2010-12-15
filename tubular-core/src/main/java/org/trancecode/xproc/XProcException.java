@@ -73,12 +73,23 @@ public final class XProcException extends BaseException
     public XProcException(final Type type, final int code, final Location location, final String message,
             final Object... parameters)
     {
+        this(namespace().newSaxonQName(getLabel(type, code)), type, code, location, message, parameters);
+    }
+
+    public XProcException(final QName name, final Location location, final String message, final Object... parameters)
+    {
+        this(name, null, 0, location, message, parameters);
+    }
+
+    private XProcException(final QName name, final Type type, final int code, final Location location,
+            final String message, final Object... parameters)
+    {
         super(message, parameters);
 
         this.type = type;
         this.code = code;
         this.location = location;
-        this.name = namespace().newSaxonQName(getLabel());
+        this.name = name;
     }
 
     public QName name()
@@ -96,7 +107,7 @@ public final class XProcException extends BaseException
         return location;
     }
 
-    public String getLabel()
+    private static String getLabel(final Type type, final int code)
     {
         final StringBuilder buffer = new StringBuilder();
         buffer.append(code);
@@ -107,6 +118,11 @@ public final class XProcException extends BaseException
         buffer.insert(0, type);
 
         return buffer.toString();
+    }
+
+    public String getLabel()
+    {
+        return getLabel(type, code);
     }
 
     @Override
