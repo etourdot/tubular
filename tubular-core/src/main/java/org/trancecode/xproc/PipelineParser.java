@@ -143,6 +143,7 @@ public class PipelineParser
         if (context.getStepProcessors().containsKey(type))
         {
             final StepProcessor stepProcessor = context.getStepProcessor(type);
+            LOG.trace("stepProcessor = {}", stepProcessor);
             step = Step.newStep(stepNode, type, stepProcessor, false);
         }
         else
