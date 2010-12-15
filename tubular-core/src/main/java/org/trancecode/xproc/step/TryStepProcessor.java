@@ -32,7 +32,7 @@ import org.trancecode.xproc.port.Port;
 public final class TryStepProcessor extends AbstractCompoundStepProcessor
 {
     public static final TryStepProcessor INSTANCE = new TryStepProcessor();
-    public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true);
+    public static final Step STEP = Step.newStep(XProcSteps.TRY, INSTANCE, true);
 
     private static final Logger LOG = Logger.getLogger(TryStepProcessor.class);
 
