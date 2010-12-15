@@ -507,6 +507,7 @@ public class PipelineParser
         final Step declaredStep = getDeclaredStep(type);
         Step step = declaredStep.setName(name).setLocation(getLocation(node)).setNode(node);
         LOG.trace("new instance step: {}", step);
+        LOG.trace("step processor: {}", step.getStepProcessor());
 
         step = parseStepChildNodes(node, step);
 
