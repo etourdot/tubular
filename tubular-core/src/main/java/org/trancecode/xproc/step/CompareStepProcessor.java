@@ -38,7 +38,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:compare}.
  * 
  * @author Herve Quiroz
- * @see <a href="http://www.w3.org/TR/xproc/#c.count">p:count</a>
+ * @see <a href="http://www.w3.org/TR/xproc/#c.compare">p:compare</a>
  */
 public final class CompareStepProcessor extends AbstractStepProcessor
 {
