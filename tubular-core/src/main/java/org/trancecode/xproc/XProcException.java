@@ -76,9 +76,10 @@ public final class XProcException extends BaseException
         this(namespace().newSaxonQName(getLabel(type, code)), type, code, location, message, parameters);
     }
 
-    public XProcException(final QName name, final Location location, final String message, final Object... parameters)
+    public XProcException(final QName name, final Type type, final Location location, final String message,
+            final Object... parameters)
     {
-        this(name, null, 0, location, message, parameters);
+        this(name, type, 0, location, message, parameters);
     }
 
     private XProcException(final QName name, final Type type, final int code, final Location location,
