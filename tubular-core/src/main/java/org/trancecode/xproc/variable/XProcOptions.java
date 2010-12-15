@@ -50,6 +50,7 @@ public final class XProcOptions
     public static final QName DTD_VALIDATE = new QName("dtd-validate");
     public static final QName ENCODING = new QName("encoding");
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
+    public static final QName FAIL_IF_NOT_EQUAL = new QName("fail-if-not-equal");
     public static final QName GROUP_ADJACENT = new QName("group-adjacent");
     public static final QName HREF = new QName("href");
     public static final QName INCLUDE_CONTENT_TYPE = new QName("include-content-type");

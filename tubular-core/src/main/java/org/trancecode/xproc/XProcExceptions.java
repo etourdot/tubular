@@ -27,6 +27,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcException.Type;
 import org.trancecode.xproc.port.PortReference;
+import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
 
 /**
@@ -91,6 +92,12 @@ public final class XProcExceptions
                 location,
                 "%s cannot be retrieved or if, once retrieved, it does not point to a p:library, p:declare-step, or p:pipeline",
                 uri);
+    }
+
+    public static XProcException xc0019(final Step step)
+    {
+        return newXProcException(Type.STEP, 19, step.getLocation(), "Documents are not equal in step %s",
+                step.getName());
     }
 
     public static XProcException xc0023(final Location location)

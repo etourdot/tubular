@@ -1,4 +1,5 @@
 org.trancecode.xproc.step.AddAttributeStepProcessor
+org.trancecode.xproc.step.CompareStepProcessor
 org.trancecode.xproc.step.CountStepProcessor
 org.trancecode.xproc.step.ExecStepProcessor
 org.trancecode.xproc.step.IdentityStepProcessor
