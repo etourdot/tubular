@@ -23,6 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.step.CatchStepProcessor;
 import org.trancecode.xproc.step.ChooseStepProcessor;
 import org.trancecode.xproc.step.ForEachStepProcessor;
@@ -66,6 +68,7 @@ public final class Configuration implements PipelineContext
     private static final Map<QName, Step> CORE_LIBRARY = getCoreLibrary();
     private static final URI DEFAULT_LIBRARY_URI = URI.create("trancecode:tubular:default-library.xpl");
     private static final Set<URI> EMPTY_SET_OF_URIS = ImmutableSet.of();
+    private static final Logger LOG = Logger.getLogger(Configuration.class);
 
     private ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private URIResolver uriResolver;
@@ -144,20 +147,46 @@ public final class Configuration implements PipelineContext
         final PipelineParser parser = new PipelineParser(context, defaultLibrarySource);
         parser.parse();
 
+        LOG.trace("supported steps: {}", parser.getLibrary().stepTypes());
+
         return parser.getLibrary();
     }
 
     private static Map<QName, StepProcessor> getDefaultStepProcessors()
     {
-        final Iterable<StepProcessor> processors = ServiceLoader.load(StepProcessor.class);
-        return ImmutableMap.copyOf(Maps.uniqueIndex(processors, new Function<StepProcessor, QName>()
+        final Map<QName, StepProcessor> processors = Maps.newHashMap();
+        final Map<QName, StepProcessor> availableProcessors = Maps.uniqueIndex(ServiceLoader.load(StepProcessor.class),
+                new Function<StepProcessor, QName>()
+                {
+                    @Override
+                    public QName apply(final StepProcessor stepProcessor)
+                    {
+                        return stepProcessor.stepType();
+                    }
+                });
+        processors.putAll(availableProcessors);
+        for (final QName stepType : Iterables.concat(XProcSteps.REQUIRED_STEPS, XProcSteps.OPTIONAL_STEPS))
         {
-            @Override
-            public QName apply(final StepProcessor stepProcessor)
+            if (!processors.containsKey(stepType))
             {
-                return stepProcessor.stepType();
+                processors.put(stepType, new StepProcessor()
+                {
+                    @Override
+                    public QName stepType()
+                    {
+                        return stepType;
+                    }
+
+                    @Override
+                    public Environment run(final Step step, final Environment environment)
+                    {
+                        throw new UnsupportedOperationException(stepType.toString());
+                    }
+                });
             }
-        }));
+        }
+
+        return ImmutableMap.copyOf(processors);
     }
 
     private static Map<QName, Step> getCoreLibrary()
