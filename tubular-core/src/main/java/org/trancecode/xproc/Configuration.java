@@ -70,11 +70,13 @@ public final class Configuration implements PipelineContext
     private static final Set<URI> EMPTY_SET_OF_URIS = ImmutableSet.of();
     private static final Logger LOG = Logger.getLogger(Configuration.class);
 
+    private static PipelineLibrary DEFAULT_PIPELINE_LIBRARY = getDefaultLPipelineLibrary();
+
     private ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private URIResolver uriResolver;
     private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
     private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
-    private PipelineLibrary library = getDefaultLPipelineLibrary();
+    private PipelineLibrary library = DEFAULT_PIPELINE_LIBRARY;
     private final Processor processor;
     private final Map<QName, StepProcessor> stepProcessors = Maps.newHashMap(DEFAULT_STEP_PROCESSORS);
 
