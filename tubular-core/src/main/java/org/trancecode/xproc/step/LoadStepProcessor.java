@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import javax.xml.transform.Source;
 
+import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
@@ -50,8 +51,8 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         assert href != null;
         LOG.trace("href = {}", href);
 
-        final boolean validate = Boolean.parseBoolean(input.getOptionValue(XProcOptions.VALIDATE));
-        LOG.trace("validate = {}", validate);
+        final boolean validate = Boolean.parseBoolean(input.getOptionValue(XProcOptions.DTD_VALIDATE));
+        LOG.trace("dtd-validate = {}", validate);
 
         final Source source;
         try
@@ -67,7 +68,9 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final XdmNode document;
         try
         {
-            document = input.pipelineContext().getProcessor().newDocumentBuilder().build(source);
+            final DocumentBuilder documentBuilder = input.pipelineContext().getProcessor().newDocumentBuilder();
+            documentBuilder.setDTDValidation(validate);
+            document = documentBuilder.build(source);
         }
         catch (final SaxonApiException e)
         {
