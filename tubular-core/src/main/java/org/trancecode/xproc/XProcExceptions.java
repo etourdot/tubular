@@ -19,10 +19,13 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.ImmutableList;
+
 import java.net.URI;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcException.Type;
@@ -100,10 +103,18 @@ public final class XProcExceptions
                 step.getName());
     }
 
-    public static XProcException xc0023(final Location location)
+    public static XProcException xc0023(final Location location, final XdmNodeKind actualNodeType,
+            final XdmNodeKind... allowedNodeTypes)
+    {
+        return xc0023(location, actualNodeType, ImmutableList.copyOf(allowedNodeTypes));
+    }
+
+    public static XProcException xc0023(final Location location, final XdmNodeKind actualNodeType,
+            final Iterable<XdmNodeKind> allowedNodeTypes)
     {
         return newXProcException(Type.STEP, 23, location,
-                "It is a dynamic error if a select expression or match pattern returns a node type that is not allowed by the step.");
+                "Selected node type %s is not allowed by the step ; allowed types: %s ", actualNodeType,
+                allowedNodeTypes);
     }
 
     public static XProcException xc0038(final Location location, final String version)

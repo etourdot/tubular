@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import java.util.EnumSet;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
@@ -110,6 +112,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
 
     private static class AddAttributeProcessorDelegate extends AbstractMatchProcessorDelegate
     {
+        private static final Iterable<XdmNodeKind> ALLOWED_NODE_TYPES = ImmutableSet.of(XdmNodeKind.ELEMENT);
 
         private final QName attributeQName;
         private final String attributeValue;
@@ -206,6 +209,12 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
 
             // Process the children, attributes have already been processed
             return EnumSet.of(NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+        }
+
+        @Override
+        protected Iterable<XdmNodeKind> allowedNodeTypes()
+        {
+            return ALLOWED_NODE_TYPES;
         }
     }
 }

@@ -17,9 +17,12 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.EnumSet;
 
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
@@ -46,13 +49,13 @@ public abstract class AbstractMatchProcessorDelegate implements SaxonProcessorDe
     @Override
     public void attribute(final XdmNode node, final SaxonBuilder builder)
     {
-        throw XProcExceptions.xc0023(step.getLocation());
+        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
     }
 
     @Override
     public void comment(final XdmNode node, final SaxonBuilder builder)
     {
-        throw XProcExceptions.xc0023(step.getLocation());
+        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
     }
 
     @Override
@@ -70,25 +73,29 @@ public abstract class AbstractMatchProcessorDelegate implements SaxonProcessorDe
     @Override
     public void processingInstruction(final XdmNode node, final SaxonBuilder builder)
     {
-        throw XProcExceptions.xc0023(step.getLocation());
+        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
     }
 
     @Override
     public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
     {
-        throw XProcExceptions.xc0023(step.getLocation());
+        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
     }
 
     @Override
     public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
     {
-        throw XProcExceptions.xc0023(step.getLocation());
+        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
     }
 
     @Override
     public void text(final XdmNode node, final SaxonBuilder builder)
     {
-        throw XProcExceptions.xc0023(step.getLocation());
+        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
     }
 
+    protected Iterable<XdmNodeKind> allowedNodeTypes()
+    {
+        return ImmutableSet.of();
+    }
 }
