@@ -100,7 +100,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         // TODO catch IllegalArgumentException to statically check the
         // XSLTMatchPattern ?
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match,
+                new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step().getNode(),
                         new AddAttributeProcessorDelegate(input.step(), attributeQName, attributeValue),
                         new CopyingSaxonProcessorDelegate()));
         final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
