@@ -22,10 +22,14 @@ package org.trancecode.xproc.step;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.XmlnsNamespace;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.DeleteSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -52,9 +56,22 @@ public final class DeleteStepProcessor extends AbstractStepProcessor
         final String match = input.getOptionValue(XProcOptions.MATCH);
         LOG.trace("match = {}", match);
 
+        final SaxonProcessorDelegate delete = new DeleteSaxonProcessorDelegate()
+        {
+            @Override
+            public void attribute(final XdmNode node, final SaxonBuilder builder)
+            {
+                if (XmlnsNamespace.instance().uri().equals(node.getNodeName().getNamespaceURI()))
+                {
+                    throw XProcExceptions.xc0062(input.getLocation(), node);
+                }
+
+                super.attribute(node, builder);
+            }
+        };
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
                 new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step().getNode(),
-                        new DeleteSaxonProcessorDelegate(), new CopyingSaxonProcessorDelegate()));
+                        delete, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);
         output.writeNodes(XProcPorts.RESULT, result);

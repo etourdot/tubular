@@ -34,6 +34,8 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.HasLocation;
+import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.XProcException;
@@ -78,7 +80,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         }
     }
 
-    protected static final class StepInput
+    protected static final class StepInput implements HasLocation
     {
         private final Environment environment;
         private Map<QName, String> parameters;
@@ -88,6 +90,12 @@ public abstract class AbstractStepProcessor implements StepProcessor
         {
             this.step = step;
             this.environment = environment;
+        }
+
+        @Override
+        public Location getLocation()
+        {
+            return step.getLocation();
         }
 
         public PipelineContext pipelineContext()

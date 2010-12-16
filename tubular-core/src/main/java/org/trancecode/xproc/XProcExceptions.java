@@ -120,6 +120,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the QName value in the attribute-name option uses the prefix \"xmlns\" or any other prefix that resolves to the namespace name \"http://www.w3.org/2000/xmlns/\".");
     }
 
+    public static XProcException xc0062(final Location location, final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 62, location, "the match option matches a namespace node: %s",
+                node.getNodeName());
+    }
+
     private static XProcException newXProcException(final Type type, final int code, final Location location,
             final String message, final Object... parameters)
     {
