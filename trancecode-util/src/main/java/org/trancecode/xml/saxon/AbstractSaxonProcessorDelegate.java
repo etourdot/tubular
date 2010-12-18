@@ -15,13 +15,11 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
-package org.trancecode.xproc.step;
+package org.trancecode.xml.saxon;
 
 import java.util.EnumSet;
 
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 
 /**
  * Base class for {@link SaxonProcessorDelegate} implementations that just throw
