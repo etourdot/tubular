@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.HasLocation;
@@ -158,6 +159,16 @@ public abstract class AbstractStepProcessor implements StepProcessor
         public String getParameterValue(final QName name, final String defaultValue)
         {
             return TcMaps.get(parameters, name, defaultValue);
+        }
+
+        public XdmValue evaluateXPath(final String select)
+        {
+            return environment.evaluateXPath(select);
+        }
+
+        public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode)
+        {
+            return environment.evaluateXPath(select, xpathContextNode);
         }
     }
 
