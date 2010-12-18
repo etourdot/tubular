@@ -46,6 +46,7 @@ public final class XProcSteps
     public static final QName OTHERWISE = XProcXmlModel.xprocNamespace().newSaxonQName("otherwise");
     public static final QName PIPELINE = XProcXmlModel.xprocNamespace().newSaxonQName("pipeline");
     public static final QName TRY = XProcXmlModel.xprocNamespace().newSaxonQName("try");
+    public static final QName VIEWPORT = XProcXmlModel.xprocNamespace().newSaxonQName("viewport");
     public static final QName WHEN = XProcXmlModel.xprocNamespace().newSaxonQName("when");
 
     public static final Set<QName> CORE_STEPS = ImmutableSet.of(CATCH, CHOOSE, FOR_EACH, GROUP, OTHERWISE, PIPELINE,
