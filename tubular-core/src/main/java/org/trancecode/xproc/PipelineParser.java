@@ -292,6 +292,11 @@ public class PipelineParser
             return XProcPorts.ITERATION_SOURCE;
         }
 
+        if (portNode.getNodeName().equals(Elements.VIEWPORT_SOURCE))
+        {
+            return XProcPorts.VIEWPORT_SOURCE;
+        }
+
         if (portNode.getNodeName().equals(Elements.XPATH_CONTEXT))
         {
             return XProcPorts.XPATH_CONTEXT;
