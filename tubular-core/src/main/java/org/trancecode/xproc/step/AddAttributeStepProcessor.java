@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.EnumSet;
@@ -27,11 +28,15 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonBuilders;
 import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonProcessorDelegates;
+import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -40,6 +45,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * Step processor for the p:add-attribute standard XProc step.
  * 
  * @author Romain Deltour
+ * @author Herve Quiroz
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.add-attribute">p:add-attribute</a>
  */
@@ -96,55 +102,50 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
             throw XProcExceptions.xc0059(input.step().getLocation());
         }
 
-        // TODO catch IllegalArgumentException to statically check the
-        // XSLTMatchPattern ?
+        final SaxonProcessorDelegate addAttribute = new AbstractSaxonProcessorDelegate()
+        {
+            @Override
+            public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
+            {
+                builder.startElement(node.getNodeName(), node);
+
+                final QName fixedupQName = SaxonBuilders.addAttribute(attributeQName, attributeValue, node, builder);
+
+                // Add all the other attributes
+                for (final XdmNode attribute : SaxonAxis.attributes(node))
+                {
+                    if (!attribute.getNodeName().equals(fixedupQName))
+                    {
+                        builder.attribute(attribute.getNodeName(), attribute.getStringValue());
+                    }
+                }
+
+                // Process the children, attributes have already been processed
+                return EnumSet.of(NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+            }
+
+            @Override
+            public void endElement(final XdmNode node, final SaxonBuilder builder)
+            {
+                builder.endElement();
+            }
+        };
+        final SaxonProcessorDelegate addAttributeForElements = SaxonProcessorDelegates.forNodeKinds(
+                ImmutableSet.of(XdmNodeKind.ELEMENT), addAttribute,
+                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
+                {
+                    @Override
+                    public XProcException apply(final XdmNode node)
+                    {
+                        return XProcExceptions.xc0023(node, XdmNodeKind.ELEMENT);
+                    }
+                }));
+
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
-                        .getNode(), new AddAttributeProcessorDelegate(input.step(), attributeQName, attributeValue),
-                        new CopyingSaxonProcessorDelegate()));
+                        .getNode(), addAttributeForElements, new CopyingSaxonProcessorDelegate()));
         final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
         final XdmNode result = matchProcessor.apply(inputDoc);
         output.writeNodes(XProcPorts.RESULT, result);
-    }
-
-    private static class AddAttributeProcessorDelegate extends AbstractMatchProcessorDelegate
-    {
-        private static final Iterable<XdmNodeKind> ALLOWED_NODE_TYPES = ImmutableSet.of(XdmNodeKind.ELEMENT);
-
-        private final QName attributeQName;
-        private final String attributeValue;
-
-        public AddAttributeProcessorDelegate(final Step step, final QName attributeQName, final String attributeValue)
-        {
-            super(step);
-            this.attributeQName = attributeQName;
-            this.attributeValue = attributeValue;
-        }
-
-        @Override
-        public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
-        {
-            builder.startElement(node.getNodeName(), node);
-
-            final QName fixedupQName = addAttribute(attributeQName, attributeValue, node, builder);
-
-            // Add all the other attributes
-            for (final XdmNode attribute : SaxonAxis.attributes(node))
-            {
-                if (!attribute.getNodeName().equals(fixedupQName))
-                {
-                    builder.attribute(attribute.getNodeName(), attribute.getStringValue());
-                }
-            }
-
-            // Process the children, attributes have already been processed
-            return EnumSet.of(NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
-        }
-
-        @Override
-        protected Iterable<XdmNodeKind> allowedNodeTypes()
-        {
-            return ALLOWED_NODE_TYPES;
-        }
     }
 }

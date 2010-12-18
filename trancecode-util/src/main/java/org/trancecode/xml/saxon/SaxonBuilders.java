@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Romain Deltour
+ * Copyright (C) 2010 TranceCode Software
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,40 +15,27 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
-package org.trancecode.xproc.step;
+package org.trancecode.xml.saxon;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.SaxonAxis;
-import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xml.saxon.SaxonProcessorDelegate;
-import org.trancecode.xproc.XProcExceptions;
 
 /**
- * Abstract processor delegate that implements all the
- * {@link SaxonProcessorDelegate} methods by throwing an <code>err:XC0023</code>
- * error: <i>It is a dynamic error if a select expression or match pattern
- * returns a node type that is not allowed by the step</i>.
+ * Utility methods related to {@link SaxonBuilder}.
  * 
- * @author Romain Deltour
- * @see XProcExceptions
+ * @author Herve Quiroz
  */
-public abstract class AbstractMatchProcessorDelegate implements SaxonProcessorDelegate
+public final class SaxonBuilders
 {
-    private static final Logger LOG = Logger.getLogger(AbstractMatchProcessorDelegate.class);
+    private static final Logger LOG = Logger.getLogger(SaxonBuilders.class);
 
-    private final Step step;
-
-    protected final QName addAttribute(final QName name, final String value, final XdmNode namespaceContext,
+    public static final QName addAttribute(final QName name, final String value, final XdmNode namespaceContext,
             final SaxonBuilder builder)
     {
         // Namespace Fixup
@@ -120,61 +107,8 @@ public abstract class AbstractMatchProcessorDelegate implements SaxonProcessorDe
         return fixedupQName;
     }
 
-    public AbstractMatchProcessorDelegate(final Step step)
+    private SaxonBuilders()
     {
-        this.step = step;
-    }
-
-    @Override
-    public void attribute(final XdmNode node, final SaxonBuilder builder)
-    {
-        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
-    }
-
-    @Override
-    public void comment(final XdmNode node, final SaxonBuilder builder)
-    {
-        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
-    }
-
-    @Override
-    public void endDocument(final XdmNode node, final SaxonBuilder builder)
-    {
-        builder.endDocument();
-    }
-
-    @Override
-    public void endElement(final XdmNode node, final SaxonBuilder builder)
-    {
-        builder.endElement();
-    }
-
-    @Override
-    public void processingInstruction(final XdmNode node, final SaxonBuilder builder)
-    {
-        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
-    }
-
-    @Override
-    public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
-    {
-        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
-    }
-
-    @Override
-    public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
-    {
-        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
-    }
-
-    @Override
-    public void text(final XdmNode node, final SaxonBuilder builder)
-    {
-        throw XProcExceptions.xc0023(step.getLocation(), node.getNodeKind(), allowedNodeTypes());
-    }
-
-    protected Iterable<XdmNodeKind> allowedNodeTypes()
-    {
-        return ImmutableSet.of();
+        // No instantiation
     }
 }
