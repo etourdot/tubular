@@ -28,10 +28,10 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
-import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.XsltPatternMatchSaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -99,8 +99,8 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         // TODO catch IllegalArgumentException to statically check the
         // XSLTMatchPattern ?
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step().getNode(),
-                        new AddAttributeProcessorDelegate(input.step(), attributeQName, attributeValue),
+                new XsltPatternMatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step()
+                        .getNode(), new AddAttributeProcessorDelegate(input.step(), attributeQName, attributeValue),
                         new CopyingSaxonProcessorDelegate()));
         final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
         final XdmNode result = matchProcessor.apply(inputDoc);

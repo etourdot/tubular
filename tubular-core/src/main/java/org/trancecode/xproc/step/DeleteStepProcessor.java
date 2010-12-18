@@ -25,10 +25,10 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.XmlnsNamespace;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.DeleteSaxonProcessorDelegate;
-import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.XsltPatternMatchSaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -70,8 +70,8 @@ public final class DeleteStepProcessor extends AbstractStepProcessor
             }
         };
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step().getNode(),
-                        delete, new CopyingSaxonProcessorDelegate()));
+                new XsltPatternMatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step()
+                        .getNode(), delete, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);
         output.writeNodes(XProcPorts.RESULT, result);

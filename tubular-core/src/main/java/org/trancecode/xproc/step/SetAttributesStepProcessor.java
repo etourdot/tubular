@@ -31,12 +31,12 @@ import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.XmlnsNamespace;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
-import org.trancecode.xml.saxon.MatchSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonMaps;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.XsltPatternMatchSaxonProcessorDelegate;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -111,8 +111,8 @@ public final class SetAttributesStepProcessor extends AbstractStepProcessor
             }
         };
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                new MatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step().getNode(),
-                        setAttributes, new CopyingSaxonProcessorDelegate()));
+                new XsltPatternMatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step()
+                        .getNode(), setAttributes, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);
         output.writeNodes(XProcPorts.RESULT, result);
