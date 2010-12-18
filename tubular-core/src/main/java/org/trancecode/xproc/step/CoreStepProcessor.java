@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 TranceCode Software
+ * Copyright (C) 2010 TranceCode Software
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,29 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
- *
- * $Id$
  */
 package org.trancecode.xproc.step;
-
-import net.sf.saxon.s9api.QName;
 
 /**
  * @author Herve Quiroz
  */
-public final class CatchStepProcessor extends AbstractCompoundStepProcessor
+public interface CoreStepProcessor extends StepProcessor
 {
-    public static final StepProcessor INSTANCE = new CatchStepProcessor();
-    public static final Step STEP = Step.newStep(XProcSteps.CATCH, INSTANCE, true);
-
-    private CatchStepProcessor()
-    {
-        // Singleton
-    }
-
-    @Override
-    public QName stepType()
-    {
-        return XProcSteps.CATCH;
-    }
+    Step stepDeclaration();
 }

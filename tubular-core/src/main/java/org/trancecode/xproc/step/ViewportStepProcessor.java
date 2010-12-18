@@ -51,21 +51,19 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:viewport}.
  * 
  * @author Herve Quiroz
- * @see <a href="http://www.w3.org/TR/xproc/#p.veiwport">p:viewport</a>
+ * @see <a href="http://www.w3.org/TR/xproc/#p.viewport">p:viewport</a>
  */
-public final class ViewportStepProcessor extends AbstractCompoundStepProcessor
+public final class ViewportStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
-    public static final ViewportStepProcessor INSTANCE = new ViewportStepProcessor();
-    public static final Step STEP = Step.newStep(XProcSteps.VIEWPORT, INSTANCE, true)
-            .declareVariable(Variable.newOption(XProcOptions.MATCH).setRequired(true))
-            .declarePort(Port.newInputPort(XProcPorts.VIEWPORT_SOURCE).setSequence(false))
-            .declarePort(Port.newOutputPort(XProcPorts.RESULT).setSequence(false));
-
     private static final Logger LOG = Logger.getLogger(ViewportStepProcessor.class);
 
-    private ViewportStepProcessor()
+    @Override
+    public Step stepDeclaration()
     {
-        // single instance
+        return Step.newStep(XProcSteps.VIEWPORT, this, true)
+                .declareVariable(Variable.newOption(XProcOptions.MATCH).setRequired(true))
+                .declarePort(Port.newInputPort(XProcPorts.VIEWPORT_SOURCE).setSequence(false))
+                .declarePort(Port.newOutputPort(XProcPorts.RESULT).setSequence(false));
     }
 
     @Override

@@ -20,34 +20,39 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.List;
 
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmAtomicValue;
+import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmValue;
+import org.trancecode.collection.TcIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.Variable;
+import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * @author Herve Quiroz
  */
-public final class ChooseStepProcessor extends AbstractCompoundStepProcessor
+public final class ChooseStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
-    public static final ChooseStepProcessor INSTANCE = new ChooseStepProcessor();
-
-    private static final Iterable<Port> PORTS = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
-            .setSequence(false).setPrimary(false));
-    public static final Step STEP = Step.newStep(XProcSteps.CHOOSE, INSTANCE, true).declarePorts(PORTS);
-
     private static final Logger LOG = Logger.getLogger(ChooseStepProcessor.class);
 
-    private ChooseStepProcessor()
+    @Override
+    public Step stepDeclaration()
     {
-        // single instance
+        final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT).setSequence(false)
+                .setPrimary(false));
+        return Step.newStep(XProcSteps.CHOOSE, this, true).declarePorts(ports);
     }
 
     @Override
@@ -93,5 +98,128 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor
         }
 
         throw XProcExceptions.xd0004(step.getLocation());
+    }
+
+    public static final class WhenStepProcessor extends AbstractWhenStepProcessor
+    {
+        @Override
+        public Step stepDeclaration()
+        {
+            final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
+                    .setSequence(false).setPrimary(false));
+            return Step.newStep(XProcSteps.WHEN, this, true).declarePorts(ports)
+                    .declareVariable(Variable.newOption(XProcOptions.TEST).setRequired(true));
+        }
+
+        @Override
+        public QName stepType()
+        {
+            return XProcSteps.WHEN;
+        }
+
+        @Override
+        protected boolean doTest(final Step step, final Environment environment)
+        {
+            final Environment resultEnvironment = environment.newChildStepEnvironment();
+            final String test = step.getVariable(XProcOptions.TEST).getValue();
+            LOG.trace("test = {}", test);
+            final XdmValue result = resultEnvironment.evaluateXPath(test);
+            LOG.trace("result = {}", result);
+
+            if (result.size() == 0)
+            {
+                return false;
+            }
+
+            if (result.size() > 1)
+            {
+                return true;
+            }
+
+            final XdmItem resultNode = result.iterator().next();
+            if (resultNode.isAtomicValue())
+            {
+                try
+                {
+                    return ((XdmAtomicValue) resultNode).getBooleanValue();
+                }
+                catch (final SaxonApiException e)
+                {
+                    // TODO error handling
+                    throw new IllegalStateException(e);
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public static final class OtherwiseStepProcessor extends AbstractWhenStepProcessor
+    {
+        @Override
+        public Step stepDeclaration()
+        {
+            final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
+                    .setSequence(false).setPrimary(false));
+            return Step.newStep(XProcSteps.OTHERWISE, this, true).declarePorts(ports);
+        }
+
+        @Override
+        public QName stepType()
+        {
+            return XProcSteps.OTHERWISE;
+        }
+
+        @Override
+        protected boolean doTest(final Step step, final Environment environment)
+        {
+            return true;
+        }
+    }
+
+    private static abstract class AbstractWhenStepProcessor extends AbstractCompoundStepProcessor implements
+            CoreStepProcessor
+    {
+        @Override
+        public Environment run(final Step step, final Environment environment)
+        {
+            LOG.trace("step = {}", step.getName());
+
+            final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+            if (!test(step, stepEnvironment))
+            {
+                return null;
+            }
+
+            Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
+
+            if (Iterables.isEmpty(step.getOutputPorts()))
+            {
+                final Step lastStep = TcIterables.getLast(step.getSubpipeline());
+
+                final Port primaryOutputPort = lastStep.getPrimaryOutputPort();
+                if (primaryOutputPort != null)
+                {
+                    final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(primaryOutputPort
+                            .setStepName(step.getName()).setPortBindings(), stepEnvironment);
+                    resultEnvironment = resultEnvironment.addPorts(environmentPort.pipe(resultEnvironment
+                            .getEnvironmentPort(primaryOutputPort)));
+                }
+
+                return resultEnvironment;
+            }
+
+            return stepEnvironment.setupOutputPorts(step, resultEnvironment);
+        }
+
+        protected boolean test(final Step step, final Environment environment)
+        {
+            LOG.trace("name = {} ; type = {}", step.getName(), step.getType());
+            final boolean result = doTest(step, environment);
+            LOG.trace("result = {}", result);
+            return result;
+        }
+
+        protected abstract boolean doTest(final Step step, final Environment environment);
     }
 }

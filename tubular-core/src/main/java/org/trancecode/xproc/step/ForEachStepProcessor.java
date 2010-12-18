@@ -35,19 +35,16 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public final class ForEachStepProcessor extends AbstractCompoundStepProcessor
+public final class ForEachStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
-    public static final ForEachStepProcessor INSTANCE = new ForEachStepProcessor();
-
     private static final Logger LOG = Logger.getLogger(ForEachStepProcessor.class);
 
-    private static final Iterable<Port> PORTS = ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE)
-            .setSequence(true), Port.newOutputPort(XProcPorts.RESULT).setSequence(true));
-    public static final Step STEP = Step.newStep(XProcSteps.FOR_EACH, INSTANCE, true).declarePorts(PORTS);
-
-    private ForEachStepProcessor()
+    @Override
+    public Step stepDeclaration()
     {
-        // single instance
+        final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE).setSequence(true),
+                Port.newOutputPort(XProcPorts.RESULT).setSequence(true));
+        return Step.newStep(XProcSteps.FOR_EACH, this, true).declarePorts(ports);
     }
 
     @Override

@@ -29,16 +29,14 @@ import org.trancecode.xproc.port.Port;
 /**
  * @author Herve Quiroz
  */
-public final class TryStepProcessor extends AbstractCompoundStepProcessor
+public final class TryStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
-    public static final TryStepProcessor INSTANCE = new TryStepProcessor();
-    public static final Step STEP = Step.newStep(XProcSteps.TRY, INSTANCE, true);
-
     private static final Logger LOG = Logger.getLogger(TryStepProcessor.class);
 
-    private TryStepProcessor()
+    @Override
+    public Step stepDeclaration()
     {
-        // single instance
+        return Step.newStep(XProcSteps.TRY, this, true);
     }
 
     @Override
@@ -88,5 +86,20 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor
         }
 
         return resultEnvironment;
+    }
+
+    public static final class CatchStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
+    {
+        @Override
+        public Step stepDeclaration()
+        {
+            return Step.newStep(XProcSteps.CATCH, this, true);
+        }
+
+        @Override
+        public QName stepType()
+        {
+            return XProcSteps.CATCH;
+        }
     }
 }

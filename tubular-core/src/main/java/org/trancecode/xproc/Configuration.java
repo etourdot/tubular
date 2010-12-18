@@ -48,15 +48,9 @@ import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.step.CatchStepProcessor;
-import org.trancecode.xproc.step.ChooseStepProcessor;
-import org.trancecode.xproc.step.ForEachStepProcessor;
-import org.trancecode.xproc.step.GroupStepProcessor;
+import org.trancecode.xproc.step.CoreStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
-import org.trancecode.xproc.step.TryStepProcessor;
-import org.trancecode.xproc.step.ViewportStepProcessor;
-import org.trancecode.xproc.step.WhenStepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
 
 /**
@@ -195,15 +189,10 @@ public final class Configuration implements PipelineContext
     private static Map<QName, Step> getCoreLibrary()
     {
         final Map<QName, Step> coreSteps = Maps.newHashMap();
-
-        coreSteps.put(XProcSteps.CATCH, CatchStepProcessor.STEP);
-        coreSteps.put(XProcSteps.CHOOSE, ChooseStepProcessor.STEP);
-        coreSteps.put(XProcSteps.FOR_EACH, ForEachStepProcessor.STEP);
-        coreSteps.put(XProcSteps.GROUP, GroupStepProcessor.STEP);
-        coreSteps.put(XProcSteps.OTHERWISE, WhenStepProcessor.STEP_OTHERWISE);
-        coreSteps.put(XProcSteps.TRY, TryStepProcessor.STEP);
-        coreSteps.put(XProcSteps.VIEWPORT, ViewportStepProcessor.STEP);
-        coreSteps.put(XProcSteps.WHEN, WhenStepProcessor.STEP_WHEN);
+        for (final CoreStepProcessor coreStepProcessor : ServiceLoader.load(CoreStepProcessor.class))
+        {
+            coreSteps.put(coreStepProcessor.stepType(), coreStepProcessor.stepDeclaration());
+        }
 
         return ImmutableMap.copyOf(coreSteps);
     }

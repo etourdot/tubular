@@ -26,15 +26,13 @@ import org.trancecode.xproc.port.XProcPorts;
 /**
  * @author Herve Quiroz
  */
-public final class GroupStepProcessor extends AbstractCompoundStepProcessor
+public final class GroupStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
-    public static final StepProcessor INSTANCE = new GroupStepProcessor();
-    public static final Step STEP = Step.newStep(XProcSteps.GROUP, INSTANCE, true).declarePort(
-            Port.newInputPort(XProcPorts.SOURCE).setSequence(true).setPrimary(true));
-
-    private GroupStepProcessor()
+    @Override
+    public Step stepDeclaration()
     {
-        // Singleton
+        return Step.newStep(XProcSteps.GROUP, this, true).declarePort(
+                Port.newInputPort(XProcPorts.SOURCE).setSequence(true).setPrimary(true));
     }
 
     @Override
