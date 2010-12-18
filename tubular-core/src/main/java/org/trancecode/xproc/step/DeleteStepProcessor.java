@@ -37,7 +37,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:delete}.
  * 
  * @author Herve Quiroz
- * @see <a href="http://www.w3.org/TR/xproc/#c.delte">p:delete</a>
+ * @see <a href="http://www.w3.org/TR/xproc/#c.delete">p:delete</a>
  */
 public final class DeleteStepProcessor extends AbstractStepProcessor
 {
