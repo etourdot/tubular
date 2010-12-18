@@ -31,7 +31,7 @@ import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
-import org.trancecode.xml.saxon.XsltPatternMatchSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -99,7 +99,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         // TODO catch IllegalArgumentException to statically check the
         // XSLTMatchPattern ?
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                new XsltPatternMatchSaxonProcessorDelegate(input.pipelineContext().getProcessor(), match, input.step()
+                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
                         .getNode(), new AddAttributeProcessorDelegate(input.step(), attributeQName, attributeValue),
                         new CopyingSaxonProcessorDelegate()));
         final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
