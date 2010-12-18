@@ -41,6 +41,12 @@ public final class XProcExceptions
         // No instantiation
     }
 
+    public static XProcException xd0003(final Location location, final int numberOfNodes)
+    {
+        return newXProcException(Type.DYNAMIC, 3, location,
+                "the viewport source does not provide exactly one document but %s", numberOfNodes);
+    }
+
     public static XProcException xd0004(final Location location)
     {
         return newXProcException(Type.DYNAMIC, 4, location,
