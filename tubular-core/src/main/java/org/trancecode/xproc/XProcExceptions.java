@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
 
 import net.sf.saxon.s9api.QName;
@@ -114,6 +116,11 @@ public final class XProcExceptions
     }
 
     public static XProcException xc0023(final XdmNode node, final XdmNodeKind... allowedNodeTypes)
+    {
+        return xc0023(node, ImmutableSet.copyOf(allowedNodeTypes));
+    }
+
+    public static XProcException xc0023(final XdmNode node, final Iterable<XdmNodeKind> allowedNodeTypes)
     {
         return newXProcException(Type.STEP, 23, SaxonLocation.of(node),
                 "Selected node type %s is not allowed by the step ; allowed types: %s ", node.getNodeKind(),
