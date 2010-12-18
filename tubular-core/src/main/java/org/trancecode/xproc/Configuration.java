@@ -55,6 +55,7 @@ import org.trancecode.xproc.step.GroupStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
 import org.trancecode.xproc.step.TryStepProcessor;
+import org.trancecode.xproc.step.ViewportStepProcessor;
 import org.trancecode.xproc.step.WhenStepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
 
@@ -201,6 +202,7 @@ public final class Configuration implements PipelineContext
         coreSteps.put(XProcSteps.GROUP, GroupStepProcessor.STEP);
         coreSteps.put(XProcSteps.OTHERWISE, WhenStepProcessor.STEP_OTHERWISE);
         coreSteps.put(XProcSteps.TRY, TryStepProcessor.STEP);
+        coreSteps.put(XProcSteps.VIEWPORT, ViewportStepProcessor.STEP);
         coreSteps.put(XProcSteps.WHEN, WhenStepProcessor.STEP_WHEN);
 
         return ImmutableMap.copyOf(coreSteps);
