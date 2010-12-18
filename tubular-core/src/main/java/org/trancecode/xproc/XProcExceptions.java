@@ -127,6 +127,13 @@ public final class XProcExceptions
                 allowedNodeTypes);
     }
 
+    public static XProcException xc0025(final Location location, final XdmNode node, final String position)
+    {
+        return newXProcException(Type.STEP, 25, location,
+                "the match pattern matches a %s which is not allowed when the position is %s", node.getNodeKind(),
+                position);
+    }
+
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);

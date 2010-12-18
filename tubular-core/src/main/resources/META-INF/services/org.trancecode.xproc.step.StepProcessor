@@ -5,6 +5,7 @@ org.trancecode.xproc.step.DeleteStepProcessor
 org.trancecode.xproc.step.ErrorStepProcessor
 org.trancecode.xproc.step.ExecStepProcessor
 org.trancecode.xproc.step.IdentityStepProcessor
+org.trancecode.xproc.step.InsertStepProcessor
 org.trancecode.xproc.step.LoadStepProcessor
 org.trancecode.xproc.step.SetAttributesStepProcessor
 org.trancecode.xproc.step.SinkStepProcessor

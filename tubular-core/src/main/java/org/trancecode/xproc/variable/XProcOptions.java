@@ -66,6 +66,7 @@ public final class XProcOptions
     public static final QName NORMALIZATION_FORM = new QName("normalization-form");
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
+    public static final QName POSITION = new QName("position");
     public static final QName RESULT_BASE_URI = new QName("result-base-uri");
     public static final QName RESULT_DOCUMENT_URI = new QName("result-document-uri");
     public static final QName RESULT_IS_XML = new QName("result-is-xml");
