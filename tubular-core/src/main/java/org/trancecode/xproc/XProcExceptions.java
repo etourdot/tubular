@@ -55,7 +55,7 @@ public final class XProcExceptions
     public static XProcException xd0010(final XdmNode node)
     {
         return newXProcException(Type.DYNAMIC, 10, SaxonLocation.of(node),
-                " the match expression on p:viewport does not match an element or document: %s", node.getNodeKind());
+                "the match expression on p:viewport does not match an element or document: %s", node.getNodeKind());
     }
 
     public static XProcException xd0023(final Location location, final String select, final String errorMessage)
