@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2008 TranceCode Software
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ * $Id$
+ */
+package org.trancecode.xproc.step;
+
+import java.util.EnumSet;
+
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
+import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.XProcOptions;
+
+/**
+ * {@code p:string-replace}.
+ * 
+ * @author Herve Quiroz
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.string-replace">p:string-replace</a>
+ */
+public final class StringReplaceStepProcessor extends AbstractStepProcessor
+{
+    private static final Logger LOG = Logger.getLogger(StringReplaceStepProcessor.class);
+
+    @Override
+    public QName stepType()
+    {
+        return XProcSteps.STRING_REPLACE;
+    }
+
+    @Override
+    protected void execute(final StepInput input, final StepOutput output)
+    {
+        final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
+        final String match = input.getOptionValue(XProcOptions.MATCH);
+        LOG.trace("match = {}", match);
+        final String replace = input.getOptionValue(XProcOptions.REPLACE);
+        LOG.trace("replace = {}", replace);
+
+        final SaxonProcessorDelegate stringReplace = new CopyingSaxonProcessorDelegate()
+        {
+            private void replace(final XdmNode node, final SaxonBuilder builder)
+            {
+                LOG.trace("{@method} node = {}", node.getNodeName());
+                final String text = input.evaluateXPath(replace, node).toString();
+                LOG.trace("result = {}", text);
+                if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
+                {
+                    builder.attribute(node.getNodeName(), text);
+                }
+                else
+                {
+                    builder.text(text);
+                }
+            }
+
+            @Override
+            public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
+            {
+                replace(node, builder);
+                return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+            }
+
+            @Override
+            public void text(final XdmNode node, final SaxonBuilder builder)
+            {
+                replace(node, builder);
+            }
+
+            @Override
+            public void comment(final XdmNode node, final SaxonBuilder builder)
+            {
+                replace(node, builder);
+            }
+
+            @Override
+            public void processingInstruction(final XdmNode node, final SaxonBuilder builder)
+            {
+                replace(node, builder);
+            }
+
+            @Override
+            public void attribute(final XdmNode node, final SaxonBuilder builder)
+            {
+                replace(node, builder);
+            }
+        };
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
+                        .getNode(), stringReplace, new CopyingSaxonProcessorDelegate()));
+
+        final XdmNode result = matchProcessor.apply(sourceDocument);
+        output.writeNodes(XProcPorts.RESULT, result);
+    }
+}
