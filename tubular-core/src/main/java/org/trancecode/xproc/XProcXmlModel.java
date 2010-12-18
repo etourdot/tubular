@@ -65,6 +65,7 @@ public final class XProcXmlModel
         public static final QName PIPELINE = xprocNamespace().newSaxonQName("pipeline");
         public static final QName RESULT = xprocStepNamespace().newSaxonQName("result");
         public static final QName VARIABLE = xprocNamespace().newSaxonQName("variable");
+        public static final QName VIEWPORT_SOURCE = xprocNamespace().newSaxonQName("viewport-source");
         public static final QName WHEN = xprocNamespace().newSaxonQName("when");
         public static final QName WITH_OPTION = xprocNamespace().newSaxonQName("with-option");
         public static final QName WITH_PARAM = xprocNamespace().newSaxonQName("with-param");
@@ -76,7 +77,8 @@ public final class XProcXmlModel
         public static final Set<QName> ELEMENTS_IN_PIPELINE = ImmutableSet.of(IMPORT, PIPELINE);
         public static final Set<QName> ELEMENTS_IN_PIPELINE_LIBRARY = ImmutableSet.of(IMPORT, DECLARE_STEP, PIPELINE);
         public static final Set<QName> ELEMENTS_PORT_BINDINGS = ImmutableSet.of(INLINE, DOCUMENT, EMPTY, PIPE);
-        public static final Set<QName> ELEMENTS_INPUT_PORTS = ImmutableSet.of(INPUT, ITERATION_SOURCE, XPATH_CONTEXT);
+        public static final Set<QName> ELEMENTS_INPUT_PORTS = ImmutableSet.of(INPUT, ITERATION_SOURCE, VIEWPORT_SOURCE,
+                XPATH_CONTEXT);
         public static final Set<QName> ELEMENTS_OUTPUT_PORTS = ImmutableSet.of(OUTPUT);
         public static final Set<QName> ELEMENTS_PORTS = ImmutableSet.copyOf(Iterables.concat(ELEMENTS_INPUT_PORTS,
                 ELEMENTS_OUTPUT_PORTS));
