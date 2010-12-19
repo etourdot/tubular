@@ -344,6 +344,9 @@ public class Environment implements HasPipelineContext
                 }
             }
 
+            xpathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace()
+                    .uri());
+
             final XPathSelector selector = xpathCompiler.compile(select).load();
             if (xpathContextNode != null)
             {
@@ -364,7 +367,7 @@ public class Environment implements HasPipelineContext
             LOG.trace("result = {}", result);
             return result;
         }
-        catch (final Exception e)
+        catch (final SaxonApiException e)
         {
             throw XProcExceptions.xd0023(location, select, e.getMessage());
         }
