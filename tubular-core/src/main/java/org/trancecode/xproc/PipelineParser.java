@@ -403,8 +403,9 @@ public class PipelineParser
 
         if (portBindingNode.getNodeName().equals(Elements.INLINE))
         {
-            final XdmNode inlineNode = SaxonAxis.childElement(portBindingNode);
-            return new InlinePortBinding(inlineNode, getLocation(portBindingNode));
+            final XdmNode inlineDocument = Saxon.asDocumentNode(context.getProcessor(),
+                    SaxonAxis.childNodes(portBindingNode));
+            return new InlinePortBinding(inlineDocument, getLocation(portBindingNode));
         }
 
         throw new PipelineException("not supported: %s", portBindingNode.getNodeName());
