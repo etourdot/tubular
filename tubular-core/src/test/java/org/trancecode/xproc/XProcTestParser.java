@@ -18,6 +18,7 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,6 +42,7 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonPredicates;
 import org.xml.sax.InputSource;
 
 /**
@@ -265,7 +267,8 @@ public class XProcTestParser
                     XProcTestSuiteXmlModel.ELEMENT_DOCUMENT);
             if (Iterables.isEmpty(documentElements))
             {
-                final Iterable<XdmNode> nodes = SaxonAxis.childNodes(node);
+                final Iterable<XdmNode> nodes = Iterables.filter(SaxonAxis.childNodes(node),
+                        Predicates.not(SaxonPredicates.isAttribute()));
                 if (Iterables.isEmpty(nodes))
                 {
                     LOG.trace("New empty document");
@@ -289,7 +292,9 @@ public class XProcTestParser
                     else
                     {
                         LOG.trace("New wrapped document");
-                        documents.add(Saxon.asDocumentNode(processor, SaxonAxis.childNodes(documentNode)));
+                        final Iterable<XdmNode> nodesWithoutAttributes = Iterables.filter(
+                                SaxonAxis.childNodes(documentNode), Predicates.not(SaxonPredicates.isAttribute()));
+                        documents.add(Saxon.asDocumentNode(processor, nodesWithoutAttributes));
                     }
                 }
             }
