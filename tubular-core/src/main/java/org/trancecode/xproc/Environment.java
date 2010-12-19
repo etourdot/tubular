@@ -683,7 +683,7 @@ public class Environment implements HasPipelineContext
 
     public XdmNode readNode(final PortReference portReference)
     {
-        return Iterables.getOnlyElement(getPort(portReference).readNodes());
+        return Iterables.getOnlyElement(readNodes(portReference));
     }
 
     public Map<QName, String> readParameters(final PortReference portReference)
