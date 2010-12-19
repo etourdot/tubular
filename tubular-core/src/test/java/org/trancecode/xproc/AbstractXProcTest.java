@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.xml.transform.Source;
 
+import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -45,6 +46,7 @@ import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
 import org.trancecode.io.Uris;
 import org.trancecode.xml.saxon.Saxon;
+import org.w3c.dom.Document;
 
 /**
  * @author Herve Quiroz
@@ -219,15 +221,9 @@ public abstract class AbstractXProcTest extends AbstractTest
         final XdmNode docExpected = Saxon.asDocumentNode(expected, processor);
         final XdmNode docActual = Saxon.asDocumentNode(actual, processor);
         final String message = String.format("expected:\n%s\nactual:\n%s", docExpected, docActual);
-        try
-        {
-            XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
-            XMLAssert.assertXMLEqual(message, docExpected.toString(), docActual.toString());
-        }
-        catch (final Exception e)
-        {
-            throw new IllegalStateException(message, e);
-        }
+        XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
+        XMLAssert.assertXMLEqual(message, (Document) NodeOverNodeInfo.wrap(docExpected.getUnderlyingNode()),
+                (Document) NodeOverNodeInfo.wrap(docActual.getUnderlyingNode()));
     }
 
     protected String getTestUrlPrefix()
