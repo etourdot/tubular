@@ -141,12 +141,9 @@ public final class Configuration implements PipelineContext
         {
             throw new IllegalStateException("cannot parse default library: " + xprocLibraryUrl, e);
         }
-        final PipelineParser parser = new PipelineParser(context, defaultLibrarySource);
-        parser.parse();
-
-        LOG.trace("supported steps: {}", parser.getLibrary().stepTypes());
-
-        return parser.getLibrary();
+        final PipelineLibrary library = PipelineParser.parseLibrary(context, defaultLibrarySource);
+        LOG.trace("supported steps: {}", library.stepTypes());
+        return library;
     }
 
     private static Map<QName, StepProcessor> getDefaultStepProcessors()

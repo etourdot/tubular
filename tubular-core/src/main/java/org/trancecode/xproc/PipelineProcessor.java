@@ -19,6 +19,8 @@ package org.trancecode.xproc;
 
 import javax.xml.transform.Source;
 
+import org.trancecode.xproc.step.Step;
+
 /**
  * @author Herve Quiroz
  */
@@ -43,15 +45,12 @@ public final class PipelineProcessor
 
     public PipelineLibrary buildPipelineLibrary(final Source source)
     {
-        final PipelineParser parser = new PipelineParser(context, source);
-        parser.parse();
-        return parser.getLibrary();
+        return PipelineParser.parseLibrary(context, source);
     }
 
     public Pipeline buildPipeline(final Source source)
     {
-        final PipelineParser parser = new PipelineParser(context, source);
-        parser.parse();
-        return new Pipeline(context, parser.getPipeline());
+        final Step pipelineStep = PipelineParser.parsePipeline(context, source);
+        return new Pipeline(context, pipelineStep);
     }
 }

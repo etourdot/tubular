@@ -78,7 +78,36 @@ public class PipelineParser
     private Step mainPipeline;
     private XdmNode rootNode;
 
-    public PipelineParser(final PipelineContext context, final Source source)
+    public static PipelineLibrary parseLibrary(final PipelineContext context, final Source source)
+    {
+        final PipelineParser parser = new PipelineParser(context, source);
+        parser.parse();
+        return parser.getLibrary();
+    }
+
+    public static PipelineLibrary parseLibrary(final PipelineContext context, final Source source,
+            final PipelineLibrary library)
+    {
+        final PipelineParser parser = new PipelineParser(context, source, library);
+        parser.parse();
+        return parser.getLibrary();
+    }
+
+    public static Step parsePipeline(final PipelineContext context, final Source source)
+    {
+        final PipelineParser parser = new PipelineParser(context, source);
+        parser.parse();
+        return parser.getPipeline();
+    }
+
+    public static Step parsePipeline(final PipelineContext context, final Source source, final PipelineLibrary library)
+    {
+        final PipelineParser parser = new PipelineParser(context, source, library);
+        parser.parse();
+        return parser.getPipeline();
+    }
+
+    private PipelineParser(final PipelineContext context, final Source source)
     {
         this(context, source, context.getPipelineLibrary());
     }
@@ -91,7 +120,7 @@ public class PipelineParser
         baseUri = URI.create(source.getSystemId());
     }
 
-    public void parse()
+    private void parse()
     {
         try
         {
@@ -578,13 +607,13 @@ public class PipelineParser
         return elements;
     }
 
-    public PipelineLibrary getLibrary()
+    private PipelineLibrary getLibrary()
     {
         final Set<URI> uris = ImmutableSet.of();
         return new PipelineLibrary(baseUri, localLibrary, uris).importLibrary(library);
     }
 
-    public Step getPipeline()
+    private Step getPipeline()
     {
         return mainPipeline;
     }
