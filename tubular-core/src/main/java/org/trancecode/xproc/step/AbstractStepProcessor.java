@@ -40,6 +40,8 @@ import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.XProcException;
 
 /**
+ * Base class for {@link StepProcessor} implementations.
+ * 
  * @author Herve Quiroz
  */
 public abstract class AbstractStepProcessor implements StepProcessor
