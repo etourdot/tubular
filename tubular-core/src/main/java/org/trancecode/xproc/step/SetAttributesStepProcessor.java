@@ -67,8 +67,7 @@ public final class SetAttributesStepProcessor extends AbstractStepProcessor
     {
         final XdmNode source = input.readNode(XProcPorts.SOURCE);
         final XdmNode attributesNode = input.readNode("attributes");
-        LOG.trace("{}", attributesNode);
-        final Map<QName, String> attributes = SaxonMaps.attributes(attributesNode);
+        final Map<QName, String> attributes = SaxonMaps.attributes(SaxonAxis.childElement(attributesNode));
         LOG.trace("attributes = {}", attributes);
         final String match = input.getOptionValue(XProcOptions.MATCH);
         LOG.trace("match = {}", match);
