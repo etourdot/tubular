@@ -208,6 +208,7 @@ public final class Configuration implements PipelineContext
         uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
         for (final XPathExtensionFunction function : EXTENSION_FUNCTIONS)
         {
+            LOG.trace("register XPath extension function: {}", function);
             processor.registerExtensionFunction(function.getExtensionFunctionDefinition());
         }
     }
