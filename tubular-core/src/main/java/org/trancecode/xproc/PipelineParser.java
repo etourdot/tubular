@@ -80,6 +80,7 @@ public class PipelineParser
 
     public static PipelineLibrary parseLibrary(final PipelineContext context, final Source source)
     {
+        LOG.trace("{@method} source = {}", source.getSystemId());
         final PipelineParser parser = new PipelineParser(context, source);
         parser.parse();
         return parser.getLibrary();
@@ -88,6 +89,7 @@ public class PipelineParser
     public static PipelineLibrary parseLibrary(final PipelineContext context, final Source source,
             final PipelineLibrary library)
     {
+        LOG.trace("{@method} source = {}", source.getSystemId());
         final PipelineParser parser = new PipelineParser(context, source, library);
         parser.parse();
         return parser.getLibrary();
@@ -95,6 +97,7 @@ public class PipelineParser
 
     public static Step parsePipeline(final PipelineContext context, final Source source)
     {
+        LOG.trace("{@method} source = {}", source.getSystemId());
         final PipelineParser parser = new PipelineParser(context, source);
         parser.parse();
         return parser.getPipeline();
@@ -102,6 +105,7 @@ public class PipelineParser
 
     public static Step parsePipeline(final PipelineContext context, final Source source, final PipelineLibrary library)
     {
+        LOG.trace("{@method} source = {}", source.getSystemId());
         final PipelineParser parser = new PipelineParser(context, source, library);
         parser.parse();
         return parser.getPipeline();
@@ -526,11 +530,13 @@ public class PipelineParser
                 throw XProcExceptions.xs0052(SaxonLocation.of(node), libraryUri);
             }
 
-            final PipelineParser parser = new PipelineParser(context, librarySource, library);
-            parser.parse();
-            final PipelineLibrary newLibrary = parser.getLibrary();
+            final PipelineLibrary newLibrary = parseLibrary(context, librarySource, getLibrary());
             LOG.trace("new steps = {}", newLibrary.stepTypes());
             library = library.importLibrary(newLibrary);
+        }
+        else
+        {
+            LOG.trace("ignoring import statement (library already imported): {}", libraryUri);
         }
     }
 

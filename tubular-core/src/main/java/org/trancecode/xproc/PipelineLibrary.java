@@ -19,7 +19,6 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import java.net.URI;
 import java.util.Map;
@@ -48,7 +47,7 @@ public final class PipelineLibrary
         LOG.trace("baseUri = {} ; steps = {keys} ; importedUris = {}", baseUri, steps, importedUris);
         this.baseUri = Preconditions.checkNotNull(baseUri);
         this.steps = ImmutableMap.copyOf(steps);
-        this.importedUris = ImmutableSet.copyOf(importedUris);
+        this.importedUris = TcSets.immutableSet(importedUris, baseUri);
     }
 
     public URI baseUri()
