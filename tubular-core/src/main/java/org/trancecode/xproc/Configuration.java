@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -61,6 +62,8 @@ public final class Configuration implements PipelineContext
     private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
     private static final Map<QName, StepProcessor> DEFAULT_STEP_PROCESSORS = getDefaultStepProcessors();
     private static final Map<QName, Step> CORE_LIBRARY = getCoreLibrary();
+    private static final Iterable<XPathExtensionFunction> EXTENSION_FUNCTIONS = ImmutableList.copyOf(ServiceLoader
+            .load(XPathExtensionFunction.class));
     private static final URI DEFAULT_LIBRARY_URI = URI.create("trancecode:tubular:default-library.xpl");
     private static final Set<URI> EMPTY_SET_OF_URIS = ImmutableSet.of();
     private static final Logger LOG = Logger.getLogger(Configuration.class);
@@ -203,6 +206,10 @@ public final class Configuration implements PipelineContext
     {
         this.processor = Preconditions.checkNotNull(processor);
         uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
+        for (final XPathExtensionFunction function : EXTENSION_FUNCTIONS)
+        {
+            processor.registerExtensionFunction(function.getExtensionFunctionDefinition());
+        }
     }
 
     @Override
