@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.xml.transform.Source;
 
+import junit.framework.AssertionFailedError;
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -220,10 +221,16 @@ public abstract class AbstractXProcTest extends AbstractTest
         assert actual != null;
         final XdmNode docExpected = Saxon.asDocumentNode(expected, processor);
         final XdmNode docActual = Saxon.asDocumentNode(actual, processor);
-        final String message = String.format("expected:\n%s\nactual:\n%s", docExpected, docActual);
         XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
-        XMLAssert.assertXMLEqual(message, (Document) NodeOverNodeInfo.wrap(docExpected.getUnderlyingNode()),
-                (Document) NodeOverNodeInfo.wrap(docActual.getUnderlyingNode()));
+        try
+        {
+            XMLAssert.assertXMLEqual((Document) NodeOverNodeInfo.wrap(docExpected.getUnderlyingNode()),
+                    (Document) NodeOverNodeInfo.wrap(docActual.getUnderlyingNode()));
+        }
+        catch (final AssertionFailedError e)
+        {
+            Assert.fail(String.format("expected:\n%s\nactual:\n%s", docExpected, docActual), e);
+        }
     }
 
     protected String getTestUrlPrefix()
