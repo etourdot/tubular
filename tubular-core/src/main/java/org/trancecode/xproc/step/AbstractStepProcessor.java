@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 
 import java.net.URI;
@@ -33,7 +32,6 @@ import java.util.Map.Entry;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
-import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.HasLocation;
 import org.trancecode.xml.Location;
@@ -81,59 +79,98 @@ public abstract class AbstractStepProcessor implements StepProcessor
         }
     }
 
+    /**
+     * Input for a step execution.
+     */
     protected static final class StepInput implements HasLocation
     {
         private final Environment environment;
-        private Map<QName, String> parameters;
         private final Step step;
 
-        public StepInput(final Step step, final Environment environment)
+        private StepInput(final Step step, final Environment environment)
         {
             this.step = step;
             this.environment = environment;
         }
 
+        /**
+         * Returns the {@link Location} of the current step in the pipeline.
+         */
         @Override
         public Location getLocation()
         {
             return step.getLocation();
         }
 
+        /**
+         * Returns the pipeline context, from which extra facilities can be
+         * retrieved.
+         */
         public PipelineContext pipelineContext()
         {
             return environment.getPipelineContext();
         }
 
+        /**
+         * Returns the base URI of the pipeline being executed.
+         */
         public URI baseUri()
         {
             return environment.getBaseUri();
         }
 
+        /**
+         * Creates a {@code c:result} element to be used as the result of step
+         * execution.
+         * 
+         * @see <A href="http://www.w3.org/TR/xproc/#cv.result">c:result</a>
+         */
         public XdmNode newResultElement(final String value)
         {
             return environment.newResultElement(value);
         }
 
+        /**
+         * Returns the step being executed.
+         */
         public Step step()
         {
             return step;
         }
 
+        /**
+         * Reads a single node from the specified port.
+         * <p>
+         * The port is necessarily a declared one from the current step.
+         */
         public XdmNode readNode(final String portName)
         {
             return environment.readNode(step.getPortReference(portName));
         }
 
+        /**
+         * Reads nodes from the specified port.
+         * <p>
+         * The port is necessarily a declared one from the current step.
+         */
         public Iterable<XdmNode> readNodes(final String portName)
         {
             return environment.readNodes(step.getPortReference(portName));
         }
 
+        /**
+         * Returns the value of an option from the current step.
+         */
         public String getOptionValue(final QName name)
         {
             return getOptionValue(name, null);
         }
 
+        /**
+         * Returns the value of an option from the current step or the specified
+         * default value if there is no value for this option on the current
+         * step.
+         */
         public String getOptionValue(final QName name, final String defaultValue)
         {
             Preconditions.checkArgument(step.hasOptionDeclared(name), "no such option %s on step %s", name,
@@ -141,52 +178,55 @@ public abstract class AbstractStepProcessor implements StepProcessor
             return environment.getVariable(name, defaultValue);
         }
 
+        /**
+         * Returns a map of parameters for the specified port.
+         */
         public Map<QName, String> parameters(final String portName)
         {
-            if (parameters == null)
-            {
-                parameters = ImmutableMap.copyOf(environment.readParameters(step.getPortReference(portName)));
-            }
-
-            return parameters;
+            return environment.readParameters(step.getPortReference(portName));
         }
 
-        public String getParameterValue(final QName name)
-        {
-            return getParameterValue(name, null);
-        }
-
-        public String getParameterValue(final QName name, final String defaultValue)
-        {
-            return TcMaps.get(parameters, name, defaultValue);
-        }
-
+        /**
+         * Evaluates an XPath query.
+         */
         public XdmValue evaluateXPath(final String select)
         {
             return environment.evaluateXPath(select);
         }
 
+        /**
+         * Evaluates an XPath query with the specified node as a context.
+         */
         public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode)
         {
             return environment.evaluateXPath(select, xpathContextNode);
         }
     }
 
+    /**
+     * Input of a step execution.
+     */
     protected static final class StepOutput
     {
         private final ListMultimap<String, XdmNode> ports = ArrayListMultimap.create();
         private final Step step;
 
-        public StepOutput(final Step step)
+        private StepOutput(final Step step)
         {
             this.step = step;
         }
 
+        /**
+         * Writes the specified nodes to a given port.
+         */
         public void writeNodes(final String portName, final XdmNode... nodes)
         {
             writeNodes(portName, ImmutableList.copyOf(nodes));
         }
 
+        /**
+         * Writes the specified nodes to a given port.
+         */
         public void writeNodes(final String portName, final Iterable<XdmNode> nodes)
         {
             Preconditions.checkArgument(step.hasPortDeclared(portName), "no such port %s on step %s", portName,
