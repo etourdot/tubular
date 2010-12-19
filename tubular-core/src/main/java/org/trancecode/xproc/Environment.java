@@ -369,7 +369,9 @@ public class Environment implements HasPipelineContext
         }
         catch (final SaxonApiException e)
         {
-            throw XProcExceptions.xd0023(location, select, e.getMessage());
+            final XProcException xprocException = XProcExceptions.xd0023(location, select, e.getMessage());
+            xprocException.initCause(e);
+            throw xprocException;
         }
     }
 
