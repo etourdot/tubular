@@ -30,24 +30,19 @@ import java.util.List;
 
 import javax.xml.transform.Source;
 
-import junit.framework.AssertionFailedError;
-import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
+import org.trancecode.TcAssert;
 import org.trancecode.io.Uris;
-import org.trancecode.xml.saxon.Saxon;
-import org.w3c.dom.Document;
 
 /**
  * @author Herve Quiroz
@@ -200,8 +195,7 @@ public abstract class AbstractXProcTest extends AbstractTest
                 assert actualNodesIterator.hasNext();
                 final XdmNode expectedNode = expectedNodesIterator.next();
                 final XdmNode actualNode = actualNodesIterator.next();
-                assertEquals(expectedNode, actualNode, pipelineProcessor.context().getProcessor(),
-                        test.isIgnoreWhitespace());
+                TcAssert.assertEquals(expectedNode, actualNode, test.isIgnoreWhitespace());
             }
             assert !actualNodesIterator.hasNext();
         }
@@ -212,25 +206,6 @@ public abstract class AbstractXProcTest extends AbstractTest
         final XProcTestParser parser = new XProcTestParser(processor, testUrl, testSuite);
         parser.parse();
         return parser.getTest();
-    }
-
-    private static void assertEquals(final XdmNode expected, final XdmNode actual, final Processor processor,
-            final boolean ignoreWhitespace)
-    {
-        assert expected != null;
-        assert actual != null;
-        final XdmNode docExpected = Saxon.asDocumentNode(expected, processor);
-        final XdmNode docActual = Saxon.asDocumentNode(actual, processor);
-        XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
-        try
-        {
-            XMLAssert.assertXMLEqual((Document) NodeOverNodeInfo.wrap(docExpected.getUnderlyingNode()),
-                    (Document) NodeOverNodeInfo.wrap(docActual.getUnderlyingNode()));
-        }
-        catch (final AssertionFailedError e)
-        {
-            Assert.fail(String.format("expected:\n%s\nactual:\n%s", docExpected, docActual), e);
-        }
     }
 
     protected String getTestUrlPrefix()
