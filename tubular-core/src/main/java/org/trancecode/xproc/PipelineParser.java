@@ -181,6 +181,12 @@ public class PipelineParser
     {
         if (node.getNodeKind() == XdmNodeKind.ELEMENT)
         {
+            if (node.getNodeName().equals(Elements.IMPORT))
+            {
+                parseImport(node);
+                return step;
+            }
+
             if (Elements.ELEMENTS_PORTS.contains(node.getNodeName()))
             {
                 final String portName = getPortName(node);
