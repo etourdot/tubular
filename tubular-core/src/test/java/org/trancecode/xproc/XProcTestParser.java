@@ -18,6 +18,7 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -38,8 +39,8 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.Saxon;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.xml.sax.InputSource;
 
 /**
@@ -47,6 +48,7 @@ import org.xml.sax.InputSource;
  * {@link XProcTestCase}.
  * 
  * @author Romain Deltour
+ * @authro Herve Quiroz
  */
 public class XProcTestParser
 {
@@ -251,7 +253,7 @@ public class XProcTestParser
     private List<XdmNode> extractDocuments(final XdmNode node)
     {
         final List<XdmNode> documents = Lists.newLinkedList();
-        String href = node.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
+        final String href = node.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
         if (href != null)
         {
             documents.add(loadExternalDocument(href, node));
@@ -259,36 +261,36 @@ public class XProcTestParser
         }
         else
         {
-            Iterator<XdmNode> iter = SaxonAxis.childElements(node, XProcTestSuiteXmlModel.ELEMENT_DOCUMENT).iterator();
-            if (iter.hasNext())
+            final Iterable<XdmNode> documentElements = SaxonAxis.childElements(node,
+                    XProcTestSuiteXmlModel.ELEMENT_DOCUMENT);
+            if (Iterables.isEmpty(documentElements))
             {
-                while (iter.hasNext())
+                final Iterable<XdmNode> nodes = SaxonAxis.childNodes(node);
+                if (Iterables.isEmpty(nodes))
                 {
-                    final XdmNode documentNode = iter.next();
-                    href = documentNode.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
-                    if (href != null)
-                    {
-                        documents.add(loadExternalDocument(href, documentNode));
-                        LOG.trace("New external document");
-                    }
-                    else
-                    {
-                        documents.add(Saxon.asDocumentNode(SaxonAxis.childElement(documentNode), processor));
-                        LOG.trace("New wrapped document");
-                    }
+                    LOG.trace("New empty document");
+                }
+                else
+                {
+                    LOG.trace("New inline document");
+                    documents.add(Saxon.asDocumentNode(processor, nodes));
                 }
             }
             else
             {
-                iter = SaxonAxis.childElements(node).iterator();
-                if (iter.hasNext())
+                for (final XdmNode documentNode : documentElements)
                 {
-                    documents.add(Saxon.asDocumentNode(iter.next(), processor));
-                    LOG.trace("New inline document");
-                }
-                else
-                {
-                    LOG.trace("New empty document");
+                    final String documentHref = documentNode.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
+                    if (href != null)
+                    {
+                        LOG.trace("New external document: {}", documentHref);
+                        documents.add(loadExternalDocument(documentHref, documentNode));
+                    }
+                    else
+                    {
+                        LOG.trace("New wrapped document");
+                        documents.add(Saxon.asDocumentNode(processor, SaxonAxis.childNodes(documentNode)));
+                    }
                 }
             }
         }
