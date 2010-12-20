@@ -1,2 +1,3 @@
 org.trancecode.xproc.step.ForEachStepProcessor$IterationPositionXPathExtensionFunction
 org.trancecode.xproc.step.ForEachStepProcessor$IterationSizeXPathExtensionFunction
+org.trancecode.xproc.xpath.SystemPropertyXPathExtensionFunction
