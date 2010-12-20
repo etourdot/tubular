@@ -63,9 +63,14 @@ public final class Tubular
         return "Tubular";
     }
 
+    public static String vendor()
+    {
+        return "TranceCode Software";
+    }
+
     public static String productInformation()
     {
-        return productName() + " version " + version() + " (c) TranceCode Software" + "\nXProc version: "
-                + xprocVersion() + "\nXPath version: " + xpathVersion();
+        return String.format("%s version %s (c) %s\nXProc version: %s\nXPath version: %s", productName(), version(),
+                vendor(), xprocVersion(), xpathVersion());
     }
 }
