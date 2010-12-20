@@ -56,8 +56,8 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
 {
     private static final Logger LOG = Logger.getLogger(ForEachStepProcessor.class);
 
-    private static ThreadLocal<Integer> iterationPosition = new ThreadLocal<Integer>();
-    private static ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
+    private static final ThreadLocal<Integer> iterationPosition = new ThreadLocal<Integer>();
+    private static final ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
 
     public static final class IterationPositionXPathExtensionFunction implements XPathExtensionFunction
     {
