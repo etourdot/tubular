@@ -633,6 +633,9 @@ public class Environment implements HasPipelineContext
                 }
             }
 
+            xpathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace()
+                    .uri());
+
             final XPathSelector selector = xpathCompiler.compile(select).load();
             selector.setContextItem(xpathContextNode);
 
