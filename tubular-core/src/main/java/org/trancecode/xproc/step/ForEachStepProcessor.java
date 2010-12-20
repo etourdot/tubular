@@ -77,13 +77,14 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         final List<Callable<Iterable<XdmNode>>> tasks = Lists.newArrayListWithCapacity(inputNodes.size());
         for (int i = 0; i < inputNodes.size(); i++)
         {
-            final XdmNode inputNode = inputNodes.get(i);
+            final int iterationPosition = i + 1;
+            final XdmNode inputNode = inputNodes.get(iterationPosition);
             tasks.add(new Callable<Iterable<XdmNode>>()
             {
                 @Override
                 public Iterable<XdmNode> call()
                 {
-                    LOG.trace("new iteration: {}", inputNode);
+                    LOG.trace("iteration {}/{size}: {}", iterationPosition, inputNodes, inputNode);
                     final Port iterationPort = newIterationPort(step, inputNode);
                     final Environment iterationEnvironment = environment.newChildStepEnvironment()
                             .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
