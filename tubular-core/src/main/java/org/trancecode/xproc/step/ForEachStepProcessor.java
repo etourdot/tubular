@@ -39,6 +39,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.SequenceType;
 import org.trancecode.concurrent.TcFutures;
+import org.trancecode.core.TcThreads;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XPathExtensionFunction;
@@ -55,42 +56,8 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
 {
     private static final Logger LOG = Logger.getLogger(ForEachStepProcessor.class);
 
-    private static ThreadLocal<Integer> iterationPosition;
-    private static ThreadLocal<Integer> iterationSize;
-
-    private static int setIterationPosition(final int value)
-    {
-        final int oldValue;
-        if (iterationPosition == null)
-        {
-            iterationPosition = new ThreadLocal<Integer>();
-            oldValue = -1;
-        }
-        else
-        {
-            oldValue = iterationPosition.get();
-        }
-
-        iterationPosition.set(value);
-        return oldValue;
-    }
-
-    private static int setIterationSize(final int value)
-    {
-        final int oldValue;
-        if (iterationSize == null)
-        {
-            iterationSize = new ThreadLocal<Integer>();
-            oldValue = -1;
-        }
-        else
-        {
-            oldValue = iterationSize.get();
-        }
-
-        iterationSize.set(value);
-        return oldValue;
-    }
+    private static ThreadLocal<Integer> iterationPosition = new ThreadLocal<Integer>();
+    private static ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
 
     public static final class IterationPositionXPathExtensionFunction implements XPathExtensionFunction
     {
@@ -226,6 +193,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
 
         final List<XdmNode> inputNodes = ImmutableList.copyOf(stepEnvironment.readNodes(step
                 .getPortReference(XProcPorts.ITERATION_SOURCE)));
+        final int iterationSize = inputNodes.size();
         final List<Callable<Iterable<XdmNode>>> tasks = Lists.newArrayListWithCapacity(inputNodes.size());
         for (int i = 0; i < inputNodes.size(); i++)
         {
@@ -236,10 +204,11 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
                 @Override
                 public Iterable<XdmNode> call()
                 {
-                    LOG.trace("iteration {}/{size}: {}", iterationPosition, inputNodes, inputNode);
+                    LOG.trace("iteration {}/{}: {}", iterationPosition, iterationSize, inputNode);
 
-                    final int oldIterationPosition = setIterationPosition(iterationPosition);
-                    final int oldIterationSize = setIterationSize(inputNodes.size());
+                    final int oldIterationPosition = TcThreads.set(ForEachStepProcessor.iterationPosition,
+                            iterationPosition, -1);
+                    final int oldIterationSize = TcThreads.set(ForEachStepProcessor.iterationSize, iterationSize, -1);
                     try
                     {
                         final Port iterationPort = newIterationPort(step, inputNode);
@@ -251,8 +220,8 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
                     }
                     finally
                     {
-                        setIterationPosition(oldIterationPosition);
-                        setIterationSize(oldIterationSize);
+                        TcThreads.set(ForEachStepProcessor.iterationPosition, oldIterationPosition);
+                        TcThreads.set(ForEachStepProcessor.iterationSize, oldIterationSize);
                     }
                 }
             });
