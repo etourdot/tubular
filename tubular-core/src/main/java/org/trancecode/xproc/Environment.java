@@ -68,6 +68,8 @@ public final class Environment implements HasPipelineContext
     private static final QName ELEMENT_PARAM = XProcXmlModel.xprocStepNamespace().newSaxonQName("param");
     private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
 
+    private static final ThreadLocal<Environment> currentEnvironment = new ThreadLocal<Environment>();
+
     private final EnvironmentPort defaultReadablePort;
     private final Map<QName, String> inheritedVariables;
     private final Map<QName, String> localVariables;
@@ -76,6 +78,16 @@ public final class Environment implements HasPipelineContext
     private final Step pipeline;
     private final EnvironmentPort defaultParametersPort;
     private final EnvironmentPort xpathContextPort;
+
+    public static void setCurrentEnvironment(final Environment environment)
+    {
+        currentEnvironment.set(environment);
+    }
+
+    public static Environment getCurrentEnvironment()
+    {
+        return currentEnvironment.get();
+    }
 
     private static Map<PortReference, EnvironmentPort> getPortsMap(final Iterable<EnvironmentPort> ports)
     {
