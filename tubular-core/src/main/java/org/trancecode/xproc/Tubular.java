@@ -58,9 +58,14 @@ public final class Tubular
         return NAMESPACE;
     }
 
+    public static String productName()
+    {
+        return "Tubular";
+    }
+
     public static String productInformation()
     {
-        return "Tubular version " + version() + " (c) TranceCode Software" + "\nXProc version: " + xprocVersion()
-                + "\nXPath version: " + xpathVersion();
+        return productName() + " version " + version() + " (c) TranceCode Software" + "\nXProc version: "
+                + xprocVersion() + "\nXPath version: " + xpathVersion();
     }
 }
