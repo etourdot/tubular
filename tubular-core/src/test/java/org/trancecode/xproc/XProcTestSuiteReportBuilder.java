@@ -28,10 +28,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
+import org.trancecode.TcAssert.XdmNodeCompareAssertionError;
 import org.trancecode.io.Files;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcTestReportXmlModel.Attributes;
@@ -44,22 +44,21 @@ public final class XProcTestSuiteReportBuilder
 {
     private final Multimap<String, TestResult> results = ArrayListMultimap.create();
 
-    private static final class TestResult
+    public static final class TestResult
     {
         private final XProcTestCase test;
-        private final QName actualError;
-        private final String message;
+        private final Throwable error;
 
-        public TestResult(final XProcTestCase test, final QName actualError, final String message)
+        public TestResult(final XProcTestCase test, final Throwable error)
         {
             this.test = Preconditions.checkNotNull(test);
-            this.actualError = actualError;
-            this.message = message;
+            this.error = error;
         }
 
         public boolean failed()
         {
-            return actualError != null && !actualError.equals(test.getError());
+            return error != null
+                    && !(error instanceof XProcException && ((XProcException) error).name().equals(test.getError()));
         }
     }
 
@@ -102,20 +101,15 @@ public final class XProcTestSuiteReportBuilder
         builder.endElement();
     }
 
-    public void pass(final XProcTestCase test, final String message)
+    public TestResult result(final XProcTestCase test, final Throwable error)
     {
+        final TestResult result = new TestResult(test, error);
         if (test.testSuite() != null)
         {
-            results.put(test.testSuite(), new TestResult(test, null, message));
+            results.put(test.testSuite(), result);
         }
-    }
 
-    public void fail(final XProcTestCase test, final QName actualError, final String message)
-    {
-        if (test.testSuite() != null)
-        {
-            results.put(test.testSuite(), new TestResult(test, actualError, message));
-        }
+        return result;
     }
 
     public void write(final File file)
@@ -159,7 +153,7 @@ public final class XProcTestSuiteReportBuilder
                 builder.text(result.test.getTitle());
                 builder.endElement();
 
-                if (result.actualError != null)
+                if (result.error != null)
                 {
                     builder.startElement(Elements.ERROR);
 
@@ -168,14 +162,32 @@ public final class XProcTestSuiteReportBuilder
                         builder.attribute(Attributes.EXPECTED, result.test.getError().toString());
                     }
 
-                    builder.text(result.actualError.getClarkName());
+                    if (result.error instanceof XProcException)
+                    {
+                        builder.text(((XProcException) result.error).name().getClarkName());
+                    }
+                    else
+                    {
+                        builder.text(result.error.getClass().getSimpleName());
+                    }
                     builder.endElement();
+
+                    if (result.error instanceof XdmNodeCompareAssertionError)
+                    {
+                        final XdmNodeCompareAssertionError comparisonError = (XdmNodeCompareAssertionError) result.error;
+                        builder.startElement(Elements.EXPECTED);
+                        builder.text(comparisonError.expected().toString());
+                        builder.endElement();
+                        builder.startElement(Elements.ACTUAL);
+                        builder.text(comparisonError.actual().toString());
+                        builder.endElement();
+                    }
                 }
 
-                if (result.message != null)
+                if (result.error != null && !(result.error instanceof XdmNodeCompareAssertionError))
                 {
                     builder.startElement(Elements.MESSAGE);
-                    builder.text(result.message);
+                    builder.text(result.error.getMessage());
                     builder.endElement();
                 }
 

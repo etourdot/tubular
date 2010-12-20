@@ -105,13 +105,10 @@ public abstract class AbstractXProcTest extends AbstractTest
         }
         catch (final XProcException e)
         {
-            if (e.name().equals(test.getError()))
+            if (!reportBuilder.result(test, e).failed())
             {
-                reportBuilder.pass(test, e.getMessage());
                 return;
             }
-
-            reportBuilder.fail(test, e.name(), e.getMessage());
 
             if (test.getError() != null)
             {
@@ -122,7 +119,7 @@ public abstract class AbstractXProcTest extends AbstractTest
         }
         catch (final Throwable e)
         {
-            reportBuilder.fail(test, new QName(e.getClass().getSimpleName()), e.getMessage());
+            reportBuilder.result(test, e);
             if (e instanceof RuntimeException)
             {
                 throw (RuntimeException) e;
@@ -131,7 +128,7 @@ public abstract class AbstractXProcTest extends AbstractTest
             Assert.fail(e.getMessage(), e);
         }
 
-        reportBuilder.pass(test, null);
+        reportBuilder.result(test, null);
     }
 
     private void test(final XProcTestCase test, final PipelineProcessor pipelineProcessor)
