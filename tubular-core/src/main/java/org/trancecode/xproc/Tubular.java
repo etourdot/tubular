@@ -68,6 +68,11 @@ public final class Tubular
         return "TranceCode Software";
     }
 
+    public static String vendorUri()
+    {
+        return "http://www.trancecode.org/tubular/";
+    }
+
     public static String productInformation()
     {
         return String.format("%s version %s (c) %s\nXProc version: %s\nXPath version: %s", productName(), version(),
