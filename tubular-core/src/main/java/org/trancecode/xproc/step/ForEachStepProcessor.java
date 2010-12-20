@@ -27,11 +27,22 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.functions.ExtensionFunctionCall;
+import net.sf.saxon.functions.ExtensionFunctionDefinition;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.SingletonIterator;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.Int64Value;
+import net.sf.saxon.value.SequenceType;
 import org.trancecode.concurrent.TcFutures;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.XPathExtensionFunction;
+import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
@@ -43,6 +54,147 @@ import org.trancecode.xproc.port.XProcPorts;
 public final class ForEachStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ForEachStepProcessor.class);
+
+    private static ThreadLocal<Integer> iterationPosition;
+    private static ThreadLocal<Integer> iterationSize;
+
+    private static int setIterationPosition(final int value)
+    {
+        final int oldValue;
+        if (iterationPosition == null)
+        {
+            iterationPosition = new ThreadLocal<Integer>();
+            oldValue = -1;
+        }
+        else
+        {
+            oldValue = iterationPosition.get();
+        }
+
+        iterationPosition.set(value);
+        return oldValue;
+    }
+
+    private static int setIterationSize(final int value)
+    {
+        final int oldValue;
+        if (iterationSize == null)
+        {
+            iterationSize = new ThreadLocal<Integer>();
+            oldValue = -1;
+        }
+        else
+        {
+            oldValue = iterationSize.get();
+        }
+
+        iterationSize.set(value);
+        return oldValue;
+    }
+
+    public static final class IterationPositionXPathExtensionFunction implements XPathExtensionFunction
+    {
+        @Override
+        public ExtensionFunctionDefinition getExtensionFunctionDefinition()
+        {
+            return new ExtensionFunctionDefinition()
+            {
+                private static final long serialVersionUID = -2376250179411225176L;
+
+                @Override
+                public StructuredQName getFunctionQName()
+                {
+                    return XProcXmlModel.xprocNamespace().newStructuredQName("iteration-position");
+                }
+
+                @Override
+                public int getMinimumNumberOfArguments()
+                {
+                    return 0;
+                }
+
+                @Override
+                public SequenceType[] getArgumentTypes()
+                {
+                    return new SequenceType[0];
+                }
+
+                @Override
+                public SequenceType getResultType(final SequenceType[] suppliedArgumentTypes)
+                {
+                    return SequenceType.SINGLE_INTEGER;
+                }
+
+                @Override
+                public ExtensionFunctionCall makeCallExpression()
+                {
+                    return new ExtensionFunctionCall()
+                    {
+                        private static final long serialVersionUID = -8363336682570398286L;
+
+                        @Override
+                        public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
+                                throws XPathException
+                        {
+                            return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(iterationPosition.get()));
+                        }
+                    };
+                }
+            };
+        }
+    }
+
+    public static final class IterationSizeXPathExtensionFunction implements XPathExtensionFunction
+    {
+        @Override
+        public ExtensionFunctionDefinition getExtensionFunctionDefinition()
+        {
+            return new ExtensionFunctionDefinition()
+            {
+                private static final long serialVersionUID = -2376250179411225176L;
+
+                @Override
+                public StructuredQName getFunctionQName()
+                {
+                    return XProcXmlModel.xprocNamespace().newStructuredQName("iteration-size");
+                }
+
+                @Override
+                public int getMinimumNumberOfArguments()
+                {
+                    return 0;
+                }
+
+                @Override
+                public SequenceType[] getArgumentTypes()
+                {
+                    return new SequenceType[0];
+                }
+
+                @Override
+                public SequenceType getResultType(final SequenceType[] suppliedArgumentTypes)
+                {
+                    return SequenceType.SINGLE_INTEGER;
+                }
+
+                @Override
+                public ExtensionFunctionCall makeCallExpression()
+                {
+                    return new ExtensionFunctionCall()
+                    {
+                        private static final long serialVersionUID = -8363336682570398286L;
+
+                        @Override
+                        public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
+                                throws XPathException
+                        {
+                            return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(iterationSize.get()));
+                        }
+                    };
+                }
+            };
+        }
+    }
 
     @Override
     public Step stepDeclaration()
@@ -78,19 +230,30 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         for (int i = 0; i < inputNodes.size(); i++)
         {
             final int iterationPosition = i + 1;
-            final XdmNode inputNode = inputNodes.get(iterationPosition);
+            final XdmNode inputNode = inputNodes.get(i);
             tasks.add(new Callable<Iterable<XdmNode>>()
             {
                 @Override
                 public Iterable<XdmNode> call()
                 {
                     LOG.trace("iteration {}/{size}: {}", iterationPosition, inputNodes, inputNode);
-                    final Port iterationPort = newIterationPort(step, inputNode);
-                    final Environment iterationEnvironment = environment.newChildStepEnvironment()
-                            .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
-                            .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT));
-                    final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
-                    return resultEnvironment.getDefaultReadablePort().readNodes();
+
+                    final int oldIterationPosition = setIterationPosition(iterationPosition);
+                    final int oldIterationSize = setIterationSize(inputNodes.size());
+                    try
+                    {
+                        final Port iterationPort = newIterationPort(step, inputNode);
+                        final Environment iterationEnvironment = environment.newChildStepEnvironment()
+                                .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
+                                .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT));
+                        final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
+                        return resultEnvironment.getDefaultReadablePort().readNodes();
+                    }
+                    finally
+                    {
+                        setIterationPosition(oldIterationPosition);
+                        setIterationSize(oldIterationSize);
+                    }
                 }
             });
         }
