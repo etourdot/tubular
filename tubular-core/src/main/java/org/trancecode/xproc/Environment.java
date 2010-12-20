@@ -59,7 +59,7 @@ import org.trancecode.xproc.variable.Variables;
 /**
  * @author Herve Quiroz
  */
-public class Environment implements HasPipelineContext
+public final class Environment implements HasPipelineContext
 {
     private static final Logger LOG = Logger.getLogger(Environment.class);
 
