@@ -187,7 +187,14 @@ public final class XProcTestSuiteReportBuilder
                 if (result.error != null && !(result.error instanceof XdmNodeCompareAssertionError))
                 {
                     builder.startElement(Elements.MESSAGE);
-                    builder.text(result.error.getMessage());
+                    if (result.error.getMessage() != null)
+                    {
+                        builder.text(result.error.getMessage());
+                    }
+                    else
+                    {
+                        builder.text(result.error.getClass().getName());
+                    }
                     builder.endElement();
                 }
 
