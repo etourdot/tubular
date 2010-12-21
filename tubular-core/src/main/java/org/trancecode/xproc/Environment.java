@@ -84,6 +84,11 @@ public final class Environment implements HasPipelineContext
         currentEnvironment.set(environment);
     }
 
+    public void setCurrentEnvironment()
+    {
+        setCurrentEnvironment(this);
+    }
+
     public static Environment getCurrentEnvironment()
     {
         return currentEnvironment.get();
