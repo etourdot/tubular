@@ -35,6 +35,8 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
         LOG.trace("step = {}", step.getName());
         assert step.isCompoundStep();
 
+        environment.setCurrentEnvironment();
+
         final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
         final Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
 
@@ -49,6 +51,8 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
 
         for (final Step childStep : steps)
         {
+            Environment.setCurrentNamespaceContext(childStep.getNode());
+            currentEnvironment.setCurrentEnvironment();
             currentEnvironment = childStep.run(currentEnvironment);
         }
 
