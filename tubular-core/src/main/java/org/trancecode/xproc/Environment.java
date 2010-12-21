@@ -69,6 +69,8 @@ public final class Environment implements HasPipelineContext
     private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
 
     private static final ThreadLocal<Environment> currentEnvironment = new ThreadLocal<Environment>();
+    private static final ThreadLocal<XdmNode> currentXPathContext = new ThreadLocal<XdmNode>();
+    private static final ThreadLocal<XdmNode> currentNamespaceContext = new ThreadLocal<XdmNode>();
 
     private final EnvironmentPort defaultReadablePort;
     private final Map<QName, String> inheritedVariables;
@@ -78,6 +80,26 @@ public final class Environment implements HasPipelineContext
     private final Step pipeline;
     private final EnvironmentPort defaultParametersPort;
     private final EnvironmentPort xpathContextPort;
+
+    public static void setCurrentNamespaceContext(final XdmNode node)
+    {
+        currentNamespaceContext.set(node);
+    }
+
+    public static XdmNode getCurrentNamespaceContext()
+    {
+        return currentNamespaceContext.get();
+    }
+
+    public static void setCurrentXPathContext(final XdmNode node)
+    {
+        currentXPathContext.set(node);
+    }
+
+    public static XdmNode getCurrentXPathContext()
+    {
+        return currentXPathContext.get();
+    }
 
     public static void setCurrentEnvironment(final Environment environment)
     {
@@ -369,6 +391,7 @@ public final class Environment implements HasPipelineContext
             {
                 LOG.trace("xpathContextNode = {}", xpathContextNode);
                 selector.setContextItem(processor.newDocumentBuilder().build(xpathContextNode.asSource()));
+                setCurrentXPathContext(xpathContextNode);
             }
 
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
@@ -654,6 +677,7 @@ public final class Environment implements HasPipelineContext
                     .uri());
 
             final XPathSelector selector = xpathCompiler.compile(select).load();
+            setCurrentXPathContext(xpathContextNode);
             selector.setContextItem(xpathContextNode);
 
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
