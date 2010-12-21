@@ -17,9 +17,9 @@
  */
 package org.trancecode.xproc.xpath;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import java.util.Locale;
 import java.util.Map;
