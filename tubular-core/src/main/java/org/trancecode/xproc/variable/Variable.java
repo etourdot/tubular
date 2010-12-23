@@ -40,11 +40,11 @@ public final class Variable extends AbstractHasLocation
     };
 
     private final QName name;
-    private final String select;
-    private final String value;
-    private final Boolean required;
-    private final Type type;
     private final PortBinding portBinding;
+    private final Boolean required;
+    private final String select;
+    private final Type type;
+    private final String value;
 
     public static Variable newOption(final QName name)
     {
