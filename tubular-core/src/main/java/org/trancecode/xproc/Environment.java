@@ -30,6 +30,7 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -46,6 +47,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonNamespaces;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
@@ -329,7 +331,7 @@ public final class Environment implements HasPipelineContext
                 }
 
                 final XdmValue result = evaluateXPath(variable.getSelect(), getPipelineContext().getProcessor(),
-                        xpathContextNode, allVariables, variable.getLocation());
+                        xpathContextNode, variable.getNode(), allVariables, variable.getLocation());
                 final XdmItem resultNode = Iterables.getOnlyElement(result);
 
                 value = resultNode.getStringValue();
@@ -368,7 +370,8 @@ public final class Environment implements HasPipelineContext
     }
 
     private static XdmValue evaluateXPath(final String select, final Processor processor,
-            final XdmNode xpathContextNode, final Map<QName, String> variables, final Location location)
+            final XdmNode xpathContextNode, final XdmNode namespaceContextNode, final Map<QName, String> variables,
+            final Location location)
     {
         LOG.trace("{@method} select = {} ; variables = {}", select, variables);
 
@@ -383,8 +386,12 @@ public final class Environment implements HasPipelineContext
                 }
             }
 
-            xpathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace()
-                    .uri());
+            for (final Entry<String, String> namespace : SaxonNamespaces.namespaceSequence(namespaceContextNode))
+            {
+                xpathCompiler.declareNamespace(namespace.getKey(), namespace.getValue());
+            }
+
+            setCurrentNamespaceContext(namespaceContextNode);
 
             final XPathSelector selector = xpathCompiler.compile(select).load();
             if (xpathContextNode != null)
