@@ -182,4 +182,9 @@ public final class Variable extends AbstractHasLocation
     {
         return new Variable(name, select, value, required, location, type, portBinding, node);
     }
+
+    public XdmNode getNode()
+    {
+        return node;
+    }
 }
