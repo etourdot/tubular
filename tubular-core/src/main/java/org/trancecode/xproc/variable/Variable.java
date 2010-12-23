@@ -21,6 +21,7 @@ package org.trancecode.xproc.variable;
 
 import com.google.common.base.Preconditions;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.core.TcObjects;
 import org.trancecode.logging.Logger;
@@ -40,6 +41,7 @@ public final class Variable extends AbstractHasLocation
     };
 
     private final QName name;
+    private final XdmNode node;
     private final PortBinding portBinding;
     private final Boolean required;
     private final String select;
@@ -48,36 +50,36 @@ public final class Variable extends AbstractHasLocation
 
     public static Variable newOption(final QName name)
     {
-        return new Variable(name, null, null, null, null, Type.OPTION, null);
+        return new Variable(name, null, null, null, null, Type.OPTION, null, null);
     }
 
     public static Variable newParameter(final QName name)
     {
-        return new Variable(name, null, null, null, null, Type.PARAMETER, null);
+        return new Variable(name, null, null, null, null, Type.PARAMETER, null, null);
     }
 
     public static Variable newVariable(final QName name)
     {
-        return new Variable(name, null, null, null, null, Type.VARIABLE, null);
+        return new Variable(name, null, null, null, null, Type.VARIABLE, null, null);
     }
 
     public static Variable newOption(final QName name, final Location location)
     {
-        return new Variable(name, null, null, null, location, Type.OPTION, null);
+        return new Variable(name, null, null, null, location, Type.OPTION, null, null);
     }
 
     public static Variable newParameter(final QName name, final Location location)
     {
-        return new Variable(name, null, null, null, location, Type.PARAMETER, null);
+        return new Variable(name, null, null, null, location, Type.PARAMETER, null, null);
     }
 
     public static Variable newVariable(final QName name, final Location location)
     {
-        return new Variable(name, null, null, null, location, Type.VARIABLE, null);
+        return new Variable(name, null, null, null, location, Type.VARIABLE, null, null);
     }
 
     private Variable(final QName name, final String select, final String value, final Boolean required,
-            final Location location, final Type type, final PortBinding portBinding)
+            final Location location, final Type type, final PortBinding portBinding, final XdmNode node)
     {
         super(location);
 
@@ -92,11 +94,12 @@ public final class Variable extends AbstractHasLocation
         this.required = required;
         this.type = type;
         this.portBinding = portBinding;
+        this.node = node;
     }
 
     public Variable setLocation(final Location location)
     {
-        return new Variable(name, select, value, required, location, type, portBinding);
+        return new Variable(name, select, value, required, location, type, portBinding, node);
     }
 
     public boolean isVariable()
@@ -126,7 +129,7 @@ public final class Variable extends AbstractHasLocation
 
     public Variable setSelect(final String select)
     {
-        return new Variable(name, select, value, required, location, type, portBinding);
+        return new Variable(name, select, value, required, location, type, portBinding, node);
     }
 
     public String getValue()
@@ -136,12 +139,12 @@ public final class Variable extends AbstractHasLocation
 
     public Variable setValue(final String value)
     {
-        return new Variable(name, select, value, required, location, type, portBinding);
+        return new Variable(name, select, value, required, location, type, portBinding, node);
     }
 
     public Variable setRequired(final boolean required)
     {
-        return new Variable(name, select, value, required, location, type, portBinding);
+        return new Variable(name, select, value, required, location, type, portBinding, node);
     }
 
     public boolean isRequired()
@@ -172,6 +175,11 @@ public final class Variable extends AbstractHasLocation
     {
         LOG.trace("{}", name);
         LOG.trace("{} -> {}", this.portBinding, portBinding);
-        return new Variable(name, select, value, required, location, type, portBinding);
+        return new Variable(name, select, value, required, location, type, portBinding, node);
+    }
+
+    public Variable setNode(final XdmNode node)
+    {
+        return new Variable(name, select, value, required, location, type, portBinding, node);
     }
 }

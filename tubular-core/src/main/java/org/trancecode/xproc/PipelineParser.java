@@ -284,7 +284,7 @@ public class PipelineParser
                 {
                     throw XProcExceptions.xs0031(getLocation(node), name, step.getType());
                 }
-                return step.withOptionValue(name, value);
+                return step.withOptionValue(name, value, node);
             }
         }
         else if (node.getNodeKind() == XdmNodeKind.TEXT)
@@ -467,6 +467,8 @@ public class PipelineParser
             option = option.setRequired(Boolean.parseBoolean(required));
         }
 
+        option = option.setNode(node);
+
         return step.declareVariable(option);
     }
 
@@ -476,7 +478,7 @@ public class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
-        return step.withParam(name, select, null, getLocation(node));
+        return step.withParam(name, select, null, getLocation(node), node);
     }
 
     private Step parseWithOption(final XdmNode node, final Step step)
@@ -485,7 +487,7 @@ public class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
-        return step.withOption(name, select);
+        return step.withOption(name, select, node);
     }
 
     private Step parseDeclareVariable(final XdmNode node, final Step step)
@@ -498,6 +500,7 @@ public class PipelineParser
         variable = variable.setRequired(true);
         final PortBinding portBinding = Iterables.getOnlyElement(parsePortBindings(node), null);
         variable = variable.setPortBinding(portBinding);
+        variable = variable.setNode(node);
 
         return step.declareVariable(variable);
     }

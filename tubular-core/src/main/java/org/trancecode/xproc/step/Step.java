@@ -343,7 +343,7 @@ public final class Step extends AbstractHasLocation
         return Iterables.filter(ports.values(), PortPredicates.isParameterPort());
     }
 
-    public Step withOption(final QName name, final String select)
+    public Step withOption(final QName name, final String select, final XdmNode node)
     {
         assert Variables.containsVariable(variables, name);
 
@@ -355,7 +355,7 @@ public final class Step extends AbstractHasLocation
                 if (variable.getName().equals(name))
                 {
                     assert variable.isOption();
-                    return variable.setSelect(select);
+                    return variable.setSelect(select).setNode(node);
                 }
 
                 return variable;
@@ -368,16 +368,27 @@ public final class Step extends AbstractHasLocation
 
     public Step withParam(final QName name, final String select, final String value, final Location location)
     {
+        return withParam(name, select, value, location, null);
+    }
+
+    public Step withParam(final QName name, final String select, final String value, final Location location,
+            final XdmNode node)
+    {
         assert !parameters.containsKey(name);
 
         final Iterable<Variable> newVariables = Variables.setOrAddVariable(variables,
-                Variable.newParameter(name, location).setSelect(select).setValue(value));
+                Variable.newParameter(name, location).setSelect(select).setValue(value).setNode(node));
 
         return new Step(node, type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports,
                 steps);
     }
 
     public Step withOptionValue(final QName name, final String value)
+    {
+        return withOptionValue(name, value, null);
+    }
+
+    public Step withOptionValue(final QName name, final String value, final XdmNode node)
     {
         assert Variables.containsVariable(variables, name);
 
@@ -389,7 +400,7 @@ public final class Step extends AbstractHasLocation
                 if (variable.getName().equals(name))
                 {
                     assert variable.isOption();
-                    return variable.setValue(value);
+                    return variable.setValue(value).setNode(node);
                 }
 
                 return variable;
