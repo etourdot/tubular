@@ -30,7 +30,6 @@ import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XPathExtensionFunction;
 import org.trancecode.xproc.XProcXmlModel;
 
 /**
@@ -40,7 +39,7 @@ import org.trancecode.xproc.XProcXmlModel;
  * @see <a href="http://www.w3.org/TR/xproc/#f.step-available">Step
  *      Available</a>
  */
-public final class StepAvailableXPathExtensionFunction implements XPathExtensionFunction
+public final class StepAvailableXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
     private static final Logger LOG = Logger.getLogger(StepAvailableXPathExtensionFunction.class);
 
@@ -88,8 +87,8 @@ public final class StepAvailableXPathExtensionFunction implements XPathExtension
                     {
                         Preconditions.checkArgument(arguments.length == 1);
                         final String stepName = arguments[0].next().getStringValue();
-                        final QName stepQName = new QName(stepName, Environment.getCurrentNamespaceContext());
-                        LOG.trace("step-name = {} = {}", stepName, stepQName);
+                        final QName stepQName = resolveQName(stepName);
+                        LOG.trace("step-name = {}", stepQName);
                         final boolean available = Environment.getCurrentEnvironment().getPipelineContext()
                                 .getPipelineLibrary().stepTypes().contains(stepQName);
                         LOG.trace("available = {}", available);

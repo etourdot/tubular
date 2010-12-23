@@ -30,12 +30,12 @@ import net.sf.saxon.functions.ExtensionFunctionDefinition;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.SingletonIterator;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Tubular;
-import org.trancecode.xproc.XPathExtensionFunction;
 import org.trancecode.xproc.XProcXmlModel;
 
 /**
@@ -45,24 +45,24 @@ import org.trancecode.xproc.XProcXmlModel;
  * @see <a href="http://www.w3.org/TR/xproc/#f.system-property">System
  *      Properties</a>
  */
-public final class SystemPropertyXPathExtensionFunction implements XPathExtensionFunction
+public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
     private static final Logger LOG = Logger.getLogger(SystemPropertyXPathExtensionFunction.class);
-    private static final Map<String, String> PROPERTIES;
+    private static final Map<QName, String> PROPERTIES;
 
     static
     {
-        final Map<String, String> properties = Maps.newHashMap();
+        final Map<QName, String> properties = Maps.newHashMap();
         // TODO p:episode
-        properties.put("p:episode", "123");
-        properties.put("p:language", Locale.getDefault().toString());
-        properties.put("p:product-name", Tubular.productName());
-        properties.put("p:product-version", Tubular.version());
-        properties.put("p:vendor", Tubular.vendor());
-        properties.put("p:vendor-uri", Tubular.vendorUri());
-        properties.put("p:version", Tubular.xprocVersion());
-        properties.put("p:xpath-version", Tubular.xpathVersion());
-        properties.put("p:psvi-supported", "false");
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("episode"), "123");
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("language"), Locale.getDefault().toString());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("product-name"), Tubular.productName());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("product-version"), Tubular.version());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("vendor"), Tubular.vendor());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("vendor-uri"), Tubular.vendorUri());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("version"), Tubular.xprocVersion());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("xpath-version"), Tubular.xpathVersion());
+        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("psvi-supported"), "false");
         PROPERTIES = ImmutableMap.copyOf(properties);
     }
 
@@ -109,7 +109,7 @@ public final class SystemPropertyXPathExtensionFunction implements XPathExtensio
                             throws XPathException
                     {
                         Preconditions.checkArgument(arguments.length == 1);
-                        final String property = arguments[0].next().getStringValue();
+                        final QName property = resolveQName(arguments[0].next().getStringValue());
                         final String value;
                         if (PROPERTIES.containsKey(property))
                         {

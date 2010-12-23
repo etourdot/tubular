@@ -42,12 +42,12 @@ import org.trancecode.concurrent.TcFutures;
 import org.trancecode.core.TcThreads;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XPathExtensionFunction;
 import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.xpath.AbstractXPathExtensionFunction;
 
 /**
  * @author Herve Quiroz
@@ -59,7 +59,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
     private static final ThreadLocal<Integer> iterationPosition = new ThreadLocal<Integer>();
     private static final ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
 
-    public static final class IterationPositionXPathExtensionFunction implements XPathExtensionFunction
+    public static final class IterationPositionXPathExtensionFunction extends AbstractXPathExtensionFunction
     {
         @Override
         public ExtensionFunctionDefinition getExtensionFunctionDefinition()
@@ -111,7 +111,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         }
     }
 
-    public static final class IterationSizeXPathExtensionFunction implements XPathExtensionFunction
+    public static final class IterationSizeXPathExtensionFunction extends AbstractXPathExtensionFunction
     {
         @Override
         public ExtensionFunctionDefinition getExtensionFunctionDefinition()
