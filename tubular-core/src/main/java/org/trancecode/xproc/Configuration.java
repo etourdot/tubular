@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
@@ -222,6 +223,11 @@ public final class Configuration implements PipelineContext
     public void setExecutor(final TaskExecutor executor)
     {
         this.executor = executor;
+    }
+
+    public void setExecutor(final ExecutorService executor)
+    {
+        this.executor = TaskExecutors.forExecutorService(executor);
     }
 
     @Override
