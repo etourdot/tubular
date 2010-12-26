@@ -35,8 +35,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
@@ -44,6 +42,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import org.trancecode.concurrent.TaskExecutor;
+import org.trancecode.concurrent.TaskExecutors;
 import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
@@ -70,7 +70,7 @@ public final class Configuration implements PipelineContext
 
     private static PipelineLibrary DEFAULT_PIPELINE_LIBRARY = getDefaultLPipelineLibrary();
 
-    private ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private TaskExecutor executor = TaskExecutors.onDemandExecutor();
     private URIResolver uriResolver;
     private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
     private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
@@ -87,9 +87,9 @@ public final class Configuration implements PipelineContext
                     EMPTY_SET_OF_URIS);
 
             @Override
-            public ExecutorService getExecutorService()
+            public TaskExecutor getExecutor()
             {
-                return Executors.newSingleThreadScheduledExecutor();
+                return TaskExecutors.onDemandExecutor();
             }
 
             @Override
@@ -214,14 +214,14 @@ public final class Configuration implements PipelineContext
     }
 
     @Override
-    public ExecutorService getExecutorService()
+    public TaskExecutor getExecutor()
     {
-        return executorService;
+        return executor;
     }
 
-    public void setExecutorService(final ExecutorService executorService)
+    public void setExecutor(final TaskExecutor executor)
     {
-        this.executorService = executorService;
+        this.executor = executor;
     }
 
     @Override

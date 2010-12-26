@@ -18,12 +18,12 @@
 package org.trancecode.xproc;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import org.trancecode.concurrent.TaskExecutor;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
 import org.trancecode.xproc.step.StepProcessor;
@@ -33,7 +33,7 @@ import org.trancecode.xproc.step.StepProcessor;
  */
 public interface PipelineContext
 {
-    ExecutorService getExecutorService();
+    TaskExecutor getExecutor();
 
     InputResolver getInputResolver();
 

@@ -21,12 +21,12 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutorService;
 
 import javax.xml.transform.URIResolver;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import org.trancecode.concurrent.TaskExecutor;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
 import org.trancecode.xproc.step.StepProcessor;
@@ -36,7 +36,7 @@ import org.trancecode.xproc.step.StepProcessor;
  */
 public final class ImmutablePipelineContext implements PipelineContext
 {
-    private final ExecutorService executorService;
+    private final TaskExecutor executor;
     private final InputResolver inputResolver;
     private final OutputResolver outputResolver;
     private final PipelineLibrary pipelineLibrary;
@@ -51,16 +51,16 @@ public final class ImmutablePipelineContext implements PipelineContext
             return (ImmutablePipelineContext) context;
         }
 
-        return new ImmutablePipelineContext(context.getProcessor(), context.getExecutorService(),
-                context.getInputResolver(), context.getOutputResolver(), context.getUriResolver(),
-                context.getStepProcessors(), context.getPipelineLibrary());
+        return new ImmutablePipelineContext(context.getProcessor(), context.getExecutor(), context.getInputResolver(),
+                context.getOutputResolver(), context.getUriResolver(), context.getStepProcessors(),
+                context.getPipelineLibrary());
     }
 
-    private ImmutablePipelineContext(final Processor processor, final ExecutorService executorService,
+    private ImmutablePipelineContext(final Processor processor, final TaskExecutor executor,
             final InputResolver inputResolver, final OutputResolver outputResolver, final URIResolver uriResolver,
             final Map<QName, StepProcessor> stepProcessors, final PipelineLibrary pipelineLibrary)
     {
-        this.executorService = executorService;
+        this.executor = executor;
         this.inputResolver = inputResolver;
         this.outputResolver = outputResolver;
         this.pipelineLibrary = pipelineLibrary;
@@ -70,9 +70,9 @@ public final class ImmutablePipelineContext implements PipelineContext
     }
 
     @Override
-    public ExecutorService getExecutorService()
+    public TaskExecutor getExecutor()
     {
-        return executorService;
+        return executor;
     }
 
     @Override

@@ -227,7 +227,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
             });
         }
         final Iterable<Future<Iterable<XdmNode>>> futureResultNodes = TcFutures.submit(environment.getPipelineContext()
-                .getExecutorService(), tasks);
+                .getExecutor(), tasks);
         final Iterable<XdmNode> resultNodes = Iterables.concat(TcFutures.get(futureResultNodes));
 
         return stepEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT), resultNodes).setupOutputPorts(step);
