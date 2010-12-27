@@ -19,12 +19,14 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import net.sf.saxon.expr.XPathContext;
@@ -228,7 +230,20 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         }
         final Iterable<Future<Iterable<XdmNode>>> futureResultNodes = TcFutures.submit(environment.getPipelineContext()
                 .getExecutor(), tasks);
-        final Iterable<XdmNode> resultNodes = Iterables.concat(TcFutures.get(futureResultNodes));
+        final Iterable<XdmNode> resultNodes;
+        try
+        {
+            resultNodes = Iterables.concat(TcFutures.get(futureResultNodes));
+        }
+        catch (final ExecutionException e)
+        {
+            TcFutures.cancel(futureResultNodes);
+            throw Throwables.propagate(e);
+        }
+        catch (final InterruptedException e)
+        {
+            throw new IllegalStateException(e);
+        }
 
         return stepEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT), resultNodes).setupOutputPorts(step);
     }
