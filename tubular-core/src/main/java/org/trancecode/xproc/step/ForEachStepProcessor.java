@@ -233,12 +233,11 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         final Iterable<XdmNode> resultNodes;
         try
         {
-            resultNodes = Iterables.concat(TcFutures.get(futureResultNodes));
+            resultNodes = Iterables.concat(TcFutures.get(futureResultNodes, true));
         }
         catch (final ExecutionException e)
         {
-            TcFutures.cancel(futureResultNodes);
-            throw Throwables.propagate(e);
+            throw Throwables.propagate(e.getCause());
         }
         catch (final InterruptedException e)
         {
