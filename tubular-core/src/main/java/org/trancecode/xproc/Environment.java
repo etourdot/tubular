@@ -56,7 +56,6 @@ import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
-import org.trancecode.xproc.variable.Variables;
 
 /**
  * @author Herve Quiroz
@@ -291,7 +290,7 @@ public final class Environment implements HasPipelineContext
     private Environment setupVariables(final Step step)
     {
         LOG.trace("{@method} step = {}", step.getName());
-        LOG.trace("variables = {}", Variables.getVariableNames(step.getVariables()));
+        LOG.trace("variables = {keys}", step.getVariables());
 
         final Map<QName, String> allVariables = Maps.newHashMap(inheritedVariables);
         allVariables.putAll(localVariables);
@@ -299,8 +298,9 @@ public final class Environment implements HasPipelineContext
         final Map<QName, String> newLocalVariables = Maps.newHashMap(localVariables);
         final List<XdmNode> newParameterNodes = Lists.newArrayList();
 
-        for (final Variable variable : step.getVariables())
+        for (final Entry<QName, Variable> variableEntry : step.getVariables().entrySet())
         {
+            final Variable variable = variableEntry.getValue();
             LOG.trace("variable = {}", variable);
             final String value;
             if (variable.getValue() != null)

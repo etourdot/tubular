@@ -19,10 +19,8 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -30,6 +28,7 @@ import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -37,7 +36,6 @@ import org.trancecode.annotation.ReturnsNullable;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.core.TcObjects;
-import org.trancecode.function.TcFunctions;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
@@ -49,8 +47,6 @@ import org.trancecode.xproc.port.PortPredicates;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.Variable;
-import org.trancecode.xproc.variable.VariablePredicates;
-import org.trancecode.xproc.variable.Variables;
 
 /**
  * @author Herve Quiroz
@@ -58,7 +54,7 @@ import org.trancecode.xproc.variable.Variables;
 public final class Step extends AbstractHasLocation
 {
     private static final Logger LOG = Logger.getLogger(Step.class);
-    private static final List<Variable> EMPTY_VARIABLE_LIST = ImmutableList.of();
+    private static final Map<QName, Variable> EMPTY_VARIABLE_LIST = ImmutableMap.of();
     private static final Map<QName, Variable> EMPTY_PARAMETER_MAP = ImmutableMap.of();
     private static final Map<String, Port> EMPTY_PORT_MAP = ImmutableMap.of();
     private static final List<Step> EMPTY_STEP_LIST = ImmutableList.of();
@@ -72,7 +68,7 @@ public final class Step extends AbstractHasLocation
     };
 
     private final Map<QName, Variable> parameters;
-    private final List<Variable> variables;
+    private final Map<QName, Variable> variables;
 
     private final Map<String, Port> ports;
 
@@ -97,7 +93,7 @@ public final class Step extends AbstractHasLocation
     }
 
     private Step(final XdmNode node, final QName type, final String name, final Location location,
-            final StepProcessor stepProcessor, final boolean compoundStep, final Iterable<Variable> variables,
+            final StepProcessor stepProcessor, final boolean compoundStep, final Map<QName, Variable> variables,
             final Map<QName, Variable> parameters, final Map<String, Port> ports, final Iterable<Step> steps)
     {
         super(location);
@@ -111,7 +107,7 @@ public final class Step extends AbstractHasLocation
 
         this.compoundStep = compoundStep;
 
-        this.variables = ImmutableList.copyOf(variables);
+        this.variables = ImmutableMap.copyOf(variables);
         this.parameters = ImmutableMap.copyOf(parameters);
         this.ports = ImmutableMap.copyOf(ports);
         this.steps = ImmutableList.copyOf(steps);
@@ -143,15 +139,21 @@ public final class Step extends AbstractHasLocation
 
     public Step declareVariable(final Variable variable)
     {
-        assert !Variables.containsVariable(variables, variable.getName()) : "step = " + name + " ; variable = "
-                + variable.getName() + " ; variables = " + variables;
-        return new Step(node, type, name, location, stepProcessor, compoundStep,
-                TcIterables.append(variables, variable), parameters, ports, steps);
+        assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
+                + " ; variables = " + variables;
+        return new Step(node, type, name, location, stepProcessor, compoundStep, TcMaps.copyAndPut(variables,
+                variable.getName(), variable), parameters, ports, steps);
     }
 
-    public Step declareVariables(final Iterable<Variable> variables)
+    public Step declareVariables(final Map<QName, Variable> variables)
     {
-        return TcFunctions.apply(this, variables, StepFunctions.declareVariable());
+        Step step = this;
+        for (final Entry<QName, Variable> variable : variables.entrySet())
+        {
+            step = step.declareVariable(variable.getValue());
+        }
+
+        return step;
     }
 
     public String getName()
@@ -345,25 +347,12 @@ public final class Step extends AbstractHasLocation
 
     public Step withOption(final QName name, final String select, final XdmNode node)
     {
-        assert Variables.containsVariable(variables, name);
+        final Variable option = variables.get(name);
+        Preconditions.checkArgument(option != null, "no such option: %s", name);
+        Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
 
-        final Iterable<Variable> newVariables = Iterables.transform(variables, new Function<Variable, Variable>()
-        {
-            @Override
-            public Variable apply(final Variable variable)
-            {
-                if (variable.getName().equals(name))
-                {
-                    assert variable.isOption();
-                    return variable.setSelect(select).setNode(node);
-                }
-
-                return variable;
-            }
-        });
-
-        return new Step(node, type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports,
-                steps);
+        return new Step(node, type, this.name, location, stepProcessor, compoundStep, TcMaps.copyAndPut(variables,
+                name, option.setSelect(select).setNode(node)), parameters, ports, steps);
     }
 
     public Step withParam(final QName name, final String select, final String value, final Location location)
@@ -374,12 +363,10 @@ public final class Step extends AbstractHasLocation
     public Step withParam(final QName name, final String select, final String value, final Location location,
             final XdmNode node)
     {
-        assert !parameters.containsKey(name);
-
-        final Iterable<Variable> newVariables = Variables.setOrAddVariable(variables,
-                Variable.newParameter(name, location).setSelect(select).setValue(value).setNode(node));
-
-        return new Step(node, type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports,
+        Preconditions.checkArgument(!parameters.containsKey(name), "parameter already set: %s", name);
+        return new Step(node, type, this.name, location, stepProcessor, compoundStep, variables,
+                TcMaps.copyAndPut(parameters, name,
+                        Variable.newParameter(name, location).setSelect(select).setValue(value).setNode(node)), ports,
                 steps);
     }
 
@@ -390,31 +377,18 @@ public final class Step extends AbstractHasLocation
 
     public Step withOptionValue(final QName name, final String value, final XdmNode node)
     {
-        assert Variables.containsVariable(variables, name);
+        final Variable option = variables.get(name);
+        Preconditions.checkArgument(option != null, "no such option: %s", name);
+        Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
 
-        final Iterable<Variable> newVariables = Iterables.transform(variables, new Function<Variable, Variable>()
-        {
-            @Override
-            public Variable apply(final Variable variable)
-            {
-                if (variable.getName().equals(name))
-                {
-                    assert variable.isOption();
-                    return variable.setValue(value).setNode(node);
-                }
-
-                return variable;
-            }
-        });
-
-        return new Step(node, type, this.name, location, stepProcessor, compoundStep, newVariables, parameters, ports,
-                steps);
+        return new Step(node, type, this.name, location, stepProcessor, compoundStep, TcMaps.copyAndPut(variables,
+                name, option.setValue(value).setNode(node)), parameters, ports, steps);
     }
 
     public boolean hasOptionDeclared(final QName name)
     {
-        return Iterables
-                .any(variables, Predicates.and(VariablePredicates.isNamed(name), VariablePredicates.isOption()));
+        final Variable variable = variables.get(name);
+        return variable != null && variable.isOption();
     }
 
     @Override
@@ -450,7 +424,7 @@ public final class Step extends AbstractHasLocation
         return xpathContextPort;
     }
 
-    public Iterable<Variable> getVariables()
+    public Map<QName, Variable> getVariables()
     {
         return variables;
     }
@@ -514,7 +488,7 @@ public final class Step extends AbstractHasLocation
 
     public Variable getVariable(final QName name)
     {
-        return Variables.getVariable(variables, name);
+        return variables.get(name);
     }
 
     public PortReference getPortReference(final String portName)
