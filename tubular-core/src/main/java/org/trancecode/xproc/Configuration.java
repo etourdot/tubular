@@ -136,7 +136,7 @@ public final class Configuration implements PipelineContext
             }
         };
         final URL xprocLibraryUrl = Configuration.class.getResource(RESOURCE_PATH_XPROC_LIBRARY_1_0);
-        Source defaultLibrarySource;
+        final Source defaultLibrarySource;
         try
         {
             defaultLibrarySource = new StreamSource(xprocLibraryUrl.openStream(), xprocLibraryUrl.toString());
