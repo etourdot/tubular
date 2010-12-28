@@ -19,9 +19,6 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.base.Function;
-import org.trancecode.function.Pair;
-import org.trancecode.xproc.variable.Variable;
 
 /**
  * @author Herve Quiroz
@@ -31,23 +28,5 @@ public final class StepFunctions
     private StepFunctions()
     {
         // No instantiation
-    }
-
-    public static Function<Pair<Step, Variable>, Step> declareVariable()
-    {
-        return DeclareVariableBinaryFunction.INSTANCE;
-    }
-
-    private static class DeclareVariableBinaryFunction implements Function<Pair<Step, Variable>, Step>
-    {
-        private static final DeclareVariableBinaryFunction INSTANCE = new DeclareVariableBinaryFunction();
-
-        @Override
-        public Step apply(final Pair<Step, Variable> arguments)
-        {
-            final Step step = arguments.left();
-            final Variable variable = arguments.right();
-            return step.declareVariable(variable);
-        }
     }
 }
