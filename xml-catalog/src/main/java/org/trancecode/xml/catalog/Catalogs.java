@@ -30,8 +30,6 @@ import java.net.URI;
 
 import org.trancecode.annotation.Nullable;
 import org.trancecode.collection.TcIterables;
-import org.trancecode.core.AbstractImmutableHashCodeObject;
-import org.trancecode.core.AbstractImmutableObject;
 import org.trancecode.function.TcFunctions;
 import org.trancecode.io.UriFunctions;
 import org.trancecode.io.Uris;
@@ -80,13 +78,12 @@ public final class Catalogs
         return new RoutingCatalog(catalogEntries);
     }
 
-    private static class RoutingCatalog extends AbstractImmutableObject implements Function<CatalogQuery, URI>
+    private static class RoutingCatalog implements Function<CatalogQuery, URI>
     {
         private final Iterable<Function<CatalogQuery, URI>> catalogEntries;
 
         public RoutingCatalog(final Iterable<Function<CatalogQuery, URI>> catalogEntries)
         {
-            super(catalogEntries);
             this.catalogEntries = Preconditions.checkNotNull(catalogEntries);
         }
 
@@ -118,15 +115,13 @@ public final class Catalogs
         return new RewriteSystem(systemIdStartString, rewritePrefix);
     }
 
-    private static final class RewriteSystem extends AbstractImmutableHashCodeObject implements
-            Function<CatalogQuery, URI>
+    private static final class RewriteSystem implements Function<CatalogQuery, URI>
     {
         private final String systemIdStartString;
         private final String rewritePrefix;
 
         public RewriteSystem(final String systemIdStartString, final String rewritePrefix)
         {
-            super(systemIdStartString, rewritePrefix);
             this.systemIdStartString = systemIdStartString;
             this.rewritePrefix = rewritePrefix;
         }
@@ -149,15 +144,13 @@ public final class Catalogs
         return new RewriteUri(uriStartString, rewritePrefix);
     }
 
-    private static final class RewriteUri extends AbstractImmutableHashCodeObject implements
-            Function<CatalogQuery, URI>
+    private static final class RewriteUri implements Function<CatalogQuery, URI>
     {
         private final String uriStartString;
         private final String rewritePrefix;
 
         public RewriteUri(final String uriStartString, final String rewritePrefix)
         {
-            super(uriStartString, rewritePrefix);
             this.uriStartString = uriStartString;
             this.rewritePrefix = rewritePrefix;
         }

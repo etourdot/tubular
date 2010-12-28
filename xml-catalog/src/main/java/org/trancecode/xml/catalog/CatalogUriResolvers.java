@@ -28,7 +28,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
 
-import org.trancecode.core.AbstractImmutableObject;
 import org.trancecode.io.InputResolver;
 import org.trancecode.xml.Sax;
 import org.xml.sax.EntityResolver;
@@ -52,7 +51,7 @@ public final class CatalogUriResolvers
         return new EntityResolverURIResolver(inputResolver, catalog);
     }
 
-    private static class EntityResolverURIResolver extends AbstractImmutableObject implements URIResolver
+    private static class EntityResolverURIResolver implements URIResolver
     {
         private final InputResolver inputResolver;
         private final Catalog catalog;
@@ -60,7 +59,6 @@ public final class CatalogUriResolvers
 
         public EntityResolverURIResolver(final InputResolver inputResolver, final Catalog catalog)
         {
-            super(inputResolver, catalog);
             this.inputResolver = Preconditions.checkNotNull(inputResolver);
             this.catalog = Preconditions.checkNotNull(catalog);
             entityResolver = CatalogEntityResolvers.newEntityResolver(inputResolver, catalog);

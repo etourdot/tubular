@@ -23,12 +23,10 @@ import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
-import org.trancecode.core.AbstractImmutableHashCodeObject;
-
 /**
  * @author Herve Quiroz
  */
-public final class CatalogQuery extends AbstractImmutableHashCodeObject
+public final class CatalogQuery
 {
     private final String publicId;
     private final String systemId;
@@ -42,7 +40,6 @@ public final class CatalogQuery extends AbstractImmutableHashCodeObject
 
     private CatalogQuery(final String publicId, final String systemId, final URI uri)
     {
-        super(publicId, systemId, uri);
         Preconditions.checkArgument(publicId != null || systemId != null || uri != null);
         this.publicId = publicId;
         this.systemId = systemId;
