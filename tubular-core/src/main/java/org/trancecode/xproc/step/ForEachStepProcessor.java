@@ -41,7 +41,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.SequenceType;
 import org.trancecode.concurrent.TcFutures;
-import org.trancecode.core.TcThreads;
+import org.trancecode.lang.TcThreads;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcXmlModel;
