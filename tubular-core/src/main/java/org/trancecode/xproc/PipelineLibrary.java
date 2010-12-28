@@ -50,17 +50,17 @@ public final class PipelineLibrary
         this.importedUris = TcSets.immutableSet(importedUris, baseUri);
     }
 
-    public URI baseUri()
+    public URI getBaseUri()
     {
         return baseUri;
     }
 
-    public Set<URI> importedUris()
+    public Set<URI> getImportedUris()
     {
         return importedUris;
     }
 
-    public Set<QName> stepTypes()
+    public Set<QName> getStepTypes()
     {
         return steps.keySet();
     }
@@ -92,7 +92,7 @@ public final class PipelineLibrary
     public PipelineLibrary importLibrary(final PipelineLibrary library)
     {
         Preconditions.checkNotNull(library);
-        if (baseUri.equals(library.baseUri()) || importedUris.contains(library.baseUri))
+        if (baseUri.equals(library.getBaseUri()) || importedUris.contains(library.baseUri))
         {
             return this;
         }

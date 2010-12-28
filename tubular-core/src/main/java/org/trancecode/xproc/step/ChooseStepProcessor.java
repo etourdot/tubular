@@ -48,7 +48,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
     private static final Logger LOG = Logger.getLogger(ChooseStepProcessor.class);
 
     @Override
-    public Step stepDeclaration()
+    public Step getStepDeclaration()
     {
         final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT).setSequence(false)
                 .setPrimary(false));
@@ -56,7 +56,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
     }
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.CHOOSE;
     }
@@ -103,7 +103,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
     public static final class WhenStepProcessor extends AbstractWhenStepProcessor
     {
         @Override
-        public Step stepDeclaration()
+        public Step getStepDeclaration()
         {
             final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
                     .setSequence(false).setPrimary(false));
@@ -112,7 +112,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
         }
 
         @Override
-        public QName stepType()
+        public QName getStepType()
         {
             return XProcSteps.WHEN;
         }
@@ -157,7 +157,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
     public static final class OtherwiseStepProcessor extends AbstractWhenStepProcessor
     {
         @Override
-        public Step stepDeclaration()
+        public Step getStepDeclaration()
         {
             final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.XPATH_CONTEXT)
                     .setSequence(false).setPrimary(false));
@@ -165,7 +165,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
         }
 
         @Override
-        public QName stepType()
+        public QName getStepType()
         {
             return XProcSteps.OTHERWISE;
         }

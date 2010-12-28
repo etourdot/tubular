@@ -146,7 +146,7 @@ public final class Configuration implements PipelineContext
             throw new IllegalStateException("cannot parse default library: " + xprocLibraryUrl, e);
         }
         final PipelineLibrary library = PipelineParser.parseLibrary(context, defaultLibrarySource);
-        LOG.trace("supported steps: {}", library.stepTypes());
+        LOG.trace("supported steps: {}", library.getStepTypes());
         return library;
     }
 
@@ -159,7 +159,7 @@ public final class Configuration implements PipelineContext
                     @Override
                     public QName apply(final StepProcessor stepProcessor)
                     {
-                        return stepProcessor.stepType();
+                        return stepProcessor.getStepType();
                     }
                 });
         processors.putAll(availableProcessors);
@@ -170,7 +170,7 @@ public final class Configuration implements PipelineContext
                 processors.put(stepType, new StepProcessor()
                 {
                     @Override
-                    public QName stepType()
+                    public QName getStepType()
                     {
                         return stepType;
                     }
@@ -192,7 +192,7 @@ public final class Configuration implements PipelineContext
         final Map<QName, Step> coreSteps = Maps.newHashMap();
         for (final CoreStepProcessor coreStepProcessor : ServiceLoader.load(CoreStepProcessor.class))
         {
-            coreSteps.put(coreStepProcessor.stepType(), coreStepProcessor.stepDeclaration());
+            coreSteps.put(coreStepProcessor.getStepType(), coreStepProcessor.getStepDeclaration());
         }
 
         return ImmutableMap.copyOf(coreSteps);
@@ -272,7 +272,7 @@ public final class Configuration implements PipelineContext
     public void registerStepProcessor(final StepProcessor stepProcessor)
     {
         Preconditions.checkNotNull(stepProcessor);
-        stepProcessors.put(stepProcessor.stepType(), stepProcessor);
+        stepProcessors.put(stepProcessor.getStepType(), stepProcessor);
     }
 
     public void registerPipelineLibrary(final PipelineLibrary library)

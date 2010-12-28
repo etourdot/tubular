@@ -39,7 +39,7 @@ public final class LoadStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.LOAD;
     }
@@ -57,18 +57,18 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final Source source;
         try
         {
-            source = input.pipelineContext().getUriResolver().resolve(href, input.baseUri().toString());
+            source = input.getPipelineContext().getUriResolver().resolve(href, input.getBaseUri().toString());
         }
         catch (final Exception e)
         {
             throw new PipelineException("Error while trying to read document ; href = %s ; baseUri = %s", e, href,
-                    input.baseUri());
+                    input.getBaseUri());
         }
 
         final XdmNode document;
         try
         {
-            final DocumentBuilder documentBuilder = input.pipelineContext().getProcessor().newDocumentBuilder();
+            final DocumentBuilder documentBuilder = input.getPipelineContext().getProcessor().newDocumentBuilder();
             documentBuilder.setDTDValidation(validate);
             document = documentBuilder.build(source);
         }

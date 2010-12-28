@@ -519,8 +519,8 @@ public class PipelineParser
         assert href != null;
         LOG.trace("{@method} href = {}", href);
         final URI libraryUri = baseUri.resolve(href);
-        LOG.trace("libraryUri = {} ; libraries = {}", libraryUri, library.importedUris());
-        if (!library.importedUris().contains(libraryUri))
+        LOG.trace("libraryUri = {} ; libraries = {}", libraryUri, library.getImportedUris());
+        if (!library.getImportedUris().contains(libraryUri))
         {
             final Source librarySource;
             try
@@ -534,7 +534,7 @@ public class PipelineParser
             }
 
             final PipelineLibrary newLibrary = parseLibrary(context, librarySource, getLibrary());
-            LOG.trace("new steps = {}", newLibrary.stepTypes());
+            LOG.trace("new steps = {}", newLibrary.getStepTypes());
             library = library.importLibrary(newLibrary);
         }
         else
@@ -545,7 +545,7 @@ public class PipelineParser
 
     private Collection<QName> getSupportedStepTypes()
     {
-        return Sets.union(library.stepTypes(), localLibrary.keySet());
+        return Sets.union(library.getStepTypes(), localLibrary.keySet());
     }
 
     private Step parseInstanceStep(final XdmNode node)

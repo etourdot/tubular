@@ -45,7 +45,7 @@ public final class CompareStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(CompareStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.COMPARE;
     }
@@ -55,13 +55,13 @@ public final class CompareStepProcessor extends AbstractStepProcessor
     {
         final XdmNode sourceNode = input.readNode(XProcPorts.SOURCE);
         final XdmNode alternateNode = input.readNode(XProcPorts.ALTERNATE);
-        final boolean result = compare(input.pipelineContext().getProcessor(), sourceNode, alternateNode);
+        final boolean result = compare(input.getPipelineContext().getProcessor(), sourceNode, alternateNode);
         LOG.trace("  result = {}", result);
         final boolean failIfNotEqual = Boolean.parseBoolean(input.getOptionValue(XProcOptions.FAIL_IF_NOT_EQUAL));
         LOG.trace("  failIfNotEqual = {}", failIfNotEqual);
         if (!result && failIfNotEqual)
         {
-            throw XProcExceptions.xc0019(input.step());
+            throw XProcExceptions.xc0019(input.getStep());
         }
 
         output.writeNodes(XProcPorts.RESULT, input.newResultElement(Boolean.toString(result)));

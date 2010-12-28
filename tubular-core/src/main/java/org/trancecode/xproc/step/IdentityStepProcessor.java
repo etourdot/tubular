@@ -28,7 +28,7 @@ import org.trancecode.xproc.port.XProcPorts;
 public final class IdentityStepProcessor extends AbstractStepProcessor
 {
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.IDENTITY;
     }

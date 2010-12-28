@@ -58,7 +58,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
     private static final Logger LOG = Logger.getLogger(ViewportStepProcessor.class);
 
     @Override
-    public Step stepDeclaration()
+    public Step getStepDeclaration()
     {
         return Step.newStep(XProcSteps.VIEWPORT, this, true)
                 .declareVariable(Variable.newOption(XProcOptions.MATCH).setRequired(true))
@@ -67,7 +67,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
     }
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.VIEWPORT;
     }

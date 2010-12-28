@@ -49,7 +49,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(StoreStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.STORE;
     }
@@ -60,7 +60,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         final XdmNode node = input.readNode(XProcPorts.SOURCE);
         assert node != null;
 
-        final URI baseUri = input.baseUri();
+        final URI baseUri = input.getBaseUri();
         final String providedHref = input.getOptionValue(XProcOptions.HREF);
         final String href;
         if (providedHref != null)
@@ -86,8 +86,8 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         LOG.debug("Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
                 href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
-        final OutputStream targetOutputStream = input.pipelineContext().getOutputResolver()
-                .resolveOutputStream(href, input.baseUri().toString());
+        final OutputStream targetOutputStream = input.getPipelineContext().getOutputResolver()
+                .resolveOutputStream(href, input.getBaseUri().toString());
 
         final Serializer serializer = new Serializer();
         serializer.setOutputStream(targetOutputStream);
@@ -112,7 +112,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
 
         try
         {
-            input.pipelineContext().getProcessor().writeXdmValue(node, serializer);
+            input.getPipelineContext().getProcessor().writeXdmValue(node, serializer);
             targetOutputStream.close();
         }
         catch (final Exception e)

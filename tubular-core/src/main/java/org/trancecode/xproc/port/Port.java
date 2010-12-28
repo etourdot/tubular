@@ -104,11 +104,6 @@ public final class Port extends AbstractHasLocation implements HasPortReference
         this.portBindings = ImmutableList.copyOf(portBindings);
     }
 
-    public List<PortBinding> portBindings()
-    {
-        return portBindings;
-    }
-
     public Port setLocation(final Location location)
     {
         return new Port(portReference, location, type, primary, sequence, select, portBindings);
@@ -116,12 +111,12 @@ public final class Port extends AbstractHasLocation implements HasPortReference
 
     public Port setStepName(final String stepName)
     {
-        return new Port(portReference.setStep(stepName), location, type, primary, sequence, select, portBindings);
+        return new Port(portReference.setStepName(stepName), location, type, primary, sequence, select, portBindings);
     }
 
     public String getStepName()
     {
-        return portReference.step();
+        return portReference.getStepName();
     }
 
     public List<PortBinding> getPortBindings()
@@ -150,14 +145,14 @@ public final class Port extends AbstractHasLocation implements HasPortReference
     }
 
     @Override
-    public PortReference portReference()
+    public PortReference getPortReference()
     {
         return portReference;
     }
 
     public String getPortName()
     {
-        return portReference.port();
+        return portReference.getPortName();
     }
 
     public boolean isPrimary()

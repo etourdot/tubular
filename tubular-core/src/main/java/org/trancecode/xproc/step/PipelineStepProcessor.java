@@ -43,7 +43,7 @@ public final class PipelineStepProcessor extends AbstractCompoundStepProcessor
     }
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.ANY;
     }

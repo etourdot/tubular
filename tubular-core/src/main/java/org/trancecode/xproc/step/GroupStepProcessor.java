@@ -29,14 +29,14 @@ import org.trancecode.xproc.port.XProcPorts;
 public final class GroupStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
     @Override
-    public Step stepDeclaration()
+    public Step getStepDeclaration()
     {
         return Step.newStep(XProcSteps.GROUP, this, true).declarePort(
                 Port.newInputPort(XProcPorts.SOURCE).setSequence(true).setPrimary(true));
     }
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.GROUP;
     }

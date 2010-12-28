@@ -34,7 +34,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 {
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.WRAP_SEQUENCE;
     }
@@ -42,7 +42,7 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        final SaxonBuilder builder = new SaxonBuilder(input.pipelineContext().getProcessor()
+        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
                 .getUnderlyingConfiguration());
 
         final String wrapperLocalName = input.getOptionValue(XProcOptions.WRAPPER);
@@ -51,7 +51,7 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         final QName wrapper;
         if (wrapperPrefix == null || wrapperNamespaceUri == null)
         {
-            wrapper = new QName(wrapperLocalName, input.step().getNode());
+            wrapper = new QName(wrapperLocalName, input.getStep().getNode());
         }
         else
         {
@@ -61,7 +61,7 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         // TODO handle 'group-adjacent' option
 
         builder.startDocument();
-        builder.startElement(wrapper, input.step().getNode());
+        builder.startElement(wrapper, input.getStep().getNode());
 
         for (final XdmNode inputDocument : input.readNodes(XProcPorts.SOURCE))
         {

@@ -60,7 +60,7 @@ public final class InsertStepProcessor extends AbstractStepProcessor
             XdmNodeKind.PROCESSING_INSTRUCTION, XdmNodeKind.COMMENT);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.INSERT;
     }
@@ -193,8 +193,8 @@ public final class InsertStepProcessor extends AbstractStepProcessor
                     }
                 }));
 
-        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
                         .getNode(), insertWithError, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(sourceDocument);

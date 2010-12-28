@@ -53,7 +53,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.EXEC;
     }
@@ -69,7 +69,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final List<XdmNode> inputDocuments = ImmutableList.copyOf(input.readNodes(XProcPorts.SOURCE));
         if (inputDocuments.size() > 1)
         {
-            throw XProcExceptions.xd0006(input.step().getLocation(), input.step().getPortReference(XProcPorts.SOURCE));
+            throw XProcExceptions.xd0006(input.getStep().getLocation(), input.getStep().getPortReference(XProcPorts.SOURCE));
         }
 
         final List<String> commandLine = Lists.newArrayList();
@@ -115,14 +115,14 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final File stderrFile = stderr.get();
         process.destroy();
 
-        final SaxonBuilder builder = new SaxonBuilder(input.pipelineContext().getProcessor()
+        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
                 .getUnderlyingConfiguration());
         builder.startDocument();
-        builder.startElement(XProcXmlModel.Elements.RESULT, input.step().getNode());
+        builder.startElement(XProcXmlModel.Elements.RESULT, input.getStep().getNode());
         final boolean isResultXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
         if (isResultXml)
         {
-            final XdmNode resultNode = input.pipelineContext().getProcessor().newDocumentBuilder().build(stdoutFile);
+            final XdmNode resultNode = input.getPipelineContext().getProcessor().newDocumentBuilder().build(stdoutFile);
             builder.nodes(SaxonAxis.childElement(resultNode));
         }
         else

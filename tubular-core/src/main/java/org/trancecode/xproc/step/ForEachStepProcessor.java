@@ -166,7 +166,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
     }
 
     @Override
-    public Step stepDeclaration()
+    public Step getStepDeclaration()
     {
         final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE).setSequence(true),
                 Port.newOutputPort(XProcPorts.RESULT).setSequence(true));
@@ -174,7 +174,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
     }
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.FOR_EACH;
     }

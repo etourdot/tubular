@@ -119,7 +119,7 @@ public final class Environment implements HasPipelineContext
 
     private static Map<PortReference, EnvironmentPort> getPortsMap(final Iterable<EnvironmentPort> ports)
     {
-        return Maps.uniqueIndex(ports, PortFunctions.portReference());
+        return Maps.uniqueIndex(ports, PortFunctions.getPortReference());
     }
 
     public static Environment newEnvironment(final Step pipeline, final PipelineContext configuration)
@@ -180,14 +180,14 @@ public final class Environment implements HasPipelineContext
             {
                 environmentPort = environmentPort.pipe(getXPathContextPort());
             }
-            newPorts.put(port.portReference(), environmentPort);
+            newPorts.put(port.getPortReference(), environmentPort);
         }
 
         for (final Port port : step.getOutputPorts())
         {
-            if (port.portBindings().isEmpty())
+            if (port.getPortBindings().isEmpty())
             {
-                newPorts.put(port.portReference(), EnvironmentPort.newEnvironmentPort(port, this));
+                newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, this));
             }
         }
 
@@ -209,9 +209,9 @@ public final class Environment implements HasPipelineContext
 
         for (final Port port : step.getOutputPorts())
         {
-            if (!ports.containsKey(port.portReference()))
+            if (!ports.containsKey(port.getPortReference()))
             {
-                newPorts.put(port.portReference(), EnvironmentPort.newEnvironmentPort(port, sourceEnvironment));
+                newPorts.put(port.getPortReference(), EnvironmentPort.newEnvironmentPort(port, sourceEnvironment));
             }
         }
 
@@ -536,7 +536,7 @@ public final class Environment implements HasPipelineContext
 
     public EnvironmentPort getEnvironmentPort(final Port port)
     {
-        return getEnvironmentPort(port.portReference());
+        return getEnvironmentPort(port.getPortReference());
     }
 
     public EnvironmentPort getEnvironmentPort(final PortReference portReference)
@@ -574,10 +574,10 @@ public final class Environment implements HasPipelineContext
     public EnvironmentPort addEnvironmentPort(final Port port)
     {
         LOG.trace("{@method} port = {}", port);
-        assert port.portReference().equals(port.portReference());
-        assert !ports.containsKey(port.portReference());
+        assert port.getPortReference().equals(port.getPortReference());
+        assert !ports.containsKey(port.getPortReference());
         final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
-        ports.put(port.portReference(), environmentPort);
+        ports.put(port.getPortReference(), environmentPort);
         return environmentPort;
     }
 

@@ -28,7 +28,7 @@ import net.sf.saxon.s9api.QName;
 public final class SinkStepProcessor extends AbstractStepProcessor
 {
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.SINK;
     }

@@ -22,5 +22,5 @@ package org.trancecode.xproc.step;
  */
 public interface CoreStepProcessor extends StepProcessor
 {
-    Step stepDeclaration();
+    Step getStepDeclaration();
 }

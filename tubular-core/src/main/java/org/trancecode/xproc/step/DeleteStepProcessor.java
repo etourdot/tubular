@@ -44,7 +44,7 @@ public final class DeleteStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(DeleteStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.DELETE;
     }
@@ -69,8 +69,8 @@ public final class DeleteStepProcessor extends AbstractStepProcessor
                 super.attribute(node, builder);
             }
         };
-        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
                         .getNode(), delete, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);

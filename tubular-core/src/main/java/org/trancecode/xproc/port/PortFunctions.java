@@ -49,7 +49,7 @@ public final class PortFunctions
         }
     }
 
-    public static Function<HasPortReference, PortReference> portReference()
+    public static Function<HasPortReference, PortReference> getPortReference()
     {
         return PortReferenceFunction.INSTANCE;
     }
@@ -61,7 +61,7 @@ public final class PortFunctions
         @Override
         public PortReference apply(final HasPortReference port)
         {
-            return port.portReference();
+            return port.getPortReference();
         }
     }
 }

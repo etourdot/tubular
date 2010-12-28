@@ -93,17 +93,17 @@ public final class XProcException extends BaseException
         this.name = name;
     }
 
-    public QName name()
+    public QName getName()
     {
         return name;
     }
 
-    public int code()
+    public int getCode()
     {
         return code;
     }
 
-    public Location location()
+    public Location getLocation()
     {
         return location;
     }

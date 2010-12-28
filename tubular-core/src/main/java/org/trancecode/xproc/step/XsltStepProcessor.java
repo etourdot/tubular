@@ -58,7 +58,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(XsltStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.XSLT;
     }
@@ -81,7 +81,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         }
         else
         {
-            outputBaseUri = input.baseUri();
+            outputBaseUri = input.getBaseUri();
         }
         assert outputBaseUri != null;
 
@@ -89,12 +89,12 @@ public final class XsltStepProcessor extends AbstractStepProcessor
 
         if (!SUPPORTED_VERSIONS.contains(version))
         {
-            throw XProcExceptions.xc0038(input.step().getLocation(), version);
+            throw XProcExceptions.xc0038(input.getStep().getLocation(), version);
         }
         final XdmNode stylesheet = input.readNode(XProcPorts.STYLESHEET);
         assert stylesheet != null;
 
-        final Processor processor = input.pipelineContext().getProcessor();
+        final Processor processor = input.getPipelineContext().getProcessor();
 
         // TODO pipeline logging
         final XsltTransformer transformer;
@@ -158,7 +158,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
             transformer.setInitialMode(new QName(initialMode));
         }
 
-        final Map<QName, String> parameters = input.parameters(XProcPorts.PARAMETERS);
+        final Map<QName, String> parameters = input.getParameters(XProcPorts.PARAMETERS);
         LOG.debug("parameters = {}", parameters);
         for (final Map.Entry<QName, String> parameter : parameters.entrySet())
         {

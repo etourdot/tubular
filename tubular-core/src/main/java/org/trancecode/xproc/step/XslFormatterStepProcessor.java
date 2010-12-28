@@ -48,7 +48,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(XslFormatterStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.XSL_FORMATTER;
     }
@@ -60,7 +60,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
 
         final String href = input.getOptionValue(XProcOptions.CONTENT_TYPE, null);
         assert href != null;
-        final OutputStream resultOutputStream = input.pipelineContext().getOutputResolver()
+        final OutputStream resultOutputStream = input.getPipelineContext().getOutputResolver()
                 .resolveOutputStream(href, source.getBaseURI().toString());
 
         final String contentType = input.getOptionValue(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
@@ -72,7 +72,7 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
             public Source resolve(final String href, final String base) throws TransformerException
             {
                 final URI uri = Uris.resolve(href, base);
-                final InputStream inputStream = input.pipelineContext().getInputResolver()
+                final InputStream inputStream = input.getPipelineContext().getInputResolver()
                         .resolveInputStream(href, base);
                 return new StreamSource(inputStream, uri.toString());
             }

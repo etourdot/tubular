@@ -52,7 +52,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
     public final Environment run(final Step step, final Environment environment)
     {
         LOG.trace("{@method} step = {}", step.getName());
-        assert stepType().equals(step.getType()) || stepType().equals(XProcSteps.ANY);
+        assert getStepType().equals(step.getType()) || getStepType().equals(XProcSteps.ANY);
 
         try
         {
@@ -108,7 +108,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
          * Returns the pipeline context, from which extra facilities can be
          * retrieved.
          */
-        public PipelineContext pipelineContext()
+        public PipelineContext getPipelineContext()
         {
             return environment.getPipelineContext();
         }
@@ -116,7 +116,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         /**
          * Returns the base URI of the pipeline being executed.
          */
-        public URI baseUri()
+        public URI getBaseUri()
         {
             return environment.getBaseUri();
         }
@@ -135,7 +135,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         /**
          * Returns the step being executed.
          */
-        public Step step()
+        public Step getStep()
         {
             return step;
         }
@@ -183,7 +183,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         /**
          * Returns a map of parameters for the specified port.
          */
-        public Map<QName, String> parameters(final String portName)
+        public Map<QName, String> getParameters(final String portName)
         {
             return environment.readParameters(step.getPortReference(portName));
         }

@@ -112,7 +112,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 
             if (test.getError() != null)
             {
-                Assert.fail(String.format("expected error: %s ; actual: %s", test.getError(), e.name()), e);
+                Assert.fail(String.format("expected error: %s ; actual: %s", test.getError(), e.getName()), e);
             }
 
             throw e;

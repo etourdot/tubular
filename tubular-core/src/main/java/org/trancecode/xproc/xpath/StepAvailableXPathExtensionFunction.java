@@ -90,7 +90,7 @@ public final class StepAvailableXPathExtensionFunction extends AbstractXPathExte
                         final QName stepQName = resolveQName(stepName);
                         LOG.trace("step-name = {}", stepQName);
                         final boolean available = Environment.getCurrentEnvironment().getPipelineContext()
-                                .getPipelineLibrary().stepTypes().contains(stepQName);
+                                .getPipelineLibrary().getStepTypes().contains(stepQName);
                         LOG.trace("available = {}", available);
                         return SingletonIterator.makeIterator(BooleanValue.get(available));
                     }

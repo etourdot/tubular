@@ -28,8 +28,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class PortReference
 {
-    private final String step;
-    private final String port;
+    private final String stepName;
+    private final String portName;
     private transient int hashCode;
     private transient String toString;
 
@@ -38,29 +38,29 @@ public class PortReference
         return new PortReference(step, port);
     }
 
-    private PortReference(final String step, final String port)
+    private PortReference(final String step, final String portName)
     {
         Preconditions.checkArgument(step == null || !step.isEmpty());
-        this.step = step;
+        this.stepName = step;
 
-        Preconditions.checkNotNull(port);
-        Preconditions.checkArgument(!port.isEmpty());
-        this.port = port;
+        Preconditions.checkNotNull(portName);
+        Preconditions.checkArgument(!portName.isEmpty());
+        this.portName = portName;
     }
 
-    public String step()
+    public String getStepName()
     {
-        return step;
+        return stepName;
     }
 
-    public String port()
+    public String getPortName()
     {
-        return port;
+        return portName;
     }
 
-    public PortReference setStep(final String step)
+    public PortReference setStepName(final String stepName)
     {
-        return new PortReference(step, port);
+        return new PortReference(stepName, portName);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class PortReference
     {
         if (hashCode == 0)
         {
-            hashCode = new HashCodeBuilder(7, 13).append(step).append(port).toHashCode();
+            hashCode = new HashCodeBuilder(7, 13).append(stepName).append(portName).toHashCode();
         }
 
         return hashCode;
@@ -80,7 +80,7 @@ public class PortReference
         if (o != null && o instanceof PortReference)
         {
             final PortReference portReference = (PortReference) o;
-            return new EqualsBuilder().append(step, portReference.step).append(port, portReference.port).isEquals();
+            return new EqualsBuilder().append(stepName, portReference.stepName).append(portName, portReference.portName).isEquals();
         }
 
         return false;
@@ -91,7 +91,7 @@ public class PortReference
     {
         if (toString == null)
         {
-            toString = step + "/" + port;
+            toString = stepName + "/" + portName;
         }
 
         return toString;

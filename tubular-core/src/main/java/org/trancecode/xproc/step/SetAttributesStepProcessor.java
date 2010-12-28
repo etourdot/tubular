@@ -57,7 +57,7 @@ public final class SetAttributesStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(SetAttributesStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.SET_ATTRIBUTES;
     }
@@ -125,8 +125,8 @@ public final class SetAttributesStepProcessor extends AbstractStepProcessor
                     }
                 }));
 
-        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
                         .getNode(), setAttributesForElements, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);

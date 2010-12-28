@@ -27,7 +27,7 @@ import org.trancecode.xproc.Environment;
  */
 public interface StepProcessor
 {
-    QName stepType();
+    QName getStepType();
 
     Environment run(Step step, Environment environment);
 }

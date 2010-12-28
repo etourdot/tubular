@@ -54,7 +54,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.ADD_ATTRIBUTE;
     }
@@ -80,7 +80,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         // @attribute-namespace ?
         if ((attributeNamespace != null || attributePrefix != null) && attributeName.contains(":"))
         {
-            throw XProcExceptions.xd0034(input.step().getLocation());
+            throw XProcExceptions.xd0034(input.getStep().getLocation());
         }
 
         // Create the attribute QName
@@ -92,14 +92,14 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         }
         else
         {
-            attributeQName = new QName(attributeName, input.step().getNode());
+            attributeQName = new QName(attributeName, input.getStep().getNode());
         }
 
         // Check the step is not used for a new namespace declaration
         if ("http://www.w3.org/2000/xmlns/".equals(attributeQName.getNamespaceURI())
                 || ("xmlns".equals(attributeQName.toString())))
         {
-            throw XProcExceptions.xc0059(input.step().getLocation());
+            throw XProcExceptions.xc0059(input.getStep().getLocation());
         }
 
         final SaxonProcessorDelegate addAttribute = new AbstractSaxonProcessorDelegate()
@@ -141,8 +141,8 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
                     }
                 }));
 
-        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
                         .getNode(), addAttributeForElements, new CopyingSaxonProcessorDelegate()));
         final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
         final XdmNode result = matchProcessor.apply(inputDoc);

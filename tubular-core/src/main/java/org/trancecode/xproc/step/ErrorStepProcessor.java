@@ -36,7 +36,7 @@ public final class ErrorStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(ErrorStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.ERROR;
     }
@@ -53,9 +53,9 @@ public final class ErrorStepProcessor extends AbstractStepProcessor
         {
             if (prefix != null || namespace != null)
             {
-                throw XProcExceptions.xd0034(input.step().getLocation());
+                throw XProcExceptions.xd0034(input.getStep().getLocation());
             }
-            errorCode = new QName(code, input.step().getNode());
+            errorCode = new QName(code, input.getStep().getNode());
         }
         else if (prefix == null && namespace == null)
         {
@@ -68,7 +68,7 @@ public final class ErrorStepProcessor extends AbstractStepProcessor
 
         // TODO write some element to the output port
 
-        throw new XProcException(errorCode, XProcException.Type.DYNAMIC, input.step().getLocation(), input.step()
+        throw new XProcException(errorCode, XProcException.Type.DYNAMIC, input.getStep().getLocation(), input.getStep()
                 .getName());
     }
 }

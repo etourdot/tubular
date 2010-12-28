@@ -45,7 +45,7 @@ public final class StringReplaceStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(StringReplaceStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.STRING_REPLACE;
     }
@@ -107,8 +107,8 @@ public final class StringReplaceStepProcessor extends AbstractStepProcessor
                 replace(node, builder);
             }
         };
-        final SaxonProcessor matchProcessor = new SaxonProcessor(input.pipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.pipelineContext().getProcessor(), match, input.step()
+        final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
                         .getNode(), stringReplace, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(sourceDocument);

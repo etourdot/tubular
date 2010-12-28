@@ -58,7 +58,7 @@ public final class XProcTestSuiteReportBuilder
         public boolean failed()
         {
             return error != null
-                    && !(error instanceof XProcException && ((XProcException) error).name().equals(test.getError()));
+                    && !(error instanceof XProcException && ((XProcException) error).getName().equals(test.getError()));
         }
     }
 
@@ -164,7 +164,7 @@ public final class XProcTestSuiteReportBuilder
 
                     if (result.error instanceof XProcException)
                     {
-                        builder.text(((XProcException) result.error).name().getClarkName());
+                        builder.text(((XProcException) result.error).getName().getClarkName());
                     }
                     else
                     {

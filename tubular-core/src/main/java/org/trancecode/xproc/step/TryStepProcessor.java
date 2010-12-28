@@ -34,13 +34,13 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor implem
     private static final Logger LOG = Logger.getLogger(TryStepProcessor.class);
 
     @Override
-    public Step stepDeclaration()
+    public Step getStepDeclaration()
     {
         return Step.newStep(XProcSteps.TRY, this, true);
     }
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.TRY;
     }
@@ -91,13 +91,13 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor implem
     public static final class CatchStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
     {
         @Override
-        public Step stepDeclaration()
+        public Step getStepDeclaration()
         {
             return Step.newStep(XProcSteps.CATCH, this, true);
         }
 
         @Override
-        public QName stepType()
+        public QName getStepType()
         {
             return XProcSteps.CATCH;
         }

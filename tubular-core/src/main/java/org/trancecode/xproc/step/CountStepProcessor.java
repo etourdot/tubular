@@ -36,7 +36,7 @@ public final class CountStepProcessor extends AbstractStepProcessor
     private static final Logger LOG = Logger.getLogger(CountStepProcessor.class);
 
     @Override
-    public QName stepType()
+    public QName getStepType()
     {
         return XProcSteps.COUNT;
     }
