@@ -20,7 +20,7 @@
 package org.trancecode.xproc;
 
 import net.sf.saxon.s9api.QName;
-import org.trancecode.core.BaseException;
+import org.trancecode.base.BaseException;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.Namespace;
 

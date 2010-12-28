@@ -19,7 +19,7 @@
  */
 package org.trancecode.xml.catalog;
 
-import org.trancecode.core.BaseException;
+import org.trancecode.base.BaseException;
 
 /**
  * @author Herve Quiroz
