@@ -58,7 +58,7 @@ import org.trancecode.xproc.step.XProcSteps;
 /**
  * @author Herve Quiroz
  */
-public final class Configuration implements PipelineContext
+public final class PipelineConfiguration implements PipelineContext
 {
     private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
     private static final Map<QName, StepProcessor> DEFAULT_STEP_PROCESSORS = getDefaultStepProcessors();
@@ -67,7 +67,7 @@ public final class Configuration implements PipelineContext
             .load(XPathExtensionFunction.class));
     private static final URI DEFAULT_LIBRARY_URI = URI.create("trancecode:tubular:default-library.xpl");
     private static final Set<URI> EMPTY_SET_OF_URIS = ImmutableSet.of();
-    private static final Logger LOG = Logger.getLogger(Configuration.class);
+    private static final Logger LOG = Logger.getLogger(PipelineConfiguration.class);
 
     private static PipelineLibrary DEFAULT_PIPELINE_LIBRARY = getDefaultLPipelineLibrary();
 
@@ -135,7 +135,7 @@ public final class Configuration implements PipelineContext
                 return library;
             }
         };
-        final URL xprocLibraryUrl = Configuration.class.getResource(RESOURCE_PATH_XPROC_LIBRARY_1_0);
+        final URL xprocLibraryUrl = PipelineConfiguration.class.getResource(RESOURCE_PATH_XPROC_LIBRARY_1_0);
         final Source defaultLibrarySource;
         try
         {
@@ -198,12 +198,12 @@ public final class Configuration implements PipelineContext
         return ImmutableMap.copyOf(coreSteps);
     }
 
-    public Configuration()
+    public PipelineConfiguration()
     {
         this(new Processor(false));
     }
 
-    public Configuration(final Processor processor)
+    public PipelineConfiguration(final Processor processor)
     {
         this.processor = Preconditions.checkNotNull(processor);
         uriResolver = processor.getUnderlyingConfiguration().getURIResolver();

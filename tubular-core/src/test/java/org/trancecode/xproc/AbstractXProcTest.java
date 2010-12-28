@@ -84,7 +84,7 @@ public abstract class AbstractXProcTest extends AbstractTest
     public static void parseStandardLibrary()
     {
         Logger.getLogger("org.trancecode").setLevel(Level.INFO);
-        new Configuration();
+        new PipelineConfiguration();
         Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     protected void test(final URL testUrl, final String testSuite) throws Exception
     {
-        final Configuration configuration = new Configuration();
+        final PipelineConfiguration configuration = new PipelineConfiguration();
         final PipelineProcessor pipelineProcessor = new PipelineProcessor(configuration);
         final XProcTestCase test = getTest(testUrl, configuration.getProcessor(), testSuite);
 

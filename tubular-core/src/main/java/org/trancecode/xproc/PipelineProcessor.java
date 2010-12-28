@@ -30,7 +30,7 @@ public final class PipelineProcessor
 
     public PipelineProcessor()
     {
-        this(new Configuration());
+        this(new PipelineConfiguration());
     }
 
     public PipelineProcessor(final PipelineContext context)
