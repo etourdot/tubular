@@ -33,7 +33,7 @@ import org.trancecode.xproc.binding.PortBinding;
 /**
  * @author Herve Quiroz
  */
-public class Port extends AbstractHasLocation implements HasPortReference
+public final class Port extends AbstractHasLocation implements HasPortReference
 {
     private static final Logger LOG = Logger.getLogger(Port.class);
     private static final List<PortBinding> EMPTY_PORT_BINDING_LIST = ImmutableList.of();
