@@ -21,7 +21,7 @@ package org.trancecode.xproc.step;
 
 import com.google.common.collect.Iterables;
 import net.sf.saxon.s9api.QName;
-import org.trancecode.annotation.Nullable;
+import org.trancecode.api.Nullable;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.XProcPorts;
 

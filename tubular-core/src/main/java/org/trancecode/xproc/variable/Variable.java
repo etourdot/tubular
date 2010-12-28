@@ -22,7 +22,7 @@ package org.trancecode.xproc.variable;
 import com.google.common.base.Preconditions;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.api.ReturnsNullable;
 import org.trancecode.core.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;

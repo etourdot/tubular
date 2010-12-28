@@ -20,7 +20,7 @@
 package org.trancecode.xproc.binding;
 
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.annotation.Immutable;
+import org.trancecode.api.Immutable;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;

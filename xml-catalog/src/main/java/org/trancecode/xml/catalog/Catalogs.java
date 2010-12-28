@@ -28,7 +28,7 @@ import com.google.common.collect.Iterables;
 
 import java.net.URI;
 
-import org.trancecode.annotation.Nullable;
+import org.trancecode.api.Nullable;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.function.TcFunctions;
 import org.trancecode.io.UriFunctions;

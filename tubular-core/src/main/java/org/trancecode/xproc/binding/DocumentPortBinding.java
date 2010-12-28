@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableList;
 import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.annotation.Immutable;
+import org.trancecode.api.Immutable;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineException;

@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.core.TcObjects;

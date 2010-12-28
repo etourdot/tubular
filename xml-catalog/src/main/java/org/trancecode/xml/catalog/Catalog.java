@@ -24,8 +24,8 @@ import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
-import org.trancecode.annotation.Nullable;
-import org.trancecode.annotation.ReturnsNullable;
+import org.trancecode.api.Nullable;
+import org.trancecode.api.ReturnsNullable;
 import org.trancecode.io.Uris;
 
 /**
