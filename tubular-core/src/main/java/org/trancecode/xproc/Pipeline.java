@@ -25,7 +25,7 @@ import org.trancecode.xproc.step.Step;
 /**
  * @author Herve Quiroz
  */
-public final class Pipeline implements HasPipelineContext
+public final class Pipeline
 {
     private final PipelineContext context;
     private final Step pipeline;
