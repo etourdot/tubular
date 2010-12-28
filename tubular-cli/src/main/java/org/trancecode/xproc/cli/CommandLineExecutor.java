@@ -42,7 +42,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.trancecode.xproc.Configuration;
+import org.trancecode.xproc.PipelineConfiguration;
 import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.PipelineProcessor;
 import org.trancecode.xproc.PipelineResult;
@@ -139,7 +139,7 @@ public final class CommandLineExecutor
                 Logger.getRootLogger().setLevel(Level.DEBUG);
             }
 
-            final Configuration configurationPipelineContext = new Configuration();
+            final PipelineConfiguration configurationPipelineContext = new PipelineConfiguration();
             final URIResolver uriResolver = configurationPipelineContext.getUriResolver();
             final PipelineProcessor pipelineProcessor = new PipelineProcessor(configurationPipelineContext);
             final String[] libraries = commandLine.getOptionValues(librariesOption.getOpt());
