@@ -54,6 +54,7 @@ import org.trancecode.xproc.step.CoreStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
+import org.trancecode.xproc.xpath.XPathExtensionFunction;
 
 /**
  * @author Herve Quiroz

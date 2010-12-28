@@ -20,7 +20,6 @@ package org.trancecode.xproc.xpath;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XPathExtensionFunction;
 
 /**
  * @author Herve Quiroz
