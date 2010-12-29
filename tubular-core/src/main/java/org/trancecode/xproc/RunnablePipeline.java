@@ -19,17 +19,22 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.UriResolvers;
 import org.trancecode.xml.saxon.SaxonFunctions;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.binding.PortBindingFunctions;
@@ -72,7 +77,43 @@ public class RunnablePipeline
         pipeline = pipeline.withOptionValue(name, value);
     }
 
-    public void setPortBinding(final String portName, final Iterable<Source> bindings)
+    public void bindSourcePortToResources(final String portName, final Iterable<URI> inputResources)
+    {
+        final Iterable<Source> sources = Iterables.transform(inputResources, new Function<URI, Source>()
+        {
+            @Override
+            public Source apply(final URI resource)
+            {
+                return UriResolvers.resolve(context.getUriResolver(), resource, pipeline.getNode().getBaseURI());
+            }
+        });
+        bindSourcePort(portName, sources);
+    }
+
+    public void bindSourcePortToResources(final String portName, final URI... inputResources)
+    {
+        bindSourcePortToResources(portName, ImmutableList.copyOf(inputResources));
+    }
+
+    public void bindSourcePortToFiles(final String portName, final Iterable<File> inputFiles)
+    {
+        final Iterable<Source> sources = Iterables.transform(inputFiles, new Function<File, Source>()
+        {
+            @Override
+            public Source apply(final File file)
+            {
+                return new StreamSource(file);
+            }
+        });
+        bindSourcePort(portName, sources);
+    }
+
+    public void bindSourcePortToFiles(final String portName, final File... inputFiles)
+    {
+        bindSourcePortToFiles(portName, ImmutableList.copyOf(inputFiles));
+    }
+
+    public void bindSourcePort(final String portName, final Iterable<Source> bindings)
     {
         final List<PortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(
                 bindings,
@@ -82,9 +123,9 @@ public class RunnablePipeline
         pipeline = pipeline.setPortBindings(portName, portBindings);
     }
 
-    public void setPortBinding(final String portName, final Source... bindings)
+    public void bindSourcePort(final String portName, final Source... bindings)
     {
-        setPortBinding(portName, ImmutableList.copyOf(bindings));
+        bindSourcePort(portName, ImmutableList.copyOf(bindings));
     }
 
     public Step getPipeline()

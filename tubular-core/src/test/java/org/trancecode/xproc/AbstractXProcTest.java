@@ -146,7 +146,7 @@ public abstract class AbstractXProcTest extends AbstractTest
             {
                 sources.add(inputDoc.asSource());
             }
-            runnablePipeline.setPortBinding(port, sources);
+            runnablePipeline.bindSourcePort(port, sources);
         }
 
         // Set options

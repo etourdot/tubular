@@ -182,7 +182,7 @@ public final class CommandLineExecutor
                         if (runnablePipeline.getPipeline().getPort(portBindingName).isInput())
                         {
                             LOG.debug("input port binding: {} = {}", portBindingName, portBindingValue);
-                            runnablePipeline.setPortBinding(
+                            runnablePipeline.bindSourcePort(
                                     portBindingName,
                                     newSource(uriResolver, portBindingValue, "Cannot bind port to resource from %s",
                                             portBindingValue));
