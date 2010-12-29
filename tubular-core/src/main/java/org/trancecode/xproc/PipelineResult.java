@@ -20,7 +20,20 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.io.Files;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.TransformerException;
+
+import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.io.RuntimeIOException;
+import org.trancecode.xml.XmlException;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.step.Step;
@@ -46,8 +59,37 @@ public final class PipelineResult
 
     public Iterable<XdmNode> readNodes(final String portName)
     {
+        Preconditions.checkNotNull(portName);
         final Port declaredPort = pipeline.getPort(portName);
         final EnvironmentPort environmentPort = resultEnvironment.getEnvironmentPort(declaredPort);
         return environmentPort.readNodes();
+    }
+
+    public void readNode(final String portName, final File outputFile)
+    {
+        Preconditions.checkNotNull(outputFile);
+        final XdmNode node = Iterables.getOnlyElement(readNodes(portName));
+        try
+        {
+            Files.write(node.toString(), outputFile, Charset.defaultCharset());
+        }
+        catch (final IOException e)
+        {
+            throw new RuntimeIOException(e);
+        }
+    }
+
+    public void readNode(final String portName, final Result result)
+    {
+        Preconditions.checkNotNull(result);
+        final XdmNode node = Iterables.getOnlyElement(readNodes(portName));
+        try
+        {
+            TransformerFactoryImpl.newInstance().newTransformer().transform(node.asSource(), result);
+        }
+        catch (final TransformerException e)
+        {
+            throw new XmlException(e, "cannot push node from port '%' to result", portName);
+        }
     }
 }
