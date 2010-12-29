@@ -28,7 +28,7 @@ import org.trancecode.xproc.step.Step;
 /**
  * @author Herve Quiroz
  */
-public class PipelineResult
+public final class PipelineResult
 {
     private final Step pipeline;
     private final Environment resultEnvironment;
