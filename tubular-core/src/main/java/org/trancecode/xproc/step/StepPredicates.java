@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * {@link Predicate} implementations related to {@link Step}.
@@ -28,6 +29,11 @@ import com.google.common.base.Predicate;
  */
 public final class StepPredicates
 {
+    public static Predicate<Step> hasName(final String name)
+    {
+        return Predicates.compose(Predicates.equalTo(name), StepFunctions.getName());
+    }
+
     private StepPredicates()
     {
         // No instantiation
