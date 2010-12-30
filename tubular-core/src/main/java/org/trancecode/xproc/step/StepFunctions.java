@@ -28,14 +28,18 @@ public final class StepFunctions
 {
     public static Function<Step, String> getName()
     {
-        return new Function<Step, String>()
+        return GetNameFunction.INSTANCE;
+    }
+
+    private static final class GetNameFunction implements Function<Step, String>
+    {
+        private static final GetNameFunction INSTANCE = new GetNameFunction();
+
+        @Override
+        public String apply(final Step step)
         {
-            @Override
-            public String apply(final Step step)
-            {
-                return step.getName();
-            }
-        };
+            return step.getName();
+        }
     }
 
     private StepFunctions()
