@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.binding;
 
+import com.google.common.base.Preconditions;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.Immutable;
 import org.trancecode.logging.Logger;
@@ -33,7 +34,7 @@ import org.trancecode.xproc.port.PortReference;
 @Immutable
 public final class PipePortBinding extends AbstractPortBinding
 {
-    private final Logger log = Logger.getLogger(getClass());
+    private static final Logger LOG = Logger.getLogger(PipePortBinding.class);
 
     private final PortReference portReference;
 
@@ -45,9 +46,7 @@ public final class PipePortBinding extends AbstractPortBinding
     public PipePortBinding(final PortReference portReference, final Location location)
     {
         super(location);
-
-        assert portReference != null;
-        this.portReference = portReference;
+        this.portReference = Preconditions.checkNotNull(portReference);
     }
 
     @Override
@@ -60,10 +59,15 @@ public final class PipePortBinding extends AbstractPortBinding
         {
             public Iterable<XdmNode> readNodes()
             {
-                log.trace("{@method} boundPort = {}", boundPort);
+                LOG.trace("{@method} boundPort = {}", boundPort);
                 return boundPort.readNodes();
             }
         };
+    }
+
+    public PortReference getPortReference()
+    {
+        return portReference;
     }
 
     @Override
