@@ -31,7 +31,7 @@ import org.trancecode.xproc.port.PortReference;
  * @author Herve Quiroz
  */
 @Immutable
-public class PipePortBinding extends AbstractPortBinding
+public final class PipePortBinding extends AbstractPortBinding
 {
     private final Logger log = Logger.getLogger(getClass());
 
