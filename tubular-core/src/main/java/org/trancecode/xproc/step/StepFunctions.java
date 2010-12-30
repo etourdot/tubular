@@ -19,12 +19,25 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Function;
 
 /**
  * @author Herve Quiroz
  */
 public final class StepFunctions
 {
+    public static Function<Step, String> getName()
+    {
+        return new Function<Step, String>()
+        {
+            @Override
+            public String apply(final Step step)
+            {
+                return step.getName();
+            }
+        };
+    }
+
     private StepFunctions()
     {
         // No instantiation
