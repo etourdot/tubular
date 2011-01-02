@@ -82,19 +82,19 @@ public final class CommandLineExecutor
         librariesOption.setType(URL.class);
         options.addOption(librariesOption);
 
-        optionOption = new Option("o", "option", true, "Passes a option to the given XProc pipeline");
+        optionOption = new Option("o", "option", true, "Passes an option to the pipeline");
         optionOption.setArgName("name=value");
         optionOption.setArgs(2);
         optionOption.setValueSeparator('=');
         options.addOption(optionOption);
 
-        paramOption = new Option("p", "param", true, "Passes a parameter to the given XProc pipeline");
+        paramOption = new Option("p", "param", true, "Passes a parameter to the pipeline");
         paramOption.setArgName("name=value");
         paramOption.setArgs(2);
         paramOption.setValueSeparator('=');
         options.addOption(paramOption);
 
-        portBindingOption = new Option("b", "port-binding", true, "Passes a port binding to the given XProc pipeline");
+        portBindingOption = new Option("b", "port-binding", true, "Binds a source port to the specified URI");
         portBindingOption.setArgName("name=uri");
         portBindingOption.setArgs(2);
         portBindingOption.setValueSeparator('=');
