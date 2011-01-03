@@ -41,7 +41,7 @@ public final class Pipeline
         return new RunnablePipeline(this);
     }
 
-    protected Step getUnderlyingPipeline()
+    public Step getUnderlyingPipeline()
     {
         return pipeline;
     }
