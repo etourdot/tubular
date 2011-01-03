@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 TranceCode Software
+ * Copyright (C) 2011 TranceCode Software
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,30 +14,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
- *
- * $Id$
  */
 package org.trancecode.xproc.step;
 
-import net.sf.saxon.s9api.QName;
-import org.trancecode.xproc.port.XProcPorts;
-
 /**
+ * Interface to "visit" pipeline elements.
+ * 
  * @author Herve Quiroz
  */
-@ExternalResources(read = false, write = false)
-public final class IdentityStepProcessor extends AbstractStepProcessor
+public interface StepContainer
 {
-    @Override
-    public QName getStepType()
-    {
-        return XProcSteps.IDENTITY;
-    }
+    Iterable<Step> getAllSteps();
 
-    @Override
-    protected void execute(final StepInput input, final StepOutput output)
-    {
-
-        output.writeNodes(XProcPorts.RESULT, input.readNodes(XProcPorts.SOURCE));
-    }
+    Step getStepByName(String name);
 }

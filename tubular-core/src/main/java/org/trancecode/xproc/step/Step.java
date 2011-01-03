@@ -19,8 +19,10 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -40,6 +42,8 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.binding.DocumentPortBinding;
+import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.PortFunctions;
@@ -51,7 +55,7 @@ import org.trancecode.xproc.variable.Variable;
 /**
  * @author Herve Quiroz
  */
-public final class Step extends AbstractHasLocation
+public final class Step extends AbstractHasLocation implements StepContainer
 {
     private static final Logger LOG = Logger.getLogger(Step.class);
     private static final Map<QName, Variable> EMPTY_VARIABLE_LIST = ImmutableMap.of();
@@ -78,6 +82,9 @@ public final class Step extends AbstractHasLocation
     private final StepProcessor stepProcessor;
     private final List<Step> steps;
     private final boolean compoundStep;
+
+    private final Supplier<Integer> hashCode;
+    private final Supplier<String> toString;
 
     public static Step newStep(final QName type, final StepProcessor stepProcessor, final boolean compoundStep)
     {
@@ -111,6 +118,11 @@ public final class Step extends AbstractHasLocation
         this.parameters = ImmutableMap.copyOf(parameters);
         this.ports = ImmutableMap.copyOf(ports);
         this.steps = ImmutableList.copyOf(steps);
+
+        hashCode = TcObjects.immutableObjectHashCode(Step.class, node, type, name, location, stepProcessor,
+                compoundStep, variables, parameters, ports, steps);
+        toString = TcObjects.immutableObjectToString("%s ; name = %s ; ports = %s ; variables = %s", type, name, ports,
+                variables);
     }
 
     public Step setName(final String name)
@@ -394,7 +406,7 @@ public final class Step extends AbstractHasLocation
     @Override
     public String toString()
     {
-        return String.format("%s ; name = %s ; ports = %s ; variables = %s", type, name, ports, variables);
+        return toString.get();
     }
 
     public Step setPortBindings(final String portName, final PortBinding... portBindings)
@@ -499,5 +511,165 @@ public final class Step extends AbstractHasLocation
     public StepProcessor getStepProcessor()
     {
         return stepProcessor;
+    }
+
+    @ReturnsNullable
+    private ExternalResources getExternalResources()
+    {
+        return stepProcessor.getClass().getAnnotation(ExternalResources.class);
+    }
+
+    protected boolean readsExternalResources()
+    {
+        final ExternalResources externalResources = getExternalResources();
+        if (externalResources != null)
+        {
+            if (externalResources.read())
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+
+        for (final Port inputPort : getInputPorts())
+        {
+            for (final PortBinding portBinding : inputPort.getPortBindings())
+            {
+                if (portBinding instanceof DocumentPortBinding)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean writesExternalResources()
+    {
+        final ExternalResources externalResources = getExternalResources();
+        if (externalResources != null)
+        {
+            return externalResources.write();
+        }
+
+        return true;
+    }
+
+    protected Map<Step, Step> getSubpipelineStepDependencies()
+    {
+        Preconditions.checkState(isCompoundStep(), "not a compound step: %s", getName());
+
+        // TODO memoization
+
+        int lastWriteStepIndex = -1;
+        int defaultReadblePortStepIndex = -1;
+        final Map<PortReference, Integer> subpipelineOutputPorts = Maps.newHashMap();
+        final Map<Step, Step> dependencies = Maps.newHashMap();
+        for (int stepIndex = 0; stepIndex < getSubpipeline().size(); stepIndex++)
+        {
+            final Step step = getSubpipeline().get(stepIndex);
+
+            // find out about the dependency of the current step in the pipeline
+            if (stepIndex > 0)
+            {
+                int dependencyIndex = -1;
+
+                if (step.readsExternalResources())
+                {
+                    dependencyIndex = lastWriteStepIndex;
+                }
+
+                for (final Port inputPort : step.getInputPorts())
+                {
+                    if (inputPort.getPortBindings().isEmpty() && isPrimary(inputPort))
+                    {
+                        dependencyIndex = Math.max(dependencyIndex, defaultReadblePortStepIndex);
+                    }
+                    else
+                    {
+                        for (final PortBinding portBinding : inputPort.getPortBindings())
+                        {
+                            if (portBinding instanceof PipePortBinding)
+                            {
+                                final PipePortBinding pipePortBinding = (PipePortBinding) portBinding;
+                                dependencyIndex = Math.max(dependencyIndex,
+                                        subpipelineOutputPorts.get(pipePortBinding.getPortReference()));
+                            }
+                        }
+                    }
+                }
+
+                if (dependencyIndex >= 0)
+                {
+                    dependencies.put(step, getSubpipeline().get(dependencyIndex));
+                }
+            }
+
+            // update current information about the pipeline
+            if (step.writesExternalResources())
+            {
+                lastWriteStepIndex = stepIndex;
+            }
+            if (step.getPrimaryOutputPort() != null)
+            {
+                defaultReadblePortStepIndex = stepIndex;
+            }
+            for (final PortReference portReference : Iterables.transform(step.getOutputPorts(),
+                    PortFunctions.getPortReference()))
+            {
+                subpipelineOutputPorts.put(portReference, stepIndex);
+            }
+        }
+
+        return dependencies;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return hashCode.get();
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (o == this)
+        {
+            return true;
+        }
+
+        if (o != null && o instanceof Step)
+        {
+            final Step other = (Step) o;
+            return TcObjects.pairEquals(node, other.node, type, other.type, name, other.name, location, other.location,
+                    stepProcessor, other.stepProcessor, compoundStep, other.compoundStep, variables, other.variables,
+                    parameters, other.parameters, ports, other.ports, steps, other.steps);
+        }
+
+        return false;
+    }
+
+    @Override
+    public Iterable<Step> getAllSteps()
+    {
+        return Iterables.concat(ImmutableList.of(this),
+                Iterables.concat(Iterables.transform(getSubpipeline(), new Function<Step, Iterable<Step>>()
+                {
+                    @Override
+                    public Iterable<Step> apply(final Step step)
+                    {
+                        return step.getAllSteps();
+                    }
+                })));
+    }
+
+    @Override
+    public Step getStepByName(final String name)
+    {
+        return Iterables.find(getAllSteps(), StepPredicates.hasName(name));
     }
 }
