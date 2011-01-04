@@ -19,6 +19,19 @@
  */
 package org.trancecode.xproc.step;
 
+import com.beust.jcommander.internal.Lists;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.trancecode.concurrent.TcFutures;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 
@@ -47,15 +60,68 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
     {
         LOG.trace("steps = {}", steps);
 
-        Environment currentEnvironment = environment.newChildStepEnvironment();
+        final Environment initialEnvironment = environment.newChildStepEnvironment();
 
-        for (final Step childStep : steps)
+        final Map<Step, Step> stepDependencies = Step.getSubpipelineStepDependencies(steps);
+        final Map<Step, Future<Environment>> stepResults = new ConcurrentHashMap<Step, Future<Environment>>();
+        final List<Future<Environment>> results = Lists.newArrayList();
+        final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
+        for (final Step step : steps)
         {
-            Environment.setCurrentNamespaceContext(childStep.getNode());
-            currentEnvironment.setCurrentEnvironment();
-            currentEnvironment = childStep.run(currentEnvironment);
+            final Future<Environment> result = environment.getPipelineContext().getExecutor()
+                    .submit(new Callable<Environment>()
+                    {
+                        @Override
+                        public Environment call() throws Exception
+                        {
+                            // shortcut in case an error was reported by another
+                            // task
+                            if (error.get() != null)
+                            {
+                                throw new IllegalStateException(error.get());
+                            }
+
+                            final Step dependency = stepDependencies.get(step);
+                            final Environment inputEnvironment;
+                            if (dependency != null)
+                            {
+                                try
+                                {
+                                    inputEnvironment = stepResults.get(dependency).get();
+                                }
+                                catch (final ExecutionException e)
+                                {
+                                    throw Throwables.propagate(e.getCause());
+                                }
+                            }
+                            else
+                            {
+                                inputEnvironment = initialEnvironment;
+                            }
+
+                            Environment.setCurrentNamespaceContext(step.getNode());
+                            inputEnvironment.setCurrentEnvironment();
+                            return step.run(inputEnvironment);
+                        }
+                    });
+            stepResults.put(step, result);
+            results.add(result);
         }
 
-        return currentEnvironment;
+        final Iterable<Environment> resultEnvironments;
+        try
+        {
+            resultEnvironments = TcFutures.get(results);
+        }
+        catch (final ExecutionException e)
+        {
+            throw Throwables.propagate(e.getCause());
+        }
+        catch (final InterruptedException e)
+        {
+            throw new IllegalStateException(e);
+        }
+
+        return Iterables.getLast(resultEnvironments);
     }
 }
