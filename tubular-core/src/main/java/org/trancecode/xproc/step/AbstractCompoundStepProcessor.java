@@ -19,9 +19,9 @@
  */
 package org.trancecode.xproc.step;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Map;
