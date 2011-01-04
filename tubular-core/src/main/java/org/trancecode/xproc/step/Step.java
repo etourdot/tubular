@@ -562,16 +562,20 @@ public final class Step extends AbstractHasLocation implements StepContainer
     protected Map<Step, Step> getSubpipelineStepDependencies()
     {
         Preconditions.checkState(isCompoundStep(), "not a compound step: %s", getName());
-
         // TODO memoization
+        return getSubpipelineStepDependencies(getSubpipeline());
+    }
 
+    protected static Map<Step, Step> getSubpipelineStepDependencies(final Iterable<Step> steps)
+    {
+        final List<Step> indexedSteps = ImmutableList.copyOf(steps);
         int lastWriteStepIndex = -1;
         int defaultReadblePortStepIndex = -1;
         final Map<PortReference, Integer> subpipelineOutputPorts = Maps.newHashMap();
         final Map<Step, Step> dependencies = Maps.newHashMap();
-        for (int stepIndex = 0; stepIndex < getSubpipeline().size(); stepIndex++)
+        for (int stepIndex = 0; stepIndex < indexedSteps.size(); stepIndex++)
         {
-            final Step step = getSubpipeline().get(stepIndex);
+            final Step step = indexedSteps.get(stepIndex);
 
             // find out about the dependency of the current step in the pipeline
             if (stepIndex > 0)
@@ -585,7 +589,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
                 for (final Port inputPort : step.getInputPorts())
                 {
-                    if (inputPort.getPortBindings().isEmpty() && isPrimary(inputPort))
+                    if (inputPort.getPortBindings().isEmpty() && step.isPrimary(inputPort))
                     {
                         dependencyIndex = Math.max(dependencyIndex, defaultReadblePortStepIndex);
                     }
@@ -605,7 +609,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
                 if (dependencyIndex >= 0)
                 {
-                    dependencies.put(step, getSubpipeline().get(dependencyIndex));
+                    dependencies.put(step, indexedSteps.get(dependencyIndex));
                 }
             }
 
