@@ -122,6 +122,6 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
             throw new IllegalStateException(e);
         }
 
-        return Iterables.getLast(resultEnvironments);
+        return Iterables.getLast(resultEnvironments, initialEnvironment);
     }
 }
