@@ -20,6 +20,8 @@
 package org.trancecode.xproc.step;
 
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.port.XProcPorts;
 
 /**
@@ -28,6 +30,8 @@ import org.trancecode.xproc.port.XProcPorts;
 @ExternalResources(read = false, write = false)
 public final class IdentityStepProcessor extends AbstractStepProcessor
 {
+    private static final Logger LOG = Logger.getLogger(IdentityStepProcessor.class);
+
     @Override
     public QName getStepType()
     {
@@ -37,7 +41,8 @@ public final class IdentityStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-
-        output.writeNodes(XProcPorts.RESULT, input.readNodes(XProcPorts.SOURCE));
+        final Iterable<XdmNode> nodes = input.readNodes(XProcPorts.SOURCE);
+        LOG.trace("nodes = {}", nodes);
+        output.writeNodes(XProcPorts.RESULT, nodes);
     }
 }
