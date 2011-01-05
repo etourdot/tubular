@@ -115,6 +115,7 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
         }
         catch (final ExecutionException e)
         {
+            TcFutures.cancel(results);
             throw Throwables.propagate(e.getCause());
         }
         catch (final InterruptedException e)
