@@ -179,7 +179,7 @@ public final class PipelineConfiguration implements PipelineContext
                     @Override
                     public Environment run(final Step step, final Environment environment)
                     {
-                        throw new UnsupportedOperationException(stepType.toString());
+                        throw new UnsupportedOperationException("step not supported: " + stepType);
                     }
                 });
             }
