@@ -46,6 +46,7 @@ import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.Variable;
 import org.trancecode.xproc.variable.XProcOptions;
+import org.trancecode.xproc.xpath.IterationPositionXPathExtensionFunction;
 
 /**
  * {@code p:viewport}.
@@ -92,6 +93,8 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
 
         final SaxonProcessorDelegate runSubpipeline = new AbstractSaxonProcessorDelegate()
         {
+            private int iterationPosition = 1;
+
             private void runSubpipeline(final XdmNode node, final SaxonBuilder builder)
             {
                 LOG.trace("run subpipeline on: {}", node.getNodeName());
@@ -101,7 +104,17 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 final EnvironmentPort currentEnvironmentPort = EnvironmentPort.newEnvironmentPort(currentPort,
                         viewportEnvironment);
                 subpipelineEnvironment.addPorts(currentEnvironmentPort);
-                Environment resultEnvironment = runSteps(step.getSubpipeline(), subpipelineEnvironment);
+                final int previousIterationPosition = IterationPositionXPathExtensionFunction
+                        .setIterationPosition(iterationPosition++);
+                Environment resultEnvironment;
+                try
+                {
+                    resultEnvironment = runSteps(step.getSubpipeline(), subpipelineEnvironment);
+                }
+                finally
+                {
+                    IterationPositionXPathExtensionFunction.setIterationPosition(previousIterationPosition);
+                }
                 resultEnvironment = resultEnvironment.setupOutputPorts(step, resultEnvironment);
                 final XdmNode resultNode = Iterables.getOnlyElement(resultEnvironment.getDefaultReadablePort()
                         .readNodes());
