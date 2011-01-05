@@ -541,8 +541,10 @@ public final class Environment
 
     public EnvironmentPort getEnvironmentPort(final PortReference portReference)
     {
-        assert ports.containsKey(portReference) : "port = " + portReference + " ; ports = " + ports;
-        return ports.get(portReference);
+        final EnvironmentPort port = ports.get(portReference);
+        Preconditions.checkArgument(port != null, "no such port: %s\navailable ports: %s", portReference,
+                ports.keySet());
+        return port;
     }
 
     public Environment addPorts(final EnvironmentPort... ports)
