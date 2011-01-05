@@ -98,12 +98,12 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
             private void runSubpipeline(final XdmNode node, final SaxonBuilder builder)
             {
                 LOG.trace("run subpipeline on: {}", node.getNodeName());
-                final Environment subpipelineEnvironment = viewportEnvironment.newChildStepEnvironment();
+                Environment subpipelineEnvironment = viewportEnvironment.newChildStepEnvironment();
                 final Port currentPort = Port.newInputPort(step.getName(), "current", step.getLocation())
                         .setPortBindings(new InlinePortBinding(node, step.getLocation()));
                 final EnvironmentPort currentEnvironmentPort = EnvironmentPort.newEnvironmentPort(currentPort,
                         viewportEnvironment);
-                subpipelineEnvironment.addPorts(currentEnvironmentPort);
+                subpipelineEnvironment = subpipelineEnvironment.addPorts(currentEnvironmentPort);
                 final int previousIterationPosition = IterationPositionXPathExtensionFunction
                         .setIterationPosition(iterationPosition++);
                 Environment resultEnvironment;
