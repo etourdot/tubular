@@ -29,27 +29,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.functions.ExtensionFunctionCall;
-import net.sf.saxon.functions.ExtensionFunctionDefinition;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.SingletonIterator;
-import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.Int64Value;
-import net.sf.saxon.value.SequenceType;
 import org.trancecode.concurrent.TcFutures;
-import org.trancecode.lang.TcThreads;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.XProcPorts;
-import org.trancecode.xproc.xpath.AbstractXPathExtensionFunction;
+import org.trancecode.xproc.xpath.IterationPositionXPathExtensionFunction;
+import org.trancecode.xproc.xpath.IterationSizeXPathExtensionFunction;
 
 /**
  * @author Herve Quiroz
@@ -57,113 +47,6 @@ import org.trancecode.xproc.xpath.AbstractXPathExtensionFunction;
 public final class ForEachStepProcessor extends AbstractCompoundStepProcessor implements CoreStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ForEachStepProcessor.class);
-
-    private static final ThreadLocal<Integer> iterationPosition = new ThreadLocal<Integer>();
-    private static final ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
-
-    public static final class IterationPositionXPathExtensionFunction extends AbstractXPathExtensionFunction
-    {
-        @Override
-        public ExtensionFunctionDefinition getExtensionFunctionDefinition()
-        {
-            return new ExtensionFunctionDefinition()
-            {
-                private static final long serialVersionUID = -2376250179411225176L;
-
-                @Override
-                public StructuredQName getFunctionQName()
-                {
-                    return XProcXmlModel.xprocNamespace().newStructuredQName("iteration-position");
-                }
-
-                @Override
-                public int getMinimumNumberOfArguments()
-                {
-                    return 0;
-                }
-
-                @Override
-                public SequenceType[] getArgumentTypes()
-                {
-                    return new SequenceType[0];
-                }
-
-                @Override
-                public SequenceType getResultType(final SequenceType[] suppliedArgumentTypes)
-                {
-                    return SequenceType.SINGLE_INTEGER;
-                }
-
-                @Override
-                public ExtensionFunctionCall makeCallExpression()
-                {
-                    return new ExtensionFunctionCall()
-                    {
-                        private static final long serialVersionUID = -8363336682570398286L;
-
-                        @Override
-                        public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                                throws XPathException
-                        {
-                            return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(iterationPosition.get()));
-                        }
-                    };
-                }
-            };
-        }
-    }
-
-    public static final class IterationSizeXPathExtensionFunction extends AbstractXPathExtensionFunction
-    {
-        @Override
-        public ExtensionFunctionDefinition getExtensionFunctionDefinition()
-        {
-            return new ExtensionFunctionDefinition()
-            {
-                private static final long serialVersionUID = -2376250179411225176L;
-
-                @Override
-                public StructuredQName getFunctionQName()
-                {
-                    return XProcXmlModel.xprocNamespace().newStructuredQName("iteration-size");
-                }
-
-                @Override
-                public int getMinimumNumberOfArguments()
-                {
-                    return 0;
-                }
-
-                @Override
-                public SequenceType[] getArgumentTypes()
-                {
-                    return new SequenceType[0];
-                }
-
-                @Override
-                public SequenceType getResultType(final SequenceType[] suppliedArgumentTypes)
-                {
-                    return SequenceType.SINGLE_INTEGER;
-                }
-
-                @Override
-                public ExtensionFunctionCall makeCallExpression()
-                {
-                    return new ExtensionFunctionCall()
-                    {
-                        private static final long serialVersionUID = -8363336682570398286L;
-
-                        @Override
-                        public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                                throws XPathException
-                        {
-                            return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(iterationSize.get()));
-                        }
-                    };
-                }
-            };
-        }
-    }
 
     @Override
     public Step getStepDeclaration()
@@ -208,9 +91,9 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
                 {
                     LOG.trace("iteration {}/{}: {}", iterationPosition, iterationSize, inputNode);
 
-                    final int oldIterationPosition = TcThreads.set(ForEachStepProcessor.iterationPosition,
-                            iterationPosition, -1);
-                    final int oldIterationSize = TcThreads.set(ForEachStepProcessor.iterationSize, iterationSize, -1);
+                    final int oldIterationPosition = IterationPositionXPathExtensionFunction
+                            .setIterationPosition(iterationPosition);
+                    final int oldIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
                     try
                     {
                         final Port iterationPort = newIterationPort(step, inputNode);
@@ -222,8 +105,8 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
                     }
                     finally
                     {
-                        TcThreads.set(ForEachStepProcessor.iterationPosition, oldIterationPosition);
-                        TcThreads.set(ForEachStepProcessor.iterationSize, oldIterationSize);
+                        IterationPositionXPathExtensionFunction.setIterationPosition(oldIterationPosition);
+                        IterationSizeXPathExtensionFunction.setIterationSize(oldIterationSize);
                     }
                 }
             });
