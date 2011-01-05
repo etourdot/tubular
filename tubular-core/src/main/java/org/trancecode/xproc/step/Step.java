@@ -595,14 +595,14 @@ public final class Step extends AbstractHasLocation implements StepContainer
                     }
                     else
                     {
-                        for (final PortBinding portBinding : inputPort.getPortBindings())
+                        for (final PipePortBinding portBinding : Iterables.filter(inputPort.getPortBindings(),
+                                PipePortBinding.class))
                         {
-                            if (portBinding instanceof PipePortBinding)
-                            {
-                                final PipePortBinding pipePortBinding = (PipePortBinding) portBinding;
-                                dependencyIndex = Math.max(dependencyIndex,
-                                        subpipelineOutputPorts.get(pipePortBinding.getPortReference()));
-                            }
+                            final PortReference dependencyPortReference = portBinding.getPortReference();
+                            assert subpipelineOutputPorts.containsKey(dependencyPortReference) : step.getName()
+                                    + " -> " + dependencyPortReference;
+                            dependencyIndex = Math.max(dependencyIndex,
+                                    subpipelineOutputPorts.get(dependencyPortReference));
                         }
                     }
                 }
