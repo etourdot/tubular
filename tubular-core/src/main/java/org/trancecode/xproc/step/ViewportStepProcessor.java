@@ -117,8 +117,11 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 }
                 resultEnvironment = resultEnvironment.setupOutputPorts(step, resultEnvironment);
                 final XdmNode resultNode = Iterables.getOnlyElement(resultEnvironment.getDefaultReadablePort()
-                        .readNodes());
-                builder.nodes(resultNode);
+                        .readNodes(), null);
+                if (resultNode != null)
+                {
+                    builder.nodes(resultNode);
+                }
             }
 
             @Override
