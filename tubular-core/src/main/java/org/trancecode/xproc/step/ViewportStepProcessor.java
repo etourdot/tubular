@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -116,12 +115,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                     IterationPositionXPathExtensionFunction.setIterationPosition(previousIterationPosition);
                 }
                 resultEnvironment = resultEnvironment.setupOutputPorts(step, resultEnvironment);
-                final XdmNode resultNode = Iterables.getOnlyElement(resultEnvironment.getDefaultReadablePort()
-                        .readNodes(), null);
-                if (resultNode != null)
-                {
-                    builder.nodes(resultNode);
-                }
+                builder.nodes(resultEnvironment.getDefaultReadablePort().readNodes());
             }
 
             @Override
