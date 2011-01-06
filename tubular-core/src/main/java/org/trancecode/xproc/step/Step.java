@@ -571,7 +571,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         final List<Step> indexedSteps = ImmutableList.copyOf(steps);
         int lastWriteStepIndex = -1;
         int defaultReadblePortStepIndex = -1;
-        final Map<PortReference, Integer> subpipelineOutputPorts = Maps.newHashMap();
+        final Map<String, Integer> subpipelineStepNames = Maps.newHashMap();
         final Map<Step, Step> dependencies = Maps.newHashMap();
         for (int stepIndex = 0; stepIndex < indexedSteps.size(); stepIndex++)
         {
@@ -599,10 +599,10 @@ public final class Step extends AbstractHasLocation implements StepContainer
                                 PipePortBinding.class))
                         {
                             final PortReference dependencyPortReference = portBinding.getPortReference();
-                            assert subpipelineOutputPorts.containsKey(dependencyPortReference) : step.getName()
-                                    + " -> " + dependencyPortReference;
+                            assert subpipelineStepNames.containsKey(dependencyPortReference.getStepName()) : step
+                                    .getName() + " -> " + dependencyPortReference;
                             dependencyIndex = Math.max(dependencyIndex,
-                                    subpipelineOutputPorts.get(dependencyPortReference));
+                                    subpipelineStepNames.get(dependencyPortReference.getStepName()));
                         }
                     }
                 }
@@ -613,7 +613,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
                 }
             }
 
-            // update current information about the pipeline
+            // update current information about the step
             if (step.writesExternalResources())
             {
                 lastWriteStepIndex = stepIndex;
@@ -622,11 +622,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
             {
                 defaultReadblePortStepIndex = stepIndex;
             }
-            for (final PortReference portReference : Iterables.transform(step.getOutputPorts(),
-                    PortFunctions.getPortReference()))
-            {
-                subpipelineOutputPorts.put(portReference, stepIndex);
-            }
+            subpipelineStepNames.put(step.getName(), stepIndex);
         }
 
         return dependencies;
