@@ -96,13 +96,15 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
 
             private void runSubpipeline(final XdmNode node, final SaxonBuilder builder)
             {
-                LOG.trace("run subpipeline on: {}", node.getNodeName());
+                LOG.trace("run subpipeline on:\n{}", node);
                 Environment subpipelineEnvironment = viewportEnvironment.newChildStepEnvironment();
                 final Port currentPort = Port.newInputPort(step.getName(), "current", step.getLocation())
                         .setPortBindings(new InlinePortBinding(node, step.getLocation()));
                 final EnvironmentPort currentEnvironmentPort = EnvironmentPort.newEnvironmentPort(currentPort,
                         viewportEnvironment);
                 subpipelineEnvironment = subpipelineEnvironment.addPorts(currentEnvironmentPort);
+                subpipelineEnvironment = subpipelineEnvironment.setDefaultReadablePort(currentEnvironmentPort);
+                subpipelineEnvironment = subpipelineEnvironment.setXPathContextPort(currentEnvironmentPort);
                 final int previousIterationPosition = IterationPositionXPathExtensionFunction
                         .setIterationPosition(iterationPosition++);
                 Environment resultEnvironment;
@@ -115,7 +117,9 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                     IterationPositionXPathExtensionFunction.setIterationPosition(previousIterationPosition);
                 }
                 resultEnvironment = resultEnvironment.setupOutputPorts(step, resultEnvironment);
-                builder.nodes(resultEnvironment.getDefaultReadablePort().readNodes());
+                final Iterable<XdmNode> resultNodes = resultEnvironment.getDefaultReadablePort().readNodes();
+                LOG.trace("resultNodes = {}", resultNodes);
+                builder.nodes(resultNodes);
             }
 
             @Override
@@ -160,7 +164,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                         step.getNode(), runSubpipelineForElements, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode resultDocument = matchProcessor.apply(sourceDocument);
-
+        LOG.trace("resultDocument = {}", resultDocument);
         Environment resultEnvironment = viewportEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT),
                 resultDocument);
         resultEnvironment = resultEnvironment.setupOutputPorts(step, environment);
