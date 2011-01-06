@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -46,6 +47,7 @@ import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.Variable;
 import org.trancecode.xproc.variable.XProcOptions;
 import org.trancecode.xproc.xpath.IterationPositionXPathExtensionFunction;
+import org.trancecode.xproc.xpath.IterationSizeXPathExtensionFunction;
 
 /**
  * {@code p:viewport}.
@@ -90,6 +92,9 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
         final String match = viewportEnvironment.getVariable(XProcOptions.MATCH);
         LOG.trace("match = {}", match);
 
+        final int iterationSize = evaluateIterationSize(step, match, sourceDocument, viewportEnvironment);
+        LOG.trace("iterationSize = {}", iterationSize);
+
         final SaxonProcessorDelegate runSubpipeline = new AbstractSaxonProcessorDelegate()
         {
             private int iterationPosition = 1;
@@ -107,6 +112,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 subpipelineEnvironment = subpipelineEnvironment.setXPathContextPort(currentEnvironmentPort);
                 final int previousIterationPosition = IterationPositionXPathExtensionFunction
                         .setIterationPosition(iterationPosition++);
+                final int previousIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
                 Environment resultEnvironment;
                 try
                 {
@@ -115,6 +121,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 finally
                 {
                     IterationPositionXPathExtensionFunction.setIterationPosition(previousIterationPosition);
+                    IterationSizeXPathExtensionFunction.setIterationSize(previousIterationSize);
                 }
                 resultEnvironment = resultEnvironment.setupOutputPorts(step, resultEnvironment);
                 final Iterable<XdmNode> resultNodes = resultEnvironment.getDefaultReadablePort().readNodes();
@@ -169,5 +176,17 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 resultDocument);
         resultEnvironment = resultEnvironment.setupOutputPorts(step, environment);
         return resultEnvironment;
+    }
+
+    private static int evaluateIterationSize(final Step step, final String match, final XdmNode sourceDocument,
+            final Environment environment)
+    {
+        final AtomicInteger count = new AtomicInteger(0);
+        final SaxonProcessor matchProcessor = new SaxonProcessor(environment.getPipelineContext().getProcessor(),
+                SaxonProcessorDelegates.forXsltMatchPattern(environment.getPipelineContext().getProcessor(), match,
+                        step.getNode(), SaxonProcessorDelegates.countMatchingNodes(count),
+                        new CopyingSaxonProcessorDelegate()));
+        matchProcessor.apply(sourceDocument);
+        return count.get();
     }
 }
