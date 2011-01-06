@@ -5,7 +5,7 @@
 
   <p:identity name="identity1" />
 
-  <p:store name="store1" />
+  <p:store name="store1" href="file:/path/to/result" />
 
   <p:identity name="identity2">
     <p:input port="source">
