@@ -27,11 +27,14 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.SequenceType;
 import org.trancecode.lang.TcThreads;
+import org.trancecode.logging.Logger;
 import org.trancecode.xproc.XProcXmlModel;
 
 public final class IterationSizeXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
+    private static final Logger LOG = Logger.getLogger(IterationSizeXPathExtensionFunction.class);
     private static final ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
+
     static
     {
         iterationSize.set(1);
@@ -39,7 +42,9 @@ public final class IterationSizeXPathExtensionFunction extends AbstractXPathExte
 
     public static int setIterationSize(final int value)
     {
-        return TcThreads.set(iterationSize, value);
+        final int previousValue = TcThreads.set(iterationSize, value);
+        LOG.trace("{@method} {} -> {}", previousValue, value);
+        return previousValue;
     }
 
     @Override
