@@ -20,7 +20,6 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
-import org.trancecode.collection.TcIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
@@ -191,23 +189,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
                 return null;
             }
 
-            Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
-
-            if (Iterables.isEmpty(step.getOutputPorts()))
-            {
-                final Step lastStep = TcIterables.getLast(step.getSubpipeline());
-
-                final Port primaryOutputPort = lastStep.getPrimaryOutputPort();
-                if (primaryOutputPort != null)
-                {
-                    final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(primaryOutputPort
-                            .setStepName(step.getName()).setPortBindings(), stepEnvironment);
-                    resultEnvironment = resultEnvironment.addPorts(environmentPort.pipe(resultEnvironment
-                            .getEnvironmentPort(primaryOutputPort)));
-                }
-
-                return resultEnvironment;
-            }
+            final Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
 
             return stepEnvironment.setupOutputPorts(step, resultEnvironment);
         }
