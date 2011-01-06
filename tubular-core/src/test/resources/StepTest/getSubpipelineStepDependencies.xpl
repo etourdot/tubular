@@ -17,7 +17,11 @@
 
   <p:store name="store2" href="file:/path/to/result" />
 
-  <p:identity name="identity4" />
+  <p:identity name="identity4">
+    <p:input port="source">
+      <p:pipe port="result" step="identity3" />
+    </p:input>
+  </p:identity>
 
   <p:load name="load1" href="file:/path/to/other/source" />
 
