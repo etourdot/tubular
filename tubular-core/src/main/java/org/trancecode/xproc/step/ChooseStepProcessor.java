@@ -60,14 +60,14 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
     }
 
     @Override
-    public Environment run(final Step step, final Environment environment)
+    public Environment run(final Step chooseStep, final Environment environment)
     {
-        LOG.trace("step = {}", step.getName());
-        assert step.getType().equals(XProcSteps.CHOOSE);
-        assert step.isCompoundStep();
+        LOG.trace("chooseStep = {}", chooseStep.getName());
+        assert chooseStep.getType().equals(XProcSteps.CHOOSE);
+        assert chooseStep.isCompoundStep();
 
-        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-        for (final Step whenStep : step.getSubpipeline())
+        final Environment stepEnvironment = environment.newFollowingStepEnvironment(chooseStep);
+        for (final Step whenStep : chooseStep.getSubpipeline())
         {
             assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
             Environment resultEnvironment = runSteps(ImmutableList.of(whenStep), stepEnvironment);
@@ -79,7 +79,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
                 for (final Port port : whenStep.getOutputPorts())
                 {
                     final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(
-                            port.setStepName(step.getName()), stepEnvironment);
+                            port.setStepName(chooseStep.getName()), stepEnvironment);
                     newPorts.add(environmentPort.pipe(resultEnvironment.getEnvironmentPort(port)));
                 }
 
@@ -87,7 +87,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
                 final Port primaryOutputPort = whenStep.getPrimaryOutputPort();
                 if (primaryOutputPort != null)
                 {
-                    resultEnvironment = resultEnvironment.setDefaultReadablePort(step
+                    resultEnvironment = resultEnvironment.setDefaultReadablePort(chooseStep
                             .getPortReference(primaryOutputPort.getPortName()));
                 }
 
@@ -95,7 +95,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
             }
         }
 
-        throw XProcExceptions.xd0004(step.getLocation());
+        throw XProcExceptions.xd0004(chooseStep.getLocation());
     }
 
     public static final class WhenStepProcessor extends AbstractWhenStepProcessor
@@ -116,10 +116,10 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
         }
 
         @Override
-        protected boolean doTest(final Step step, final Environment environment)
+        protected boolean doTest(final Step whenStep, final Environment environment)
         {
             final Environment resultEnvironment = environment.newChildStepEnvironment();
-            final String test = step.getVariable(XProcOptions.TEST).getValue();
+            final String test = whenStep.getVariable(XProcOptions.TEST).getValue();
             LOG.trace("test = {}", test);
             final XdmValue result = resultEnvironment.evaluateXPath(test);
             LOG.trace("result = {}", result);
@@ -169,7 +169,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
         }
 
         @Override
-        protected boolean doTest(final Step step, final Environment environment)
+        protected boolean doTest(final Step otherwiseStep, final Environment environment)
         {
             return true;
         }
@@ -179,29 +179,29 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
             CoreStepProcessor
     {
         @Override
-        public Environment run(final Step step, final Environment environment)
+        public Environment run(final Step whenStep, final Environment environment)
         {
-            LOG.trace("step = {}", step.getName());
+            LOG.trace("step = {}", whenStep.getName());
 
-            final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
-            if (!test(step, stepEnvironment))
+            final Environment stepEnvironment = environment.newFollowingStepEnvironment(whenStep);
+            if (!test(whenStep, stepEnvironment))
             {
                 return null;
             }
 
-            final Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
+            final Environment resultEnvironment = runSteps(whenStep.getSubpipeline(), stepEnvironment);
 
-            return stepEnvironment.setupOutputPorts(step, resultEnvironment);
+            return stepEnvironment.setupOutputPorts(whenStep, resultEnvironment);
         }
 
-        protected boolean test(final Step step, final Environment environment)
+        protected boolean test(final Step whenStep, final Environment environment)
         {
-            LOG.trace("name = {} ; type = {}", step.getName(), step.getType());
-            final boolean result = doTest(step, environment);
+            LOG.trace("name = {} ; type = {}", whenStep.getName(), whenStep.getType());
+            final boolean result = doTest(whenStep, environment);
             LOG.trace("result = {}", result);
             return result;
         }
 
-        protected abstract boolean doTest(final Step step, final Environment environment);
+        protected abstract boolean doTest(final Step whenStep, final Environment environment);
     }
 }
