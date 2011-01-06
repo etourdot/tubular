@@ -70,13 +70,14 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
         for (final Step whenStep : chooseStep.getSubpipeline())
         {
             assert XProcSteps.WHEN_STEPS.contains(whenStep.getType());
-            Environment resultEnvironment = runSteps(ImmutableList.of(whenStep), stepEnvironment);
+            final Step normalizedWhenStep = PipelineStepProcessor.addImplicitPorts(whenStep);
+            Environment resultEnvironment = runSteps(ImmutableList.of(normalizedWhenStep), stepEnvironment);
 
             if (resultEnvironment != null)
             {
                 final List<EnvironmentPort> newPorts = Lists.newArrayList();
 
-                for (final Port port : whenStep.getOutputPorts())
+                for (final Port port : normalizedWhenStep.getOutputPorts())
                 {
                     final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(
                             port.setStepName(chooseStep.getName()), stepEnvironment);
@@ -84,7 +85,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
                 }
 
                 resultEnvironment = resultEnvironment.addPorts(newPorts);
-                final Port primaryOutputPort = whenStep.getPrimaryOutputPort();
+                final Port primaryOutputPort = normalizedWhenStep.getPrimaryOutputPort();
                 if (primaryOutputPort != null)
                 {
                     resultEnvironment = resultEnvironment.setDefaultReadablePort(chooseStep
