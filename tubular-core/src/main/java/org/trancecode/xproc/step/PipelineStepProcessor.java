@@ -50,8 +50,6 @@ public final class PipelineStepProcessor extends AbstractCompoundStepProcessor
 
     public static Step addImplicitPorts(final Step pipeline)
     {
-        assert PipelineStepProcessor.isPipeline(pipeline);
-
         return addImplicitInputPort(addImplicitOutputPort(pipeline));
     }
 
