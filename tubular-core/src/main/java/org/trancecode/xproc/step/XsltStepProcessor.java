@@ -75,7 +75,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         {
             outputBaseUri = URI.create(providedOutputBaseUri);
         }
-        else if (sourceDocument.getBaseURI() != null)
+        else if (sourceDocument.getBaseURI() != null && sourceDocument.getBaseURI().toString().length() > 0)
         {
             outputBaseUri = sourceDocument.getBaseURI();
         }
