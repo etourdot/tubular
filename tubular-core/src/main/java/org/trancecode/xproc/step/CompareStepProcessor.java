@@ -79,7 +79,7 @@ public final class CompareStepProcessor extends AbstractStepProcessor
 
             final XPathSelector selector = xpathCompiler.compile("deep-equal($node1, $node2)").load();
             selector.setVariable(node1, sourceNode);
-            selector.setVariable(node2, sourceNode);
+            selector.setVariable(node2, alternateNode);
 
             final XdmValue result = selector.evaluate();
             final XdmItem resultNode = Iterables.getOnlyElement(result);
