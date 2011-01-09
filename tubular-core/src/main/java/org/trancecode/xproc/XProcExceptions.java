@@ -66,6 +66,14 @@ public final class XProcExceptions
                 "the match expression on p:viewport does not match an element or document: %s", node.getNodeKind());
     }
 
+    public static XProcException xd0011(final Location location, final String resource, final Exception error)
+    {
+        final XProcException exception = newXProcException(Type.DYNAMIC, 11, location, "cannot load document: %s",
+                resource);
+        exception.initCause(error);
+        return exception;
+    }
+
     public static XProcException xd0023(final Location location, final String select, final String errorMessage)
     {
         return newXProcException(Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select,
