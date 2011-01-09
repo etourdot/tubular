@@ -52,7 +52,7 @@ public final class XProcException extends BaseException
             @Override
             public String toString()
             {
-                return "XS";
+                return "XD";
             }
         },
         STEP
