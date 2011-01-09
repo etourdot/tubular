@@ -19,15 +19,17 @@
  */
 package org.trancecode.xproc.binding;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.Immutable;
+import org.trancecode.xml.Jaxp;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.XProcExceptions;
 
 /**
  * @author Herve Quiroz
@@ -42,13 +44,7 @@ public class DocumentPortBinding extends AbstractPortBinding
     public DocumentPortBinding(final String href, final Location location)
     {
         super(location);
-
-        this.href = href;
-    }
-
-    public Iterable<XdmNode> readNodes()
-    {
-        throw new IllegalStateException();
+        this.href = Preconditions.checkNotNull(href);
     }
 
     @Override
@@ -62,13 +58,19 @@ public class DocumentPortBinding extends AbstractPortBinding
                 {
                     final Source source = environment.getPipelineContext().getUriResolver()
                             .resolve(href, location.getSystemId());
-
-                    return ImmutableList.of(environment.getPipelineContext().getProcessor().newDocumentBuilder()
-                            .build(source));
+                    try
+                    {
+                        return ImmutableList.of(environment.getPipelineContext().getProcessor().newDocumentBuilder()
+                                .build(source));
+                    }
+                    finally
+                    {
+                        Jaxp.closeQuietly(source);
+                    }
                 }
                 catch (final Exception e)
                 {
-                    throw new PipelineException("Error while trying to build document ; href = %s", e, href);
+                    throw XProcExceptions.xd0011(getLocation(), href, e);
                 }
             }
         };
