@@ -23,11 +23,10 @@ import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Jaxp;
-import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -54,31 +53,25 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final boolean validate = Boolean.parseBoolean(input.getOptionValue(XProcOptions.DTD_VALIDATE));
         LOG.trace("dtd-validate = {}", validate);
 
-        final Source source;
-        try
-        {
-            source = input.getPipelineContext().getUriResolver().resolve(href, input.getBaseUri().toString());
-        }
-        catch (final Exception e)
-        {
-            throw new PipelineException("Error while trying to read document ; href = %s ; baseUri = %s", e, href,
-                    input.getBaseUri());
-        }
-
         final XdmNode document;
         try
         {
-            final DocumentBuilder documentBuilder = input.getPipelineContext().getProcessor().newDocumentBuilder();
-            documentBuilder.setDTDValidation(validate);
-            document = documentBuilder.build(source);
+            final Source source = input.getPipelineContext().getUriResolver()
+                    .resolve(href, input.getBaseUri().toString());
+            try
+            {
+                final DocumentBuilder documentBuilder = input.getPipelineContext().getProcessor().newDocumentBuilder();
+                documentBuilder.setDTDValidation(validate);
+                document = documentBuilder.build(source);
+            }
+            finally
+            {
+                Jaxp.closeQuietly(source, LOG);
+            }
         }
-        catch (final SaxonApiException e)
+        catch (final Exception e)
         {
-            throw new PipelineException("Error while trying to build document ; href = %s", e, href);
-        }
-        finally
-        {
-            Jaxp.closeQuietly(source, LOG);
+            throw XProcExceptions.xd0011(input.getLocation(), href, e);
         }
 
         output.writeNodes(XProcPorts.RESULT, document);
