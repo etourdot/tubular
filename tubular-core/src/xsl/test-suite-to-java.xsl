@@ -15,7 +15,7 @@
   <xsl:template match="/t:test-suite">
 
     <xsl:text>/*
- * Copyright (C) 2010 TranceCode Software
+ * Copyright (C) 2010 Herve Quiroz
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
