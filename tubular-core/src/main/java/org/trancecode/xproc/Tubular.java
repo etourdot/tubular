@@ -65,7 +65,7 @@ public final class Tubular
 
     public static String vendor()
     {
-        return "TranceCode Software";
+        return "Herve Quiroz";
     }
 
     public static String vendorUri()
