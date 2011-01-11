@@ -67,15 +67,15 @@ public final class XProcTestSuiteReportBuilder
         builder.startElement(Elements.PROCESSOR);
 
         builder.startElement(Elements.NAME);
-        builder.text("Tubular");
+        builder.text(Tubular.productName());
         builder.endElement();
 
         builder.startElement(Elements.VENDOR);
-        builder.text("TranceCode");
+        builder.text(Tubular.vendor());
         builder.endElement();
 
         builder.startElement(Elements.VENDOR_URI);
-        builder.text("http://code.google.com/p/tubular/");
+        builder.text(Tubular.vendorUri());
         builder.endElement();
 
         builder.startElement(Elements.VERSION);
