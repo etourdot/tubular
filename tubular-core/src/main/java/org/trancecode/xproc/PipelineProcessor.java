@@ -38,7 +38,7 @@ public final class PipelineProcessor
         this.context = ImmutablePipelineContext.copyOf(context);
     }
 
-    public PipelineContext context()
+    public PipelineContext getPipelineContext()
     {
         return context;
     }
