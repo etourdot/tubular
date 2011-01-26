@@ -33,7 +33,12 @@ public final class PipelineProcessor
         this(new PipelineConfiguration());
     }
 
-    public PipelineProcessor(final PipelineContext context)
+    public PipelineProcessor(final PipelineConfiguration configuration)
+    {
+        this((PipelineContext) configuration);
+    }
+
+    PipelineProcessor(final PipelineContext context)
     {
         this.context = ImmutablePipelineContext.copyOf(context);
     }
