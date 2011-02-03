@@ -21,9 +21,12 @@ package org.trancecode.xproc.step;
 
 import com.google.common.io.Closeables;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import com.google.common.io.Files;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
@@ -76,8 +79,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
 
         final String mimeType = input.getOptionValue(XProcOptions.MEDIA_TYPE, DEFAULT_MIMETYPE);
         final String encoding = input.getOptionValue(XProcOptions.ENCODING, DEFAULT_ENCODING);
-        final String omitXmlDeclaration = input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION,
-                DEFAULT_OMIT_XML_DECLARATION);
+        final boolean omitXmlDeclaration = Boolean.parseBoolean(input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION));
         final String doctypePublicId = input.getOptionValue(XProcOptions.DOCTYPE_PUBLIC, DEFAULT_DOCTYPE_PUBLIC);
         final String doctypeSystemId = input.getOptionValue(XProcOptions.DOCTYPE_SYSTEM, DEFAULT_DOCTYPE_SYSTEM);
         final String method = input.getOptionValue(XProcOptions.METHOD, DEFAULT_METHOD);
@@ -86,9 +88,25 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         LOG.debug("Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
                 href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
-        final OutputStream targetOutputStream = input.getPipelineContext().getOutputResolver()
+        OutputStream targetOutputStream;
+        if ("file".equals(outputUri.getScheme())) {
+            File oFile = new File(outputUri);
+            try
+            {
+                if (!oFile.exists()) {
+                    Files.createParentDirs(oFile);
+                }
+                targetOutputStream = new FileOutputStream(oFile);
+            }
+            catch (final Exception e)
+            {
+                throw new PipelineException("Error while trying to write document ; output-base-uri = %s", e, outputUri);
+            }
+        } else {
+            targetOutputStream = input.getPipelineContext().getOutputResolver()
                 .resolveOutputStream(href, input.getBaseUri().toString());
-
+        }
+        
         final Serializer serializer = new Serializer();
         serializer.setOutputStream(targetOutputStream);
         if (doctypePublicId != null)
@@ -107,7 +125,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         }
         serializer.setOutputProperty(Property.ENCODING, encoding);
         serializer.setOutputProperty(Property.MEDIA_TYPE, mimeType);
-        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, omitXmlDeclaration);
+        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, (omitXmlDeclaration ? "yes" : "no"));
         serializer.setOutputProperty(Property.INDENT, (indent ? "yes" : "no"));
 
         try
