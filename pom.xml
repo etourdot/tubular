@@ -4,11 +4,11 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
+  <!--parent>
     <groupId>org.trancecode</groupId>
     <artifactId>trancecode</artifactId>
     <version>3</version>
-  </parent>
+  </parent-->
 
   <groupId>org.trancecode</groupId>
   <artifactId>tubular</artifactId>
@@ -57,8 +57,8 @@
 
   <properties>
 
-    <saxon9.version>9.2.1.2</saxon9.version>
-
+    <saxon9.version>9.3.0.4</saxon9.version>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <!-- ===================================================================== -->
@@ -190,5 +190,28 @@
   </dependencyManagement>
 
   <!-- ===================================================================== -->
+    <build>
 
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
 </project>
