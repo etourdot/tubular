@@ -50,6 +50,11 @@
       <id>releases.trancecode.org</id>
       <url>http://maven.trancecode.org/releases/</url>
     </repository>
+    <repository>
+        <id>Maven2</id>
+        <name>Maven central repository</name>
+        <url>http://repo1.maven.org/maven2/</url>
+    </repository>
 
   </repositories>
 
@@ -186,6 +191,11 @@
         <version>${saxon9.version}</version>
       </dependency>
 
+        <dependency>
+           <groupId>com.fasterxml.uuid</groupId>
+           <artifactId>java-uuid-generator</artifactId>
+           <version>3.1.0</version>
+        </dependency>
     </dependencies>
   </dependencyManagement>
 

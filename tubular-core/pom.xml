@@ -98,6 +98,11 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
 
+    <dependency>
+       <groupId>com.fasterxml.uuid</groupId>
+       <artifactId>java-uuid-generator</artifactId>
+    </dependency>
+      
   </dependencies>
 
   <build>

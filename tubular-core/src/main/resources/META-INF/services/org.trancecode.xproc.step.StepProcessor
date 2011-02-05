@@ -13,3 +13,4 @@ org.trancecode.xproc.step.StoreStepProcessor
 org.trancecode.xproc.step.StringReplaceStepProcessor
 org.trancecode.xproc.step.WrapSequenceStepProcessor
 org.trancecode.xproc.step.XsltStepProcessor
+org.trancecode.xproc.step.UuidStepProcessor

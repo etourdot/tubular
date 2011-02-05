@@ -156,6 +156,13 @@ public final class XProcExceptions
                 "It is a dynamic error if the QName value in the attribute-name option uses the prefix \"xmlns\" or any other prefix that resolves to the namespace name \"http://www.w3.org/2000/xmlns/\".");
     }
 
+    public static XProcException xc0060(final Location location)
+    {
+        return newXProcException(
+                Type.STEP, 60, location,
+                "It is a dynamic error if the processor does not support the specified version of the UUID algorithm.");
+    }
+
     public static XProcException xc0062(final Location location, final XdmNode node)
     {
         return newXProcException(Type.STEP, 62, location, "the match option matches a namespace node: %s",
