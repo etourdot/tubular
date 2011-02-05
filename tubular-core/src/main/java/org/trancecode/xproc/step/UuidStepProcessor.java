@@ -40,7 +40,7 @@ import java.util.EnumSet;
 import java.util.UUID;
 
 /**
- * @author Herve Quiroz
+ * @author Emmanuel Tourdot
  */
 @ExternalResources(read = false, write = false)
 public final class UuidStepProcessor extends AbstractStepProcessor
