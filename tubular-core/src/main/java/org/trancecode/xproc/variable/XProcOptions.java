@@ -63,6 +63,9 @@ public final class XProcOptions
     public static final QName MATCH = new QName("match");
     public static final QName MEDIA_TYPE = new QName("media-type");
     public static final QName METHOD = new QName("method");
+    public static final QName NEW_NAME = new QName("new-name");
+    public static final QName NEW_PREFIX = new QName("new-prefix");
+    public static final QName NEW_NAMESPACE = new QName("new-namespace");
     public static final QName NORMALIZATION_FORM = new QName("normalization-form");
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
