@@ -41,10 +41,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * {@code p:replace}.
+ * {@code p:rename}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.replace">p:replace</a>
+ * @see <a href="http://www.w3.org/TR/xproc/#c.rename">p:rename</a>
  */
 public final class RenameStepProcessor extends AbstractStepProcessor
 {
