@@ -74,6 +74,7 @@ public final class XProcOptions
     public static final QName RESULT_BASE_URI = new QName("result-base-uri");
     public static final QName RESULT_DOCUMENT_URI = new QName("result-document-uri");
     public static final QName RESULT_IS_XML = new QName("result-is-xml");
+    public static final QName SELECT = new QName("select");
     public static final QName SOURCE_BASE_URI = new QName("source-base-uri");
     public static final QName SOURCE_DOCUMENT_URI = new QName("source-document-uri");
     public static final QName STANDALONE = new QName("standalone");
