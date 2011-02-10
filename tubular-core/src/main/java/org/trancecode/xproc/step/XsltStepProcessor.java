@@ -30,8 +30,8 @@ import java.util.Set;
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
 
-import net.sf.saxon.OutputURIResolver;
 import net.sf.saxon.event.Receiver;
+import net.sf.saxon.lib.OutputURIResolver;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;

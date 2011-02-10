@@ -78,6 +78,7 @@ public abstract class AbstractXProcTest extends AbstractTest
     public static void setupLoggingLevel()
     {
         // setLoggingLevel("org.trancecode.xproc", TRACE);
+        Logger.getLogger("org.trancecode").setLevel(Level.INFO);
     }
 
     @BeforeClass
@@ -95,6 +96,7 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     protected void test(final URL testUrl, final String testSuite) throws Exception
     {
+        LOG.info("Starting test: {}", testUrl);
         final PipelineConfiguration configuration = new PipelineConfiguration();
         final PipelineProcessor pipelineProcessor = new PipelineProcessor(configuration);
         final XProcTestCase test = getTest(testUrl, configuration.getProcessor(), testSuite);
@@ -129,11 +131,12 @@ public abstract class AbstractXProcTest extends AbstractTest
         }
 
         reportBuilder.result(test, null);
+        LOG.info("Ending test: {}", testUrl);
     }
 
     private void test(final XProcTestCase test, final PipelineProcessor pipelineProcessor)
     {
-        log.info("== parse pipeline ==");
+        log.info("== parse pipeline {} ==", test.url());
         final Pipeline pipeline = pipelineProcessor.buildPipeline(test.getPipeline().asSource());
         log.info("== pipeline parsed ==");
         final RunnablePipeline runnablePipeline = pipeline.load();
@@ -169,18 +172,41 @@ public abstract class AbstractXProcTest extends AbstractTest
         final PipelineResult result = runnablePipeline.run();
         log.info("== pipeline run ==");
 
+        PipelineResult compareResult = null;
         if (test.getComparePipeline() != null)
         {
-            // TODO parse compare-pipeline (if any)
-            assert false : "TODO";
+            log.info("== parse compare pipeline ==");
+            final Pipeline comparePipeline = pipelineProcessor.buildPipeline(test.getComparePipeline().asSource());
+            log.info("== compare pipeline parsed ==");
+            final RunnablePipeline compareRunnablePipeline = comparePipeline.load();
+            for (final String port : test.getOutputs().keySet())
+            {
+                final List<Source> sources = Lists.newArrayList();
+                for (final XdmNode inputDoc : test.getOutputs().get(port))
+                {
+                    sources.add(inputDoc.asSource());
+                }
+                compareRunnablePipeline.bindSourcePort(port, sources);
+            }
+            for (final QName name : test.getOptions().keySet())
+            {
+                compareRunnablePipeline.withOption(name, test.getOptions().get(name));
+            }
+            for (final String port : test.getParameters().keySet())
+            {
+                for (final QName name : test.getParameters().get(port).keySet())
+                {
+                    compareRunnablePipeline.withParam(name, test.getParameters().get(port).get(name));
+                }
+            }
+            compareResult = compareRunnablePipeline.run();
         }
-
-        // TODO run compare-pipeline (if any)
+        final PipelineResult resultPipeline =  (test.getComparePipeline() != null)? compareResult : result;
+        assert resultPipeline != null;
 
         for (final String port : test.getOutputs().keySet())
         {
-
-            final Iterable<XdmNode> actualNodes = result.readNodes(port);
+            final Iterable<XdmNode> actualNodes = resultPipeline.readNodes(port);
             final Iterable<XdmNode> expectedNodes = test.getOutputs().get(port);
             AssertJUnit.assertEquals(port + " = " + actualNodes.toString(), Iterables.size(expectedNodes),
                     Iterables.size(actualNodes));
@@ -192,7 +218,7 @@ public abstract class AbstractXProcTest extends AbstractTest
                 assert actualNodesIterator.hasNext();
                 final XdmNode expectedNode = expectedNodesIterator.next();
                 final XdmNode actualNode = actualNodesIterator.next();
-                TcAssert.assertEquals(expectedNode, actualNode, test.isIgnoreWhitespace());
+                TcAssert.compare(expectedNode, actualNode);
             }
             assert !actualNodesIterator.hasNext();
         }

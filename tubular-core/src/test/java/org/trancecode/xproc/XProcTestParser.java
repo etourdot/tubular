@@ -272,6 +272,7 @@ public class XProcTestParser
                 if (Iterables.isEmpty(nodes))
                 {
                     LOG.trace("New empty document");
+                    documents.add(Saxon.asDocumentNode(processor, nodes));
                 }
                 else
                 {

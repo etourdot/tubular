@@ -17,7 +17,7 @@
  */
 package org.trancecode.xproc.xpath;
 
-import net.sf.saxon.functions.ExtensionFunctionDefinition;
+import net.sf.saxon.lib.ExtensionFunctionDefinition;
 
 /**
  * @author Herve Quiroz

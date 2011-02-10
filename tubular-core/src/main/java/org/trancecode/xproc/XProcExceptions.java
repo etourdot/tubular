@@ -117,6 +117,11 @@ public final class XProcExceptions
                 uri);
     }
 
+    public static XProcException xc0013(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 13, SaxonLocation.of(node), "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
+    }
+
     public static XProcException xc0019(final Step step)
     {
         return newXProcException(Type.STEP, 19, step.getLocation(), "Documents are not equal in step %s",
@@ -141,7 +146,6 @@ public final class XProcExceptions
                 "the match pattern matches a %s which is not allowed when the position is %s", node.getNodeKind(),
                 position);
     }
-
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
@@ -154,6 +158,13 @@ public final class XProcExceptions
                 59,
                 location,
                 "It is a dynamic error if the QName value in the attribute-name option uses the prefix \"xmlns\" or any other prefix that resolves to the namespace name \"http://www.w3.org/2000/xmlns/\".");
+    }
+
+    public static XProcException xc0060(final Location location)
+    {
+        return newXProcException(
+                Type.STEP, 60, location,
+                "It is a dynamic error if the processor does not support the specified version of the UUID algorithm.");
     }
 
     public static XProcException xc0062(final Location location, final XdmNode node)

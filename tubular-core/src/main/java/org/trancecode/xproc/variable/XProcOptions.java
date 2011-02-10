@@ -42,6 +42,7 @@ public final class XProcOptions
     public static final QName ATTRIBUTE_VALUE = new QName("attribute-value");
     public static final QName BYTE_ORDER_MARK = new QName("byte-order-mark");
     public static final QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
+    public static final QName CHARSET = new QName("charset");
     public static final QName CODE = new QName("code");
     public static final QName CODE_PREFIX = new QName("code-prefix");
     public static final QName CODE_NAMESPACE = new QName("code-namespace");
@@ -63,6 +64,10 @@ public final class XProcOptions
     public static final QName MATCH = new QName("match");
     public static final QName MEDIA_TYPE = new QName("media-type");
     public static final QName METHOD = new QName("method");
+    public static final QName NAMESPACE = new QName("namespace");
+    public static final QName NEW_NAME = new QName("new-name");
+    public static final QName NEW_PREFIX = new QName("new-prefix");
+    public static final QName NEW_NAMESPACE = new QName("new-namespace");
     public static final QName NORMALIZATION_FORM = new QName("normalization-form");
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
@@ -71,6 +76,7 @@ public final class XProcOptions
     public static final QName RESULT_BASE_URI = new QName("result-base-uri");
     public static final QName RESULT_DOCUMENT_URI = new QName("result-document-uri");
     public static final QName RESULT_IS_XML = new QName("result-is-xml");
+    public static final QName SELECT = new QName("select");
     public static final QName SOURCE_BASE_URI = new QName("source-base-uri");
     public static final QName SOURCE_DOCUMENT_URI = new QName("source-document-uri");
     public static final QName STANDALONE = new QName("standalone");

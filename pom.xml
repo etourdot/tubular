@@ -57,8 +57,7 @@
 
   <properties>
 
-    <saxon9.version>9.2.1.2</saxon9.version>
-
+    <saxon9.version>9.3.0.4</saxon9.version>
   </properties>
 
   <!-- ===================================================================== -->
@@ -186,9 +185,14 @@
         <version>${saxon9.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.fasterxml.uuid</groupId>
+        <artifactId>java-uuid-generator</artifactId>
+        <version>3.1.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <!-- ===================================================================== -->
-
+ 
 </project>
