@@ -20,25 +20,26 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
+import java.util.EnumSet;
+import java.util.Set;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.XmlNamespace;
-import org.trancecode.xml.XmlnsNamespace;
-import org.trancecode.xml.saxon.*;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * {@code p:rename}.
@@ -72,18 +73,17 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         assert new_name != null;
         LOG.trace("new_name = {}", new_name);
 
-
         final QName newName = getNewNamespace(new_prefix, new_namespace, new_name, input.getStep());
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override
-            public boolean startDocument(XdmNode node, SaxonBuilder builder)
+            public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
             {
                 return true;
             }
 
             @Override
-            public void endDocument(XdmNode node, SaxonBuilder builder)
+            public void endDocument(final XdmNode node, final SaxonBuilder builder)
             {
             }
 
@@ -106,7 +106,7 @@ public final class RenameStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void attribute(XdmNode node, SaxonBuilder builder)
+            public void attribute(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.attribute(newName, node.getStringValue());
             }
@@ -118,28 +118,30 @@ public final class RenameStepProcessor extends AbstractStepProcessor
                 {
                     throw XProcExceptions.xc0013(node);
                 }
-                builder.processingInstruction(newName.getLocalName(), node.getStringValue()); 
+                builder.processingInstruction(newName.getLocalName(), node.getStringValue());
             }
         };
 
         /**
-         * Rule to apply before renaming:
-         * If the match option matches an attribute and if the element on which it occurs already has an attribute
-         * whose expanded name is the same as the expanded name of the specified new-name, then the results is as if the
-         * current attribute named "new-name" was deleted before renaming the matched attribute.
+         * Rule to apply before renaming: If the match option matches an
+         * attribute and if the element on which it occurs already has an
+         * attribute whose expanded name is the same as the expanded name of the
+         * specified new-name, then the results is as if the current attribute
+         * named "new-name" was deleted before renaming the matched attribute.
          */
         final SaxonProcessorDelegate deleteNewAttrib = new CopyingSaxonProcessorDelegate()
         {
             @Override
             public void attribute(final XdmNode node, final SaxonBuilder builder)
             {
-                if (!node.getNodeName().equals(newName)) {
+                if (!node.getNodeName().equals(newName))
+                {
                     super.attribute(node, builder);
                 }
             }
         };
-        final SaxonProcessorDelegate attributeDel = SaxonProcessorDelegates.forNodeKinds(ImmutableSet.of(XdmNodeKind.ATTRIBUTE),
-                deleteNewAttrib, new CopyingSaxonProcessorDelegate());
+        final SaxonProcessorDelegate attributeDel = SaxonProcessorDelegates.forNodeKinds(
+                ImmutableSet.of(XdmNodeKind.ATTRIBUTE), deleteNewAttrib, new CopyingSaxonProcessorDelegate());
         final SaxonProcessor delProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(), attributeDel);
         final XdmNode resultDel = delProcessor.apply(sourceDocument);
 
@@ -155,15 +157,15 @@ public final class RenameStepProcessor extends AbstractStepProcessor
                 }));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
-                        .getNode(), renameWithError, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
+                        .getStep().getNode(), renameWithError, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(resultDel);
         output.writeNodes(XProcPorts.RESULT, result);
     }
 
-    private static QName getNewNamespace(final String new_prefix, final String new_namespace,
-                                               final String new_name, final Step inputStep)
+    private static QName getNewNamespace(final String new_prefix, final String new_namespace, final String new_name,
+            final Step inputStep)
     {
         if (new_prefix != null)
         {
@@ -186,7 +188,7 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         if (new_name.contains(":"))
         {
             throw XProcExceptions.xd0034(inputStep.getLocation());
-            }
+        }
         else
         {
             return new QName("", new_namespace, new_name);

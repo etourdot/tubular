@@ -20,9 +20,10 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.io.Closeables;
-import com.google.common.io.Files;
+
+import java.io.ByteArrayOutputStream;
+
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
 import net.sf.saxon.s9api.XdmNode;
@@ -33,12 +34,6 @@ import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-import org.xml.sax.InputSource;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXSource;
-import java.io.*;
-import java.net.URI;
 
 /**
  * @author Emmanuel Tourdot
@@ -62,10 +57,12 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
         final String doctypePublicId = input.getOptionValue(XProcOptions.DOCTYPE_PUBLIC, null);
         final String doctypeSystemId = input.getOptionValue(XProcOptions.DOCTYPE_SYSTEM, null);
         final String method = input.getOptionValue(XProcOptions.METHOD, "xml");
-        final boolean escapeUri = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false"));
+        final boolean escapeUri = Boolean.parseBoolean(input
+                .getOptionValue(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false"));
         final boolean omitXML = Boolean.parseBoolean(input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION, "true"));
         final boolean indent = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INDENT, "false"));
-        final boolean includeContent = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INCLUDE_CONTENT_TYPE, "true"));
+        final boolean includeContent = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INCLUDE_CONTENT_TYPE,
+                "true"));
 
         final XdmNode root = SaxonAxis.childElement(node);
         final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
@@ -101,7 +98,7 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
         }
 
         final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-            .getUnderlyingConfiguration());
+                .getUnderlyingConfiguration());
         builder.startDocument();
         builder.startElement(root.getNodeName());
         builder.startContent();

@@ -20,25 +20,27 @@
 package org.trancecode.xproc.step;
 
 import com.fasterxml.uuid.Generators;
-import com.fasterxml.uuid.NoArgGenerator;
-import com.fasterxml.uuid.UUIDGenerator;
 import com.fasterxml.uuid.impl.NameBasedGenerator;
 import com.fasterxml.uuid.impl.RandomBasedGenerator;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
-import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmNodeKind;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
-import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.XProcExceptions;
-import org.trancecode.xproc.port.XProcPorts;
-import org.trancecode.xproc.variable.XProcOptions;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.EnumSet;
 import java.util.UUID;
+
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
+import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * @author Emmanuel Tourdot
@@ -115,8 +117,8 @@ public final class UuidStepProcessor extends AbstractStepProcessor
             }
         };
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
-                        .getNode(), uuidReplace, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
+                        .getStep().getNode(), uuidReplace, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
@@ -126,7 +128,7 @@ public final class UuidStepProcessor extends AbstractStepProcessor
     {
         try
         {
-            switch(Integer.parseInt(version))
+            switch (Integer.parseInt(version))
             {
                 case 1:
                     final TimeBasedGenerator t_uuid_gen = Generators.timeBasedGenerator();
@@ -135,9 +137,10 @@ public final class UuidStepProcessor extends AbstractStepProcessor
                     final NameBasedGenerator n_uuid_gen;
                     try
                     {
-                        n_uuid_gen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL, MessageDigest.getInstance("MD5"));
+                        n_uuid_gen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL,
+                                MessageDigest.getInstance("MD5"));
                     }
-                    catch (NoSuchAlgorithmException e)
+                    catch (final NoSuchAlgorithmException e)
                     {
                         throw XProcExceptions.xc0060(inputStep.getLocation());
                     }
@@ -149,7 +152,7 @@ public final class UuidStepProcessor extends AbstractStepProcessor
                     throw XProcExceptions.xc0060(inputStep.getLocation());
             }
         }
-        catch (NumberFormatException e)
+        catch (final NumberFormatException e)
         {
             throw XProcExceptions.xc0060(inputStep.getLocation());
         }

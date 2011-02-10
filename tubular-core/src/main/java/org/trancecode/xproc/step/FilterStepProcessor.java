@@ -19,18 +19,19 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import net.sf.saxon.s9api.*;
+import java.util.EnumSet;
+
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
-import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * {@code p:filter}.
@@ -57,16 +58,16 @@ public final class FilterStepProcessor extends AbstractStepProcessor
         assert select != null;
         LOG.trace("select = {}", select);
 
-        final SaxonProcessorDelegate unmatchDelegate= new AbstractSaxonProcessorDelegate()
+        final SaxonProcessorDelegate unmatchDelegate = new AbstractSaxonProcessorDelegate()
         {
             @Override
-            public boolean startDocument(XdmNode node, SaxonBuilder builder)
+            public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
             {
                 return true;
             }
 
             @Override
-            public void endDocument(XdmNode node, SaxonBuilder builder)
+            public void endDocument(final XdmNode node, final SaxonBuilder builder)
             {
             }
 
@@ -77,7 +78,7 @@ public final class FilterStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void endElement(XdmNode node, SaxonBuilder builder)
+            public void endElement(final XdmNode node, final SaxonBuilder builder)
             {
             }
 
@@ -101,8 +102,8 @@ public final class FilterStepProcessor extends AbstractStepProcessor
             {
             }
         };
-        
-        final SaxonProcessorDelegate matchDelegate= new AbstractSaxonProcessorDelegate()
+
+        final SaxonProcessorDelegate matchDelegate = new AbstractSaxonProcessorDelegate()
         {
             @Override
             public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
@@ -130,9 +131,9 @@ public final class FilterStepProcessor extends AbstractStepProcessor
                 builder.endElement();
                 return EnumSet.noneOf(NextSteps.class);
             }
-            
+
             @Override
-            public void endElement(XdmNode node, SaxonBuilder builder)
+            public void endElement(final XdmNode node, final SaxonBuilder builder)
             {
             }
 
@@ -159,20 +160,21 @@ public final class FilterStepProcessor extends AbstractStepProcessor
         };
 
         // TODO
-        // it works but it not correct: select must be an xpathExpression not a XSLTMatchPattern 
+        // it works but it not correct: select must be an xpathExpression not a
+        // XSLTMatchPattern
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), select, input.getStep()
-                        .getNode(), matchDelegate, unmatchDelegate));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), select, input
+                        .getStep().getNode(), matchDelegate, unmatchDelegate));
 
         final XdmNode result = matchProcessor.apply(sourceDocument);
-        if (result!=null)
+        if (result != null)
         {
             output.writeNodes(XProcPorts.RESULT, result);
         }
         else
         {
             final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-                .getUnderlyingConfiguration());
+                    .getUnderlyingConfiguration());
             builder.startDocument();
             builder.endDocument();
             output.writeNodes(XProcPorts.RESULT, builder.getNode());
