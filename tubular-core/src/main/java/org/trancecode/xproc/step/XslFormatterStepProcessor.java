@@ -56,6 +56,8 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output) throws Exception
     {
+        LOG.trace("{@method}");
+
         final XdmNode source = input.readNode(XProcPorts.SOURCE);
 
         final String href = input.getOptionValue(XProcOptions.CONTENT_TYPE, null);
