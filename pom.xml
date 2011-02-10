@@ -4,11 +4,11 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <!--parent>
+  <parent>
     <groupId>org.trancecode</groupId>
     <artifactId>trancecode</artifactId>
     <version>3</version>
-  </parent-->
+  </parent>
 
   <groupId>org.trancecode</groupId>
   <artifactId>tubular</artifactId>
@@ -50,11 +50,6 @@
       <id>releases.trancecode.org</id>
       <url>http://maven.trancecode.org/releases/</url>
     </repository>
-    <repository>
-        <id>Maven2</id>
-        <name>Maven central repository</name>
-        <url>http://repo1.maven.org/maven2/</url>
-    </repository>
 
   </repositories>
 
@@ -63,7 +58,6 @@
   <properties>
 
     <saxon9.version>9.3.0.4</saxon9.version>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <!-- ===================================================================== -->
@@ -191,37 +185,14 @@
         <version>${saxon9.version}</version>
       </dependency>
 
-        <dependency>
-           <groupId>com.fasterxml.uuid</groupId>
-           <artifactId>java-uuid-generator</artifactId>
-           <version>3.1.0</version>
-        </dependency>
+      <dependency>
+        <groupId>com.fasterxml.uuid</groupId>
+        <artifactId>java-uuid-generator</artifactId>
+        <version>3.1.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <!-- ===================================================================== -->
-    <build>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-		</plugins>
-	</build>
+ 
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Herve Quiroz
+ * Copyright (C) 2008 Emmanuel Tourdot
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -72,42 +72,8 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         assert new_name != null;
         LOG.trace("new_name = {}", new_name);
 
-        QName newNameQname = null;
-        if (new_prefix != null)
-        {
-            if (new_namespace == null)
-            {
-                throw XProcExceptions.xd0034(input.getStep().getLocation());
-            }
-            else
-            {
-                newNameQname = new QName(new_prefix, new_namespace, new_name);
-            }
-        }
-        else
-        {
-            if (new_namespace == null)
-            {
-                newNameQname = new QName(new_name, input.getStep().getNode());
-            }
-        }
-        if (new_name.contains(":"))
-        {
-            if (new_namespace != null)
-            {
-                throw XProcExceptions.xd0034(input.getStep().getLocation());
-            }
-            else
-            {
-                newNameQname = new QName(new_name, input.getStep().getNode());
-            }
-        }
-        else
-        {
-            newNameQname = new QName(new_prefix == null ? "" : new_prefix, new_namespace, new_name);
-        }
 
-        final QName newName = newNameQname;
+        final QName newName = getNewNamespace(new_prefix, new_namespace, new_name, input.getStep());
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override
@@ -160,7 +126,7 @@ public final class RenameStepProcessor extends AbstractStepProcessor
          * Rule to apply before renaming:
          * If the match option matches an attribute and if the element on which it occurs already has an attribute
          * whose expanded name is the same as the expanded name of the specified new-name, then the results is as if the
-         * current attribute named “new-name” was deleted before renaming the matched attribute.
+         * current attribute named "new-name" was deleted before renaming the matched attribute.
          */
         final SaxonProcessorDelegate deleteNewAttrib = new CopyingSaxonProcessorDelegate()
         {
@@ -194,5 +160,36 @@ public final class RenameStepProcessor extends AbstractStepProcessor
 
         final XdmNode result = matchProcessor.apply(resultDel);
         output.writeNodes(XProcPorts.RESULT, result);
+    }
+
+    private static QName getNewNamespace(final String new_prefix, final String new_namespace,
+                                               final String new_name, final Step inputStep)
+    {
+        if (new_prefix != null)
+        {
+            if (new_namespace == null)
+            {
+                throw XProcExceptions.xd0034(inputStep.getLocation());
+            }
+            else
+            {
+                return new QName(new_prefix, new_namespace, new_name);
+            }
+        }
+        else
+        {
+            if (new_namespace == null)
+            {
+                return new QName(new_name, inputStep.getNode());
+            }
+        }
+        if (new_name.contains(":"))
+        {
+            throw XProcExceptions.xd0034(inputStep.getLocation());
+            }
+        else
+        {
+            return new QName("", new_namespace, new_name);
+        }
     }
 }

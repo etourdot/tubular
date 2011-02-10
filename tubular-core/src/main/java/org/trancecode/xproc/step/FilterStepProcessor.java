@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Herve Quiroz
+ * Copyright (C) 2008 Emmanuel Tourdot
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -158,11 +158,13 @@ public final class FilterStepProcessor extends AbstractStepProcessor
 
         };
 
+        // TODO
+        // it works but it not correct: select must be an xpathExpression not a XSLTMatchPattern 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), select, input.getStep()
                         .getNode(), matchDelegate, unmatchDelegate));
 
-        XdmNode result = matchProcessor.apply(sourceDocument);
+        final XdmNode result = matchProcessor.apply(sourceDocument);
         if (result!=null)
         {
             output.writeNodes(XProcPorts.RESULT, result);

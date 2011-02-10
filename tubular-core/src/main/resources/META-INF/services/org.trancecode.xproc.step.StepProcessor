@@ -16,3 +16,4 @@ org.trancecode.xproc.step.XsltStepProcessor
 org.trancecode.xproc.step.UuidStepProcessor
 org.trancecode.xproc.step.RenameStepProcessor
 org.trancecode.xproc.step.FilterStepProcessor
+org.trancecode.xproc.step.EscapeMarkupStepProcessor

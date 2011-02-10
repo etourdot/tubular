@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Herve Quiroz
+ * Copyright (C) 2008 Emmanuel Tourdot
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,6 +30,7 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.*;
+import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -60,37 +61,10 @@ public final class UuidStepProcessor extends AbstractStepProcessor
         final String match = input.getOptionValue(XProcOptions.MATCH);
         assert match != null;
         LOG.trace("match = {}", match);
-        String version = input.getOptionValue(XProcOptions.VERSION, "4");
+        final String version = input.getOptionValue(XProcOptions.VERSION, "4");
         LOG.trace("version = {}", version);
 
-        if (!"1".equals(version) && !"3".equals(version) && !"4".equals(version))
-        {
-            throw XProcExceptions.xc0060(input.getStep().getLocation());
-        }
-        UUID uuid = null;
-        switch(Integer.parseInt(version))
-        {
-            case 1:
-                final TimeBasedGenerator t_uuid_gen = Generators.timeBasedGenerator();
-                uuid = t_uuid_gen.generate();
-                break;
-            case 3:
-                final NameBasedGenerator n_uuid_gen;
-                try
-                {
-                    n_uuid_gen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL, MessageDigest.getInstance("MD5"));
-                }
-                catch (NoSuchAlgorithmException e)
-                {
-                    throw XProcExceptions.xc0060(input.getStep().getLocation());
-                }
-                uuid = n_uuid_gen.generate("tubular_uuid");
-                break;
-            case 4:
-                RandomBasedGenerator r_uuid_gen = Generators.randomBasedGenerator();
-                uuid = r_uuid_gen.generate();
-                break;
-        }
+        final UUID uuid = getUuid(version, input.getStep());
         LOG.trace("uuid = {}", uuid.toString());
         final String textUUID = uuid.toString();
 
@@ -146,5 +120,38 @@ public final class UuidStepProcessor extends AbstractStepProcessor
 
         final XdmNode result = matchProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
+    }
+
+    private static UUID getUuid(final String version, final Step inputStep)
+    {
+        try
+        {
+            switch(Integer.parseInt(version))
+            {
+                case 1:
+                    final TimeBasedGenerator t_uuid_gen = Generators.timeBasedGenerator();
+                    return t_uuid_gen.generate();
+                case 3:
+                    final NameBasedGenerator n_uuid_gen;
+                    try
+                    {
+                        n_uuid_gen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL, MessageDigest.getInstance("MD5"));
+                    }
+                    catch (NoSuchAlgorithmException e)
+                    {
+                        throw XProcExceptions.xc0060(inputStep.getLocation());
+                    }
+                    return n_uuid_gen.generate("tubular_uuid");
+                case 4:
+                    final RandomBasedGenerator r_uuid_gen = Generators.randomBasedGenerator();
+                    return r_uuid_gen.generate();
+                default:
+                    throw XProcExceptions.xc0060(inputStep.getLocation());
+            }
+        }
+        catch (NumberFormatException e)
+        {
+            throw XProcExceptions.xc0060(inputStep.getLocation());
+        }
     }
 }

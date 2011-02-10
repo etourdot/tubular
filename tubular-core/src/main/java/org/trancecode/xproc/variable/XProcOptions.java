@@ -42,6 +42,7 @@ public final class XProcOptions
     public static final QName ATTRIBUTE_VALUE = new QName("attribute-value");
     public static final QName BYTE_ORDER_MARK = new QName("byte-order-mark");
     public static final QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
+    public static final QName CHARSET = new QName("charset");
     public static final QName CODE = new QName("code");
     public static final QName CODE_PREFIX = new QName("code-prefix");
     public static final QName CODE_NAMESPACE = new QName("code-namespace");
@@ -63,6 +64,7 @@ public final class XProcOptions
     public static final QName MATCH = new QName("match");
     public static final QName MEDIA_TYPE = new QName("media-type");
     public static final QName METHOD = new QName("method");
+    public static final QName NAMESPACE = new QName("namespace");
     public static final QName NEW_NAME = new QName("new-name");
     public static final QName NEW_PREFIX = new QName("new-prefix");
     public static final QName NEW_NAMESPACE = new QName("new-namespace");

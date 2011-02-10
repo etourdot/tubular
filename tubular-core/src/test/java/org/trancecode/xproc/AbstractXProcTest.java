@@ -201,15 +201,11 @@ public abstract class AbstractXProcTest extends AbstractTest
             }
             compareResult = compareRunnablePipeline.run();
         }
+        final PipelineResult resultPipeline =  (test.getComparePipeline() != null)? compareResult : result;
+        assert resultPipeline != null;
 
         for (final String port : test.getOutputs().keySet())
         {
-            PipelineResult resultPipeline;
-            if (test.getComparePipeline() != null) {
-                resultPipeline = compareResult;
-            } else {
-                resultPipeline = result;
-            }
             final Iterable<XdmNode> actualNodes = resultPipeline.readNodes(port);
             final Iterable<XdmNode> expectedNodes = test.getOutputs().get(port);
             AssertJUnit.assertEquals(port + " = " + actualNodes.toString(), Iterables.size(expectedNodes),
@@ -222,8 +218,7 @@ public abstract class AbstractXProcTest extends AbstractTest
                 assert actualNodesIterator.hasNext();
                 final XdmNode expectedNode = expectedNodesIterator.next();
                 final XdmNode actualNode = actualNodesIterator.next();
-                //TcAssert.assertEquals(expectedNode, actualNode, test.isIgnoreWhitespace());
-                TcAssert.Compare(expectedNode, actualNode);
+                TcAssert.compare(expectedNode, actualNode);
             }
             assert !actualNodesIterator.hasNext();
         }
