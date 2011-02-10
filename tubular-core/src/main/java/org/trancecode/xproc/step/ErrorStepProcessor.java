@@ -44,6 +44,8 @@ public final class ErrorStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
+        LOG.trace("{@method}");
+
         final String code = input.getOptionValue(XProcOptions.CODE);
         final String prefix = input.getOptionValue(XProcOptions.CODE_PREFIX, null);
         final String namespace = input.getOptionValue(XProcOptions.CODE_NAMESPACE, null);
