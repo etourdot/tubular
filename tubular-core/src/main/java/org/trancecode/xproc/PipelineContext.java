@@ -48,4 +48,6 @@ public interface PipelineContext
     Map<QName, StepProcessor> getStepProcessors();
 
     PipelineLibrary getPipelineLibrary();
+
+    <T> T getProperty(String name);
 }

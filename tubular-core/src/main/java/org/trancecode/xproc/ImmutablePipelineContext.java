@@ -17,33 +17,15 @@
  */
 package org.trancecode.xproc;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
-import java.util.NoSuchElementException;
 
-import javax.xml.transform.URIResolver;
-
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
-import org.trancecode.concurrent.TaskExecutor;
-import org.trancecode.io.InputResolver;
-import org.trancecode.io.OutputResolver;
-import org.trancecode.xproc.step.StepProcessor;
+import org.trancecode.function.TcSuppliers;
 
 /**
  * @author Herve Quiroz
  */
-public final class ImmutablePipelineContext implements PipelineContext
+public final class ImmutablePipelineContext extends AbstractPipelineContext
 {
-    private final TaskExecutor executor;
-    private final InputResolver inputResolver;
-    private final OutputResolver outputResolver;
-    private final PipelineLibrary pipelineLibrary;
-    private final Processor processor;
-    private final Map<QName, StepProcessor> stepProcessors;
-    private final URIResolver uriResolver;
-
     public static ImmutablePipelineContext copyOf(final PipelineContext context)
     {
         if (context instanceof ImmutablePipelineContext)
@@ -51,75 +33,23 @@ public final class ImmutablePipelineContext implements PipelineContext
             return (ImmutablePipelineContext) context;
         }
 
-        return new ImmutablePipelineContext(context.getProcessor(), context.getExecutor(), context.getInputResolver(),
-                context.getOutputResolver(), context.getUriResolver(), context.getStepProcessors(),
-                context.getPipelineLibrary());
-    }
-
-    private ImmutablePipelineContext(final Processor processor, final TaskExecutor executor,
-            final InputResolver inputResolver, final OutputResolver outputResolver, final URIResolver uriResolver,
-            final Map<QName, StepProcessor> stepProcessors, final PipelineLibrary pipelineLibrary)
-    {
-        this.executor = executor;
-        this.inputResolver = inputResolver;
-        this.outputResolver = outputResolver;
-        this.pipelineLibrary = pipelineLibrary;
-        this.processor = processor;
-        this.uriResolver = uriResolver;
-        this.stepProcessors = ImmutableMap.copyOf(stepProcessors);
-    }
-
-    @Override
-    public TaskExecutor getExecutor()
-    {
-        return executor;
-    }
-
-    @Override
-    public InputResolver getInputResolver()
-    {
-        return inputResolver;
-    }
-
-    @Override
-    public OutputResolver getOutputResolver()
-    {
-        return outputResolver;
-    }
-
-    @Override
-    public PipelineLibrary getPipelineLibrary()
-    {
-        return pipelineLibrary;
-    }
-
-    @Override
-    public Processor getProcessor()
-    {
-        return processor;
-    }
-
-    @Override
-    public URIResolver getUriResolver()
-    {
-        return uriResolver;
-    }
-
-    @Override
-    public StepProcessor getStepProcessor(final QName step)
-    {
-        if (stepProcessors.containsKey(step))
+        if (context instanceof AbstractPipelineContext)
         {
-            return stepProcessors.get(step);
+            return new ImmutablePipelineContext(((AbstractPipelineContext) context).getProperties());
         }
 
-        // TODO XProc error?
-        throw new NoSuchElementException(step.toString());
+        throw new IllegalArgumentException(context.getClass().getName());
     }
 
-    @Override
-    public Map<QName, StepProcessor> getStepProcessors()
+    ImmutablePipelineContext(final Map<String, Object> properties)
     {
-        return stepProcessors;
+        super(properties);
+        executor = TcSuppliers.memoize(executor);
+        inputResolver = TcSuppliers.memoize(inputResolver);
+        outputResolver = TcSuppliers.memoize(outputResolver);
+        pipelineLibrary = TcSuppliers.memoize(pipelineLibrary);
+        processor = TcSuppliers.memoize(processor);
+        stepProcessors = TcSuppliers.memoize(stepProcessors);
+        uriResolver = TcSuppliers.memoize(uriResolver);
     }
 }

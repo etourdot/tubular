@@ -30,9 +30,7 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -59,7 +57,7 @@ import org.trancecode.xproc.xpath.XPathExtensionFunction;
 /**
  * @author Herve Quiroz
  */
-public final class PipelineConfiguration implements PipelineContext
+public final class PipelineConfiguration extends AbstractPipelineContext
 {
     private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
     private static final Map<QName, StepProcessor> DEFAULT_STEP_PROCESSORS = getDefaultStepProcessors();
@@ -72,70 +70,17 @@ public final class PipelineConfiguration implements PipelineContext
 
     private static PipelineLibrary DEFAULT_PIPELINE_LIBRARY = getDefaultLPipelineLibrary();
 
-    private TaskExecutor executor = TaskExecutors.onDemandExecutor();
-    private URIResolver uriResolver;
-    private OutputResolver outputResolver = DefaultOutputResolver.INSTANCE;
-    private InputResolver inputResolver = DefaultInputResolver.INSTANCE;
-    private PipelineLibrary library = DEFAULT_PIPELINE_LIBRARY;
-    private final Processor processor;
-    private final Map<QName, StepProcessor> stepProcessors = Maps.newHashMap(DEFAULT_STEP_PROCESSORS);
-
     private static PipelineLibrary getDefaultLPipelineLibrary()
     {
-        final PipelineContext context = new PipelineContext()
-        {
-            private final Processor processor = new Processor(false);
-            private final PipelineLibrary library = new PipelineLibrary(DEFAULT_LIBRARY_URI, CORE_LIBRARY,
-                    EMPTY_SET_OF_URIS);
-
-            @Override
-            public TaskExecutor getExecutor()
-            {
-                return TaskExecutors.onDemandExecutor();
-            }
-
-            @Override
-            public InputResolver getInputResolver()
-            {
-                return null;
-            }
-
-            @Override
-            public OutputResolver getOutputResolver()
-            {
-                return null;
-            }
-
-            @Override
-            public Processor getProcessor()
-            {
-                return processor;
-            }
-
-            @Override
-            public URIResolver getUriResolver()
-            {
-                return processor.getUnderlyingConfiguration().getURIResolver();
-            }
-
-            @Override
-            public StepProcessor getStepProcessor(final QName step)
-            {
-                return DEFAULT_STEP_PROCESSORS.get(step);
-            }
-
-            @Override
-            public Map<QName, StepProcessor> getStepProcessors()
-            {
-                return DEFAULT_STEP_PROCESSORS;
-            }
-
-            @Override
-            public PipelineLibrary getPipelineLibrary()
-            {
-                return library;
-            }
-        };
+        final Map<String, Object> properties = Maps.newHashMap();
+        properties.put(PROPERTY_EXECUTOR, TaskExecutors.onDemandExecutor());
+        final Processor processor = new Processor(false);
+        properties.put(PROPERTY_PROCESSOR, processor);
+        properties.put(PROPERTY_URI_RESOLVER, processor.getUnderlyingConfiguration().getURIResolver());
+        properties.put(PROPERTY_PIPELINE_LIBRARY, new PipelineLibrary(DEFAULT_LIBRARY_URI, CORE_LIBRARY,
+                EMPTY_SET_OF_URIS));
+        properties.put(PROPERTY_STEP_PROCESSORS, DEFAULT_STEP_PROCESSORS);
+        final PipelineContext context = new ImmutablePipelineContext(properties);
         final URL xprocLibraryUrl = PipelineConfiguration.class.getResource(RESOURCE_PATH_XPROC_LIBRARY_1_0);
         final Source defaultLibrarySource;
         try
@@ -204,10 +149,21 @@ public final class PipelineConfiguration implements PipelineContext
         this(new Processor(false));
     }
 
+    private static Map<String, Object> newEmptyPropertiesMap()
+    {
+        return Maps.newHashMap();
+    }
+
     public PipelineConfiguration(final Processor processor)
     {
-        this.processor = Preconditions.checkNotNull(processor);
-        uriResolver = processor.getUnderlyingConfiguration().getURIResolver();
+        super(newEmptyPropertiesMap());
+        getProperties().put(PROPERTY_EXECUTOR, TaskExecutors.onDemandExecutor());
+        getProperties().put(PROPERTY_INPUT_RESOLVER, DefaultInputResolver.INSTANCE);
+        getProperties().put(PROPERTY_OUTPUT_RESOLVER, DefaultOutputResolver.INSTANCE);
+        getProperties().put(PROPERTY_PIPELINE_LIBRARY, DEFAULT_PIPELINE_LIBRARY);
+        getProperties().put(PROPERTY_PROCESSOR, Preconditions.checkNotNull(processor));
+        getProperties().put(PROPERTY_STEP_PROCESSORS, Maps.newHashMap(DEFAULT_STEP_PROCESSORS));
+        getProperties().put(PROPERTY_URI_RESOLVER, processor.getUnderlyingConfiguration().getURIResolver());
         for (final XPathExtensionFunction function : EXTENSION_FUNCTIONS)
         {
             LOG.trace("register XPath extension function: {}", function);
@@ -215,93 +171,46 @@ public final class PipelineConfiguration implements PipelineContext
         }
     }
 
-    @Override
-    public TaskExecutor getExecutor()
-    {
-        return executor;
-    }
-
     public void setExecutor(final TaskExecutor executor)
     {
-        this.executor = executor;
+        getProperties().put(PROPERTY_EXECUTOR, Preconditions.checkNotNull(executor));
     }
 
     public void setExecutor(final ExecutorService executor)
     {
-        this.executor = TaskExecutors.forExecutorService(executor);
-    }
-
-    @Override
-    public InputResolver getInputResolver()
-    {
-        return this.inputResolver;
+        setExecutor(TaskExecutors.forExecutorService(executor));
     }
 
     public void setInputResolver(final InputResolver inputResolver)
     {
-        this.inputResolver = Preconditions.checkNotNull(inputResolver);
-    }
-
-    @Override
-    public URIResolver getUriResolver()
-    {
-        return uriResolver;
+        getProperties().put(PROPERTY_INPUT_RESOLVER, Preconditions.checkNotNull(inputResolver));
     }
 
     public void setUriResolver(final URIResolver uriResolver)
     {
-        this.uriResolver = Preconditions.checkNotNull(uriResolver);
-    }
-
-    @Override
-    public OutputResolver getOutputResolver()
-    {
-        return this.outputResolver;
+        getProperties().put(PROPERTY_URI_RESOLVER, Preconditions.checkNotNull(uriResolver));
     }
 
     public void setOutputResolver(final OutputResolver outputResolver)
     {
-        this.outputResolver = Preconditions.checkNotNull(outputResolver);
-    }
-
-    @Override
-    public Processor getProcessor()
-    {
-        return processor;
+        getProperties().put(PROPERTY_OUTPUT_RESOLVER, Preconditions.checkNotNull(outputResolver));
     }
 
     public void registerStepProcessor(final StepProcessor stepProcessor)
     {
         Preconditions.checkNotNull(stepProcessor);
+        final Map<QName, StepProcessor> stepProcessors = getProperty(PROPERTY_STEP_PROCESSORS);
         stepProcessors.put(stepProcessor.getStepType(), stepProcessor);
     }
 
     public void registerPipelineLibrary(final PipelineLibrary library)
     {
         Preconditions.checkNotNull(library);
-        this.library = library.importLibrary(this.library);
+        getProperties().put(PROPERTY_PIPELINE_LIBRARY, library.importLibrary(getPipelineLibrary()));
     }
 
-    @Override
-    public PipelineLibrary getPipelineLibrary()
+    public void setProperty(final String name, final Object value)
     {
-        return library;
-    }
-
-    @Override
-    public StepProcessor getStepProcessor(final QName step)
-    {
-        if (stepProcessors.containsKey(step))
-        {
-            return stepProcessors.get(step);
-        }
-
-        throw new NoSuchElementException(step.toString());
-    }
-
-    @Override
-    public Map<QName, StepProcessor> getStepProcessors()
-    {
-        return Collections.unmodifiableMap(stepProcessors);
+        properties.put(name, value);
     }
 }
