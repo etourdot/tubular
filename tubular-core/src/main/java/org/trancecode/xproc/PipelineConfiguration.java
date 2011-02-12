@@ -68,9 +68,9 @@ public final class PipelineConfiguration extends AbstractPipelineContext
     private static final Set<URI> EMPTY_SET_OF_URIS = ImmutableSet.of();
     private static final Logger LOG = Logger.getLogger(PipelineConfiguration.class);
 
-    private static PipelineLibrary DEFAULT_PIPELINE_LIBRARY = getDefaultLPipelineLibrary();
+    private static PipelineLibrary DEFAULT_PIPELINE_LIBRARY = getDefaultPipelineLibrary();
 
-    private static PipelineLibrary getDefaultLPipelineLibrary()
+    private static PipelineLibrary getDefaultPipelineLibrary()
     {
         final Map<String, Object> properties = Maps.newHashMap();
         properties.put(PROPERTY_EXECUTOR, TaskExecutors.onDemandExecutor());
