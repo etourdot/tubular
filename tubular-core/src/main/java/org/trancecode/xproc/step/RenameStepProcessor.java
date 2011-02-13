@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Emmanuel Tourdot
+ * Copyright (C) 2011 Emmanuel Tourdot
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,25 +21,18 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-
-import java.util.EnumSet;
-import java.util.Set;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
-import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
-import org.trancecode.xml.saxon.SaxonAxis;
-import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xml.saxon.SaxonProcessor;
-import org.trancecode.xml.saxon.SaxonProcessorDelegate;
-import org.trancecode.xml.saxon.SaxonProcessorDelegates;
+import org.trancecode.xml.saxon.*;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * {@code p:rename}.
