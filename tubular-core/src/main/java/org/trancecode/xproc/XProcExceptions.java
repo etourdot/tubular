@@ -20,9 +20,6 @@
 package org.trancecode.xproc;
 
 import com.google.common.collect.ImmutableSet;
-
-import java.net.URI;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -32,6 +29,8 @@ import org.trancecode.xproc.XProcException.Type;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
+
+import java.net.URI;
 
 /**
  * @author Herve Quiroz
@@ -117,6 +116,11 @@ public final class XProcExceptions
                 uri);
     }
 
+   public static XProcException xc0010(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 10, SaxonLocation.of(node), "It is a dynamic error if an encoding of base64 is specified and the character set is not specified or if the specified character set is not supported by the implementation.");
+    }
+
     public static XProcException xc0013(final XdmNode node)
     {
         return newXProcException(Type.STEP, 13, SaxonLocation.of(node), "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
@@ -149,6 +153,11 @@ public final class XProcExceptions
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
+    }
+
+    public static XProcException xc0051(final Location location)
+    {
+        return newXProcException(Type.STEP, 51, location, "it is a dynamic error if the content-type specified is not supported by the implementation.");
     }
 
     public static XProcException xc0059(final Location location)
