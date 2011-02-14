@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Herve Quiroz
+ * Copyright (C) 2011 Herve Quiroz
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,39 +17,17 @@
  */
 package org.trancecode.xproc;
 
-import java.util.Map;
-
-import javax.xml.transform.URIResolver;
-
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
-import org.trancecode.concurrent.TaskExecutor;
-import org.trancecode.io.InputResolver;
-import org.trancecode.io.OutputResolver;
-import org.trancecode.xproc.step.StepProcessor;
+import java.util.UUID;
 
 /**
  * @author Herve Quiroz
  */
-public interface PipelineContext
+public final class Episode
 {
-    Episode getEpisode();
+    final String id = UUID.randomUUID().toString();
 
-    TaskExecutor getExecutor();
-
-    InputResolver getInputResolver();
-
-    OutputResolver getOutputResolver();
-
-    Processor getProcessor();
-
-    URIResolver getUriResolver();
-
-    StepProcessor getStepProcessor(QName step);
-
-    Map<QName, StepProcessor> getStepProcessors();
-
-    PipelineLibrary getPipelineLibrary();
-
-    <T> T getProperty(String name);
+    public String getId()
+    {
+        return id;
+    }
 }

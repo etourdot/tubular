@@ -53,7 +53,7 @@ public class RunnablePipeline
     protected RunnablePipeline(final Pipeline pipeline)
     {
         Preconditions.checkNotNull(pipeline);
-        this.context = pipeline.getPipelineContext();
+        this.context = ImmutablePipelineContext.copyOf(pipeline.getPipelineContext()).withNewEpisode();
         this.pipeline = pipeline.getUnderlyingPipeline();
     }
 

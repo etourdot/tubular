@@ -35,6 +35,7 @@ import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.trancecode.logging.Logger;
+import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Tubular;
 import org.trancecode.xproc.XProcXmlModel;
 
@@ -49,12 +50,11 @@ public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExt
 {
     private static final Logger LOG = Logger.getLogger(SystemPropertyXPathExtensionFunction.class);
     private static final Map<QName, String> PROPERTIES;
+    private static final QName PROPERTY_EPISODE = XProcXmlModel.xprocNamespace().newSaxonQName("episode");
 
     static
     {
         final Map<QName, String> properties = Maps.newHashMap();
-        // TODO p:episode
-        properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("episode"), "123");
         properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("language"), Locale.getDefault().toString());
         properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("product-name"), Tubular.productName());
         properties.put(XProcXmlModel.xprocNamespace().newSaxonQName("product-version"), Tubular.version());
@@ -111,7 +111,11 @@ public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExt
                         Preconditions.checkArgument(arguments.length == 1);
                         final QName property = resolveQName(arguments[0].next().getStringValue());
                         final String value;
-                        if (PROPERTIES.containsKey(property))
+                        if (property.equals(PROPERTY_EPISODE))
+                        {
+                            value = Environment.getCurrentEnvironment().getPipelineContext().getEpisode().getId();
+                        }
+                        else if (PROPERTIES.containsKey(property))
                         {
                             value = PROPERTIES.get(property);
                         }

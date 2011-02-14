@@ -41,6 +41,7 @@ abstract class AbstractPipelineContext implements PipelineContext
 {
     final static String PROPERTY_PREFIX = "http://www.trancecode.org/tubular/1/property/";
 
+    final static String PROPERTY_EPISODE = PROPERTY_PREFIX + "episode";
     final static String PROPERTY_EXECUTOR = PROPERTY_PREFIX + "executor";
     final static String PROPERTY_INPUT_RESOLVER = PROPERTY_PREFIX + "inputResolver";
     final static String PROPERTY_OUTPUT_RESOLVER = PROPERTY_PREFIX + "outputResolver";
@@ -51,6 +52,7 @@ abstract class AbstractPipelineContext implements PipelineContext
 
     final Map<String, Object> properties;
 
+    Supplier<Episode> episode;
     Supplier<TaskExecutor> executor;
     Supplier<InputResolver> inputResolver;
     Supplier<OutputResolver> outputResolver;
@@ -62,6 +64,7 @@ abstract class AbstractPipelineContext implements PipelineContext
     protected AbstractPipelineContext(final Map<String, Object> properties)
     {
         this.properties = Preconditions.checkNotNull(properties);
+        episode = TcSuppliers.getFromMap(properties, PROPERTY_EPISODE);
         executor = TcSuppliers.getFromMap(properties, PROPERTY_EXECUTOR);
         inputResolver = TcSuppliers.getFromMap(properties, PROPERTY_INPUT_RESOLVER);
         outputResolver = TcSuppliers.getFromMap(properties, PROPERTY_OUTPUT_RESOLVER);
@@ -82,6 +85,12 @@ abstract class AbstractPipelineContext implements PipelineContext
     final Map<String, Object> getProperties()
     {
         return properties;
+    }
+
+    @Override
+    public final Episode getEpisode()
+    {
+        return episode.get();
     }
 
     @Override

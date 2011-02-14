@@ -19,6 +19,7 @@ package org.trancecode.xproc;
 
 import java.util.Map;
 
+import org.trancecode.collection.TcMaps;
 import org.trancecode.function.TcSuppliers;
 
 /**
@@ -51,5 +52,10 @@ public final class ImmutablePipelineContext extends AbstractPipelineContext
         processor = TcSuppliers.memoize(processor);
         stepProcessors = TcSuppliers.memoize(stepProcessors);
         uriResolver = TcSuppliers.memoize(uriResolver);
+    }
+
+    ImmutablePipelineContext withNewEpisode()
+    {
+        return new ImmutablePipelineContext(TcMaps.copyAndPut(properties, PROPERTY_EPISODE, new Episode()));
     }
 }
