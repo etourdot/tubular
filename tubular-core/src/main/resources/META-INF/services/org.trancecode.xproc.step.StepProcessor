@@ -20,3 +20,4 @@ org.trancecode.xproc.step.EscapeMarkupStepProcessor
 org.trancecode.xproc.step.UnEscapeMarkupStepProcessor
 org.trancecode.xproc.step.WrapStepProcessor
 org.trancecode.xproc.step.UnWrapStepProcessor
+org.trancecode.xproc.step.ReplaceStepProcessor
