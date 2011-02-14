@@ -17,6 +17,8 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 
 import org.trancecode.collection.TcMaps;
@@ -44,7 +46,7 @@ public final class ImmutablePipelineContext extends AbstractPipelineContext
 
     ImmutablePipelineContext(final Map<String, Object> properties)
     {
-        super(properties);
+        super(ImmutableMap.copyOf(properties));
         executor = TcSuppliers.memoize(executor);
         inputResolver = TcSuppliers.memoize(inputResolver);
         outputResolver = TcSuppliers.memoize(outputResolver);
