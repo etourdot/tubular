@@ -66,7 +66,7 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         assert new_name != null;
         LOG.trace("new_name = {}", new_name);
 
-        final QName newName = getNewNamespace(new_prefix, new_namespace, new_name, input.getStep());
+        final QName newName = StepUtils.getNewNamespace(new_prefix, new_namespace, new_name, input.getStep());
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override
@@ -155,36 +155,5 @@ public final class RenameStepProcessor extends AbstractStepProcessor
 
         final XdmNode result = matchProcessor.apply(resultDel);
         output.writeNodes(XProcPorts.RESULT, result);
-    }
-
-    private static QName getNewNamespace(final String new_prefix, final String new_namespace, final String new_name,
-            final Step inputStep)
-    {
-        if (new_prefix != null)
-        {
-            if (new_namespace == null)
-            {
-                throw XProcExceptions.xd0034(inputStep.getLocation());
-            }
-            else
-            {
-                return new QName(new_prefix, new_namespace, new_name);
-            }
-        }
-        else
-        {
-            if (new_namespace == null)
-            {
-                return new QName(new_name, inputStep.getNode());
-            }
-        }
-        if (new_name.contains(":"))
-        {
-            throw XProcExceptions.xd0034(inputStep.getLocation());
-        }
-        else
-        {
-            return new QName("", new_namespace, new_name);
-        }
     }
 }
