@@ -39,13 +39,15 @@ import org.trancecode.xproc.step.StepProcessor;
  */
 abstract class AbstractPipelineContext implements PipelineContext
 {
-    final static String PROPERTY_EXECUTOR = "http://www.trancecode.org/tubular/1/property/executor";
-    final static String PROPERTY_INPUT_RESOLVER = "http://www.trancecode.org/tubular/1/property/inputResolver";
-    final static String PROPERTY_OUTPUT_RESOLVER = "http://www.trancecode.org/tubular/1/property/outputResolver";
-    final static String PROPERTY_PIPELINE_LIBRARY = "http://www.trancecode.org/tubular/1/property/pipelineLibrary";
-    final static String PROPERTY_PROCESSOR = "http://www.trancecode.org/tubular/1/property/processor";
-    final static String PROPERTY_STEP_PROCESSORS = "http://www.trancecode.org/tubular/1/property/stepProcessors";
-    final static String PROPERTY_URI_RESOLVER = "http://www.trancecode.org/tubular/1/property/uriResolver";
+    final static String PROPERTY_PREFIX = "http://www.trancecode.org/tubular/1/property/";
+
+    final static String PROPERTY_EXECUTOR = PROPERTY_PREFIX + "executor";
+    final static String PROPERTY_INPUT_RESOLVER = PROPERTY_PREFIX + "inputResolver";
+    final static String PROPERTY_OUTPUT_RESOLVER = PROPERTY_PREFIX + "outputResolver";
+    final static String PROPERTY_PIPELINE_LIBRARY = PROPERTY_PREFIX + "pipelineLibrary";
+    final static String PROPERTY_PROCESSOR = PROPERTY_PREFIX + "processor";
+    final static String PROPERTY_STEP_PROCESSORS = PROPERTY_PREFIX + "stepProcessors";
+    final static String PROPERTY_URI_RESOLVER = PROPERTY_PREFIX + "uriResolver";
 
     final Map<String, Object> properties;
 
