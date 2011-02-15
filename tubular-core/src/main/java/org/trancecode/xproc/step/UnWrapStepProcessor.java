@@ -19,8 +19,9 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import net.sf.saxon.s9api.*;
-import org.apache.commons.lang.StringUtils;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.xml.saxon.*;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
@@ -94,66 +95,4 @@ public final class UnWrapStepProcessor extends AbstractStepProcessor
         output.writeNodes(XProcPorts.RESULT, result);
     }
 
-    private boolean nextInGroupAdjacent(final String groupAdjacent, final XdmNode node)
-    {
-        return inGroupAdjacent(groupAdjacent, node, true);
-    }
-
-    private boolean prevInGroupAdjacent(final String groupAdjacent, final XdmNode node)
-    {
-        return inGroupAdjacent(groupAdjacent, node, false);
-    }
-
-    private boolean inGroupAdjacent(final String groupAdjacent, final XdmNode node, final boolean next)
-    {
-        if (groupAdjacent == null)
-        {
-            return false;
-        }
-        try
-        {
-            final XPathCompiler xPathCompiler = node.getProcessor().newXPathCompiler();
-            final XPathSelector xPathSelector = xPathCompiler.compile(groupAdjacent).load();
-            xPathSelector.setContextItem(node);
-            final XdmItem item1 = xPathSelector.evaluateSingle();
-            final XdmSequenceIterator iterator = (next)? node.axisIterator(Axis.FOLLOWING_SIBLING) :
-                        node.axisIterator(Axis.PRECEDING_SIBLING);
-            final XdmItem item2 = getNextSkpNode(iterator, xPathSelector);
-             if (item2 != null)
-            {
-                return item1.getStringValue().equals(item2.getStringValue());
-            }
-            else
-            {
-                return false;
-            }
-        }
-        catch (SaxonApiException e)
-        {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private XdmItem getNextSkpNode(final XdmSequenceIterator iterator, final XPathSelector xPathSelector)
-    {
-        while (iterator.hasNext())
-        {
-            final XdmNode itm = (XdmNode) iterator.next();
-            if (XdmNodeKind.ELEMENT.equals(itm.getNodeKind()) ||
-                (XdmNodeKind.TEXT.equals(itm.getNodeKind()) && !"".equals(StringUtils.trim(itm.getStringValue()))))
-            {
-                try
-                {
-                    xPathSelector.setContextItem(itm);
-                    return xPathSelector.evaluateSingle();
-                }
-                catch (SaxonApiException e)
-                {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
 }
