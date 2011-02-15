@@ -36,6 +36,7 @@ public final class XProcPorts
     public static final String STYLESHEET = "stylesheet";
     public static final String VIEWPORT_SOURCE = "viewport-source";
     public static final String XPATH_CONTEXT = "xpath-context";
+    public static final String REPLACEMENT = "replacement";
 
     private XProcPorts()
     {

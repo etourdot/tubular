@@ -22,28 +22,22 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.sf.saxon.s9api.*;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.Saxon;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonPredicates;
+import org.xml.sax.InputSource;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-
-import net.sf.saxon.s9api.DocumentBuilder;
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.Saxon;
-import org.trancecode.xml.saxon.SaxonAxis;
-import org.trancecode.xml.saxon.SaxonPredicates;
-import org.xml.sax.InputSource;
 
 /**
  * Parses a {http://xproc.org/ns/testsuite}test element into an
@@ -267,7 +261,7 @@ public class XProcTestParser
                     XProcTestSuiteXmlModel.ELEMENT_DOCUMENT);
             if (Iterables.isEmpty(documentElements))
             {
-                final Iterable<XdmNode> nodes = Iterables.filter(SaxonAxis.childNodes(node),
+                final Iterable<XdmNode> nodes = Iterables.filter(SaxonAxis.childElements(node),
                         Predicates.not(SaxonPredicates.isAttribute()));
                 if (Iterables.isEmpty(nodes))
                 {

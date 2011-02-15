@@ -71,7 +71,7 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         }
         catch (final Exception e)
         {
-            throw XProcExceptions.xd0011(input.getLocation(), href, e);
+            throw XProcExceptions.xc0027(input.getLocation());
         }
 
         output.writeNodes(XProcPorts.RESULT, document);

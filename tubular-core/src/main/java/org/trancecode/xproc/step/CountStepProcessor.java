@@ -47,7 +47,7 @@ public final class CountStepProcessor extends AbstractStepProcessor
         // TODO improve performance with "limit" option
         final int count = Iterables.size(input.readNodes(XProcPorts.SOURCE));
         LOG.trace("  count = {}", count);
-        final int limit = Integer.parseInt(input.getOptionValue(XProcOptions.LIMIT));
+        final int limit = Integer.parseInt(input.getOptionValue(XProcOptions.LIMIT, "0"));
         LOG.trace("  limit = {}", limit);
         final int result = (limit > 0 ? Math.min(count, limit) : count);
         LOG.trace("  result = {}", result);
