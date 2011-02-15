@@ -33,6 +33,7 @@ public final class XProcOptions
 {
     public static final Map<QName, Object> EMPTY_OPTIONS_MAP = ImmutableMap.of();
 
+    public static final QName ALL = new QName("all");
     public static final QName ARGS = new QName("args");
     public static final QName ARG_SEPARATOR = new QName("arg-separator");
     public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
@@ -72,6 +73,7 @@ public final class XProcOptions
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
     public static final QName POSITION = new QName("position");
+    public static final QName RELATIVE = new QName("relative");
     public static final QName REPLACE = new QName("replace");
     public static final QName RESULT_BASE_URI = new QName("result-base-uri");
     public static final QName RESULT_DOCUMENT_URI = new QName("result-document-uri");
