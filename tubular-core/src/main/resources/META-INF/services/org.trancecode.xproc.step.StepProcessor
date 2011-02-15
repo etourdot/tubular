@@ -22,3 +22,4 @@ org.trancecode.xproc.step.WrapStepProcessor
 org.trancecode.xproc.step.UnWrapStepProcessor
 org.trancecode.xproc.step.ReplaceStepProcessor
 org.trancecode.xproc.step.PackStepProcessor
+org.trancecode.xproc.step.MakeAbsoluteUrisStepProcessor
