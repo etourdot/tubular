@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -53,8 +54,8 @@ public final class PackStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        final Iterable<XdmNode> sourceDocument = input.readNodes(XProcPorts.SOURCE);
-        final Iterable<XdmNode> alternateDoc = input.readNodes(XProcPorts.ALTERNATE);
+        final Iterable<XdmNode> sourceDoc = readeSequencePort(input, XProcPorts.SOURCE);
+        final Iterable<XdmNode> alternateDoc = readeSequencePort(input, XProcPorts.ALTERNATE);
 
         final String wrapperLocalName = input.getOptionValue(XProcOptions.WRAPPER);
         assert wrapperLocalName != null;        
@@ -65,7 +66,7 @@ public final class PackStepProcessor extends AbstractStepProcessor
 
         final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
             .getUnderlyingConfiguration());
-        final Iterator<XdmNode> srcIterator = sourceDocument.iterator();
+        final Iterator<XdmNode> srcIterator = sourceDoc.iterator();
         final Iterator<XdmNode> altIterator = alternateDoc.iterator();
         while (srcIterator.hasNext() || altIterator.hasNext())
         {
@@ -74,26 +75,35 @@ public final class PackStepProcessor extends AbstractStepProcessor
             builder.startContent();
             if (srcIterator.hasNext())
             {
-                addNodeOrChilds(srcIterator.next(), builder);
+                builder.nodes(srcIterator.next());
             }
             if (altIterator.hasNext())
             {
-                addNodeOrChilds(altIterator.next(), builder);
+                builder.nodes(altIterator.next());
             }
             builder.endDocument();
             output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
     }
 
-    private void addNodeOrChilds(final XdmNode node, final SaxonBuilder builder)
+    private Iterable<XdmNode> readeSequencePort(final StepInput input, final String portName)
     {
-        if (XdmNodeKind.DOCUMENT.equals(node.getNodeKind()))
+        final Iterable<XdmNode> source = input.readNodes(portName);
+        final Iterator<XdmNode> iterator = source.iterator();
+        final ImmutableList.Builder builder = new ImmutableList.Builder();
+        while (iterator.hasNext())
         {
-            builder.nodes(SaxonAxis.childNodes(node));
+            final XdmNode node = iterator.next();
+            if (XdmNodeKind.DOCUMENT.equals(node.getNodeKind()))
+            {
+                builder.addAll(SaxonAxis.childNodes(node));
+            }
+            else
+            {
+                builder.add(node);
+            }
         }
-        else
-        {
-            builder.nodes(node);
-        }
+        return builder.build();
     }
+
 }
