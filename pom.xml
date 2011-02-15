@@ -196,4 +196,33 @@
 
   <!-- ===================================================================== -->
 
+  <build>
+
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>2.6</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.trancecode</groupId>
+              <artifactId>trancecode-checkstyle-configuration</artifactId>
+              <version>1-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <configLocation>org/trancecode/checkstyle.xml</configLocation>
+            <linkXRef>false</linkXRef>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+  </build>
+
+  <!-- ===================================================================== -->
+
 </project>
