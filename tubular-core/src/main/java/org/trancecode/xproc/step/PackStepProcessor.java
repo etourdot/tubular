@@ -64,12 +64,12 @@ public final class PackStepProcessor extends AbstractStepProcessor
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
         final QName wrapperQName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input.getStep());
 
-        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-            .getUnderlyingConfiguration());
         final Iterator<XdmNode> srcIterator = sourceDoc.iterator();
         final Iterator<XdmNode> altIterator = alternateDoc.iterator();
         while (srcIterator.hasNext() || altIterator.hasNext())
         {
+            final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
+                .getUnderlyingConfiguration());
             builder.startDocument();
             builder.startElement(wrapperQName);
             builder.startContent();
