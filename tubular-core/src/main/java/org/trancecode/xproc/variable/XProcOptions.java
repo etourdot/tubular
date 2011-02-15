@@ -20,10 +20,9 @@
 package org.trancecode.xproc.variable;
 
 import com.google.common.collect.ImmutableMap;
+import net.sf.saxon.s9api.QName;
 
 import java.util.Map;
-
-import net.sf.saxon.s9api.QName;
 
 /**
  * Common XProc options.
@@ -40,6 +39,7 @@ public final class XProcOptions
     public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
     public static final QName ATTRIBUTE_NAMESPACE = new QName("attribute-namespace");
     public static final QName ATTRIBUTE_VALUE = new QName("attribute-value");
+    public static final QName BASE_URI = new QName("base-uri");
     public static final QName BYTE_ORDER_MARK = new QName("byte-order-mark");
     public static final QName CDATA_SECTION_ELEMENTS = new QName("cdata-section-elements");
     public static final QName CHARSET = new QName("charset");
