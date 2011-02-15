@@ -150,6 +150,13 @@ public final class XProcExceptions
                 "the match pattern matches a %s which is not allowed when the position is %s", node.getNodeKind(),
                 position);
     }
+
+    public static XProcException xc0027(final Location location)
+    {
+        return newXProcException(Type.STEP, 27, location,
+                "It is a dynamic error if the document is not valid or the step doesn't support DTD validation.");
+    }
+
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
