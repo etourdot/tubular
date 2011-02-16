@@ -23,7 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.EnumSet;
-
+import javax.xml.XMLConstants;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -92,12 +92,16 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         }
         else
         {
+            if (attributeName.contains(XMLConstants.XMLNS_ATTRIBUTE + ":"))
+            {
+                throw XProcExceptions.xc0059(input.getStep().getLocation());
+            }
             attributeQName = new QName(attributeName, input.getStep().getNode());
         }
 
         // Check the step is not used for a new namespace declaration
-        if ("http://www.w3.org/2000/xmlns/".equals(attributeQName.getNamespaceURI())
-                || ("xmlns".equals(attributeQName.toString())))
+        if (XMLConstants.XMLNS_ATTRIBUTE.equals(attributeQName.getLocalName()) ||
+            XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attributeQName.getNamespaceURI()))
         {
             throw XProcExceptions.xc0059(input.getStep().getLocation());
         }

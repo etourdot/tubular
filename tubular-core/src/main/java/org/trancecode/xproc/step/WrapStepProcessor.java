@@ -19,16 +19,28 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import net.sf.saxon.s9api.*;
+import java.util.EnumSet;
+import java.util.Set;
+import net.sf.saxon.s9api.Axis;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
+import net.sf.saxon.s9api.XdmSequenceIterator;
 import org.apache.commons.lang.StringUtils;
-import org.trancecode.xml.saxon.*;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * {@code p:wrap}.
@@ -63,13 +75,13 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         final SaxonProcessorDelegate wrapDelegate = new AbstractSaxonProcessorDelegate()
         {
             @Override
-            public void attribute(XdmNode node, SaxonBuilder builder)
+            public void attribute(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.attribute(node.getNodeName(), node.getStringValue());
             }
 
             @Override
-            public void comment(XdmNode node, SaxonBuilder builder)
+            public void comment(final XdmNode node, final SaxonBuilder builder)
             {
                 if (!prevInGroupAdjacent(groupAdjacent, node))
                 {
@@ -83,14 +95,12 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void endDocument(XdmNode node, SaxonBuilder builder)
+            public void endDocument(final XdmNode node, final SaxonBuilder builder)
             {
-                //builder.endDocument();
-                //builder.endElement();
             }
 
             @Override
-            public void endElement(XdmNode node, SaxonBuilder builder)
+            public void endElement(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.endElement();
                 if (!nextInGroupAdjacent(groupAdjacent, node))
@@ -100,7 +110,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void processingInstruction(XdmNode node, SaxonBuilder builder)
+            public void processingInstruction(final XdmNode node, final SaxonBuilder builder)
             {
                 if (!prevInGroupAdjacent(groupAdjacent, node))
                 {
@@ -114,7 +124,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public boolean startDocument(XdmNode node, SaxonBuilder builder)
+            public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.startDocument();
                 builder.startElement(newName);
@@ -137,7 +147,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void text(XdmNode node, SaxonBuilder builder)
+            public void text(final XdmNode node, final SaxonBuilder builder)
             {
                 if (!prevInGroupAdjacent(groupAdjacent, node))
                 {
@@ -192,7 +202,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             final XPathSelector xPathSelector = xPathCompiler.compile(groupAdjacent).load();
             xPathSelector.setContextItem(node);
             final XdmItem item1 = xPathSelector.evaluateSingle();
-            final XdmSequenceIterator iterator = (next)? node.axisIterator(Axis.FOLLOWING_SIBLING) :
+            final XdmSequenceIterator iterator = next? node.axisIterator(Axis.FOLLOWING_SIBLING) :
                         node.axisIterator(Axis.PRECEDING_SIBLING);
             final XdmItem item2 = getNextSkpNode(iterator, xPathSelector);
              if (item2 != null)
@@ -206,6 +216,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         }
         catch (SaxonApiException e)
         {
+            //TODO throw real XProcException ?
             e.printStackTrace();
         }
         return false;
@@ -226,6 +237,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
                 }
                 catch (SaxonApiException e)
                 {
+                    // TODO is it correct ?
                     return null;
                 }
             }

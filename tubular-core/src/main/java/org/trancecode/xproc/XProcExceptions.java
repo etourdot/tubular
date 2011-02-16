@@ -162,9 +162,14 @@ public final class XProcExceptions
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
     }
 
+    public static XProcException xc0050(final Location location)
+    {
+        return newXProcException(Type.STEP, 50, location, "It is a dynamic error if the URI scheme is not supported or the step cannot store to the specified location.");
+    }
+
     public static XProcException xc0051(final Location location)
     {
-        return newXProcException(Type.STEP, 51, location, "it is a dynamic error if the content-type specified is not supported by the implementation.");
+        return newXProcException(Type.STEP, 51, location, "It is a dynamic error if the content-type specified is not supported by the implementation.");
     }
 
     public static XProcException xc0058(final Location location)
