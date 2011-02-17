@@ -34,34 +34,34 @@ public final class StepUtils
         // No instantiation
     }
 
-    public static QName getNewNamespace(final String new_prefix, final String new_namespace, final String new_name,
+    public static QName getNewNamespace(final String newPrefix, final String newNamespace, final String newName,
             final Step step)
     {
-        if (new_prefix != null)
+        if (newPrefix != null)
         {
-            if (new_namespace == null)
+            if (newNamespace == null)
             {
                 throw XProcExceptions.xd0034(step.getLocation());
             }
             else
             {
-                return new QName(new_prefix, new_namespace, new_name);
+                return new QName(newPrefix, newNamespace, newName);
             }
         }
         else
         {
-            if (new_namespace == null)
+            if (newNamespace == null)
             {
-                return new QName(new_name, step.getNode());
+                return new QName(newName, step.getNode());
             }
         }
-        if (new_name.contains(":"))
+        if (newName.contains(":"))
         {
             throw XProcExceptions.xd0034(step.getLocation());
         }
         else
         {
-            return new QName("", new_namespace, new_name);
+            return new QName("", newNamespace, newName);
         }
     }
 

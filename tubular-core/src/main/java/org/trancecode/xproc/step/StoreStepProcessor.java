@@ -20,12 +20,6 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.io.Closeables;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.net.URI;
-
 import com.google.common.io.Files;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
@@ -33,9 +27,14 @@ import net.sf.saxon.s9api.Serializer.Property;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URI;
 
 /**
  * @author Herve Quiroz
@@ -88,21 +87,25 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         LOG.debug("Storing document to: {} ; mime-type: {} ; encoding: {} ; doctype-public = {} ; doctype-system = {}",
                 href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
-        OutputStream targetOutputStream;
-        if ("file".equals(outputUri.getScheme())) {
-            File oFile = new File(outputUri);
+        final OutputStream targetOutputStream;
+        if ("file".equals(outputUri.getScheme()))
+        {
+            final File oFile = new File(outputUri);
             try
             {
-                if (!oFile.exists()) {
+                if (!oFile.exists())
+                {
                     Files.createParentDirs(oFile);
                 }
                 targetOutputStream = new FileOutputStream(oFile);
             }
             catch (final Exception e)
             {
-                throw new PipelineException("Error while trying to write document ; output-base-uri = %s", e, outputUri);
+                throw XProcExceptions.xc0050(input.getLocation());
             }
-        } else {
+        }
+        else
+        {
             targetOutputStream = input.getPipelineContext().getOutputResolver()
                 .resolveOutputStream(href, input.getBaseUri().toString());
         }
@@ -125,8 +128,8 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         }
         serializer.setOutputProperty(Property.ENCODING, encoding);
         serializer.setOutputProperty(Property.MEDIA_TYPE, mimeType);
-        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, (omitXmlDeclaration ? "yes" : "no"));
-        serializer.setOutputProperty(Property.INDENT, (indent ? "yes" : "no"));
+        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, omitXmlDeclaration ? "yes" : "no");
+        serializer.setOutputProperty(Property.INDENT, indent ? "yes" : "no");
 
         try
         {
@@ -135,7 +138,7 @@ public final class StoreStepProcessor extends AbstractStepProcessor
         }
         catch (final Exception e)
         {
-            throw new PipelineException("Error while trying to write document ; output-base-uri = %s", e, outputUri);
+            throw XProcExceptions.xc0050(input.getLocation());
         }
         finally
         {

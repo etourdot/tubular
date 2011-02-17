@@ -21,18 +21,22 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import java.util.EnumSet;
+import java.util.Set;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * {@code p:replace}.
@@ -94,13 +98,13 @@ public final class ReplaceStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void text(XdmNode node, SaxonBuilder builder)
+            public void text(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.nodes(replacement);
             }
 
             @Override
-            public void comment(XdmNode node, SaxonBuilder builder)
+            public void comment(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.nodes(replacement);
             }
@@ -125,9 +129,7 @@ public final class ReplaceStepProcessor extends AbstractStepProcessor
         final SaxonProcessor replaceProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
                         .getStep().getNode(), replaceWithError, new CopyingSaxonProcessorDelegate()));
-
         final XdmNode result = replaceProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
     }
-
 }

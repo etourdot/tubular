@@ -20,27 +20,41 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableSet;
-import net.sf.saxon.s9api.*;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.ccil.cowan.tagsoup.Parser;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
-import org.trancecode.xproc.XProcExceptions;
-import org.trancecode.xproc.port.XProcPorts;
-import org.trancecode.xproc.variable.XProcOptions;
-import org.xml.sax.InputSource;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.EnumSet;
+import java.util.Set;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.sax.SAXSource;
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.EnumSet;
-import java.util.Set;
+import net.sf.saxon.s9api.DocumentBuilder;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.ccil.cowan.tagsoup.Parser;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.Saxon;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.XProcOptions;
+import org.xml.sax.InputSource;
 
 /**
  * @author Emmanuel Tourdot
@@ -96,7 +110,8 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                             LOG.trace("copy existing attribute: {}", attribute);
                             builder.attribute(attribute.getNodeName(), attribute.getStringValue());
                         }
-                        if (HTML_CONTENTTYPE.equals(contentType.getBaseType())) {
+                        if (HTML_CONTENTTYPE.equals(contentType.getBaseType()))
+                        {
                             writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                         }
                         else
@@ -118,16 +133,8 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         {
             final SaxonProcessorDelegate escapeDelegate = new CopyingSaxonProcessorDelegate()
             {
-                private void addNamespace(final SaxonBuilder builder)
-                {
-                    if (namespaceURI != null)
-                    {
-                        builder.namespace(null, namespaceOption);
-                    }
-                }
-
                 @Override
-                public boolean startDocument(XdmNode node, SaxonBuilder builder)
+                public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
                 {
                     return super.startDocument(node, builder);
                 }
@@ -143,7 +150,8 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 public void text(final XdmNode node, final SaxonBuilder builder)
                 {
                     final String unEscapeContent = getUnEscapeContent(node.getStringValue(), encodingOption, contentType, charset);
-                    if (HTML_CONTENTTYPE.equals(contentType.getBaseType())) {
+                    if (HTML_CONTENTTYPE.equals(contentType.getBaseType()))
+                    {
                         writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                     }
                     else
@@ -245,8 +253,8 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         {
             try
             {
-                InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)), encoding);
-                StringWriter writer = new StringWriter();
+                final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)), encoding);
+                final StringWriter writer = new StringWriter();
                 IOUtils.copy(b64is, writer, charset);
                 return writer.toString();
             }

@@ -19,8 +19,6 @@
  */
 package org.trancecode.xproc.step;
 
-import javax.xml.transform.Source;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -29,6 +27,8 @@ import org.trancecode.xml.Jaxp;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
+
+import javax.xml.transform.Source;
 
 /**
  * @author Herve Quiroz
@@ -71,9 +71,16 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         }
         catch (final Exception e)
         {
-            throw XProcExceptions.xc0027(input.getLocation());
-        }
+            if (validate)
+            {
+                throw XProcExceptions.xc0027(input.getLocation());
+            }
+            else
+            {
+                throw XProcExceptions.xd0011(input.getLocation(), href, e);
+            }
 
+        }
         output.writeNodes(XProcPorts.RESULT, document);
     }
 }
