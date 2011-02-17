@@ -24,3 +24,4 @@ org.trancecode.xproc.step.ReplaceStepProcessor
 org.trancecode.xproc.step.PackStepProcessor
 org.trancecode.xproc.step.MakeAbsoluteUrisStepProcessor
 org.trancecode.xproc.step.AddXmlBaseStepProcessor
+org.trancecode.xproc.step.LabelElementsStepProcessor
