@@ -39,7 +39,7 @@ public final class VariablePredicates
         return new IsNamedPredicate(name);
     }
 
-    private static class IsNamedPredicate implements Predicate<Variable>
+    private static final class IsNamedPredicate implements Predicate<Variable>
     {
         private final QName name;
 
@@ -60,7 +60,7 @@ public final class VariablePredicates
         return IsOptionPredicate.INSTANCE;
     }
 
-    private static class IsOptionPredicate implements Predicate<Variable>
+    private static final class IsOptionPredicate implements Predicate<Variable>
     {
         private static final IsOptionPredicate INSTANCE = new IsOptionPredicate();
 

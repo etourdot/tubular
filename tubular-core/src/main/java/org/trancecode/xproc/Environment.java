@@ -69,9 +69,9 @@ public final class Environment
     private static final QName ELEMENT_PARAM = XProcXmlModel.xprocStepNamespace().newSaxonQName("param");
     private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
 
-    private static final ThreadLocal<Environment> currentEnvironment = new ThreadLocal<Environment>();
-    private static final ThreadLocal<XdmNode> currentXPathContext = new ThreadLocal<XdmNode>();
-    private static final ThreadLocal<XdmNode> currentNamespaceContext = new ThreadLocal<XdmNode>();
+    private static final ThreadLocal<Environment> CURRENT_ENVIRONMENT = new ThreadLocal<Environment>();
+    private static final ThreadLocal<XdmNode> CURRENT_XPATH_CONTEXT = new ThreadLocal<XdmNode>();
+    private static final ThreadLocal<XdmNode> CURRENT_NAMESPACE_CONTEXT = new ThreadLocal<XdmNode>();
 
     private final EnvironmentPort defaultReadablePort;
     private final Map<QName, String> inheritedVariables;
@@ -84,27 +84,27 @@ public final class Environment
 
     public static void setCurrentNamespaceContext(final XdmNode node)
     {
-        currentNamespaceContext.set(node);
+        CURRENT_NAMESPACE_CONTEXT.set(node);
     }
 
     public static XdmNode getCurrentNamespaceContext()
     {
-        return currentNamespaceContext.get();
+        return CURRENT_NAMESPACE_CONTEXT.get();
     }
 
     public static void setCurrentXPathContext(final XdmNode node)
     {
-        currentXPathContext.set(node);
+        CURRENT_XPATH_CONTEXT.set(node);
     }
 
     public static XdmNode getCurrentXPathContext()
     {
-        return currentXPathContext.get();
+        return CURRENT_XPATH_CONTEXT.get();
     }
 
     public static void setCurrentEnvironment(final Environment environment)
     {
-        currentEnvironment.set(environment);
+        CURRENT_ENVIRONMENT.set(environment);
     }
 
     public void setCurrentEnvironment()
@@ -114,7 +114,7 @@ public final class Environment
 
     public static Environment getCurrentEnvironment()
     {
-        return currentEnvironment.get();
+        return CURRENT_ENVIRONMENT.get();
     }
 
     private static Map<PortReference, EnvironmentPort> getPortsMap(final Iterable<EnvironmentPort> ports)

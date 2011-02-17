@@ -33,16 +33,16 @@ import org.trancecode.xproc.XProcXmlModel;
 public final class IterationSizeXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
     private static final Logger LOG = Logger.getLogger(IterationSizeXPathExtensionFunction.class);
-    private static final ThreadLocal<Integer> iterationSize = new ThreadLocal<Integer>();
+    private static final ThreadLocal<Integer> ITERATION_SIZE = new ThreadLocal<Integer>();
 
     static
     {
-        iterationSize.set(1);
+        ITERATION_SIZE.set(1);
     }
 
     public static int setIterationSize(final int value)
     {
-        final int previousValue = TcThreads.set(iterationSize, value);
+        final int previousValue = TcThreads.set(ITERATION_SIZE, value);
         LOG.trace("{@method} {} -> {}", previousValue, value);
         return previousValue;
     }
@@ -89,7 +89,7 @@ public final class IterationSizeXPathExtensionFunction extends AbstractXPathExte
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
                             throws XPathException
                     {
-                        return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(iterationSize.get()));
+                        return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(ITERATION_SIZE.get()));
                     }
                 };
             }

@@ -38,7 +38,7 @@ public final class PortPredicates
         return IsInputPortPredicate.INSTANCE;
     }
 
-    private static class IsInputPortPredicate implements Predicate<Port>
+    private static final class IsInputPortPredicate implements Predicate<Port>
     {
         public static final IsInputPortPredicate INSTANCE = new IsInputPortPredicate();
 
@@ -59,7 +59,7 @@ public final class PortPredicates
         return IsOutputPortPredicate.INSTANCE;
     }
 
-    private static class IsOutputPortPredicate implements Predicate<Port>
+    private static final class IsOutputPortPredicate implements Predicate<Port>
     {
         public static final IsOutputPortPredicate INSTANCE = new IsOutputPortPredicate();
 
@@ -80,7 +80,7 @@ public final class PortPredicates
         return IsParameterPortPredicate.INSTANCE;
     }
 
-    private static class IsParameterPortPredicate implements Predicate<Port>
+    private static final class IsParameterPortPredicate implements Predicate<Port>
     {
         public static final IsParameterPortPredicate INSTANCE = new IsParameterPortPredicate();
 

@@ -41,7 +41,7 @@ import org.trancecode.xproc.binding.PortBinding;
 /**
  * @author Herve Quiroz
  */
-public class EnvironmentPort implements HasPortReference
+public final class EnvironmentPort implements HasPortReference
 {
     private static final Logger LOG = Logger.getLogger(EnvironmentPort.class);
 

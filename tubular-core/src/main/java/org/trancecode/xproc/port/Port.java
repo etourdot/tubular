@@ -202,7 +202,7 @@ public final class Port extends AbstractHasLocation implements HasPortReference
         final String primaryTag = getTag(primary, "[primary]", "[not primary]");
         final String sequenceTag = getTag(sequence, "[sequence]", "[not sequence]");
         final String parameterTag = getTag(isParameter(), "[parameter]", "");
-        final String selectTag = (select != null ? "[select = " + select + "]" : "");
+        final String selectTag = select != null ? "[select = " + select + "]" : "";
         return String.format("%s[%s][%s]%s%s%s%s", getClass().getSimpleName(), type, portReference, parameterTag,
                 primaryTag, sequenceTag, selectTag);
     }

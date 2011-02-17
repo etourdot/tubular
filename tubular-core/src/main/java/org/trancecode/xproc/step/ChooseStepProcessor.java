@@ -176,7 +176,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
         }
     }
 
-    private static abstract class AbstractWhenStepProcessor extends AbstractCompoundStepProcessor implements
+    private abstract static class AbstractWhenStepProcessor extends AbstractCompoundStepProcessor implements
             CoreStepProcessor
     {
         @Override

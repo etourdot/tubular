@@ -49,7 +49,7 @@ public final class CountStepProcessor extends AbstractStepProcessor
         LOG.trace("  count = {}", count);
         final int limit = Integer.parseInt(input.getOptionValue(XProcOptions.LIMIT, "0"));
         LOG.trace("  limit = {}", limit);
-        final int result = (limit > 0 ? Math.min(count, limit) : count);
+        final int result = limit > 0 ? Math.min(count, limit) : count;
         LOG.trace("  result = {}", result);
 
         output.writeNodes(XProcPorts.RESULT, input.newResultElement(Integer.toString(result)));

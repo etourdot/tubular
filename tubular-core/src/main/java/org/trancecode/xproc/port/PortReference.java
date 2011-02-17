@@ -26,7 +26,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 /**
  * @author Herve Quiroz
  */
-public class PortReference
+public final class PortReference
 {
     private final String stepName;
     private final String portName;
@@ -80,7 +80,8 @@ public class PortReference
         if (o != null && o instanceof PortReference)
         {
             final PortReference portReference = (PortReference) o;
-            return new EqualsBuilder().append(stepName, portReference.stepName).append(portName, portReference.portName).isEquals();
+            return new EqualsBuilder().append(stepName, portReference.stepName)
+                    .append(portName, portReference.portName).isEquals();
         }
 
         return false;

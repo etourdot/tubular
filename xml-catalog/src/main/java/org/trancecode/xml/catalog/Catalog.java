@@ -33,11 +33,11 @@ import org.trancecode.io.Uris;
  */
 public final class Catalog extends ForwardingCatalog
 {
-    private static final Catalog defaultCatalog = newCatalog(Catalogs.defaultCatalog());
+    private static final Catalog DEFAULT_CATALOG = newCatalog(Catalogs.defaultCatalog());
 
     public static Catalog defaultCatalog()
     {
-        return defaultCatalog;
+        return DEFAULT_CATALOG;
     }
 
     public static Catalog newCatalog(final Function<CatalogQuery, URI> catalogFunction)

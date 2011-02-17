@@ -65,7 +65,7 @@ import org.trancecode.xproc.variable.Variable;
 /**
  * @author Herve Quiroz
  */
-public class PipelineParser
+public final class PipelineParser
 {
     private static final Logger LOG = Logger.getLogger(PipelineParser.class);
 
