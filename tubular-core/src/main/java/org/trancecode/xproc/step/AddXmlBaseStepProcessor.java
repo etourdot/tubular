@@ -19,18 +19,21 @@
  */
 package org.trancecode.xproc.step;
 
+import java.util.EnumSet;
+import javax.xml.XMLConstants;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.apache.commons.lang.StringUtils;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import javax.xml.XMLConstants;
-import java.util.EnumSet;
 
 /**
  * Step processor for the p:add-xml-base standard XProc step.
@@ -65,7 +68,7 @@ public final class AddXmlBaseStepProcessor extends AbstractStepProcessor
         final SaxonProcessorDelegate addXmlBaseDelegate = new CopyingSaxonProcessorDelegate()
         {
             @Override
-            public EnumSet<NextSteps> startElement(XdmNode node, SaxonBuilder builder)
+            public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.startElement(node.getNodeName(), node);
                 for (final XdmNode attribute : SaxonAxis.attributes(node))

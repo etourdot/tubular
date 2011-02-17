@@ -21,20 +21,25 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmNodeKind;
-import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
-import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.XProcExceptions;
-import org.trancecode.xproc.port.XProcPorts;
-import org.trancecode.xproc.variable.XProcOptions;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EnumSet;
 import java.util.Set;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
+import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
+import org.trancecode.xproc.XProcException;
+import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * {@code p:make-absolute-uris}.
@@ -59,8 +64,8 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
         final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
         final String match = input.getOptionValue(XProcOptions.MATCH);
         assert match != null;
-        final String base_uri = input.getOptionValue(XProcOptions.BASE_URI);
-        final URI baseUriURI = getUri(base_uri);
+        final String baseUriOption = input.getOptionValue(XProcOptions.BASE_URI);
+        final URI baseUriURI = getUri(baseUriOption);
 
         final SaxonProcessorDelegate makeUrisDelegate = new AbstractSaxonProcessorDelegate()
         {
@@ -102,7 +107,7 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void attribute(XdmNode node, SaxonBuilder builder)
+            public void attribute(final XdmNode node, final SaxonBuilder builder)
             {
                 if (baseUriURI != null)
                 {

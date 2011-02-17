@@ -21,18 +21,23 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import java.util.EnumSet;
+import java.util.Set;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.*;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * {@code p:rename}.
@@ -57,16 +62,16 @@ public final class RenameStepProcessor extends AbstractStepProcessor
     {
         final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
         final String match = input.getOptionValue(XProcOptions.MATCH);
-        final String new_name = input.getOptionValue(XProcOptions.NEW_NAME);
-        final String new_prefix = input.getOptionValue(XProcOptions.NEW_PREFIX, null);
-        final String new_namespace = input.getOptionValue(XProcOptions.NEW_NAMESPACE, null);
+        final String newNameOption = input.getOptionValue(XProcOptions.NEW_NAME);
+        final String newPrefixOption = input.getOptionValue(XProcOptions.NEW_PREFIX, null);
+        final String newNamespaceOption = input.getOptionValue(XProcOptions.NEW_NAMESPACE, null);
 
         assert match != null;
         LOG.trace("match = {}", match);
-        assert new_name != null;
-        LOG.trace("new_name = {}", new_name);
+        assert newNameOption != null;
+        LOG.trace("new_name = {}", newNameOption);
 
-        final QName newName = StepUtils.getNewNamespace(new_prefix, new_namespace, new_name, input.getStep());
+        final QName newName = StepUtils.getNewNamespace(newPrefixOption, newNamespaceOption, newNameOption, input.getStep());
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override

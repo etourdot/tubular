@@ -19,16 +19,20 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import java.util.EnumSet;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
-import org.trancecode.xml.saxon.*;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonProcessor;
+import org.trancecode.xml.saxon.SaxonProcessorDelegate;
+import org.trancecode.xml.saxon.SaxonProcessorDelegates;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.util.EnumSet;
 
 /**
  * {@code p:unwrap}.
@@ -54,24 +58,24 @@ public final class UnWrapStepProcessor extends AbstractStepProcessor
         final SaxonProcessorDelegate unWrapDelegate = new AbstractSaxonProcessorDelegate()
         {
             @Override
-            public boolean startDocument(XdmNode node, SaxonBuilder builder)
+            public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
             {
                 return true;
             }
 
             @Override
-            public EnumSet<NextSteps> startElement(XdmNode node, SaxonBuilder builder)
+            public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
             {
                 return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
             }
 
             @Override
-            public void endDocument(XdmNode node, SaxonBuilder builder)
+            public void endDocument(final XdmNode node, final SaxonBuilder builder)
             {
             }
 
             @Override
-            public void endElement(XdmNode node, SaxonBuilder builder)
+            public void endElement(final XdmNode node, final SaxonBuilder builder)
             {
             }
         };
@@ -89,10 +93,8 @@ public final class UnWrapStepProcessor extends AbstractStepProcessor
         final SaxonProcessor unWrapProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
                         .getStep().getNode(), unWrapWithError, new CopyingSaxonProcessorDelegate()));
-
         final XdmNode result = unWrapProcessor.apply(sourceDocument);
 
         output.writeNodes(XProcPorts.RESULT, result);
     }
-
 }
