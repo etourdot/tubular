@@ -76,11 +76,11 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
             serializer.setOutputProperty(Property.DOCTYPE_SYSTEM, doctypeSystemId);
         }
         serializer.setOutputProperty(Property.METHOD, method);
-        serializer.setOutputProperty(Property.ESCAPE_URI_ATTRIBUTES, (escapeUri ? "yes" : "no"));
+        serializer.setOutputProperty(Property.ESCAPE_URI_ATTRIBUTES, escapeUri ? "yes" : "no");
         serializer.setOutputProperty(Property.MEDIA_TYPE, mimeType);
-        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, (omitXML ? "yes" : "no"));
-        serializer.setOutputProperty(Property.INDENT, (indent ? "yes" : "no"));
-        serializer.setOutputProperty(Property.INCLUDE_CONTENT_TYPE, (includeContent ? "yes" : "no"));
+        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, omitXML ? "yes" : "no");
+        serializer.setOutputProperty(Property.INDENT, indent ? "yes" : "no");
+        serializer.setOutputProperty(Property.INCLUDE_CONTENT_TYPE, includeContent ? "yes" : "no");
 
         try
         {

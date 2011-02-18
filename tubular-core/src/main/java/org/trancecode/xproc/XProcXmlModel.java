@@ -63,6 +63,7 @@ public final class XProcXmlModel
         public static final QName PIPE = xprocNamespace().newSaxonQName("pipe");
         public static final QName PIPEINFO = xprocNamespace().newSaxonQName("pipeinfo");
         public static final QName PIPELINE = xprocNamespace().newSaxonQName("pipeline");
+        public static final QName REQUEST = xprocStepNamespace().newSaxonQName("request");
         public static final QName RESULT = xprocStepNamespace().newSaxonQName("result");
         public static final QName VARIABLE = xprocNamespace().newSaxonQName("variable");
         public static final QName VIEWPORT_SOURCE = xprocNamespace().newSaxonQName("viewport-source");

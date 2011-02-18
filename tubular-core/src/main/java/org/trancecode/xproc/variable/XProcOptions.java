@@ -36,6 +36,7 @@ public final class XProcOptions
     public static final QName ALL = new QName("all");
     public static final QName ARGS = new QName("args");
     public static final QName ARG_SEPARATOR = new QName("arg-separator");
+    public static final QName ATTRIBUTE = new QName("attribute");
     public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
     public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
     public static final QName ATTRIBUTE_NAMESPACE = new QName("attribute-namespace");
@@ -61,6 +62,7 @@ public final class XProcOptions
     public static final QName INCLUDE_CONTENT_TYPE = new QName("include-content-type");
     public static final QName INDENT = new QName("indent");
     public static final QName INITIAL_MODE = new QName("initial-mode");
+    public static final QName LABEL = new QName("label");
     public static final QName LIMIT = new QName("limit");
     public static final QName MATCH = new QName("match");
     public static final QName MEDIA_TYPE = new QName("media-type");

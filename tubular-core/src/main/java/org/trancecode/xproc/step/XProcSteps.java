@@ -66,7 +66,7 @@ public final class XProcSteps
     public static final QName HTTP_REQUEST = XProcXmlModel.xprocNamespace().newSaxonQName("http-request");
     public static final QName IDENTITY = XProcXmlModel.xprocNamespace().newSaxonQName("identity");
     public static final QName INSERT = XProcXmlModel.xprocNamespace().newSaxonQName("insert");
-    public static final QName LABEL_ELEMENT = XProcXmlModel.xprocNamespace().newSaxonQName("label-element");
+    public static final QName LABEL_ELEMENTS = XProcXmlModel.xprocNamespace().newSaxonQName("label-elements");
     public static final QName LOAD = XProcXmlModel.xprocNamespace().newSaxonQName("load");
     public static final QName MAKE_ABSOLUTE_URIS = XProcXmlModel.xprocNamespace().newSaxonQName("make-absolute-uris");
     public static final QName NAMESPACE_RENAME = XProcXmlModel.xprocNamespace().newSaxonQName("namespace-rename");
@@ -87,7 +87,7 @@ public final class XProcSteps
     public static final QName XSLT = XProcXmlModel.xprocNamespace().newSaxonQName("xslt");
 
     public static final Set<QName> REQUIRED_STEPS = ImmutableSet.of(ADD_ATTRIBUTE, ADD_XML_BASE, COMPARE, COUNT,
-            DELETE, DIRECTORY_LIST, ERROR, ESCAPE_MARKUP, FILTER, HTTP_REQUEST, IDENTITY, INSERT, LABEL_ELEMENT, LOAD,
+            DELETE, DIRECTORY_LIST, ERROR, ESCAPE_MARKUP, FILTER, HTTP_REQUEST, IDENTITY, INSERT, LABEL_ELEMENTS, LOAD,
             MAKE_ABSOLUTE_URIS, NAMESPACE_RENAME, PACK, PARAMETERS, RENAME, REPLACE, SET_ATTRIBUTES, SINK,
             SPLIT_SEQUENCE, STORE, STRING_REPLACE, UNESCAPE_MARKUP, UNWRAP, WRAP, XINCLUDE, XSLT);
 
