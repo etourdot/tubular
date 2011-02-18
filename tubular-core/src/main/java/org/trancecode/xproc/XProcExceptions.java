@@ -162,6 +162,11 @@ public final class XProcExceptions
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
     }
 
+    public static XProcException xc0040(final Location location)
+    {
+        return newXProcException(Type.STEP, 40, location, "It is a dynamic error if the document element of the document that arrives on the source port is not c:request.");
+    }
+
     public static XProcException xc0050(final Location location)
     {
         return newXProcException(Type.STEP, 50, location, "It is a dynamic error if the URI scheme is not supported or the step cannot store to the specified location.");

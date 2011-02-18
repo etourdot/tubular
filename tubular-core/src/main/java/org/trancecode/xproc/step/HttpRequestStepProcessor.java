@@ -65,6 +65,8 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         {
             throw XProcExceptions.xc0040(input.getStep().getLocation());
         }
+
+        //TODO: all the job !
         output.writeNodes(XProcPorts.RESULT, sourceDoc);
     }
 }
