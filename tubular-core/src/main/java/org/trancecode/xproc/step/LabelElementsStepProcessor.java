@@ -54,7 +54,7 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(LabelElementsStepProcessor.class);
     private static final String ATTRIBUTE_DEFAULT_VALUE = "xml:id";
-    private static final QName index = new QName("p", XProcXmlModel.xprocNamespace().uri(), "index");
+    private static final QName INDEX = new QName("p", XProcXmlModel.xprocNamespace().uri(), "index");
 
     @Override
     public QName getStepType()
@@ -81,15 +81,15 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
         {
             private final AtomicInteger countElement = new AtomicInteger(1);
 
-            private final String getNewLabel(final XdmNode element)
+            private String getNewLabel(final XdmNode element)
             {
                 try
                 {
                     final XPathCompiler xPathCompiler = element.getProcessor().newXPathCompiler();
                     xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace().uri());
-                    xPathCompiler.declareVariable(index);
+                    xPathCompiler.declareVariable(INDEX);
                     final XPathSelector xPathSelector = xPathCompiler.compile(labelOption).load();
-                    xPathSelector.setVariable(index, new XdmAtomicValue(countElement.get()));
+                    xPathSelector.setVariable(INDEX, new XdmAtomicValue(countElement.get()));
                     xPathSelector.setContextItem(element);
                     final XdmItem item = xPathSelector.evaluateSingle();
                     return (item == null) ? "" : item.getStringValue();

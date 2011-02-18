@@ -40,7 +40,7 @@ public final class StepUtils
     public static final String METHOD_XHTML = "xhtml";
     public static final String METHOD_TEXT = "text";
 
-    private static final ImmutableMap<String, String> mediaTypes = ImmutableMap.of(METHOD_XML, MediaTypes.MEDIA_TYPE_XML,
+    private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML, MediaTypes.MEDIA_TYPE_XML,
         METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML, MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
 
     private StepUtils()
@@ -85,7 +85,7 @@ public final class StepUtils
         final String mediaType = input.getOptionValue(XProcOptions.MEDIA_TYPE, null);
         if (mediaType == null)
         {
-            builder.put(XProcOptions.MEDIA_TYPE, mediaTypes.get(method.getLocalName()));
+            builder.put(XProcOptions.MEDIA_TYPE, MEDIATYPES.get(method.getLocalName()));
         }
         else
         {
@@ -163,5 +163,4 @@ public final class StepUtils
             return new QName("", newNamespace, newName);
         }
     }
-
 }
