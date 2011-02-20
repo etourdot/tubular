@@ -19,10 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
+import java.io.ByteArrayOutputStream;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
-import net.sf.saxon.s9api.Serializer.Property;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
@@ -31,8 +32,6 @@ import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * @author Emmanuel Tourdot
@@ -51,36 +50,16 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         final XdmNode node = input.readNode(XProcPorts.SOURCE);
-
-        final String mimeType = input.getOptionValue(XProcOptions.MEDIA_TYPE, MediaTypes.MEDIA_TYPE_XML);
-        final String doctypePublicId = input.getOptionValue(XProcOptions.DOCTYPE_PUBLIC, null);
-        final String doctypeSystemId = input.getOptionValue(XProcOptions.DOCTYPE_SYSTEM, null);
-        final String method = input.getOptionValue(XProcOptions.METHOD, "xml");
-        final boolean escapeUri = Boolean.parseBoolean(input
-                .getOptionValue(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false"));
-        final boolean omitXML = Boolean.parseBoolean(input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION, "true"));
-        final boolean indent = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INDENT, "false"));
-        final boolean includeContent = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INCLUDE_CONTENT_TYPE,
-                "true"));
+        final ImmutableMap.Builder<QName, String> defaultBuilder = new ImmutableMap.Builder<QName, String>();
+        defaultBuilder.put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false").put(XProcOptions.INCLUDE_CONTENT_TYPE, "true")
+                .put(XProcOptions.INDENT, "false").put(XProcOptions.METHOD, "xml")
+                .put(XProcOptions.MEDIA_TYPE, MediaTypes.MEDIA_TYPE_XML).put(XProcOptions.OMIT_XML_DECLARATION, "true");
+        final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
+        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input, defaultOptions);
 
         final XdmNode root = SaxonAxis.childElement(node);
         final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-        final Serializer serializer = new Serializer();
-        serializer.setOutputStream(targetOutputStream);
-        if (doctypePublicId != null)
-        {
-            serializer.setOutputProperty(Property.DOCTYPE_PUBLIC, doctypePublicId);
-        }
-        if (doctypeSystemId != null)
-        {
-            serializer.setOutputProperty(Property.DOCTYPE_SYSTEM, doctypeSystemId);
-        }
-        serializer.setOutputProperty(Property.METHOD, method);
-        serializer.setOutputProperty(Property.ESCAPE_URI_ATTRIBUTES, escapeUri ? "yes" : "no");
-        serializer.setOutputProperty(Property.MEDIA_TYPE, mimeType);
-        serializer.setOutputProperty(Property.OMIT_XML_DECLARATION, omitXML ? "yes" : "no");
-        serializer.setOutputProperty(Property.INDENT, indent ? "yes" : "no");
-        serializer.setOutputProperty(Property.INCLUDE_CONTENT_TYPE, includeContent ? "yes" : "no");
+        final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
 
         try
         {

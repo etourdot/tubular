@@ -116,6 +116,31 @@ public final class XProcExceptions
                 uri);
     }
 
+    public static XProcException xc0002(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 2, SaxonLocation.of(node), "It is a dynamic error if the value starts with the string \"--\".");
+    }
+
+    public static XProcException xc0003(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 3, SaxonLocation.of(node), "It is a dynamic error if a username or password is specified without specifying an auth-method, if the requested auth-method isn't supported, or the authentication challenge contains an authentication method that isn't supported.");
+    }
+
+    public static XProcException xc0004(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 4, SaxonLocation.of(node), "It is a dynamic error if the status-only attribute has the value true and the detailed attribute does not have the value true.");
+    }
+
+    public static XProcException xc0005(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 5, SaxonLocation.of(node), "It is a dynamic error if the request contains a c:body or c:multipart but the method does not allow for an entity body being sent with the request.");
+    }
+
+    public static XProcException xc0006(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 6, SaxonLocation.of(node), "It is a dynamic error if the method is not specified on a c:request.");
+    }
+
    public static XProcException xc0010(final XdmNode node)
     {
         return newXProcException(Type.STEP, 10, SaxonLocation.of(node), "It is a dynamic error if an encoding of base64 is specified and the character set is not specified or if the specified character set is not supported by the implementation.");
@@ -130,6 +155,11 @@ public final class XProcExceptions
     {
         return newXProcException(Type.STEP, 19, step.getLocation(), "Documents are not equal in step %s",
                 step.getName());
+    }
+
+    public static XProcException xc0022(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 22, SaxonLocation.of(node), "it is a dynamic error if the content of the c:body element does not consist of exactly one element, optionally preceded and/or followed by any number of processing instructions, comments or whitespace characters");
     }
 
     public static XProcException xc0023(final XdmNode node, final XdmNodeKind... allowedNodeTypes)

@@ -22,7 +22,9 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.io.OutputStream;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.Serializer;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -40,7 +42,7 @@ public final class StepUtils
     public static final String METHOD_XHTML = "xhtml";
     public static final String METHOD_TEXT = "text";
 
-    private static final ImmutableMap<String, String> mediaTypes = ImmutableMap.of(METHOD_XML, MediaTypes.MEDIA_TYPE_XML,
+    private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML, MediaTypes.MEDIA_TYPE_XML,
         METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML, MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
 
     private StepUtils()
@@ -85,7 +87,7 @@ public final class StepUtils
         final String mediaType = input.getOptionValue(XProcOptions.MEDIA_TYPE, null);
         if (mediaType == null)
         {
-            builder.put(XProcOptions.MEDIA_TYPE, mediaTypes.get(method.getLocalName()));
+            builder.put(XProcOptions.MEDIA_TYPE, MEDIATYPES.get(method.getLocalName()));
         }
         else
         {
@@ -99,6 +101,27 @@ public final class StepUtils
         putInBuilder(builder, input, defaultOptions, XProcOptions.VERSION, false);
 
         return builder.build();
+    }
+
+    public static Serializer getSerializer(final OutputStream stream, final ImmutableMap<String, Object> options)
+    {
+        final Serializer serializer = new Serializer();
+        serializer.setOutputStream(stream);
+        if (options.containsKey(XProcOptions.DOCTYPE_PUBLIC))
+        {
+            serializer.setOutputProperty(Serializer.Property.DOCTYPE_PUBLIC, options.get(XProcOptions.DOCTYPE_PUBLIC).toString());
+        }
+        if (options.containsKey(XProcOptions.DOCTYPE_SYSTEM))
+        {
+            serializer.setOutputProperty(Serializer.Property.DOCTYPE_SYSTEM, options.get(XProcOptions.DOCTYPE_PUBLIC).toString());
+        }
+        serializer.setOutputProperty(Serializer.Property.METHOD, ((QName) options.get(XProcOptions.METHOD)).getLocalName());
+        serializer.setOutputProperty(Serializer.Property.ESCAPE_URI_ATTRIBUTES, (Boolean) options.get(XProcOptions.ESCAPE_URI_ATTRIBUTES) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, options.get(XProcOptions.MEDIA_TYPE).toString());
+        serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, (Boolean) options.get(XProcOptions.OMIT_XML_DECLARATION) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.INDENT, (Boolean) options.get(XProcOptions.INDENT) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.INCLUDE_CONTENT_TYPE, (Boolean) options.get(XProcOptions.INCLUDE_CONTENT_TYPE) ? "yes" : "no");
+        return serializer;
     }
 
     private static void putInBuilder(final ImmutableMap.Builder builder, final AbstractStepProcessor.StepInput input,
@@ -163,5 +186,4 @@ public final class StepUtils
             return new QName("", newNamespace, newName);
         }
     }
-
 }

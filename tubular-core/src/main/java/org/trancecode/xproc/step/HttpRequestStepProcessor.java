@@ -19,11 +19,26 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.net.ProxySelector;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.port.XProcPorts;
@@ -50,6 +65,12 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         final XdmNode sourceDoc = input.readNode(XProcPorts.SOURCE);
+        final XdmNode request = SaxonAxis.childElement(sourceDoc);
+        if (!XProcXmlModel.Elements.REQUEST.equals(request.getNodeName()))
+        {
+            throw XProcExceptions.xc0040(input.getStep().getLocation());
+        }
+
         final ImmutableMap.Builder<QName, String> defaultBuilder = new ImmutableMap.Builder<QName, String>();
         defaultBuilder.put(XProcOptions.CDATA_SECTION_ELEMENTS, "").put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false")
                 .put(XProcOptions.INCLUDE_CONTENT_TYPE, "true").put(XProcOptions.INDENT, "false")
@@ -59,14 +80,44 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
         final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input, defaultOptions);
 
-        final XdmNode request = SaxonAxis.childElement(sourceDoc);
+        final RequestParser parser = new RequestParser(serializationOptions);
+        final XProcHttpRequest xProcRequest = parser.parseRequest(request);
 
-        if (!XProcXmlModel.Elements.REQUEST.equals(request.getNodeName()))
+        final HttpClient httpClient = prepareHttpClient();
+        try
         {
-            throw XProcExceptions.xc0040(input.getStep().getLocation());
+            final Processor processor = input.getPipelineContext().getProcessor();
+            final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor, xProcRequest.isDetailled(), xProcRequest.isStatusOnly());
+            final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler);
+            final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
+            builder.startDocument();
+            builder.nodes(response.getNodes());
+            builder.endDocument();
+            output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
-
-        //TODO: all the job !
-        output.writeNodes(XProcPorts.RESULT, sourceDoc);
+        catch (IOException e)
+        {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        finally
+        {
+            httpClient.getConnectionManager().shutdown();
+        }
     }
+
+    private HttpClient prepareHttpClient()
+    {
+        final SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+        final ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(schemeRegistry);
+        final DefaultHttpClient httpClient = new DefaultHttpClient(connManager);
+        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+                httpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
+        httpClient.setRoutePlanner(routePlanner);
+
+        final ImmutableList<String> authPref = ImmutableList.of(AuthPolicy.BASIC, AuthPolicy.DIGEST);
+        httpClient.getParams().setParameter(AuthPNames.CREDENTIAL_CHARSET, authPref);
+        return httpClient;
+    }
+
 }
