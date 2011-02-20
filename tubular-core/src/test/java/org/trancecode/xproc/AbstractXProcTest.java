@@ -77,8 +77,7 @@ public abstract class AbstractXProcTest extends AbstractTest
     @BeforeClass
     public static void setupLoggingLevel()
     {
-        // setLoggingLevel("org.trancecode.xproc", TRACE);
-        Logger.getLogger("org.trancecode").setLevel(Level.INFO);
+        Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
     }
 
     @BeforeClass
@@ -201,7 +200,7 @@ public abstract class AbstractXProcTest extends AbstractTest
             }
             compareResult = compareRunnablePipeline.run();
         }
-        final PipelineResult resultPipeline =  (test.getComparePipeline() != null)? compareResult : result;
+        final PipelineResult resultPipeline = (test.getComparePipeline() != null) ? compareResult : result;
         assert resultPipeline != null;
 
         for (final String port : test.getOutputs().keySet())
