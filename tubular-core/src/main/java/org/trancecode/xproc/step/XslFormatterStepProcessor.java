@@ -19,16 +19,21 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.io.Closeables;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.fop.apps.Fop;
@@ -60,30 +65,41 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
 
         final XdmNode source = input.readNode(XProcPorts.SOURCE);
 
-        final String href = input.getOptionValue(XProcOptions.CONTENT_TYPE, null);
+        final String baseUri = source.getBaseURI().toString();
+        final String href = input.getOptionValue(XProcOptions.HREF, null);
         assert href != null;
         final OutputStream resultOutputStream = input.getPipelineContext().getOutputResolver()
-                .resolveOutputStream(href, source.getBaseURI().toString());
-
-        final String contentType = input.getOptionValue(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
-        final FopFactory fopFactory = FopFactory.newInstance();
-        final Fop fop = fopFactory.newFop(contentType, resultOutputStream);
-        fop.getUserAgent().setURIResolver(new URIResolver()
+                .resolveOutputStream(href, baseUri);
+        try
         {
-            @Override
-            public Source resolve(final String href, final String base) throws TransformerException
+            final String contentType = input.getOptionValue(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
+            final FopFactory fopFactory = FopFactory.newInstance();
+            final Fop fop = fopFactory.newFop(contentType, resultOutputStream);
+            fop.getUserAgent().setURIResolver(new URIResolver()
             {
-                final URI uri = Uris.resolve(href, base);
-                final InputStream inputStream = input.getPipelineContext().getInputResolver()
-                        .resolveInputStream(href, base);
-                return new StreamSource(inputStream, uri.toString());
-            }
-        });
-        fop.getUserAgent().setBaseURL(source.getBaseURI().toString());
+                @Override
+                public Source resolve(final String href, final String base) throws TransformerException
+                {
+                    final URI uri = Uris.resolve(href, base);
+                    final InputStream inputStream = input.getPipelineContext().getInputResolver()
+                            .resolveInputStream(href, base);
+                    return new StreamSource(inputStream, uri.toString());
+                }
+            });
+            fop.getUserAgent().setBaseURL(source.getBaseURI().toString());
 
-        final SAXResult fopResult = new SAXResult(fop.getDefaultHandler());
+            final TransformerFactory factory = new TransformerFactoryImpl();
+            final Transformer transformer = factory.newTransformer();
 
-        // TODO run FOP
-        // TODO build result
+            final SAXResult fopResult = new SAXResult(fop.getDefaultHandler());
+
+            transformer.transform(source.asSource(), fopResult);
+        }
+        finally
+        {
+            Closeables.closeQuietly(resultOutputStream);
+        }
+
+        output.writeNodes(XProcPorts.RESULT, input.newResultElement(Uris.resolve(href, baseUri).toString()));
     }
 }
