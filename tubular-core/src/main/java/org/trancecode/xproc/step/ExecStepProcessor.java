@@ -127,7 +127,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         }
         else
         {
-            final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINEs));
+            final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINES));
             if (wrapResultLines)
             {
                 @SuppressWarnings("unchecked")

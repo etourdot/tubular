@@ -90,7 +90,7 @@ public final class XProcOptions
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
     public static final QName VALIDATE = new QName("validate");
     public static final QName VERSION = new QName("version");
-    public static final QName WRAP_RESULT_LINEs = new QName("wrap-result-lines");
+    public static final QName WRAP_RESULT_LINES = new QName("wrap-result-lines");
     public static final QName WRAPPER = new QName("wrapper");
     public static final QName WRAPPER_PREFIX = new QName("wrapper-prefix");
     public static final QName WRAPPER_NAMESPACE = new QName("wrapper-namespace");
