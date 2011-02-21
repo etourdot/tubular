@@ -187,6 +187,11 @@ public final class XProcExceptions
                 "It is a dynamic error if the document is not valid or the step doesn't support DTD validation.");
     }
 
+    public static XProcException xc0035(final Location location)
+    {
+        return newXProcException(Type.STEP, 35, location, "It is a dynamic error to specify both result-is-xml and wrap-result-lines.");
+    }
+
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);

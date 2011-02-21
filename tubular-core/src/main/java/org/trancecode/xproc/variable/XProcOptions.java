@@ -55,6 +55,7 @@ public final class XProcOptions
     public static final QName DOCTYPE_SYSTEM = new QName("doctype-system");
     public static final QName DTD_VALIDATE = new QName("dtd-validate");
     public static final QName ENCODING = new QName("encoding");
+    public static final QName ERRORS_IS_XML = new QName("errors-is-xml");
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
     public static final QName FAIL_IF_NOT_EQUAL = new QName("fail-if-not-equal");
     public static final QName GROUP_ADJACENT = new QName("group-adjacent");
@@ -90,6 +91,7 @@ public final class XProcOptions
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
     public static final QName VALIDATE = new QName("validate");
     public static final QName VERSION = new QName("version");
+    public static final QName WRAP_ERROR_LINES = new QName("wrap-error-lines");
     public static final QName WRAP_RESULT_LINES = new QName("wrap-result-lines");
     public static final QName WRAPPER = new QName("wrapper");
     public static final QName WRAPPER_PREFIX = new QName("wrapper-prefix");
