@@ -36,6 +36,7 @@ public final class XProcOptions
     public static final QName ALL = new QName("all");
     public static final QName ARGS = new QName("args");
     public static final QName ARG_SEPARATOR = new QName("arg-separator");
+    public static final QName ASSERT_VALID = new QName("assert-valid");
     public static final QName ATTRIBUTE = new QName("attribute");
     public static final QName ATTRIBUTE_NAME = new QName("attribute-name");
     public static final QName ATTRIBUTE_PREFIX = new QName("attribute-prefix");
@@ -68,6 +69,7 @@ public final class XProcOptions
     public static final QName MATCH = new QName("match");
     public static final QName MEDIA_TYPE = new QName("media-type");
     public static final QName METHOD = new QName("method");
+    public static final QName MODE = new QName("mode");
     public static final QName NAMESPACE = new QName("namespace");
     public static final QName NEW_NAME = new QName("new-name");
     public static final QName NEW_PREFIX = new QName("new-prefix");
@@ -88,7 +90,9 @@ public final class XProcOptions
     public static final QName TEMP_BASE_URI = new QName("temp-base-uri");
     public static final QName TEMPLATE_NAME = new QName("template-name");
     public static final QName TEST = new QName("test");
+    public static final QName TRY_NAMESPACES = new QName("try-namespaces");
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
+    public static final QName USE_LOCATION_HINTS = new QName("use-location-hints");
     public static final QName VALIDATE = new QName("validate");
     public static final QName VERSION = new QName("version");
     public static final QName WRAP_ERROR_LINES = new QName("wrap-error-lines");

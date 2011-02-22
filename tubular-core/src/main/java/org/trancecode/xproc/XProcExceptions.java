@@ -212,6 +212,11 @@ public final class XProcExceptions
         return newXProcException(Type.STEP, 51, location, "It is a dynamic error if the content-type specified is not supported by the implementation.");
     }
 
+    public static XProcException xc0053(final Location location)
+    {
+        return newXProcException(Type.STEP, 53, location, "It is a dynamic error if the assert-valid option is true and the input document is not valid.");
+    }
+
     public static XProcException xc0058(final Location location)
     {
         return newXProcException(Type.STEP, 58, location, "It is a dynamic error if the all and relative options are both true.");
