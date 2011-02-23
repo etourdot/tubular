@@ -19,10 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -32,19 +33,20 @@ import org.apache.http.client.methods.HttpRequestBase;
  */
 public class XProcHttpRequest
 {
-    private ImmutableList<Header> headers;
+    private List<Header> headers;
     private HttpHost httpHost;
     private HttpRequestBase httpRequest;
     private boolean detailled;
     private boolean statusOnly;
     private HttpEntity entity;
+    private CredentialsProvider credentials;
 
-    public ImmutableList<Header> getHeaders()
+    public List<Header> getHeaders()
     {
         return headers;
     }
 
-    public void setHeaders(final ImmutableList<Header> headers)
+    public void setHeaders(final List<Header> headers)
     {
         this.headers = headers;
     }
@@ -102,5 +104,15 @@ public class XProcHttpRequest
     public boolean hasEntity()
     {
         return this.entity != null;
+    }
+
+    public CredentialsProvider getCredentials()
+    {
+        return credentials;
+    }
+
+    public void setCredentials(final CredentialsProvider credentials)
+    {
+        this.credentials = credentials;
     }
 }

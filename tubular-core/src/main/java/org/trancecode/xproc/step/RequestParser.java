@@ -22,12 +22,14 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import net.sf.saxon.s9api.Axis;
@@ -94,7 +96,6 @@ public class RequestParser
             throw XProcExceptions.xc0006(requestNode);
         }
         request.setHeaders(parseHeaders(requestNode));
-
         request.setEntity(parseMultipart(requestNode));
         if (!request.hasEntity())
         {
@@ -105,7 +106,7 @@ public class RequestParser
         {
             throw XProcExceptions.xc0005(requestNode);            
         }
-        
+
         final boolean status = Boolean.valueOf(requestNode.getAttributeValue(XProcXmlModel.Attributes.STATUS_ONLY));
         final boolean detailed = Boolean.valueOf(requestNode.getAttributeValue(XProcXmlModel.Attributes.DETAILED));
         if (status && !detailed)
@@ -117,17 +118,29 @@ public class RequestParser
         
         final String href = requestNode.getAttributeValue(XProcXmlModel.Attributes.HREF);
         final URI hrefUri = requestNode.getBaseURI().resolve(href);
-        request.setHttpHost(new HttpHost(hrefUri.getHost(), hrefUri.getPort(), hrefUri.getScheme()));
+        if (hrefUri.getPort() != -1)
+        {
+            request.setHttpHost(new HttpHost(hrefUri.getHost(), hrefUri.getPort(), hrefUri.getScheme()));
+        }
+        else
+        {
+            request.setHttpHost(new HttpHost(hrefUri.getHost()));
+        }
 
         final CredentialsProvider credentialsProvider = parseAuthentication(requestNode);
+        request.setCredentials(credentialsProvider);
         request.setHttpRequest(constructMethod(method, hrefUri));
 
         return request;
     }
 
-    private ImmutableList<Header> parseHeaders(final XdmNode requestNode)
+    private void checkCoherenceHeaders(final ImmutableList<Header> headers, final HttpEntity entity)
     {
-        final ImmutableList.Builder<Header> builder = new ImmutableList.Builder<Header>();
+    }
+
+    private List<Header> parseHeaders(final XdmNode requestNode)
+    {
+        final List<Header> list = Lists.newArrayList();
         final Iterable<XdmNode> childs = SaxonAxis.childElements(requestNode, XProcXmlModel.Elements.HEADER);
         for (final XdmNode child : childs)
         {
@@ -135,10 +148,10 @@ public class RequestParser
             final String valueHeader = child.getAttributeValue(XProcXmlModel.Attributes.VALUE);
             if (Strings.isNullOrEmpty(nameHeader) && Strings.isNullOrEmpty(valueHeader))
             {
-                builder.add(new BasicHeader(nameHeader, valueHeader));
+                list.add(new BasicHeader(nameHeader, valueHeader));
             }
         }
-        return builder.build();
+        return list;
     }
 
     private MultipartEntity parseMultipart(final XdmNode requestNode)
@@ -156,7 +169,7 @@ public class RequestParser
             final MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.STRICT, boundary, Charset.forName("UTF-8"))
             {
                 @Override
-                protected String generateContentType(String boundary, Charset charset)
+                protected String generateContentType(final String boundary, final Charset charset)
                 {
                     final StringBuilder buffer = new StringBuilder();
                     buffer.append(contentType).append("; boundary=").append(boundary);
@@ -190,8 +203,21 @@ public class RequestParser
         final String contentTypeAtt = node.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
         final String encoding = node.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
         final String id = node.getAttributeValue(XProcXmlModel.Attributes.ID);
+        if (id != null)
+        {
+            request.getHeaders().add(new BasicHeader("Content-ID", id));
+        }
         final String description = node.getAttributeValue(XProcXmlModel.Attributes.DESCRIPTION);
+        if (description != null)
+        {
+            request.getHeaders().add(new BasicHeader("Content-Description", description));
+        }
         final String disposition = node.getAttributeValue(XProcXmlModel.Attributes.DISPOSITION);
+        if (disposition != null)
+        {
+            request.getHeaders().add(new BasicHeader("Content-Disposition", disposition));
+        }
+
         try
         {
             final ContentType contentType = new ContentType(contentTypeAtt);
@@ -229,6 +255,7 @@ public class RequestParser
                 {
                     Closeables.closeQuietly(targetOutputStream);
                 }
+                contentBuilder.append(targetOutputStream.toString());
             }
             if (charset != null)
             {
@@ -236,7 +263,7 @@ public class RequestParser
             }
             else
             {
-                return new StringEntity(contentBuilder.toString(), contentType.toString(), "UTF-8");
+                return new StringEntity(contentBuilder.toString(), contentType.toString(), "utf-8");
             }
 
         }
@@ -276,7 +303,7 @@ public class RequestParser
 
             final CredentialsProvider credsProvider = new BasicCredentialsProvider();
             final HttpHost httpHost = request.getHttpHost();
-            credsProvider.setCredentials(new AuthScope(httpHost.getHostName(), httpHost.getPort(), httpHost.getSchemeName()),
+            credsProvider.setCredentials(new AuthScope(httpHost.getHostName(), httpHost.getPort()),
                     new UsernamePasswordCredentials(username, password));
 
             return credsProvider;
@@ -306,7 +333,7 @@ public class RequestParser
     private HttpRequestBase constructMethod(final String method, final URI hrefUri)
     {
         final HttpEntity httpEntity = request.getEntity();
-        final ImmutableList<Header> headers = request.getHeaders();
+        final List<Header> headers = request.getHeaders();
         if (StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method))
         {
             final HttpPost httpPost = new HttpPost(hrefUri);

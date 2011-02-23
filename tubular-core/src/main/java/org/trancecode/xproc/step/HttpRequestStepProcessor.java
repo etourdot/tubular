@@ -19,23 +19,29 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.net.ProxySelector;
+import java.util.List;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.protocol.BasicHttpContext;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
@@ -82,22 +88,26 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
 
         final RequestParser parser = new RequestParser(serializationOptions);
         final XProcHttpRequest xProcRequest = parser.parseRequest(request);
-
-        final HttpClient httpClient = prepareHttpClient();
+        final BasicHttpContext localContext = new BasicHttpContext();
+        final HttpClient httpClient = prepareHttpClient(xProcRequest, localContext);
         try
         {
             final Processor processor = input.getPipelineContext().getProcessor();
             final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor, xProcRequest.isDetailled(), xProcRequest.isStatusOnly());
-            final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler);
+            final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler, localContext);
             final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
             builder.startDocument();
-            builder.nodes(response.getNodes());
+            if (response.getNodes() != null)
+            {
+                builder.nodes(response.getNodes());                
+            }
             builder.endDocument();
             output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
         catch (IOException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            //TODO
+            e.printStackTrace();
         }
         finally
         {
@@ -105,19 +115,26 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         }
     }
 
-    private HttpClient prepareHttpClient()
+    private HttpClient prepareHttpClient(final XProcHttpRequest xProcRequest, final BasicHttpContext localContext)
     {
         final SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
         final ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(schemeRegistry);
         final DefaultHttpClient httpClient = new DefaultHttpClient(connManager);
-        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+        final ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
                 httpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
         httpClient.setRoutePlanner(routePlanner);
 
-        final ImmutableList<String> authPref = ImmutableList.of(AuthPolicy.BASIC, AuthPolicy.DIGEST);
-        httpClient.getParams().setParameter(AuthPNames.CREDENTIAL_CHARSET, authPref);
+        if (xProcRequest.getCredentials() != null)
+        {
+            final List<String> authPref = Lists.newArrayList(AuthPolicy.BASIC, AuthPolicy.DIGEST);
+            httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authPref);
+            httpClient.setCredentialsProvider(xProcRequest.getCredentials());
+            final AuthCache authCache = new BasicAuthCache();
+            final BasicScheme basicAuth = new BasicScheme();
+            authCache.put(xProcRequest.getHttpHost(), basicAuth);
+            localContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+        }
         return httpClient;
     }
-
 }

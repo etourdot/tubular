@@ -22,9 +22,20 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Set;
+import javax.mail.MessagingException;
+import javax.mail.internet.ContentType;
+import javax.mail.internet.MimeUtility;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
+import org.apache.commons.io.IOUtils;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.variable.XProcOptions;
@@ -41,7 +52,8 @@ public final class StepUtils
     public static final String METHOD_HTML = "html";
     public static final String METHOD_XHTML = "xhtml";
     public static final String METHOD_TEXT = "text";
-
+    public static final String ENCODING_BASE64 = "base64";
+    public static final Set<String> SUPPORTED_CONTENTTYPE = ImmutableSet.of(MediaTypes.MEDIA_XML,MediaTypes.MEDIA_TYPE_HTML);
     private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML, MediaTypes.MEDIA_TYPE_XML,
         METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML, MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
 
@@ -184,6 +196,29 @@ public final class StepUtils
         else
         {
             return new QName("", newNamespace, newName);
+        }
+    }
+
+    public static String getBase64Content(final String content, final ContentType contentType, final String charset)
+    {
+        try
+        {
+            final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)), ENCODING_BASE64);
+            final StringWriter writer = new StringWriter();
+            IOUtils.copy(b64is, writer, charset);
+            return writer.toString();
+        }
+        catch (MessagingException e)
+        {
+            throw XProcExceptions.xc0010(null);
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw XProcExceptions.xc0010(null);
+        }
+        catch (IOException e)
+        {
+            throw XProcExceptions.xc0010(null);
         }
     }
 }
