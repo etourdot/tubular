@@ -96,7 +96,7 @@ public final class XProcSteps
     public static final QName HASH = XProcXmlModel.xprocNamespace().newSaxonQName("hash");
     public static final QName UUID = XProcXmlModel.xprocNamespace().newSaxonQName("uuid");
     public static final QName VALIDATE_WITH_RELANXNG = XProcXmlModel.xprocNamespace().newSaxonQName(
-            "validate-with-relaxng");
+            "validate-with-relax-ng");
     public static final QName VALIDATE_WITH_SCHEMATRON = XProcXmlModel.xprocNamespace().newSaxonQName(
             "validate-with-schematron");
     public static final QName VALIDATE_WITH_SCHEMA = XProcXmlModel.xprocNamespace().newSaxonQName(
