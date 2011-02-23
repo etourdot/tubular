@@ -45,7 +45,7 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
     @Override
     public Environment run(final Step step, final Environment environment)
     {
-        LOG.trace("step = {}", step.getName());
+        LOG.trace("{@method} step = {} ; type = {}", step.getName(), step.getType());
         assert step.isCompoundStep();
 
         environment.setCurrentEnvironment();
