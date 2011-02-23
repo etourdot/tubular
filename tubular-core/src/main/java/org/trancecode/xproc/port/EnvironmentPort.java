@@ -205,7 +205,6 @@ public final class EnvironmentPort implements HasPortReference
     @Override
     public String toString()
     {
-        return String.format("%s[%s/%s]", getClass().getSimpleName(), declaredPort.getStepName(),
-                declaredPort.getPortName());
+        return declaredPort.toString();
     }
 }
