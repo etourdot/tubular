@@ -46,7 +46,31 @@ public final class Port extends AbstractHasLocation implements HasPortReference
     private final PortReference portReference;
 
     public static enum Type {
-        INPUT, OUTPUT, PARAMETER
+        INPUT
+        {
+            @Override
+            public String toString()
+            {
+                return "input-port";
+            }
+        },
+        OUTPUT
+        {
+            @Override
+            public String toString()
+            {
+                return "output-port";
+            }
+        },
+        PARAMETER
+        {
+            @Override
+            public String toString()
+            {
+                return "parameter-port";
+            }
+        }
+
     }
 
     public static Port newInputPort(final String portName)
@@ -199,12 +223,7 @@ public final class Port extends AbstractHasLocation implements HasPortReference
     @Override
     public String toString()
     {
-        final String primaryTag = getTag(primary, "[primary]", "[not primary]");
-        final String sequenceTag = getTag(sequence, "[sequence]", "[not sequence]");
-        final String parameterTag = getTag(isParameter(), "[parameter]", "");
-        final String selectTag = select != null ? "[select = " + select + "]" : "";
-        return String.format("%s[%s][%s]%s%s%s%s", getClass().getSimpleName(), type, portReference, parameterTag,
-                primaryTag, sequenceTag, selectTag);
+        return String.format("%s(%s)", type, portReference);
     }
 
     public Port setPrimary(final String primary)
