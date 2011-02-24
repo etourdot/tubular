@@ -19,20 +19,11 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.collect.ImmutableSet;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EnumSet;
-import java.util.Set;
-import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
-import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.sax.SAXSource;
 import net.sf.saxon.s9api.DocumentBuilder;
@@ -41,9 +32,9 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.ccil.cowan.tagsoup.Parser;
+import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.Saxon;
@@ -62,10 +53,6 @@ import org.xml.sax.InputSource;
 public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(UnEscapeMarkupStepProcessor.class);
-    private static final String XML_CONTENTTYPE = "application/xml";
-    private static final String HTML_CONTENTTYPE = "text/html";
-    private static final String ENCODING_BASE64 = "base64";
-    private static final Set<String> SUPPORTED_CONTENTTYPE = ImmutableSet.of(XML_CONTENTTYPE,HTML_CONTENTTYPE);
 
     @Override
     public QName getStepType()
@@ -80,14 +67,14 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
 
         final String namespaceOption = input.getOptionValue(XProcOptions.NAMESPACE, null);
         final URI namespaceURI = getUri(namespaceOption);
-        final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, XML_CONTENTTYPE);
+        final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, MediaTypes.MEDIA_XML);
         final String encodingOption = input.getOptionValue(XProcOptions.ENCODING, null);
 
         final ContentType contentType = getContentType(contentTypeOption, input.getStep());
         final String charsetOption = input.getOptionValue(XProcOptions.CHARSET, null);
         final String charset = (charsetOption == null) ? contentType.getParameter("charset") : charsetOption;
 
-        if (ENCODING_BASE64.equals(encodingOption))
+        if (StepUtils.ENCODING_BASE64.equals(encodingOption))
         {
             if (charset == null)
             {
@@ -110,7 +97,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                             LOG.trace("copy existing attribute: {}", attribute);
                             builder.attribute(attribute.getNodeName(), attribute.getStringValue());
                         }
-                        if (HTML_CONTENTTYPE.equals(contentType.getBaseType()))
+                        if (MediaTypes.MEDIA_TYPE_HTML.equals(contentType.getBaseType()))
                         {
                             writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                         }
@@ -150,7 +137,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 public void text(final XdmNode node, final SaxonBuilder builder)
                 {
                     final String unEscapeContent = getUnEscapeContent(node.getStringValue(), encodingOption, contentType, charset);
-                    if (HTML_CONTENTTYPE.equals(contentType.getBaseType()))
+                    if (MediaTypes.MEDIA_TYPE_HTML.equals(contentType.getBaseType()))
                     {
                         writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                     }
@@ -235,7 +222,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         try
         {
             final ContentType ct = new ContentType(content_type);
-            if (!SUPPORTED_CONTENTTYPE.contains(ct.getBaseType()))
+            if (!StepUtils.SUPPORTED_CONTENTTYPE.contains(ct.getBaseType()))
             {
                 throw XProcExceptions.xc0051(inputStep.getLocation());
             }
@@ -249,34 +236,15 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
 
     private static String getUnEscapeContent(final String content, final String encoding, final ContentType contentType, final String charset)
     {
-        if (ENCODING_BASE64.equals(encoding))
+        if (StepUtils.ENCODING_BASE64.equals(encoding))
         {
-            try
-            {
-                final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)), encoding);
-                final StringWriter writer = new StringWriter();
-                IOUtils.copy(b64is, writer, charset);
-                return writer.toString();
-            }
-            catch (MessagingException e)
-            {
-                throw XProcExceptions.xc0010(null);
-            }
-            catch (UnsupportedEncodingException e)
-            {
-                throw XProcExceptions.xc0010(null);
-            }
-            catch (IOException e)
-            {
-                throw XProcExceptions.xc0010(null);
-            }
+            return StepUtils.getBase64Content(content, contentType, charset);
         }
-
-        if (XML_CONTENTTYPE.equals(contentType.getBaseType()))
+        else if (MediaTypes.MEDIA_XML.equals(contentType.getBaseType()))
         {
             return StringEscapeUtils.unescapeHtml(content);
         }
-        else if (HTML_CONTENTTYPE.equals(contentType.getBaseType()))
+        else if (MediaTypes.MEDIA_TYPE_HTML.equals(contentType.getBaseType()))
         {
             return StringEscapeUtils.unescapeXml(content);
         }

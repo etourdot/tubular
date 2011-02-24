@@ -20,10 +20,31 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.net.ProxySelector;
+import java.util.List;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.protocol.BasicHttpContext;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
+import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.port.XProcPorts;
@@ -50,6 +71,12 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         final XdmNode sourceDoc = input.readNode(XProcPorts.SOURCE);
+        final XdmNode request = SaxonAxis.childElement(sourceDoc);
+        if (!XProcXmlModel.Elements.REQUEST.equals(request.getNodeName()))
+        {
+            throw XProcExceptions.xc0040(input.getStep().getLocation());
+        }
+
         final ImmutableMap.Builder<QName, String> defaultBuilder = new ImmutableMap.Builder<QName, String>();
         defaultBuilder.put(XProcOptions.CDATA_SECTION_ELEMENTS, "").put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false")
                 .put(XProcOptions.INCLUDE_CONTENT_TYPE, "true").put(XProcOptions.INDENT, "false")
@@ -59,14 +86,55 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
         final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input, defaultOptions);
 
-        final XdmNode request = SaxonAxis.childElement(sourceDoc);
-
-        if (!XProcXmlModel.Elements.REQUEST.equals(request.getNodeName()))
+        final RequestParser parser = new RequestParser(serializationOptions);
+        final XProcHttpRequest xProcRequest = parser.parseRequest(request);
+        final BasicHttpContext localContext = new BasicHttpContext();
+        final HttpClient httpClient = prepareHttpClient(xProcRequest, localContext);
+        try
         {
-            throw XProcExceptions.xc0040(input.getStep().getLocation());
+            final Processor processor = input.getPipelineContext().getProcessor();
+            final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor, xProcRequest.isDetailled(), xProcRequest.isStatusOnly());
+            final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler, localContext);
+            final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
+            builder.startDocument();
+            if (response.getNodes() != null)
+            {
+                builder.nodes(response.getNodes());                
+            }
+            builder.endDocument();
+            output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
+        catch (IOException e)
+        {
+            //TODO
+            e.printStackTrace();
+        }
+        finally
+        {
+            httpClient.getConnectionManager().shutdown();
+        }
+    }
 
-        //TODO: all the job !
-        output.writeNodes(XProcPorts.RESULT, sourceDoc);
+    private HttpClient prepareHttpClient(final XProcHttpRequest xProcRequest, final BasicHttpContext localContext)
+    {
+        final SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+        final ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(schemeRegistry);
+        final DefaultHttpClient httpClient = new DefaultHttpClient(connManager);
+        final ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+                httpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
+        httpClient.setRoutePlanner(routePlanner);
+
+        if (xProcRequest.getCredentials() != null)
+        {
+            final List<String> authPref = Lists.newArrayList(AuthPolicy.BASIC, AuthPolicy.DIGEST);
+            httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authPref);
+            httpClient.setCredentialsProvider(xProcRequest.getCredentials());
+            final AuthCache authCache = new BasicAuthCache();
+            final BasicScheme basicAuth = new BasicScheme();
+            authCache.put(xProcRequest.getHttpHost(), basicAuth);
+            localContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+        }
+        return httpClient;
     }
 }

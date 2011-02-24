@@ -32,6 +32,7 @@ public final class XProcPorts
     public static final String PARAMETERS = "parameters";
     public static final String RESULT = "result";
     public static final String SECONDARY = "secondary";
+    public static final String SCHEMA = "schema";
     public static final String SOURCE = "source";
     public static final String STYLESHEET = "stylesheet";
     public static final String VIEWPORT_SOURCE = "viewport-source";

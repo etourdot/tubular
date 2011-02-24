@@ -71,6 +71,14 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         {
             throw XProcExceptions.xd0006(input.getStep().getLocation(), input.getStep().getPortReference(XProcPorts.SOURCE));
         }
+        final boolean isResultXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
+        final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINES));
+        final boolean isErrorXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ERRORS_IS_XML));
+        final boolean wrapErrorLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_ERROR_LINES));
+        if ((isResultXml && wrapResultLines) || (isErrorXml && wrapErrorLines))
+        {
+            throw XProcExceptions.xc0035(input.getStep().getLocation());
+        }
 
         final List<String> commandLine = Lists.newArrayList();
         commandLine.add(command);
@@ -119,7 +127,6 @@ public final class ExecStepProcessor extends AbstractStepProcessor
                 .getUnderlyingConfiguration());
         builder.startDocument();
         builder.startElement(XProcXmlModel.Elements.RESULT, input.getStep().getNode());
-        final boolean isResultXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
         if (isResultXml)
         {
             final XdmNode resultNode = input.getPipelineContext().getProcessor().newDocumentBuilder().build(stdoutFile);
@@ -127,7 +134,6 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         }
         else
         {
-            final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINES));
             if (wrapResultLines)
             {
                 @SuppressWarnings("unchecked")

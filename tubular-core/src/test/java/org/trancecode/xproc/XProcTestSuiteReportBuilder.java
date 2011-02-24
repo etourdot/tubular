@@ -21,12 +21,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
-
 import java.io.File;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -57,8 +55,9 @@ public final class XProcTestSuiteReportBuilder
 
         public boolean failed()
         {
-            return error != null
-                    && !(error instanceof XProcException && ((XProcException) error).getName().equals(test.getError()));
+            return (error != null
+                    && !(error instanceof XProcException && ((XProcException) error).getName().equals(test.getError()))) ||
+                   (error == null && test.getError() != null);
         }
     }
 

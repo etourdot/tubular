@@ -23,7 +23,8 @@ org.trancecode.xproc.step.StringReplaceStepProcessor
 org.trancecode.xproc.step.UnEscapeMarkupStepProcessor
 org.trancecode.xproc.step.UnWrapStepProcessor
 org.trancecode.xproc.step.UuidStepProcessor
+org.trancecode.xproc.step.ValidateWithSchemaStepProcessor
 org.trancecode.xproc.step.WrapSequenceStepProcessor
+org.trancecode.xproc.step.WrapStepProcessor
 org.trancecode.xproc.step.XslFormatterStepProcessor
 org.trancecode.xproc.step.XsltStepProcessor
-org.trancecode.xproc.step.WrapStepProcessor

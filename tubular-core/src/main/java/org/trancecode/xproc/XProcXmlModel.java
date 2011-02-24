@@ -64,6 +64,7 @@ public final class XProcXmlModel
         public static final QName PIPEINFO = xprocNamespace().newSaxonQName("pipeinfo");
         public static final QName PIPELINE = xprocNamespace().newSaxonQName("pipeline");
         public static final QName REQUEST = xprocStepNamespace().newSaxonQName("request");
+        public static final QName RESPONSE = xprocStepNamespace().newSaxonQName("response");
         public static final QName RESULT = xprocStepNamespace().newSaxonQName("result");
         public static final QName VARIABLE = xprocNamespace().newSaxonQName("variable");
         public static final QName VIEWPORT_SOURCE = xprocNamespace().newSaxonQName("viewport-source");
@@ -71,6 +72,9 @@ public final class XProcXmlModel
         public static final QName WITH_OPTION = xprocNamespace().newSaxonQName("with-option");
         public static final QName WITH_PARAM = xprocNamespace().newSaxonQName("with-param");
         public static final QName XPATH_CONTEXT = xprocNamespace().newSaxonQName("xpath-context");
+        public static final QName HEADER = XProcXmlModel.xprocStepNamespace().newSaxonQName("header");
+        public static final QName MULTIPART = XProcXmlModel.xprocStepNamespace().newSaxonQName("multipart");
+        public static final QName BODY = XProcXmlModel.xprocStepNamespace().newSaxonQName("body");
 
         public static final Set<QName> ELEMENTS_CORE_STEPS = ImmutableSet.of(FOR_EACH, CHOOSE);
         public static final Set<QName> ELEMENTS_DECLARE_STEP_OR_PIPELINE = ImmutableSet.of(DECLARE_STEP, PIPELINE);
@@ -109,6 +113,22 @@ public final class XProcXmlModel
         public static final QName TYPE = new QName("type");
         public static final QName VALUE = new QName("value");
         public static final QName VERSION = new QName("version");
+
+        public static final QName METHOD = new QName("method");
+        public static final QName DETAILED = new QName("detailed");
+        public static final QName CONTENT_TYPE = new QName("content-type");
+        public static final QName ENCODING = new QName("encoding");
+        public static final QName ID = new QName("id");
+        public static final QName DESCRIPTION = new QName("description");
+        public static final QName DISPOSITION = new QName("disposition");
+        public static final QName STATUS_ONLY = new QName("status-only");
+        public static final QName STATUS = new QName("status");
+        public static final QName BOUNDARY = new QName("boundary");
+        public static final QName USERNAME = new QName("username");
+        public static final QName PASSWORD = new QName("password");
+        public static final QName AUTH_METHOD = new QName("auth-method");
+        public static final QName SEND_AUTHORIZATION = new QName("send-authorization");
+        public static final QName OVERRIDE_CONTENT_TYPE = new QName("override-content-type");
 
         private Attributes()
         {

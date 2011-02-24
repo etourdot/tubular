@@ -77,8 +77,8 @@ public abstract class AbstractXProcTest extends AbstractTest
     @BeforeClass
     public static void setupLoggingLevel()
     {
-        Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
-        Logger.getLogger("org.apache").setLevel(Level.INFO);
+        Logger.getLogger("org.trancecode").setLevel(Level.INFO);
+        Logger.getLogger("org.apache").setLevel(Level.TRACE);
     }
 
     @BeforeClass
@@ -130,7 +130,10 @@ public abstract class AbstractXProcTest extends AbstractTest
             Assert.fail(e.getMessage(), e);
         }
 
-        reportBuilder.result(test, null);
+        if (reportBuilder.result(test, null).failed())
+        {
+            Assert.fail(String.format("expected error: %s", test.getError()));
+        }
         LOG.info("Ending test: {}", testUrl);
     }
 
