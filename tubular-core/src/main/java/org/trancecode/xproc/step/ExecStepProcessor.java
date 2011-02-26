@@ -88,7 +88,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         Iterables.addAll(commandLine, Iterables.filter(args, StringPredicates.isNotEmpty()));
         LOG.trace("commandLine = {}", commandLine);
         final ProcessBuilder processBuilder = new ProcessBuilder(commandLine.toArray(new String[0]));
-        processBuilder.redirectErrorStream(true);
+        processBuilder.redirectErrorStream(false);
         if (cwd != null)
         {
             processBuilder.directory(new File(cwd));
@@ -136,12 +136,8 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final File stderrFile = stderr.get();
         process.destroy();
 
-        if (exitCode == 0)
-        {
-            output.writeNodes(XProcPorts.RESULT,
-                    parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
-        }
-
+        output.writeNodes(XProcPorts.RESULT,
+                parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
         output.writeNodes(XProcPorts.ERRORS,
                 parseOutput(stderrFile, errorsIsXml, wrapErrorLines, input.getStep().getNode()));
     }
