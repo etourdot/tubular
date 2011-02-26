@@ -78,6 +78,7 @@ public final class XProcOptions
     public static final QName NORMALIZATION_FORM = new QName("normalization-form");
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
+    public static final QName PATH_SEPARATOR = new QName("path-separator");
     public static final QName POSITION = new QName("position");
     public static final QName RELATIVE = new QName("relative");
     public static final QName REPLACE = new QName("replace");

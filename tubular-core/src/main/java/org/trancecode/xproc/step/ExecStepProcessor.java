@@ -51,7 +51,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class ExecStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
+    private static final Logger LOG = Logger.getLogger(ExecStepProcessor.class);
 
     @Override
     public QName getStepType()
@@ -62,7 +62,17 @@ public final class ExecStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output) throws Exception
     {
-        final String command = input.getOptionValue(XProcOptions.COMMAND);
+        final String pathSeparator = input.getOptionValue(XProcOptions.PATH_SEPARATOR);
+        final String command;
+        if (pathSeparator != null)
+        {
+            command = input.getOptionValue(XProcOptions.COMMAND).replace(pathSeparator, File.separator);
+        }
+        else
+        {
+            command = input.getOptionValue(XProcOptions.COMMAND);
+        }
+
         final String argSeparator = input.getOptionValue(XProcOptions.ARG_SEPARATOR, " ");
         final Iterable<String> args = TcStrings.split(input.getOptionValue(XProcOptions.ARGS), argSeparator);
         final String cwd = input.getOptionValue(XProcOptions.CWD);
