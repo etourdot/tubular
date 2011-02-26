@@ -684,6 +684,8 @@ public final class Environment
 
             xpathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace()
                     .uri());
+            xpathCompiler.declareNamespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel
+                    .xprocStepNamespace().uri());
 
             final XPathSelector selector = xpathCompiler.compile(select).load();
             setCurrentXPathContext(xpathContextNode);
