@@ -20,9 +20,10 @@
 package org.trancecode.xproc.variable;
 
 import com.google.common.collect.ImmutableMap;
-import net.sf.saxon.s9api.QName;
 
 import java.util.Map;
+
+import net.sf.saxon.s9api.QName;
 
 /**
  * Common XProc options.
@@ -86,6 +87,7 @@ public final class XProcOptions
     public static final QName SELECT = new QName("select");
     public static final QName SOURCE_BASE_URI = new QName("source-base-uri");
     public static final QName SOURCE_DOCUMENT_URI = new QName("source-document-uri");
+    public static final QName SOURCE_IS_XML = new QName("source-is-xml");
     public static final QName STANDALONE = new QName("standalone");
     public static final QName TEMP_BASE_URI = new QName("temp-base-uri");
     public static final QName TEMPLATE_NAME = new QName("template-name");

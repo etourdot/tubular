@@ -69,8 +69,10 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final List<XdmNode> inputDocuments = ImmutableList.copyOf(input.readNodes(XProcPorts.SOURCE));
         if (inputDocuments.size() > 1)
         {
-            throw XProcExceptions.xd0006(input.getStep().getLocation(), input.getStep().getPortReference(XProcPorts.SOURCE));
+            throw XProcExceptions.xd0006(input.getStep().getLocation(),
+                    input.getStep().getPortReference(XProcPorts.SOURCE));
         }
+        final boolean sourceIsXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.SOURCE_IS_XML));
         final boolean isResultXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
         final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINES));
         final boolean isErrorXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ERRORS_IS_XML));
@@ -94,6 +96,16 @@ public final class ExecStepProcessor extends AbstractStepProcessor
 
         if (!inputDocuments.isEmpty())
         {
+            final String inputContent;
+            if (sourceIsXml)
+            {
+                inputContent = inputDocuments.get(0).toString();
+            }
+            else
+            {
+                inputContent = SaxonAxis.childElement(inputDocuments.get(0)).getStringValue();
+            }
+
             new Thread(new Runnable()
             {
                 @Override
@@ -101,7 +113,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
                 {
                     try
                     {
-                        IOUtils.write(inputDocuments.get(0).toString(), process.getOutputStream());
+                        IOUtils.write(inputContent, process.getOutputStream());
                     }
                     catch (final IOException e)
                     {
