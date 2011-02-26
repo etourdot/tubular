@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.FileUtils;
@@ -135,21 +136,28 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final File stderrFile = stderr.get();
         process.destroy();
 
-        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-                .getUnderlyingConfiguration());
+        output.writeNodes(XProcPorts.RESULT,
+                parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
+    }
+
+    private static XdmNode parseOutput(final File file, final boolean outputIsXml, final boolean wrapLines,
+            final XdmNode namespaceContext) throws Exception
+    {
+        final Processor processor = namespaceContext.getProcessor();
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
-        builder.startElement(XProcXmlModel.Elements.RESULT, input.getStep().getNode());
-        if (resultIsXml)
+        builder.startElement(XProcXmlModel.Elements.RESULT, namespaceContext);
+        if (outputIsXml)
         {
-            final XdmNode resultNode = input.getPipelineContext().getProcessor().newDocumentBuilder().build(stdoutFile);
+            final XdmNode resultNode = processor.newDocumentBuilder().build(file);
             builder.nodes(SaxonAxis.childElement(resultNode));
         }
         else
         {
-            if (wrapResultLines)
+            if (wrapLines)
             {
                 @SuppressWarnings("unchecked")
-                final List<String> lines = FileUtils.readLines(stdoutFile);
+                final List<String> lines = FileUtils.readLines(file);
                 for (final String line : lines)
                 {
                     builder.startElement(XProcXmlModel.Elements.LINE);
@@ -159,13 +167,13 @@ public final class ExecStepProcessor extends AbstractStepProcessor
             }
             else
             {
-                builder.text(FileUtils.readFileToString(stdoutFile));
+                builder.text(FileUtils.readFileToString(file));
             }
         }
 
         builder.endElement();
         builder.endDocument();
 
-        output.writeNodes(XProcPorts.RESULT, builder.getNode());
+        return builder.getNode();
     }
 }
