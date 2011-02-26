@@ -150,6 +150,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
                 parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
         output.writeNodes(XProcPorts.ERRORS,
                 parseOutput(stderrFile, errorsIsXml, wrapErrorLines, input.getStep().getNode()));
+        output.writeNodes(XProcPorts.EXIT_STATUS, input.newResultElement(Integer.toString(exitCode)));
     }
 
     private static XdmNode parseOutput(final File file, final boolean outputIsXml, final boolean wrapLines,

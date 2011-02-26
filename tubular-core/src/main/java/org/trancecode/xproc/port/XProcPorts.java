@@ -29,6 +29,7 @@ public final class XProcPorts
     public static final String ALTERNATE = "alternate";
     public static final String CURRENT = "current";
     public static final String ERRORS = "errors";
+    public static final String EXIT_STATUS = "exit-status";
     public static final String ITERATION_SOURCE = "iteration-source";
     public static final String PARAMETERS = "parameters";
     public static final String REPLACEMENT = "replacement";
