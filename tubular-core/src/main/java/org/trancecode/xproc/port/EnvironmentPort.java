@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathExecutable;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
@@ -36,6 +37,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.binding.EnvironmentPortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 
@@ -73,7 +75,12 @@ public final class EnvironmentPort implements HasPortReference
         {
             try
             {
-                select = environment.getPipelineContext().getProcessor().newXPathCompiler().compile(declaredPortSelect);
+                final XPathCompiler xpathCompiler = environment.getPipelineContext().getProcessor().newXPathCompiler();
+                xpathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace()
+                        .uri());
+                xpathCompiler.declareNamespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel
+                        .xprocStepNamespace().uri());
+                select = xpathCompiler.compile(declaredPortSelect);
             }
             catch (final SaxonApiException e)
             {
