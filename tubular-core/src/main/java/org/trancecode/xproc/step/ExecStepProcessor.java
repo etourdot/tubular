@@ -136,8 +136,14 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final File stderrFile = stderr.get();
         process.destroy();
 
-        output.writeNodes(XProcPorts.RESULT,
-                parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
+        if (exitCode == 0)
+        {
+            output.writeNodes(XProcPorts.RESULT,
+                    parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
+        }
+
+        output.writeNodes(XProcPorts.ERRORS,
+                parseOutput(stderrFile, errorsIsXml, wrapErrorLines, input.getStep().getNode()));
     }
 
     private static XdmNode parseOutput(final File file, final boolean outputIsXml, final boolean wrapLines,
@@ -147,27 +153,30 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
         builder.startElement(XProcXmlModel.Elements.RESULT, namespaceContext);
-        if (outputIsXml)
+        if (file.length() > 0)
         {
-            final XdmNode resultNode = processor.newDocumentBuilder().build(file);
-            builder.nodes(SaxonAxis.childElement(resultNode));
-        }
-        else
-        {
-            if (wrapLines)
+            if (outputIsXml)
             {
-                @SuppressWarnings("unchecked")
-                final List<String> lines = FileUtils.readLines(file);
-                for (final String line : lines)
-                {
-                    builder.startElement(XProcXmlModel.Elements.LINE);
-                    builder.text(line);
-                    builder.endElement();
-                }
+                final XdmNode resultNode = processor.newDocumentBuilder().build(file);
+                builder.nodes(SaxonAxis.childElement(resultNode));
             }
             else
             {
-                builder.text(FileUtils.readFileToString(file));
+                if (wrapLines)
+                {
+                    @SuppressWarnings("unchecked")
+                    final List<String> lines = FileUtils.readLines(file);
+                    for (final String line : lines)
+                    {
+                        builder.startElement(XProcXmlModel.Elements.LINE);
+                        builder.text(line);
+                        builder.endElement();
+                    }
+                }
+                else
+                {
+                    builder.text(FileUtils.readFileToString(file));
+                }
             }
         }
 
