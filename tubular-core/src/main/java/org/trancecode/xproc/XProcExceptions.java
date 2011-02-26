@@ -20,6 +20,9 @@
 package org.trancecode.xproc;
 
 import com.google.common.collect.ImmutableSet;
+
+import java.net.URI;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -29,8 +32,6 @@ import org.trancecode.xproc.XProcException.Type;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
-
-import java.net.URI;
 
 /**
  * @author Herve Quiroz
@@ -118,37 +119,56 @@ public final class XProcExceptions
 
     public static XProcException xc0002(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 2, SaxonLocation.of(node), "It is a dynamic error if the value starts with the string \"--\".");
+        return newXProcException(Type.STEP, 2, SaxonLocation.of(node),
+                "It is a dynamic error if the value starts with the string \"--\".");
     }
 
     public static XProcException xc0003(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 3, SaxonLocation.of(node), "It is a dynamic error if a username or password is specified without specifying an auth-method, if the requested auth-method isn't supported, or the authentication challenge contains an authentication method that isn't supported.");
+        return newXProcException(
+                Type.STEP,
+                3,
+                SaxonLocation.of(node),
+                "It is a dynamic error if a username or password is specified without specifying an auth-method, if the requested auth-method isn't supported, or the authentication challenge contains an authentication method that isn't supported.");
     }
 
     public static XProcException xc0004(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 4, SaxonLocation.of(node), "It is a dynamic error if the status-only attribute has the value true and the detailed attribute does not have the value true.");
+        return newXProcException(
+                Type.STEP,
+                4,
+                SaxonLocation.of(node),
+                "It is a dynamic error if the status-only attribute has the value true and the detailed attribute does not have the value true.");
     }
 
     public static XProcException xc0005(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 5, SaxonLocation.of(node), "It is a dynamic error if the request contains a c:body or c:multipart but the method does not allow for an entity body being sent with the request.");
+        return newXProcException(
+                Type.STEP,
+                5,
+                SaxonLocation.of(node),
+                "It is a dynamic error if the request contains a c:body or c:multipart but the method does not allow for an entity body being sent with the request.");
     }
 
     public static XProcException xc0006(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 6, SaxonLocation.of(node), "It is a dynamic error if the method is not specified on a c:request.");
+        return newXProcException(Type.STEP, 6, SaxonLocation.of(node),
+                "It is a dynamic error if the method is not specified on a c:request.");
     }
 
-   public static XProcException xc0010(final XdmNode node)
+    public static XProcException xc0010(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 10, SaxonLocation.of(node), "It is a dynamic error if an encoding of base64 is specified and the character set is not specified or if the specified character set is not supported by the implementation.");
+        return newXProcException(
+                Type.STEP,
+                10,
+                SaxonLocation.of(node),
+                "It is a dynamic error if an encoding of base64 is specified and the character set is not specified or if the specified character set is not supported by the implementation.");
     }
 
     public static XProcException xc0013(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 13, SaxonLocation.of(node), "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
+        return newXProcException(Type.STEP, 13, SaxonLocation.of(node),
+                "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
     }
 
     public static XProcException xc0019(final Step step)
@@ -159,7 +179,11 @@ public final class XProcExceptions
 
     public static XProcException xc0022(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 22, SaxonLocation.of(node), "it is a dynamic error if the content of the c:body element does not consist of exactly one element, optionally preceded and/or followed by any number of processing instructions, comments or whitespace characters");
+        return newXProcException(
+                Type.STEP,
+                22,
+                SaxonLocation.of(node),
+                "it is a dynamic error if the content of the c:body element does not consist of exactly one element, optionally preceded and/or followed by any number of processing instructions, comments or whitespace characters");
     }
 
     public static XProcException xc0023(final XdmNode node, final XdmNodeKind... allowedNodeTypes)
@@ -189,7 +213,8 @@ public final class XProcExceptions
 
     public static XProcException xc0035(final Location location)
     {
-        return newXProcException(Type.STEP, 35, location, "It is a dynamic error to specify both result-is-xml and wrap-result-lines.");
+        return newXProcException(Type.STEP, 35, location,
+                "It is a dynamic error to specify both result-is-xml and wrap-result-lines.");
     }
 
     public static XProcException xc0038(final Location location, final String version)
@@ -199,27 +224,32 @@ public final class XProcExceptions
 
     public static XProcException xc0040(final Location location)
     {
-        return newXProcException(Type.STEP, 40, location, "It is a dynamic error if the document element of the document that arrives on the source port is not c:request.");
+        return newXProcException(Type.STEP, 40, location,
+                "It is a dynamic error if the document element of the document that arrives on the source port is not c:request.");
     }
 
     public static XProcException xc0050(final Location location)
     {
-        return newXProcException(Type.STEP, 50, location, "It is a dynamic error if the URI scheme is not supported or the step cannot store to the specified location.");
+        return newXProcException(Type.STEP, 50, location,
+                "It is a dynamic error if the URI scheme is not supported or the step cannot store to the specified location.");
     }
 
     public static XProcException xc0051(final Location location)
     {
-        return newXProcException(Type.STEP, 51, location, "It is a dynamic error if the content-type specified is not supported by the implementation.");
+        return newXProcException(Type.STEP, 51, location,
+                "It is a dynamic error if the content-type specified is not supported by the implementation.");
     }
 
     public static XProcException xc0053(final Location location)
     {
-        return newXProcException(Type.STEP, 53, location, "It is a dynamic error if the assert-valid option is true and the input document is not valid.");
+        return newXProcException(Type.STEP, 53, location,
+                "It is a dynamic error if the assert-valid option is true and the input document is not valid.");
     }
 
     public static XProcException xc0058(final Location location)
     {
-        return newXProcException(Type.STEP, 58, location, "It is a dynamic error if the all and relative options are both true.");
+        return newXProcException(Type.STEP, 58, location,
+                "It is a dynamic error if the all and relative options are both true.");
     }
 
     public static XProcException xc0059(final Location location)
@@ -233,8 +263,7 @@ public final class XProcExceptions
 
     public static XProcException xc0060(final Location location)
     {
-        return newXProcException(
-                Type.STEP, 60, location,
+        return newXProcException(Type.STEP, 60, location,
                 "It is a dynamic error if the processor does not support the specified version of the UUID algorithm.");
     }
 
@@ -242,6 +271,12 @@ public final class XProcExceptions
     {
         return newXProcException(Type.STEP, 62, location, "the match option matches a namespace node: %s",
                 node.getNodeName());
+    }
+
+    public static XProcException xc0064(final Location location, final int exitCode, final int failureThreshold)
+    {
+        return newXProcException(Type.STEP, 64, location,
+                "the exit code (%d) is greater than the failure threshold (%s)", exitCode, failureThreshold);
     }
 
     private static XProcException newXProcException(final Type type, final int code, final Location location,

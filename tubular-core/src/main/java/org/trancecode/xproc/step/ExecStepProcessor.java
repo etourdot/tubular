@@ -142,6 +142,18 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final Supplier<File> stderr = TcByteStreams.copyToTempFile(process.getErrorStream());
 
         final int exitCode = process.waitFor();
+        LOG.trace("exitCode = {}", exitCode);
+        final String failureThreshold = input.getOptionValue(XProcOptions.FAILURE_THRESHOLD);
+        if (failureThreshold != null)
+        {
+            LOG.trace("failureThreshold  = {}", failureThreshold);
+            final int numericFailureThreshold = Integer.parseInt(failureThreshold);
+            if (exitCode > numericFailureThreshold)
+            {
+                throw XProcExceptions.xc0064(input.getLocation(), exitCode, numericFailureThreshold);
+            }
+        }
+
         final File stdoutFile = stdout.get();
         final File stderrFile = stderr.get();
         process.destroy();
