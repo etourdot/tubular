@@ -34,6 +34,7 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.binding.EnvironmentPortBinding;
 import org.trancecode.xproc.binding.PortBinding;
@@ -76,7 +77,10 @@ public final class EnvironmentPort implements HasPortReference
             }
             catch (final SaxonApiException e)
             {
-                throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPortSelect, e.getMessage());
+                final XProcException error = XProcExceptions.xd0023(declaredPort.getLocation(), declaredPortSelect,
+                        e.getMessage());
+                error.initCause(e);
+                throw error;
             }
         }
         else
