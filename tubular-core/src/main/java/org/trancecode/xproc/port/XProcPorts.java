@@ -28,8 +28,11 @@ public final class XProcPorts
 {
     public static final String ALTERNATE = "alternate";
     public static final String CURRENT = "current";
+    public static final String ERRORS = "errors";
+    public static final String EXIT_STATUS = "exit-status";
     public static final String ITERATION_SOURCE = "iteration-source";
     public static final String PARAMETERS = "parameters";
+    public static final String REPLACEMENT = "replacement";
     public static final String RESULT = "result";
     public static final String SECONDARY = "secondary";
     public static final String SCHEMA = "schema";
@@ -37,7 +40,6 @@ public final class XProcPorts
     public static final String STYLESHEET = "stylesheet";
     public static final String VIEWPORT_SOURCE = "viewport-source";
     public static final String XPATH_CONTEXT = "xpath-context";
-    public static final String REPLACEMENT = "replacement";
 
     private XProcPorts()
     {

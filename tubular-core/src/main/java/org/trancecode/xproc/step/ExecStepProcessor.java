@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +51,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public final class ExecStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
+    private static final Logger LOG = Logger.getLogger(ExecStepProcessor.class);
 
     @Override
     public QName getStepType()
@@ -61,7 +62,17 @@ public final class ExecStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output) throws Exception
     {
-        final String command = input.getOptionValue(XProcOptions.COMMAND);
+        final String pathSeparator = input.getOptionValue(XProcOptions.PATH_SEPARATOR);
+        final String command;
+        if (pathSeparator != null)
+        {
+            command = input.getOptionValue(XProcOptions.COMMAND).replace(pathSeparator, File.separator);
+        }
+        else
+        {
+            command = input.getOptionValue(XProcOptions.COMMAND);
+        }
+
         final String argSeparator = input.getOptionValue(XProcOptions.ARG_SEPARATOR, " ");
         final Iterable<String> args = TcStrings.split(input.getOptionValue(XProcOptions.ARGS), argSeparator);
         final String cwd = input.getOptionValue(XProcOptions.CWD);
@@ -69,13 +80,15 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final List<XdmNode> inputDocuments = ImmutableList.copyOf(input.readNodes(XProcPorts.SOURCE));
         if (inputDocuments.size() > 1)
         {
-            throw XProcExceptions.xd0006(input.getStep().getLocation(), input.getStep().getPortReference(XProcPorts.SOURCE));
+            throw XProcExceptions.xd0006(input.getStep().getLocation(),
+                    input.getStep().getPortReference(XProcPorts.SOURCE));
         }
-        final boolean isResultXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
+        final boolean sourceIsXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.SOURCE_IS_XML));
+        final boolean resultIsXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.RESULT_IS_XML));
         final boolean wrapResultLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_RESULT_LINES));
-        final boolean isErrorXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ERRORS_IS_XML));
+        final boolean errorsIsXml = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ERRORS_IS_XML));
         final boolean wrapErrorLines = Boolean.parseBoolean(input.getOptionValue(XProcOptions.WRAP_ERROR_LINES));
-        if ((isResultXml && wrapResultLines) || (isErrorXml && wrapErrorLines))
+        if ((resultIsXml && wrapResultLines) || (errorsIsXml && wrapErrorLines))
         {
             throw XProcExceptions.xc0035(input.getStep().getLocation());
         }
@@ -84,8 +97,8 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         commandLine.add(command);
         Iterables.addAll(commandLine, Iterables.filter(args, StringPredicates.isNotEmpty()));
         LOG.trace("commandLine = {}", commandLine);
-        final ProcessBuilder processBuilder = new ProcessBuilder(commandLine.toArray(new String[commandLine.size()]));
-        processBuilder.redirectErrorStream(true);
+        final ProcessBuilder processBuilder = new ProcessBuilder(commandLine.toArray(new String[0]));
+        processBuilder.redirectErrorStream(false);
         if (cwd != null)
         {
             processBuilder.directory(new File(cwd));
@@ -94,6 +107,16 @@ public final class ExecStepProcessor extends AbstractStepProcessor
 
         if (!inputDocuments.isEmpty())
         {
+            final String inputContent;
+            if (sourceIsXml)
+            {
+                inputContent = inputDocuments.get(0).toString();
+            }
+            else
+            {
+                inputContent = SaxonAxis.childElement(inputDocuments.get(0)).getStringValue();
+            }
+
             new Thread(new Runnable()
             {
                 @Override
@@ -101,7 +124,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
                 {
                     try
                     {
-                        IOUtils.write(inputDocuments.get(0).toString(), process.getOutputStream());
+                        IOUtils.write(inputContent, process.getOutputStream());
                     }
                     catch (final IOException e)
                     {
@@ -119,41 +142,66 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final Supplier<File> stderr = TcByteStreams.copyToTempFile(process.getErrorStream());
 
         final int exitCode = process.waitFor();
+        LOG.trace("exitCode = {}", exitCode);
+        final String failureThreshold = input.getOptionValue(XProcOptions.FAILURE_THRESHOLD);
+        if (failureThreshold != null)
+        {
+            LOG.trace("failureThreshold  = {}", failureThreshold);
+            final int numericFailureThreshold = Integer.parseInt(failureThreshold);
+            if (exitCode > numericFailureThreshold)
+            {
+                throw XProcExceptions.xc0064(input.getLocation(), exitCode, numericFailureThreshold);
+            }
+        }
+
         final File stdoutFile = stdout.get();
         final File stderrFile = stderr.get();
         process.destroy();
 
-        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-                .getUnderlyingConfiguration());
+        output.writeNodes(XProcPorts.RESULT,
+                parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
+        output.writeNodes(XProcPorts.ERRORS,
+                parseOutput(stderrFile, errorsIsXml, wrapErrorLines, input.getStep().getNode()));
+        output.writeNodes(XProcPorts.EXIT_STATUS, input.newResultElement(Integer.toString(exitCode)));
+    }
+
+    private static XdmNode parseOutput(final File file, final boolean outputIsXml, final boolean wrapLines,
+            final XdmNode namespaceContext) throws Exception
+    {
+        final Processor processor = namespaceContext.getProcessor();
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
-        builder.startElement(XProcXmlModel.Elements.RESULT, input.getStep().getNode());
-        if (isResultXml)
+        builder.startElement(XProcXmlModel.Elements.RESULT, namespaceContext);
+        if (file.length() > 0)
         {
-            final XdmNode resultNode = input.getPipelineContext().getProcessor().newDocumentBuilder().build(stdoutFile);
-            builder.nodes(SaxonAxis.childElement(resultNode));
-        }
-        else
-        {
-            if (wrapResultLines)
+            if (outputIsXml)
             {
-                @SuppressWarnings("unchecked")
-                final List<String> lines = FileUtils.readLines(stdoutFile);
-                for (final String line : lines)
-                {
-                    builder.startElement(XProcXmlModel.Elements.LINE);
-                    builder.text(line);
-                    builder.endElement();
-                }
+                final XdmNode resultNode = processor.newDocumentBuilder().build(file);
+                builder.nodes(SaxonAxis.childElement(resultNode));
             }
             else
             {
-                builder.text(FileUtils.readFileToString(stdoutFile));
+                if (wrapLines)
+                {
+                    @SuppressWarnings("unchecked")
+                    final List<String> lines = FileUtils.readLines(file);
+                    for (final String line : lines)
+                    {
+                        builder.startElement(XProcXmlModel.Elements.LINE);
+                        builder.text(line);
+                        builder.endElement();
+                    }
+                }
+                else
+                {
+                    builder.text(FileUtils.readFileToString(file));
+                }
             }
         }
 
         builder.endElement();
         builder.endDocument();
 
-        output.writeNodes(XProcPorts.RESULT, builder.getNode());
+        return builder.getNode();
     }
 }

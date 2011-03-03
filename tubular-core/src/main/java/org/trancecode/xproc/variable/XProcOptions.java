@@ -20,9 +20,10 @@
 package org.trancecode.xproc.variable;
 
 import com.google.common.collect.ImmutableMap;
-import net.sf.saxon.s9api.QName;
 
 import java.util.Map;
+
+import net.sf.saxon.s9api.QName;
 
 /**
  * Common XProc options.
@@ -59,6 +60,7 @@ public final class XProcOptions
     public static final QName ERRORS_IS_XML = new QName("errors-is-xml");
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
     public static final QName FAIL_IF_NOT_EQUAL = new QName("fail-if-not-equal");
+    public static final QName FAILURE_THRESHOLD = new QName("failure-threshold");
     public static final QName GROUP_ADJACENT = new QName("group-adjacent");
     public static final QName HREF = new QName("href");
     public static final QName INCLUDE_CONTENT_TYPE = new QName("include-content-type");
@@ -77,6 +79,7 @@ public final class XProcOptions
     public static final QName NORMALIZATION_FORM = new QName("normalization-form");
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
+    public static final QName PATH_SEPARATOR = new QName("path-separator");
     public static final QName POSITION = new QName("position");
     public static final QName RELATIVE = new QName("relative");
     public static final QName REPLACE = new QName("replace");
@@ -86,6 +89,7 @@ public final class XProcOptions
     public static final QName SELECT = new QName("select");
     public static final QName SOURCE_BASE_URI = new QName("source-base-uri");
     public static final QName SOURCE_DOCUMENT_URI = new QName("source-document-uri");
+    public static final QName SOURCE_IS_XML = new QName("source-is-xml");
     public static final QName STANDALONE = new QName("standalone");
     public static final QName TEMP_BASE_URI = new QName("temp-base-uri");
     public static final QName TEMPLATE_NAME = new QName("template-name");

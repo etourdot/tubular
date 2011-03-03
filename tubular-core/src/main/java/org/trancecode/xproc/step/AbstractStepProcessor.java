@@ -73,7 +73,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         }
         catch (final XProcException e)
         {
-            throw (XProcException) e.fillInStackTrace();
+            throw e;
         }
         catch (final Exception e)
         {
