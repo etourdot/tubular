@@ -71,7 +71,7 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
         final String attributeNamespaceOption = input.getOptionValue(XProcOptions.ATTRIBUTE_NAMESPACE, null);
 
         final QName attributeQName = StepUtils.getNewNamespace(attributePrefixOption, attributeNamespaceOption,
-                attributeOption, input.getStep());
+                attributeOption, input.getStep().getLocation(), input.getStep().getNode());
 
         final String labelOption = input.getOptionValue(XProcOptions.LABEL, "concat(\"_\",$p:index)");
         final String match = input.getOptionValue(XProcOptions.MATCH, "*");

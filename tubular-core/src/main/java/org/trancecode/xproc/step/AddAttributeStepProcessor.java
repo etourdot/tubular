@@ -73,7 +73,6 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         LOG.trace("match = {}", match);
         assert attributeName != null;
         LOG.trace("attribute-name = {}", attributeName);
-        assert attributeName != null;
         LOG.trace("attribute-value = {}", attributeValue);
 
         // FIXME what happens when there is an @attribute-prefix but no

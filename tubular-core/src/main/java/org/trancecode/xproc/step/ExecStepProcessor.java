@@ -84,7 +84,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         commandLine.add(command);
         Iterables.addAll(commandLine, Iterables.filter(args, StringPredicates.isNotEmpty()));
         LOG.trace("commandLine = {}", commandLine);
-        final ProcessBuilder processBuilder = new ProcessBuilder(commandLine.toArray(new String[0]));
+        final ProcessBuilder processBuilder = new ProcessBuilder(commandLine.toArray(new String[commandLine.size()]));
         processBuilder.redirectErrorStream(true);
         if (cwd != null)
         {

@@ -20,11 +20,11 @@
 package org.trancecode.xproc.step;
 
 import java.util.EnumSet;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.AbstractSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonProcessor;
@@ -59,7 +59,7 @@ public final class StringReplaceStepProcessor extends AbstractStepProcessor
         final String replace = input.getOptionValue(XProcOptions.REPLACE);
         LOG.trace("replace = {}", replace);
 
-        final SaxonProcessorDelegate stringReplace = new CopyingSaxonProcessorDelegate()
+        final SaxonProcessorDelegate stringReplace = new AbstractSaxonProcessorDelegate()
         {
             private void replace(final XdmNode node, final SaxonBuilder builder)
             {
@@ -77,10 +77,15 @@ public final class StringReplaceStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
+            public EnumSet<SaxonProcessorDelegate.NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
             {
                 replace(node, builder);
-                return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+                return EnumSet.noneOf(SaxonProcessorDelegate.NextSteps.class);
+            }
+
+            @Override
+            public void endElement(final XdmNode node, final SaxonBuilder builder)
+            {
             }
 
             @Override

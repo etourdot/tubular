@@ -88,26 +88,25 @@ public final class StoreStepProcessor extends AbstractStepProcessor
                 href, mimeType, encoding, doctypePublicId, doctypeSystemId);
 
         final OutputStream targetOutputStream;
-        if ("file".equals(outputUri.getScheme()))
+        try
         {
-            final File oFile = new File(outputUri);
-            try
+            if ("file".equals(outputUri.getScheme()))
             {
+                final File oFile = new File(outputUri);
                 if (!oFile.exists())
                 {
                     Files.createParentDirs(oFile);
                 }
                 targetOutputStream = new FileOutputStream(oFile);
             }
-            catch (final Exception e)
+            else
             {
-                throw XProcExceptions.xc0050(input.getLocation());
+                targetOutputStream = input.getPipelineContext().getOutputResolver().resolveOutputStream(href, input.getBaseUri().toString());
             }
         }
-        else
+        catch (final Exception e)
         {
-            targetOutputStream = input.getPipelineContext().getOutputResolver()
-                .resolveOutputStream(href, input.getBaseUri().toString());
+            throw XProcExceptions.xc0050(input.getLocation());
         }
         
         final Serializer serializer = new Serializer();
