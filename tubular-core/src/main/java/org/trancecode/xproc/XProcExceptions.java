@@ -157,6 +157,11 @@ public final class XProcExceptions
                 step.getName());
     }
 
+    public static XProcException xc0020(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 20, SaxonLocation.of(node), "It is a dynamic error if the the user specifies a value or values that are inconsistent with each other or with the requirements of the step or protocol.");
+    }
+
     public static XProcException xc0022(final XdmNode node)
     {
         return newXProcException(Type.STEP, 22, SaxonLocation.of(node), "it is a dynamic error if the content of the c:body element does not consist of exactly one element, optionally preceded and/or followed by any number of processing instructions, comments or whitespace characters");
