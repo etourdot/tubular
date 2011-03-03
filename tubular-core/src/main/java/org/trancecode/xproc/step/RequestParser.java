@@ -137,9 +137,9 @@ class RequestParser
         return request;
     }
 
-    private void checkCoherenceHeaders(final ImmutableList<Header> headers, final HttpEntity entity)
+    /*private void checkCoherenceHeaders(final ImmutableList<Header> headers, final HttpEntity entity)
     {
-    }
+    }*/
 
     private List<Header> parseHeaders(final XdmNode requestNode)
     {
