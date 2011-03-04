@@ -42,6 +42,11 @@ public final class XProcExceptions
     {
         // No instantiation
     }
+    public static XProcException xd0001(final Location location)
+    {
+        return newXProcException(Type.DYNAMIC, 1, location,
+                "It is a dynamic error if a non-XML resource is produced on a step output or arrives on a step input.");
+    }
 
     public static XProcException xd0003(final Location location, final int numberOfNodes)
     {
@@ -58,6 +63,11 @@ public final class XProcExceptions
     public static XProcException xd0006(final Location location, final PortReference port)
     {
         return newXProcException(Type.DYNAMIC, 6, location, "wrong number of input documents in port %s", port);
+    }
+
+    public static XProcException xd0007(final Location location)
+    {
+        return newXProcException(Type.DYNAMIC, 7, location, "wrong number of input documents in ");
     }
 
     public static XProcException xd0010(final XdmNode node)
