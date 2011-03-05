@@ -49,6 +49,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.exec">p:exec</a>
  */
+@ExternalResources(read = true, write = true)
 public final class ExecStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ExecStepProcessor.class);

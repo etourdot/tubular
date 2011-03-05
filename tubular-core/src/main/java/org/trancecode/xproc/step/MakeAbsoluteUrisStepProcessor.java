@@ -21,10 +21,12 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EnumSet;
 import java.util.Set;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -45,13 +47,15 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:make-absolute-uris}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.make-absolute-uris">p:make-absolute-uris</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.make-absolute-uris">p:make-absolute-uris</a>
  */
+@ExternalResources(read = false, write = false)
 public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(MakeAbsoluteUrisStepProcessor.class);
     private static final Set<XdmNodeKind> NODE_KINDS = ImmutableSet.of(XdmNodeKind.ELEMENT, XdmNodeKind.ATTRIBUTE);
-    
+
     @Override
     public QName getStepType()
     {
@@ -97,7 +101,7 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
                 {
                     builder.text(element.getBaseURI().toString());
                 }
-                return EnumSet.noneOf(NextSteps.class);                
+                return EnumSet.noneOf(NextSteps.class);
             }
 
             @Override
@@ -120,8 +124,8 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessorDelegate makeUrisWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS, makeUrisDelegate,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
+        final SaxonProcessorDelegate makeUrisWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS,
+                makeUrisDelegate, SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
                 {
                     @Override
                     public XProcException apply(final XdmNode node)
@@ -157,7 +161,7 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
                 return uri.resolve(namespace);
             }
         }
-        catch (URISyntaxException e)
+        catch (final URISyntaxException e)
         {
             return null;
         }

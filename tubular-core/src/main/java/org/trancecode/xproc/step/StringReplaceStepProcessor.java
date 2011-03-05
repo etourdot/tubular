@@ -40,6 +40,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.string-replace">p:string-replace</a>
  */
+@ExternalResources(read = false, write = false)
 public final class StringReplaceStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(StringReplaceStepProcessor.class);
@@ -108,8 +109,8 @@ public final class StringReplaceStepProcessor extends AbstractStepProcessor
             }
         };
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
-                        .getNode(), stringReplace, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
+                        .getStep().getNode(), stringReplace, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);

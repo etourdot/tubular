@@ -19,6 +19,8 @@
  */
 package org.trancecode.xproc.step;
 
+import javax.xml.transform.Source;
+
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -28,11 +30,10 @@ import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
-import javax.xml.transform.Source;
-
 /**
  * @author Herve Quiroz
  */
+@ExternalResources(read = true, write = false)
 public final class LoadStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);

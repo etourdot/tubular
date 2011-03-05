@@ -23,11 +23,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -47,6 +49,7 @@ import org.xml.sax.SAXException;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.validate-with-xml-schema">p:validate-with-xml-schema</a>
  */
+@ExternalResources(read = false, write = false)
 public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ValidateWithSchemaStepProcessor.class);
@@ -61,7 +64,8 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         final XdmNode sourceDoc = input.readNode(XProcPorts.SOURCE);
-        final boolean useLocalHints = Boolean.parseBoolean(input.getOptionValue(XProcOptions.USE_LOCATION_HINTS, "false"));
+        final boolean useLocalHints = Boolean.parseBoolean(input.getOptionValue(XProcOptions.USE_LOCATION_HINTS,
+                "false"));
         final boolean tryNamespaces = Boolean.parseBoolean(input.getOptionValue(XProcOptions.TRY_NAMESPACES, "false"));
         final boolean assertValid = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ASSERT_VALID, "true"));
         final String mode = input.getOptionValue(XProcOptions.MODE, "strict");
@@ -80,12 +84,12 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
                 valid = valid || validate(sourceSource, sourceSchema);
             }
         }
-        catch (SaxonApiException e)
+        catch (final SaxonApiException e)
         {
         }
         if (assertValid && !valid)
         {
-            throw XProcExceptions.xc0053(input.getLocation()) ;
+            throw XProcExceptions.xc0053(input.getLocation());
         }
 
         output.writeNodes(XProcPorts.RESULT, sourceDoc);
@@ -101,10 +105,10 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
             validator.validate(sourceSource);
             return true;
         }
-        catch (SAXException e)
+        catch (final SAXException e)
         {
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
         }
         return false;
@@ -127,7 +131,7 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
         {
             return stream.toString("UTF-8");
         }
-        catch (UnsupportedEncodingException uee)
+        catch (final UnsupportedEncodingException uee)
         {
             throw new IllegalStateException(uee);
         }

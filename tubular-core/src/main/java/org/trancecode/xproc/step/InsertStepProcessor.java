@@ -51,6 +51,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.insert">p:insert</a>
  */
+@ExternalResources(read = false, write = false)
 public final class InsertStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(InsertStepProcessor.class);
@@ -194,8 +195,8 @@ public final class InsertStepProcessor extends AbstractStepProcessor
                 }));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
-                        .getNode(), insertWithError, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
+                        .getStep().getNode(), insertWithError, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);

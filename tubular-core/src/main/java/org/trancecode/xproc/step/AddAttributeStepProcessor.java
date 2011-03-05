@@ -23,7 +23,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.EnumSet;
+
 import javax.xml.XMLConstants;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -49,6 +51,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.add-attribute">p:add-attribute</a>
  */
+@ExternalResources(read = false, write = false)
 public final class AddAttributeStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);
@@ -100,8 +103,8 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         }
 
         // Check the step is not used for a new namespace declaration
-        if (XMLConstants.XMLNS_ATTRIBUTE.equals(attributeQName.getLocalName()) ||
-            XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attributeQName.getNamespaceURI()))
+        if (XMLConstants.XMLNS_ATTRIBUTE.equals(attributeQName.getLocalName())
+                || XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attributeQName.getNamespaceURI()))
         {
             throw XProcExceptions.xc0059(input.getStep().getLocation());
         }
@@ -146,8 +149,8 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
                 }));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
-                        .getNode(), addAttributeForElements, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
+                        .getStep().getNode(), addAttributeForElements, new CopyingSaxonProcessorDelegate()));
         final XdmNode inputDoc = input.readNode(XProcPorts.SOURCE);
         final XdmNode result = matchProcessor.apply(inputDoc);
         output.writeNodes(XProcPorts.RESULT, result);

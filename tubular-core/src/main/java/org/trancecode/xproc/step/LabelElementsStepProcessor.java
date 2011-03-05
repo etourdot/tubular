@@ -20,8 +20,10 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
+
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
@@ -48,8 +50,10 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:label-elements}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.label-elements">p:label-elements</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.label-elements">p:label-elements</a>
  */
+@ExternalResources(read = false, write = false)
 public final class LabelElementsStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(LabelElementsStepProcessor.class);
@@ -86,7 +90,8 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
                 try
                 {
                     final XPathCompiler xPathCompiler = element.getProcessor().newXPathCompiler();
-                    xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace().uri());
+                    xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel
+                            .xprocNamespace().uri());
                     xPathCompiler.declareVariable(INDEX);
                     final XPathSelector xPathSelector = xPathCompiler.compile(labelOption).load();
                     xPathSelector.setVariable(INDEX, new XdmAtomicValue(countElement.get()));
@@ -94,12 +99,12 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
                     final XdmItem item = xPathSelector.evaluateSingle();
                     return (item == null) ? "" : item.getStringValue();
                 }
-                catch (SaxonApiException sae)
+                catch (final SaxonApiException sae)
                 {
                     return "";
                 }
             }
-            
+
             @Override
             public EnumSet<NextSteps> startElement(final XdmNode element, final SaxonBuilder builder)
             {
@@ -123,7 +128,8 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessorDelegate labelElementsWithError = SaxonProcessorDelegates.forNodeKinds(EnumSet.of(XdmNodeKind.ELEMENT), labelElementsDelegate,
+        final SaxonProcessorDelegate labelElementsWithError = SaxonProcessorDelegates.forNodeKinds(
+                EnumSet.of(XdmNodeKind.ELEMENT), labelElementsDelegate,
                 SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
                 {
                     @Override
