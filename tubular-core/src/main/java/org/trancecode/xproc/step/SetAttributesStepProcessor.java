@@ -52,7 +52,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.set-attributes">p:set-attributes</a>
  */
-@ExternalResources(read = false, write = false)
 public final class SetAttributesStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(SetAttributesStepProcessor.class);
@@ -127,8 +126,8 @@ public final class SetAttributesStepProcessor extends AbstractStepProcessor
                 }));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
-                        .getStep().getNode(), setAttributesForElements, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
+                        .getNode(), setAttributesForElements, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);
         output.writeNodes(XProcPorts.RESULT, result);

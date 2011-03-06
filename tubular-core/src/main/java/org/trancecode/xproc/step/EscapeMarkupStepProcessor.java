@@ -21,9 +21,7 @@ package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
-
 import java.io.ByteArrayOutputStream;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
@@ -38,7 +36,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Emmanuel Tourdot
  */
-@ExternalResources(read = false, write = false)
 public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(EscapeMarkupStepProcessor.class);
@@ -58,8 +55,7 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
                 .put(XProcOptions.INDENT, "false").put(XProcOptions.METHOD, "xml")
                 .put(XProcOptions.MEDIA_TYPE, MediaTypes.MEDIA_TYPE_XML).put(XProcOptions.OMIT_XML_DECLARATION, "true");
         final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
-        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input,
-                defaultOptions);
+        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input, defaultOptions);
 
         final XdmNode root = SaxonAxis.childElement(node);
         final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();

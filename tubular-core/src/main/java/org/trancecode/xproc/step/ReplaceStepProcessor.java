@@ -21,10 +21,8 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.EnumSet;
 import java.util.Set;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -46,7 +44,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.replace">p:replace</a>
  */
-@ExternalResources(read = false, write = false)
 public final class ReplaceStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ReplaceStepProcessor.class);
@@ -119,8 +116,8 @@ public final class ReplaceStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessorDelegate replaceWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS,
-                replaceDelegate, SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
+        final SaxonProcessorDelegate replaceWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS, replaceDelegate,
+                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
                 {
                     @Override
                     public XProcException apply(final XdmNode node)

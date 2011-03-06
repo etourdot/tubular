@@ -23,11 +23,9 @@ import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EnumSet;
-
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.sax.SAXSource;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -52,7 +50,6 @@ import org.xml.sax.InputSource;
 /**
  * @author Emmanuel Tourdot
  */
-@ExternalResources(read = false, write = false)
 public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(UnEscapeMarkupStepProcessor.class);
@@ -86,15 +83,14 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
             else
             {
                 final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-                        .getUnderlyingConfiguration());
+                    .getUnderlyingConfiguration());
                 builder.startDocument();
                 final Iterable<XdmNode> childNodes = SaxonAxis.childElements(sourceDocument);
-                for (final XdmNode aNode : childNodes)
+                for (XdmNode aNode : childNodes)
                 {
                     if (XdmNodeKind.ELEMENT.equals(aNode.getNodeKind()))
                     {
-                        final String unEscapeContent = getUnEscapeContent(aNode.getStringValue(), encodingOption,
-                                contentType, charset);
+                        final String unEscapeContent = getUnEscapeContent(aNode.getStringValue(), encodingOption, contentType, charset);
                         builder.startElement(aNode.getNodeName(), aNode);
                         for (final XdmNode attribute : SaxonAxis.attributes(aNode))
                         {
@@ -103,13 +99,11 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                         }
                         if (MediaTypes.MEDIA_TYPE_HTML.equals(contentType.getBaseType()))
                         {
-                            writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(),
-                                    builder);
+                            writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                         }
                         else
                         {
-                            writeXmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(),
-                                    builder);
+                            writeXmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                         }
                         builder.endElement();
                     }
@@ -136,37 +130,31 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
                 {
                     builder.startElement(node.getNodeName(), node);
-                    return EnumSet
-                            .of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+                    return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
                 }
 
                 @Override
                 public void text(final XdmNode node, final SaxonBuilder builder)
                 {
-                    final String unEscapeContent = getUnEscapeContent(node.getStringValue(), encodingOption,
-                            contentType, charset);
+                    final String unEscapeContent = getUnEscapeContent(node.getStringValue(), encodingOption, contentType, charset);
                     if (MediaTypes.MEDIA_TYPE_HTML.equals(contentType.getBaseType()))
                     {
-                        writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(),
-                                builder);
+                        writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);
                     }
                     else
                     {
-                        writeXmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(),
-                                builder);
+                        writeXmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(), builder);                            
                     }
                 }
             };
-            final SaxonProcessor escapeProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                    escapeDelegate);
+            final SaxonProcessor escapeProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(), escapeDelegate);
 
             final XdmNode result = escapeProcessor.apply(sourceDocument);
             output.writeNodes(XProcPorts.RESULT, result);
         }
     }
 
-    private static void writeXmlNodes(final String unEscapeContent, final String namespaceOption,
-            final Processor processor, final SaxonBuilder builder)
+    private static void writeXmlNodes(final String unEscapeContent, final String namespaceOption, final Processor processor, final SaxonBuilder builder)
     {
         final XdmNode parsedNode = Saxon.parse("<z>" + unEscapeContent + "</z>", processor);
         final Iterable<XdmNode> childNodes = SaxonAxis.childNodes(SaxonAxis.childElement(parsedNode));
@@ -186,8 +174,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         }
     }
 
-    private static void writeHtmlNodes(final String unEscapeContent, final String namespaceOption,
-            final Processor processor, final SaxonBuilder builder)
+    private static void writeHtmlNodes(final String unEscapeContent, final String namespaceOption, final Processor processor, final SaxonBuilder builder)
     {
         try
         {
@@ -200,9 +187,9 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
             builder.namespace("", namespaceOption);
             builder.nodes(aNode);
         }
-        catch (final SaxonApiException e)
+        catch (SaxonApiException e)
         {
-            throw XProcExceptions.xc0051(null);
+            throw XProcExceptions.xc0051(null) ;
         }
     }
 
@@ -224,7 +211,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 return uri;
             }
         }
-        catch (final URISyntaxException e)
+        catch (URISyntaxException e)
         {
             return null;
         }
@@ -241,14 +228,13 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
             }
             return ct;
         }
-        catch (final ParseException e)
+        catch (ParseException e)
         {
             throw XProcExceptions.xc0051(inputStep.getLocation());
         }
     }
 
-    private static String getUnEscapeContent(final String content, final String encoding,
-            final ContentType contentType, final String charset)
+    private static String getUnEscapeContent(final String content, final String encoding, final ContentType contentType, final String charset)
     {
         if (StepUtils.ENCODING_BASE64.equals(encoding))
         {

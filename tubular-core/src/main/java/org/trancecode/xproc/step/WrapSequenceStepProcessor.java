@@ -29,7 +29,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.wrap-sequence">p:wrap-sequence</a>
  */
-@ExternalResources(read = false, write = false)
 public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 {
     @Override
@@ -62,11 +61,10 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         builder.startDocument();
         builder.startElement(wrapper, input.getStep().getNode());
 
-        /*
-         * for (final XdmNode inputDocument :
-         * input.readNodes(XProcPorts.SOURCE)) {
-         * builder.nodes(SaxonAxis.childElement(inputDocument)); }
-         */
+        /*for (final XdmNode inputDocument : input.readNodes(XProcPorts.SOURCE))
+        {
+            builder.nodes(SaxonAxis.childElement(inputDocument));
+        }*/
         builder.nodes(input.readNodes(XProcPorts.SOURCE));
 
         builder.endElement();

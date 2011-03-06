@@ -20,9 +20,7 @@
 package org.trancecode.xproc.step;
 
 import java.util.EnumSet;
-
 import javax.xml.XMLConstants;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -41,9 +39,9 @@ import org.trancecode.xproc.variable.XProcOptions;
  * Step processor for the p:add-xml-base standard XProc step.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.add-xml-base">p:add-xml-base</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.add-xml-base">p:add-xml-base</a>
  */
-@ExternalResources(read = false, write = false)
 public final class AddXmlBaseStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(AddXmlBaseStepProcessor.class);
@@ -105,8 +103,7 @@ public final class AddXmlBaseStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessor addXmlBaseProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                addXmlBaseDelegate);
+        final SaxonProcessor addXmlBaseProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(), addXmlBaseDelegate);
         final XdmNode result = addXmlBaseProcessor.apply(sourceDoc);
         output.writeNodes(XProcPorts.RESULT, result);
     }

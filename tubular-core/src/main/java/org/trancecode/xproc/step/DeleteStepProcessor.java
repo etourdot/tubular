@@ -39,7 +39,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.delete">p:delete</a>
  */
-@ExternalResources(read = false, write = false)
 public final class DeleteStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(DeleteStepProcessor.class);
@@ -71,8 +70,8 @@ public final class DeleteStepProcessor extends AbstractStepProcessor
             }
         };
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
-                        .getStep().getNode(), delete, new CopyingSaxonProcessorDelegate()));
+                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input.getStep()
+                        .getNode(), delete, new CopyingSaxonProcessorDelegate()));
 
         final XdmNode result = matchProcessor.apply(source);
         output.writeNodes(XProcPorts.RESULT, result);

@@ -31,7 +31,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.count">p:count</a>
  */
-@ExternalResources(read = false, write = false)
 public final class CountStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(CountStepProcessor.class);

@@ -21,10 +21,8 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.EnumSet;
 import java.util.Set;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -47,7 +45,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.rename">p:rename</a>
  */
-@ExternalResources(read = false, write = false)
 public final class RenameStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(RenameStepProcessor.class);
@@ -74,8 +71,7 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         assert newNameOption != null;
         LOG.trace("new_name = {}", newNameOption);
 
-        final QName newName = StepUtils.getNewNamespace(newPrefixOption, newNamespaceOption, newNameOption,
-                input.getStep());
+        final QName newName = StepUtils.getNewNamespace(newPrefixOption, newNamespaceOption, newNameOption, input.getStep());
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override

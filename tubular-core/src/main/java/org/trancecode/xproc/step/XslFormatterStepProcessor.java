@@ -46,7 +46,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
-@ExternalResources(read = false, write = true)
 public final class XslFormatterStepProcessor extends AbstractStepProcessor
 {
     public static final String DEFAULT_CONTENT_TYPE = "application/pdf";

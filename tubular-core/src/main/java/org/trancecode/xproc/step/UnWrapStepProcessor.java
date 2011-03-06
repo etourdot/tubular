@@ -19,9 +19,7 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.EnumSet;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -40,9 +38,9 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:unwrap}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.unwrap">p:unwrap</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.unwrap">p:unwrap</a>
  */
-@ExternalResources(read = false, write = false)
 public final class UnWrapStepProcessor extends AbstractStepProcessor
 {
     @Override
@@ -82,8 +80,7 @@ public final class UnWrapStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessorDelegate unWrapWithError = SaxonProcessorDelegates.forNodeKinds(
-                ImmutableSet.of(XdmNodeKind.ELEMENT), unWrapDelegate,
+        final SaxonProcessorDelegate unWrapWithError = SaxonProcessorDelegates.forNodeKinds(ImmutableSet.of(XdmNodeKind.ELEMENT), unWrapDelegate,
                 SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
                 {
                     @Override
