@@ -21,7 +21,9 @@ package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
+
 import java.io.ByteArrayOutputStream;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
