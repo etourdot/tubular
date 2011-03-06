@@ -426,7 +426,7 @@ public final class Environment
     {
         LOG.trace("{@method} step = {}", step.getName());
 
-        return newFollowingStepEnvironment().setupStepEnvironment(step);
+        return newFollowingStepEnvironment().setupStepEnvironment(step).setupStepAlias(step);
     }
 
     public Environment newFollowingStepEnvironment()
@@ -440,6 +440,24 @@ public final class Environment
         LOG.trace("{@method} step = {}", step.getName());
 
         return newChildStepEnvironment().setupStepEnvironment(step);
+    }
+
+    private Environment setupStepAlias(final Step step)
+    {
+        Environment environment = this;
+        final String internalStepName = step.getInternalName();
+        if (internalStepName != null)
+        {
+            LOG.trace("step alias {} -> {}", step.getName(), internalStepName);
+            for (final Port port : step.getInputPorts())
+            {
+                final Port internalPort = port.setStepName(internalStepName).pipe(port);
+                LOG.trace("{} -> {}", internalPort, port);
+                final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(internalPort, environment);
+                environment = environment.addPorts(environmentPort);
+            }
+        }
+        return environment;
     }
 
     public Environment newChildStepEnvironment()
@@ -571,16 +589,6 @@ public final class Environment
 
         return new Environment(pipeline, configuration, TcMaps.merge(this.ports, ports), defaultReadablePort,
                 defaultParametersPort, xpathContextPort, inheritedVariables, localVariables);
-    }
-
-    public EnvironmentPort addEnvironmentPort(final Port port)
-    {
-        LOG.trace("{@method} port = {}", port);
-        assert port.getPortReference().equals(port.getPortReference());
-        assert !ports.containsKey(port.getPortReference());
-        final EnvironmentPort environmentPort = EnvironmentPort.newEnvironmentPort(port, this);
-        ports.put(port.getPortReference(), environmentPort);
-        return environmentPort;
     }
 
     public Step getPipeline()
