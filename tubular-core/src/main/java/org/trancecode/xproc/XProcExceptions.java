@@ -255,6 +255,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the content-type specified is not supported by the implementation.");
     }
 
+    public static XProcException xc0052(final Location location)
+    {
+        return newXProcException(Type.STEP, 52, location,
+                "It is a dynamic error if the encoding specified is not supported by the implementation.");
+    }
+
     public static XProcException xc0053(final Location location)
     {
         return newXProcException(Type.STEP, 53, location,

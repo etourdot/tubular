@@ -40,6 +40,7 @@ import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
@@ -69,7 +70,10 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         final URI namespaceURI = getUri(namespaceOption);
         final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, MediaTypes.MEDIA_XML);
         final String encodingOption = input.getOptionValue(XProcOptions.ENCODING, null);
-
+        if (encodingOption!=null && !StepUtils.ENCODING_BASE64.equals(encodingOption))
+        {
+            throw XProcExceptions.xc0052(SaxonLocation.of(sourceDocument));
+        }
         final ContentType contentType = getContentType(contentTypeOption, input.getStep());
         final String charsetOption = input.getOptionValue(XProcOptions.CHARSET, null);
         final String charset = (charsetOption == null) ? contentType.getParameter("charset") : charsetOption;
