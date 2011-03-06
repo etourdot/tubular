@@ -20,8 +20,10 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
+
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
@@ -96,7 +98,7 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
                     final XdmItem item = xPathSelector.evaluateSingle();
                     return (item == null) ? "" : item.getStringValue();
                 }
-                catch (SaxonApiException sae)
+                catch (final SaxonApiException sae)
                 {
                     return "";
                 }
