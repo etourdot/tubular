@@ -125,6 +125,11 @@ public final class Step extends AbstractHasLocation implements StepContainer
                 variables);
     }
 
+    public boolean isPipelineStep()
+    {
+        return isCompoundStep() && !(getStepProcessor() instanceof CoreStepProcessor);
+    }
+
     public Step setName(final String name)
     {
         LOG.trace("{@method} {} -> {}", this.name, name);
