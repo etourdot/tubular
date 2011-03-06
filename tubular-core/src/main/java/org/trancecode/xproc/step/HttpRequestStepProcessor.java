@@ -58,6 +58,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.http-request">p:http-request</a>
  */
+@ExternalResources(read = true, write = true)
 public final class HttpRequestStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(HttpRequestStepProcessor.class);

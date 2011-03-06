@@ -51,6 +51,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.add-attribute">p:add-attribute</a>
  */
+@ExternalResources(read = false, write = false)
 public final class AddAttributeStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(AddAttributeStepProcessor.class);

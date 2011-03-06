@@ -49,6 +49,7 @@ import org.xml.sax.SAXException;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.validate-with-xml-schema">p:validate-with-xml-schema</a>
  */
+@ExternalResources(read = false, write = false)
 public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ValidateWithSchemaStepProcessor.class);

@@ -43,6 +43,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.add-xml-base">p:add-xml-base</a>
  */
+@ExternalResources(read = false, write = false)
 public final class AddXmlBaseStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(AddXmlBaseStepProcessor.class);

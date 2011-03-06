@@ -31,6 +31,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.error">p:error</a>
  */
+@ExternalResources(read = false, write = false)
 public final class ErrorStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ErrorStepProcessor.class);

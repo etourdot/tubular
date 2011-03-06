@@ -33,6 +33,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
+@ExternalResources(read = true, write = false)
 public final class LoadStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(LoadStepProcessor.class);

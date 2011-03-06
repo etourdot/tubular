@@ -41,6 +41,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.string-replace">p:string-replace</a>
  */
+@ExternalResources(read = false, write = false)
 public final class StringReplaceStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(StringReplaceStepProcessor.class);

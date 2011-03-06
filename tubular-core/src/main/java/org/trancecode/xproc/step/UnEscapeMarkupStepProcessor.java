@@ -52,6 +52,7 @@ import org.xml.sax.InputSource;
 /**
  * @author Emmanuel Tourdot
  */
+@ExternalResources(read = false, write = false)
 public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(UnEscapeMarkupStepProcessor.class);

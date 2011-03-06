@@ -29,6 +29,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.wrap-sequence">p:wrap-sequence</a>
  */
+@ExternalResources(read = false, write = false)
 public final class WrapSequenceStepProcessor extends AbstractStepProcessor
 {
     @Override

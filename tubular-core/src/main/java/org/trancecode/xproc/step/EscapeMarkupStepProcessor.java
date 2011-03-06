@@ -38,6 +38,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Emmanuel Tourdot
  */
+@ExternalResources(read = false, write = false)
 public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(EscapeMarkupStepProcessor.class);

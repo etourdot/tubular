@@ -47,6 +47,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.rename">p:rename</a>
  */
+@ExternalResources(read = false, write = false)
 public final class RenameStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(RenameStepProcessor.class);

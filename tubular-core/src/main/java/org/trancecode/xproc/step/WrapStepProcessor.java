@@ -50,6 +50,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.wrap">p:wrap</a>
  */
+@ExternalResources(read = false, write = false)
 public final class WrapStepProcessor extends AbstractStepProcessor
 {
     private static final Set<XdmNodeKind> NODE_KINDS = ImmutableSet.of(XdmNodeKind.DOCUMENT, XdmNodeKind.ELEMENT,

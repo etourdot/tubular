@@ -25,6 +25,7 @@ import net.sf.saxon.s9api.QName;
  * @author Herve Quiroz
  * @see <a href="http://www.w3.org/TR/xproc/#c.sink">p:sink</a>
  */
+@ExternalResources(read = false, write = false)
 public final class SinkStepProcessor extends AbstractStepProcessor
 {
     @Override

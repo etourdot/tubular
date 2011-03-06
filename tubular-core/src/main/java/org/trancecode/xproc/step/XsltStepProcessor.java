@@ -50,6 +50,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
+@ExternalResources(read = true, write = false)
 public final class XsltStepProcessor extends AbstractStepProcessor
 {
     private static final String DEFAULT_VERSION = "2.0";

@@ -40,6 +40,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.pack">p:pack</a>
  */
+@ExternalResources(read = false, write = false)
 public final class PackStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(PackStepProcessor.class);

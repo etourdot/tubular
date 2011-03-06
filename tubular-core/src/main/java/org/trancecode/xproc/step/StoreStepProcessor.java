@@ -40,6 +40,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Herve Quiroz
  */
+@ExternalResources(read = false, write = true)
 public final class StoreStepProcessor extends AbstractStepProcessor
 {
     private static final String DEFAULT_ENCODING = "UTF-8";

@@ -52,6 +52,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @see <a
  *      href="http://www.w3.org/TR/xproc/#c.set-attributes">p:set-attributes</a>
  */
+@ExternalResources(read = false, write = false)
 public final class SetAttributesStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(SetAttributesStepProcessor.class);

@@ -42,6 +42,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * @author Emmanuel Tourdot
  * @see <a href="http://www.w3.org/TR/xproc/#c.unwrap">p:unwrap</a>
  */
+@ExternalResources(read = false, write = false)
 public final class UnWrapStepProcessor extends AbstractStepProcessor
 {
     @Override
