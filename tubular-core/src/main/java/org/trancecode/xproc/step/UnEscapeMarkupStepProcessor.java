@@ -121,12 +121,6 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
             final SaxonProcessorDelegate escapeDelegate = new CopyingSaxonProcessorDelegate()
             {
                 @Override
-                public boolean startDocument(final XdmNode node, final SaxonBuilder builder)
-                {
-                    return super.startDocument(node, builder);
-                }
-
-                @Override
                 public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
                 {
                     builder.startElement(node.getNodeName(), node);

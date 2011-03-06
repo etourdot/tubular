@@ -70,7 +70,8 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
         final String groupAdjacent = input.getOptionValue(XProcOptions.GROUP_ADJACENT);
 
-        final QName newName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input.getStep());
+        final QName newName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input.getStep().getLocation(),
+                input.getStep().getNode());
 
         final SaxonProcessorDelegate wrapDelegate = new AbstractSaxonProcessorDelegate()
         {
@@ -205,14 +206,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             final XdmSequenceIterator iterator = next? node.axisIterator(Axis.FOLLOWING_SIBLING) :
                         node.axisIterator(Axis.PRECEDING_SIBLING);
             final XdmItem item2 = getNextSkpNode(iterator, xPathSelector);
-             if (item2 != null)
-            {
-                return item1.getStringValue().equals(item2.getStringValue());
-            }
-            else
-            {
-                return false;
-            }
+            return item2 != null && item1.getStringValue().equals(item2.getStringValue());
         }
         catch (SaxonApiException e)
         {

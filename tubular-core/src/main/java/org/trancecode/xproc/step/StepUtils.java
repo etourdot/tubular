@@ -33,10 +33,13 @@ import java.util.Set;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeUtility;
+import javax.mail.internet.ParseException;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.IOUtils;
 import org.trancecode.io.MediaTypes;
+import org.trancecode.xml.Location;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -67,10 +70,16 @@ public final class StepUtils
     {
         final ImmutableMap.Builder builder = new ImmutableMap.Builder<String, String>();
 
-        final String encoding = input.getOptionValue(XProcOptions.ENCODING, DEFAULT_ENCODING);
-        final Boolean byteOrderMark = "UTF-16".equals(encoding) ? Boolean.valueOf(input.getOptionValue(XProcOptions.BYTE_ORDER_MARK)) : false;
-        builder.put(XProcOptions.BYTE_ORDER_MARK, byteOrderMark);
+        if (input.getStep().hasOptionDeclared(XProcOptions.ENCODING))
+        {
+            final String encoding = input.getOptionValue(XProcOptions.ENCODING, DEFAULT_ENCODING);
+            builder.put(XProcOptions.ENCODING, encoding);
+            final Boolean byteOrderMark = "UTF-16".equals(encoding) ? Boolean.valueOf(input.getOptionValue(XProcOptions.BYTE_ORDER_MARK)) : false;
+            builder.put(XProcOptions.BYTE_ORDER_MARK, byteOrderMark);
+        }
 
+        if (input.getStep().hasOptionDeclared(XProcOptions.CDATA_SECTION_ELEMENTS))
+        {
         final String cDataSection = input.getOptionValue(XProcOptions.CDATA_SECTION_ELEMENTS, defaultOptions.get(XProcOptions.CDATA_SECTION_ELEMENTS.getLocalName()));
         if (cDataSection != null)
         {
@@ -81,6 +90,7 @@ public final class StepUtils
                 cDataBuilder.add(new QName(section));
             }
             builder.put(XProcOptions.CDATA_SECTION_ELEMENTS, cDataBuilder.build());
+            }
         }
 
         final QName method = new QName(input.getOptionValue(XProcOptions.METHOD, defaultOptions.get(XProcOptions.METHOD.getLocalName())));
@@ -106,7 +116,10 @@ public final class StepUtils
             builder.put(XProcOptions.MEDIA_TYPE , mediaType);
         }
 
-        putInBuilder(builder, input, defaultOptions, XProcOptions.NORMALIZATION_FORM, false);
+        if (input.getStep().hasOptionDeclared(XProcOptions.NORMALIZATION_FORM))
+        {
+            putInBuilder(builder, input, defaultOptions, XProcOptions.NORMALIZATION_FORM, false);
+        }
         putInBuilder(builder, input, defaultOptions, XProcOptions.OMIT_XML_DECLARATION, true);
         putInBuilder(builder, input, defaultOptions, XProcOptions.STANDALONE, false);
         putInBuilder(builder, input, defaultOptions, XProcOptions.UNDECLARE_PREFIXES, true);
@@ -169,13 +182,13 @@ public final class StepUtils
     }
 
     public static QName getNewNamespace(final String newPrefix, final String newNamespace, final String newName,
-            final Step step)
+            final Location location, final XdmNode node)
     {
         if (newPrefix != null)
         {
             if (newNamespace == null)
             {
-                throw XProcExceptions.xd0034(step.getLocation());
+                throw XProcExceptions.xd0034(location);
             }
             else
             {
@@ -186,16 +199,18 @@ public final class StepUtils
         {
             if (newNamespace == null)
             {
-                return new QName(newName, step.getNode());
+                return new QName(newName, node);
             }
         }
         if (newName.contains(":"))
         {
-            throw XProcExceptions.xd0034(step.getLocation());
+            throw XProcExceptions.xd0034(location);
         }
         else
         {
-            return new QName("", newNamespace, newName);
+            final String prefix = (newPrefix == null) ? node.getProcessor().getUnderlyingConfiguration().getNamePool()
+                    .suggestPrefixForURI(newNamespace) : newPrefix ;
+            return new QName(prefix, newNamespace, newName);
         }
     }
 
@@ -220,5 +235,19 @@ public final class StepUtils
         {
             throw XProcExceptions.xc0010(null);
         }
+    }
+
+    public static ContentType getContentType(final String mimeType, final XdmNode node)
+    {
+        final ContentType contentType;
+        try
+        {
+            contentType = new ContentType(mimeType);
+        }
+        catch (ParseException e)
+        {
+            throw XProcExceptions.xc0020(node);
+        }
+        return contentType;
     }
 }

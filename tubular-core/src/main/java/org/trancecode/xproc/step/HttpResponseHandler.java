@@ -21,9 +21,8 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.stream.StreamSource;
@@ -35,15 +34,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.http.util.EntityUtils;
+import org.trancecode.http.BodypartResponseParser;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcXmlModel;
 
-public class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
+class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
 {
     private final boolean detailed;
     private final boolean statusOnly;
@@ -72,23 +72,24 @@ public class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         {
             contentMimeType = new ContentType("text", "plain", null);
         }
+        final BodypartResponseParser parser = new BodypartResponseParser(entity.getContent(), null, httpResponse.getParams(), contentType, contentCharset);
+
         if (!detailed)
         {
             if (!statusOnly)
             {
                 if ("multipart".equals(contentMimeType.getPrimaryType()))
                 {
-                    response.setNodes(constructMultipart(entity, contentMimeType, contentType));
+                    response.setNodes(constructMultipart(entity, contentMimeType, contentType, parser));
                 }
                 else
                 {
-                    final InputStream entityStream = entity.getContent();
-                    final Iterable<XdmNode> body = constructBody(entityStream, contentMimeType, contentType);
+                    final BodypartResponseParser.BodypartEntity part = parser.parseBodypart(false);
+                    final Iterable<XdmNode> body = constructBody(contentMimeType, contentType, part);
                     if (body != null)
                     {
                         response.setNodes(body);
                     }
-                    entityStream.close();
                 }
                 EntityUtils.consume(entity);
             }
@@ -99,26 +100,29 @@ public class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
             builder.startDocument();
             builder.startElement(XProcXmlModel.Elements.RESPONSE);
             builder.attribute(XProcXmlModel.Attributes.STATUS, Integer.toString(httpResponse.getStatusLine().getStatusCode()));
-            final InputStream entityStream = entity.getContent();
-            final Iterable<XdmNode> body = constructBody(entityStream, contentMimeType, contentType);
-            if (body != null)
+            if (!statusOnly)
             {
-                builder.nodes(body);
+                final BodypartResponseParser.BodypartEntity part = parser.parseBodypart(false);
+                final Iterable<XdmNode> body = constructBody(contentMimeType, contentType, part);
+                if (body != null)
+                {
+                    builder.nodes(body);
+                }
             }
-            entityStream.close();
             builder.endDocument();
             response.setNodes(ImmutableList.of(builder.getNode()));
         }
         return response;
     }
 
-    private Iterable<XdmNode> constructBody(final InputStream entityStream, final ContentType contentMimeType, final String contentType) throws IOException
+    private Iterable<XdmNode> constructBody(final ContentType contentMimeType, final String contentType,
+                                            final BodypartResponseParser.BodypartEntity part) throws IOException
     {
         if (contentMimeType.getSubType().contains("xml"))
         {
             try
             {
-                final XdmNode node = processor.newDocumentBuilder().build(new StreamSource(entityStream));
+                final XdmNode node = processor.newDocumentBuilder().build(new StreamSource(part.getEntity().getContent()));
                 return ImmutableList.of(node);
             }
             catch (SaxonApiException sae)
@@ -134,15 +138,14 @@ public class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
             if ("text".equals(contentMimeType.getPrimaryType()))
             {
                 builder.startContent();
-                builder.text(IOUtils.toString(entityStream));
+                builder.text(IOUtils.toString(part.getEntity().getContent()));
                 builder.endDocument();
             }
             else
             {
                 builder.attribute(XProcXmlModel.Attributes.ENCODING, "base64");
                 builder.startContent();
-                //TODO: optimization
-                final String b64 = Base64.encodeBase64String(IOUtils.toByteArray(entityStream));
+                final String b64 = Base64.encodeBase64String(IOUtils.toByteArray(part.getEntity().getContent()));
                 final Iterable<String> splitter = Splitter.on("\r\n").split(b64);
                 for (final String split : splitter)
                 {
@@ -156,37 +159,39 @@ public class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         return null;
     }
 
-    private Iterable<XdmNode> constructMultipart(final HttpEntity entity, final ContentType contentMimeType, final String contentType) throws IOException
+    private Iterable<XdmNode> constructMultipart(final HttpEntity entity, final ContentType contentMimeType, final String contentType,
+                                                 final BodypartResponseParser parser) throws IOException
     {
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
         builder.startElement(XProcXmlModel.Elements.MULTIPART);
         final String boundary = contentMimeType.getParameter("boundary");
         builder.attribute(XProcXmlModel.Attributes.BOUNDARY, boundary);
+        parser.setBoundary(boundary);
         builder.attribute(XProcXmlModel.Attributes.CONTENT_TYPE, contentType);
-        final String content = EntityUtils.toString(entity);
-        final Iterable<String> splitter = Splitter.on(boundary).split(content);
-        for (final String split : splitter)       
+        final List<BodypartResponseParser.BodypartEntity> parts = parser.parseMultipart();
+        for (final BodypartResponseParser.BodypartEntity part : parts)
         {
-            if (!"--".equals(split))
+            final String mimeType = part.getHeaderGroup().getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+            final ContentType bodyCt = StepUtils.getContentType(mimeType, null);
+            if (bodyCt.getSubType().contains("xml"))
             {
-                final Iterable<Header> headers = extractHeaders(split);
-                builder.nodes(constructBody(new ByteArrayInputStream(split.getBytes()), contentMimeType, contentType));
+                builder.startElement(XProcXmlModel.Elements.BODY);
+                builder.attribute(XProcXmlModel.Attributes.CONTENT_TYPE, mimeType);
+            }
+            final Iterable<XdmNode> body = constructBody(bodyCt, mimeType, part);
+            if (body != null)
+            {
+                builder.nodes(body);
+            }
+            if (bodyCt.getSubType().contains("xml"))
+            {
+                builder.endElement();
             }
         }
         builder.endDocument();
         return ImmutableList.of(builder.getNode());
      }
-
-    private Iterable<Header> extractHeaders(final String content)
-    {
-        final Iterable<String> splitter = Splitter.on("\r\n").split(content);
-        for (final String split : splitter)
-        {
-            BasicHeaderValueParser.parseElements(split, null);
-        }
-        return null;
-    }
 
     private static String constructContentType(final Header contentType)
     {

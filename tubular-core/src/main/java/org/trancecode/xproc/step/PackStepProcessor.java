@@ -62,7 +62,8 @@ public final class PackStepProcessor extends AbstractStepProcessor
 
         final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
-        final QName wrapperQName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input.getStep());
+        final QName wrapperQName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input.getStep().getLocation(),
+                input.getStep().getNode());
 
         final Iterator<XdmNode> srcIterator = sourceDoc.iterator();
         final Iterator<XdmNode> altIterator = alternateDoc.iterator();

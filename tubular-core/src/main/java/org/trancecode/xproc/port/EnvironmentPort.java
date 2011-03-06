@@ -23,9 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
 import java.util.List;
-
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathExecutable;
@@ -34,6 +32,8 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
+import org.trancecode.xml.saxon.Saxon;
+import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.XProcExceptions;
@@ -165,6 +165,13 @@ public final class EnvironmentPort implements HasPortReference
         assert portBindings.isEmpty();
 
         final List<XdmNode> nodeList = ImmutableList.copyOf(nodes);
+        for (final XdmNode aNode : nodeList)
+        {
+            if (!Saxon.isDocument(aNode))
+            {
+                throw XProcExceptions.xd0001(SaxonLocation.of(aNode));
+            }
+        }
         LOG.trace("{} nodes -> {}", nodeList.size(), declaredPort.getPortReference());
         final EnvironmentPortBinding portBinding = new EnvironmentPortBinding()
         {

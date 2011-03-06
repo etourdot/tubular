@@ -25,10 +25,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
@@ -37,7 +37,7 @@ import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -55,8 +55,11 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.FormBodyPart;
 import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.auth.DigestScheme;
@@ -76,7 +79,7 @@ import org.trancecode.xproc.XProcXmlModel;
  * Date: 18 feb. 2011
  * Time: 06:35:39
  */
-public class RequestParser
+class RequestParser
 {
     private static final Logger LOG = Logger.getLogger(RequestParser.class);
     private static final String DEFAULT_MULTIPART_TYPE = "multipart/mixed";
@@ -134,9 +137,9 @@ public class RequestParser
         return request;
     }
 
-    private void checkCoherenceHeaders(final ImmutableList<Header> headers, final HttpEntity entity)
+    /*private void checkCoherenceHeaders(final ImmutableList<Header> headers, final HttpEntity entity)
     {
-    }
+    }*/
 
     private List<Header> parseHeaders(final XdmNode requestNode)
     {
@@ -146,7 +149,7 @@ public class RequestParser
         {
             final String nameHeader = child.getAttributeValue(XProcXmlModel.Attributes.NAME);
             final String valueHeader = child.getAttributeValue(XProcXmlModel.Attributes.VALUE);
-            if (Strings.isNullOrEmpty(nameHeader) && Strings.isNullOrEmpty(valueHeader))
+            if (!Strings.isNullOrEmpty(nameHeader) && !Strings.isNullOrEmpty(valueHeader))
             {
                 list.add(new BasicHeader(nameHeader, valueHeader));
             }
@@ -179,17 +182,10 @@ public class RequestParser
             final Iterable<XdmNode> bodies = SaxonAxis.childElements(child, XProcXmlModel.Elements.BODY);
             for (final XdmNode body : bodies)
             {
-                final StringEntity contentBody = getContentBody(body);
+                final FormBodyPart contentBody = getContentBody(body);
                 if (contentBody != null)
                 {
-                    try
-                    {
-                        reqEntity.addPart("part", new StringBody(IOUtils.toString(contentBody.getContent())));
-                    }
-                    catch (IOException e)
-                    {
-                        return null;
-                    }
+                    reqEntity.addPart(contentBody);
                 }
             }
 
@@ -198,92 +194,155 @@ public class RequestParser
         return null;
     }
 
-    private StringEntity getContentBody(final XdmNode node)
+    private String getContentString(final XdmNode node, final ContentType contentType, final String encoding)
+    {
+        final StringBuilder contentBuilder = new StringBuilder();
+        if (!StringUtils.equalsIgnoreCase("xml",contentType.getSubType()) || StringUtils.equalsIgnoreCase("base64", encoding))
+        {
+            final Iterable<XdmItem> childs = SaxonAxis.axis(node, Axis.CHILD);
+            for (final XdmItem aNode : childs)
+            {
+                if (!XdmNodeKind.TEXT.equals(((XdmNode) aNode).getNodeKind()))
+                {
+                    throw XProcExceptions.xc0022(node);
+                }
+                else
+                {
+                    contentBuilder.append(StringEscapeUtils.unescapeHtml(aNode.toString()));
+                }
+            }
+        }
+        if (StringUtils.equalsIgnoreCase("xml",contentType.getSubType()))
+        {
+            final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
+            final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
+            serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, contentType.toString());
+            try
+            {
+                node.getProcessor().writeXdmValue(SaxonAxis.childElement(node), serializer);
+            }
+            catch (final Exception e)
+            {
+                throw new PipelineException("Error while trying to write document", e);
+            }
+            finally
+            {
+                Closeables.closeQuietly(targetOutputStream);
+            }
+            contentBuilder.append(targetOutputStream.toString());
+        }
+        return contentBuilder.toString();
+    }
+
+    private Charset getCharset(final String charset, final String defaultCharset)
+    {
+        return charset != null ? Charset.forName(charset) : Charset.forName("utf-8");
+    }
+
+    private FormBodyPart getContentBody(final XdmNode node)
     {
         final String contentTypeAtt = node.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
         final String encoding = node.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
-        final String id = node.getAttributeValue(XProcXmlModel.Attributes.ID);
-        if (id != null)
-        {
-            request.getHeaders().add(new BasicHeader("Content-ID", id));
-        }
-        final String description = node.getAttributeValue(XProcXmlModel.Attributes.DESCRIPTION);
-        if (description != null)
-        {
-            request.getHeaders().add(new BasicHeader("Content-Description", description));
-        }
-        final String disposition = node.getAttributeValue(XProcXmlModel.Attributes.DISPOSITION);
-        if (disposition != null)
-        {
-            request.getHeaders().add(new BasicHeader("Content-Disposition", disposition));
-        }
-
+        final ContentType contentType = StepUtils.getContentType(contentTypeAtt, node);
+        final String contentString = getContentString(node, contentType, encoding);
+        final StringBody body;
         try
         {
-            final ContentType contentType = new ContentType(contentTypeAtt);
-            final String charset = contentType.getParameter("charset");
-            final StringBuilder contentBuilder = new StringBuilder();
-            if (!StringUtils.equalsIgnoreCase("xml",contentType.getSubType()) || StringUtils.equalsIgnoreCase("base64", encoding))
-            {
-                final Iterable<XdmItem> childs = SaxonAxis.axis(node, Axis.CHILD);
-                for (final XdmItem aNode : childs)
-                {
-                    if (!XdmNodeKind.TEXT.equals(((XdmNode) aNode).getNodeKind()))
-                    {
-                        throw XProcExceptions.xc0022(node);                        
-                    }
-                    else
-                    {
-                        contentBuilder.append(aNode.toString());
-                    }
-                }
-            }
-            if (StringUtils.equalsIgnoreCase("xml",contentType.getSubType()))
-            {
-                final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-                final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
-                serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, contentType.toString());
-                try
-                {
-                    node.getProcessor().writeXdmValue(SaxonAxis.childElement(node), serializer);
-                }
-                catch (final Exception e)
-                {
-                    throw new PipelineException("Error while trying to write document", e);
-                }
-                finally
-                {
-                    Closeables.closeQuietly(targetOutputStream);
-                }
-                contentBuilder.append(targetOutputStream.toString());
-            }
-            if (charset != null)
-            {
-                return new StringEntity(contentBuilder.toString(), contentType.toString(), charset);
-            }
-            else
-            {
-                return new StringEntity(contentBuilder.toString(), contentType.toString(), "utf-8");
-            }
-
-        }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
+            body = new StringBody(contentString, contentType.toString(),
+                                  getCharset(contentType.getParameter("charset"), "utf-8"));
         }
         catch (UnsupportedEncodingException e)
         {
-            e.printStackTrace();
+            throw XProcExceptions.xc0020(node);
         }
-        return null;
+
+        final String id = node.getAttributeValue(XProcXmlModel.Attributes.ID);
+        final String description = node.getAttributeValue(XProcXmlModel.Attributes.DESCRIPTION);
+        final String disposition = node.getAttributeValue(XProcXmlModel.Attributes.DISPOSITION);
+        final FormBodyPart bodyPart = new FormBodyPart("body", body)
+        {
+            @Override
+            protected void generateContentDisp(final ContentBody body)
+            {
+                if (disposition != null)
+                {
+                    addField(MIME.CONTENT_DISPOSITION, disposition);
+                }
+            }
+
+            @Override
+            protected void generateTransferEncoding(final ContentBody body)
+            {
+                if (encoding != null)
+                {
+                    addField(MIME.CONTENT_TRANSFER_ENC, encoding);
+                }
+            }
+
+            @Override
+            protected void generateContentType(final ContentBody body)
+            {
+                final StringBuilder buffer = new StringBuilder();
+                buffer.append(body.getMimeType());
+                if (body.getCharset() != null)
+                {
+                    try
+                    {
+                        final String testCharset = new ContentType(body.getMimeType()).getParameter("charset");
+                        if (testCharset != null)
+                        {
+                            final Charset charset = Charset.forName(testCharset);
+                            if (!StringUtils.equalsIgnoreCase(charset.displayName(), body.getCharset()))
+                            {
+                                buffer.append("; charset=").append(body.getCharset().toLowerCase());
+                            }
+                        }
+                        else
+                        {
+                            buffer.append("; charset=utf-8");
+                        }
+                    }
+                    catch (ParseException e)
+                    {
+                        throw XProcExceptions.xc0020(node);
+                    }
+                    catch (IllegalCharsetNameException e)
+                    {
+                        throw XProcExceptions.xc0020(node);
+                    }
+                }
+                addField(MIME.CONTENT_TYPE, buffer.toString());
+            }
+        };
+        if (id != null)
+        {
+            bodyPart.addField("Content-ID", id);
+        }
+        if (description != null)
+        {
+            bodyPart.addField("Content-Description", description);
+        }
+
+        return bodyPart;
     }
 
-    private StringEntity parseBody(final XdmNode requestNode)
+    private StringEntity parseBody(final XdmNode node)
     {
-        final XdmNode body = SaxonAxis.childElement(requestNode, XProcXmlModel.Elements.BODY);
+        final XdmNode body = SaxonAxis.childElement(node, XProcXmlModel.Elements.BODY);
         if (body != null)
         {
-            return getContentBody(body);
+            final String contentTypeAtt = body.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
+            final String encoding = body.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
+            final ContentType contentType = StepUtils.getContentType(contentTypeAtt, body);
+            final String contentString = getContentString(body, contentType, encoding);
+            try
+            {
+                return new StringEntity(contentString, contentType.toString(), getCharset(contentType.getParameter("charset"), "utf-8").toString());
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw XProcExceptions.xc0020(body);
+            }
         }
         return null;
     }
@@ -337,6 +396,16 @@ public class RequestParser
         if (StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method))
         {
             final HttpPost httpPost = new HttpPost(hrefUri);
+            if (headers != null && headers.size() > 0)
+            {
+                for (final Header h : headers)
+                {
+                    if (!StringUtils.equalsIgnoreCase("Content-Type", h.getName()))
+                    {
+                        httpPost.addHeader(h);
+                    }
+                }
+            }
             httpPost.setEntity(httpEntity);
             return httpPost;
         }
@@ -357,9 +426,6 @@ public class RequestParser
 
         }
         else if (StringUtils.equalsIgnoreCase(HttpHead.METHOD_NAME, method))
-        {
-        }
-        else if (StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method))
         {
         }
         return null;

@@ -443,7 +443,7 @@ public final class PipelineParser
         if (portBindingNode.getNodeName().equals(Elements.INLINE))
         {
             final XdmNode inlineDocument = Saxon.asDocumentNode(context.getProcessor(),
-                    SaxonAxis.childNodes(portBindingNode));
+                    SaxonAxis.childNodesNoAttributes(portBindingNode));
             return new InlinePortBinding(inlineDocument, getLocation(portBindingNode));
         }
 
