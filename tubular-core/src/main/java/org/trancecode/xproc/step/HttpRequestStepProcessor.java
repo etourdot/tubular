@@ -21,9 +21,11 @@ package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.List;
+
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -107,7 +109,7 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
             builder.endDocument();
             output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // TODO
             e.printStackTrace();
