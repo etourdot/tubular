@@ -19,8 +19,10 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+
 import java.util.EnumSet;
 import java.util.Set;
+
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -207,7 +209,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             final XdmItem item2 = getNextSkpNode(iterator, xPathSelector);
             return item2 != null && item1.getStringValue().equals(item2.getStringValue());
         }
-        catch (SaxonApiException e)
+        catch (final SaxonApiException e)
         {
             // TODO throw real XProcException ?
             e.printStackTrace();
@@ -229,7 +231,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
                     xPathSelector.setContextItem(itm);
                     return xPathSelector.evaluateSingle();
                 }
-                catch (SaxonApiException e)
+                catch (final SaxonApiException e)
                 {
                     // TODO is it correct ?
                     return null;

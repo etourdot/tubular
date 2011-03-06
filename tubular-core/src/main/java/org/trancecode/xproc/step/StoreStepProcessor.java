@@ -21,6 +21,12 @@ package org.trancecode.xproc.step;
 
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URI;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
@@ -30,11 +36,6 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.net.URI;
 
 /**
  * @author Herve Quiroz

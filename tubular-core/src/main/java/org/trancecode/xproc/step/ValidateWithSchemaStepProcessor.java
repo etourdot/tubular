@@ -23,11 +23,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -81,7 +83,7 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
                 valid = valid || validate(sourceSource, sourceSchema);
             }
         }
-        catch (SaxonApiException e)
+        catch (final SaxonApiException e)
         {
         }
         if (assertValid && !valid)
@@ -102,10 +104,10 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
             validator.validate(sourceSource);
             return true;
         }
-        catch (SAXException e)
+        catch (final SAXException e)
         {
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
         }
         return false;
@@ -128,7 +130,7 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
         {
             return stream.toString("UTF-8");
         }
-        catch (UnsupportedEncodingException uee)
+        catch (final UnsupportedEncodingException uee)
         {
             throw new IllegalStateException(uee);
         }

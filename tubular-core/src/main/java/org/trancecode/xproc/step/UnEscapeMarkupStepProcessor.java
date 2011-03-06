@@ -23,9 +23,11 @@ import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EnumSet;
+
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.sax.SAXSource;
+
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -86,7 +88,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                         .getUnderlyingConfiguration());
                 builder.startDocument();
                 final Iterable<XdmNode> childNodes = SaxonAxis.childElements(sourceDocument);
-                for (XdmNode aNode : childNodes)
+                for (final XdmNode aNode : childNodes)
                 {
                     if (XdmNodeKind.ELEMENT.equals(aNode.getNodeKind()))
                     {
@@ -191,7 +193,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
             builder.namespace("", namespaceOption);
             builder.nodes(aNode);
         }
-        catch (SaxonApiException e)
+        catch (final SaxonApiException e)
         {
             throw XProcExceptions.xc0051(null);
         }
@@ -215,7 +217,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 return uri;
             }
         }
-        catch (URISyntaxException e)
+        catch (final URISyntaxException e)
         {
             return null;
         }
@@ -232,7 +234,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
             }
             return ct;
         }
-        catch (ParseException e)
+        catch (final ParseException e)
         {
             throw XProcExceptions.xc0051(inputStep.getLocation());
         }

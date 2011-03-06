@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import java.util.EnumSet;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
