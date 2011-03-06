@@ -61,7 +61,8 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         final XdmNode sourceDoc = input.readNode(XProcPorts.SOURCE);
-        final boolean useLocalHints = Boolean.parseBoolean(input.getOptionValue(XProcOptions.USE_LOCATION_HINTS, "false"));
+        final boolean useLocalHints = Boolean.parseBoolean(input.getOptionValue(XProcOptions.USE_LOCATION_HINTS,
+                "false"));
         final boolean tryNamespaces = Boolean.parseBoolean(input.getOptionValue(XProcOptions.TRY_NAMESPACES, "false"));
         final boolean assertValid = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ASSERT_VALID, "true"));
         final String mode = input.getOptionValue(XProcOptions.MODE, "strict");
@@ -85,7 +86,7 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
         }
         if (assertValid && !valid)
         {
-            throw XProcExceptions.xc0053(input.getLocation()) ;
+            throw XProcExceptions.xc0053(input.getLocation());
         }
 
         output.writeNodes(XProcPorts.RESULT, sourceDoc);

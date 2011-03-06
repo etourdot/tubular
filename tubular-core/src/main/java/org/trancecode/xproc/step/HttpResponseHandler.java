@@ -61,7 +61,8 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
     {
         final XProcHttpResponse response = new XProcHttpResponse();
         final HttpEntity entity = httpResponse.getEntity();
-        final String contentCharset = EntityUtils.getContentCharSet(entity) == null ? "utf-8" : EntityUtils.getContentCharSet(entity);
+        final String contentCharset = EntityUtils.getContentCharSet(entity) == null ? "utf-8" : EntityUtils
+                .getContentCharSet(entity);
         final String contentType = constructContentType(entity.getContentType());
         ContentType contentMimeType = null;
         try
@@ -72,7 +73,8 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         {
             contentMimeType = new ContentType("text", "plain", null);
         }
-        final BodypartResponseParser parser = new BodypartResponseParser(entity.getContent(), null, httpResponse.getParams(), contentType, contentCharset);
+        final BodypartResponseParser parser = new BodypartResponseParser(entity.getContent(), null,
+                httpResponse.getParams(), contentType, contentCharset);
 
         if (!detailed)
         {
@@ -99,7 +101,8 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
             final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
             builder.startDocument();
             builder.startElement(XProcXmlModel.Elements.RESPONSE);
-            builder.attribute(XProcXmlModel.Attributes.STATUS, Integer.toString(httpResponse.getStatusLine().getStatusCode()));
+            builder.attribute(XProcXmlModel.Attributes.STATUS,
+                    Integer.toString(httpResponse.getStatusLine().getStatusCode()));
             if (!statusOnly)
             {
                 final BodypartResponseParser.BodypartEntity part = parser.parseBodypart(false);
@@ -116,13 +119,14 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
     }
 
     private Iterable<XdmNode> constructBody(final ContentType contentMimeType, final String contentType,
-                                            final BodypartResponseParser.BodypartEntity part) throws IOException
+            final BodypartResponseParser.BodypartEntity part) throws IOException
     {
         if (contentMimeType.getSubType().contains("xml"))
         {
             try
             {
-                final XdmNode node = processor.newDocumentBuilder().build(new StreamSource(part.getEntity().getContent()));
+                final XdmNode node = processor.newDocumentBuilder().build(
+                        new StreamSource(part.getEntity().getContent()));
                 return ImmutableList.of(node);
             }
             catch (SaxonApiException sae)
@@ -159,8 +163,8 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         return null;
     }
 
-    private Iterable<XdmNode> constructMultipart(final HttpEntity entity, final ContentType contentMimeType, final String contentType,
-                                                 final BodypartResponseParser parser) throws IOException
+    private Iterable<XdmNode> constructMultipart(final HttpEntity entity, final ContentType contentMimeType,
+            final String contentType, final BodypartResponseParser parser) throws IOException
     {
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
@@ -191,7 +195,7 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         }
         builder.endDocument();
         return ImmutableList.of(builder.getNode());
-     }
+    }
 
     private static String constructContentType(final Header contentType)
     {

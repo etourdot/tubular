@@ -58,19 +58,19 @@ public final class PackStepProcessor extends AbstractStepProcessor
         final Iterable<XdmNode> alternateDoc = readeSequencePort(input, XProcPorts.ALTERNATE);
 
         final String wrapperLocalName = input.getOptionValue(XProcOptions.WRAPPER);
-        assert wrapperLocalName != null;        
+        assert wrapperLocalName != null;
 
         final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
-        final QName wrapperQName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input.getStep().getLocation(),
-                input.getStep().getNode());
+        final QName wrapperQName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName,
+                input.getStep().getLocation(), input.getStep().getNode());
 
         final Iterator<XdmNode> srcIterator = sourceDoc.iterator();
         final Iterator<XdmNode> altIterator = alternateDoc.iterator();
         while (srcIterator.hasNext() || altIterator.hasNext())
         {
             final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-                .getUnderlyingConfiguration());
+                    .getUnderlyingConfiguration());
             builder.startDocument();
             builder.startElement(wrapperQName);
             builder.startContent();

@@ -54,8 +54,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * Step processor for the p:http-request standard XProc step.
  * 
  * @author Emmanuel Tourdot
- * @see <a
- *      href="http://www.w3.org/TR/xproc/#c.http-request">p:http-request</a>
+ * @see <a href="http://www.w3.org/TR/xproc/#c.http-request">p:http-request</a>
  */
 public final class HttpRequestStepProcessor extends AbstractStepProcessor
 {
@@ -84,7 +83,8 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
                 .put(XProcOptions.OMIT_XML_DECLARATION, "true").put(XProcOptions.STANDALONE, "omit")
                 .put(XProcOptions.VERSION, "1.0");
         final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
-        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input, defaultOptions);
+        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input,
+                defaultOptions);
         LOG.trace("  options = {}", serializationOptions);
 
         final RequestParser parser = new RequestParser(serializationOptions);
@@ -94,20 +94,22 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         try
         {
             final Processor processor = input.getPipelineContext().getProcessor();
-            final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor, xProcRequest.isDetailled(), xProcRequest.isStatusOnly());
-            final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler, localContext);
+            final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor,
+                    xProcRequest.isDetailled(), xProcRequest.isStatusOnly());
+            final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler,
+                    localContext);
             final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
             builder.startDocument();
             if (response.getNodes() != null)
             {
-                builder.nodes(response.getNodes());                
+                builder.nodes(response.getNodes());
             }
             builder.endDocument();
             output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
         catch (IOException e)
         {
-            //TODO
+            // TODO
             e.printStackTrace();
         }
         finally
@@ -122,8 +124,8 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
         final ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(schemeRegistry);
         final DefaultHttpClient httpClient = new DefaultHttpClient(connManager);
-        final ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
-                httpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
+        final ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(httpClient.getConnectionManager()
+                .getSchemeRegistry(), ProxySelector.getDefault());
         httpClient.setRoutePlanner(routePlanner);
 
         if (xProcRequest.getCredentials() != null)

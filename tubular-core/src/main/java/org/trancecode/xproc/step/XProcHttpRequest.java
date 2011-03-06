@@ -27,9 +27,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
- * User: Emmanuel Tourdot
- * Date: 20 feb. 2011
- * Time: 09:19:56
+ * User: Emmanuel Tourdot Date: 20 feb. 2011 Time: 09:19:56
  */
 public class XProcHttpRequest
 {

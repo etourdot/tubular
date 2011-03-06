@@ -38,8 +38,7 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:unwrap}.
  * 
  * @author Emmanuel Tourdot
- * @see <a
- *      href="http://www.w3.org/TR/xproc/#c.unwrap">p:unwrap</a>
+ * @see <a href="http://www.w3.org/TR/xproc/#c.unwrap">p:unwrap</a>
  */
 public final class UnWrapStepProcessor extends AbstractStepProcessor
 {
@@ -80,7 +79,8 @@ public final class UnWrapStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessorDelegate unWrapWithError = SaxonProcessorDelegates.forNodeKinds(ImmutableSet.of(XdmNodeKind.ELEMENT), unWrapDelegate,
+        final SaxonProcessorDelegate unWrapWithError = SaxonProcessorDelegates.forNodeKinds(
+                ImmutableSet.of(XdmNodeKind.ELEMENT), unWrapDelegate,
                 SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
                 {
                     @Override

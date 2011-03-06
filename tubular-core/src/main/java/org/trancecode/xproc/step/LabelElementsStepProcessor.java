@@ -48,7 +48,8 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:label-elements}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.label-elements">p:label-elements</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.label-elements">p:label-elements</a>
  */
 public final class LabelElementsStepProcessor extends AbstractStepProcessor
 {
@@ -86,7 +87,8 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
                 try
                 {
                     final XPathCompiler xPathCompiler = element.getProcessor().newXPathCompiler();
-                    xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace().uri());
+                    xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel
+                            .xprocNamespace().uri());
                     xPathCompiler.declareVariable(INDEX);
                     final XPathSelector xPathSelector = xPathCompiler.compile(labelOption).load();
                     xPathSelector.setVariable(INDEX, new XdmAtomicValue(countElement.get()));
@@ -99,7 +101,7 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
                     return "";
                 }
             }
-            
+
             @Override
             public EnumSet<NextSteps> startElement(final XdmNode element, final SaxonBuilder builder)
             {
@@ -123,7 +125,8 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessorDelegate labelElementsWithError = SaxonProcessorDelegates.forNodeKinds(EnumSet.of(XdmNodeKind.ELEMENT), labelElementsDelegate,
+        final SaxonProcessorDelegate labelElementsWithError = SaxonProcessorDelegates.forNodeKinds(
+                EnumSet.of(XdmNodeKind.ELEMENT), labelElementsDelegate,
                 SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
                 {
                     @Override

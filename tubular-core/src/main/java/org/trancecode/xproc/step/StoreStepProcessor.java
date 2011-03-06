@@ -78,7 +78,8 @@ public final class StoreStepProcessor extends AbstractStepProcessor
 
         final String mimeType = input.getOptionValue(XProcOptions.MEDIA_TYPE, DEFAULT_MIMETYPE);
         final String encoding = input.getOptionValue(XProcOptions.ENCODING, DEFAULT_ENCODING);
-        final boolean omitXmlDeclaration = Boolean.parseBoolean(input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION));
+        final boolean omitXmlDeclaration = Boolean
+                .parseBoolean(input.getOptionValue(XProcOptions.OMIT_XML_DECLARATION));
         final String doctypePublicId = input.getOptionValue(XProcOptions.DOCTYPE_PUBLIC, DEFAULT_DOCTYPE_PUBLIC);
         final String doctypeSystemId = input.getOptionValue(XProcOptions.DOCTYPE_SYSTEM, DEFAULT_DOCTYPE_SYSTEM);
         final String method = input.getOptionValue(XProcOptions.METHOD, DEFAULT_METHOD);
@@ -101,14 +102,15 @@ public final class StoreStepProcessor extends AbstractStepProcessor
             }
             else
             {
-                targetOutputStream = input.getPipelineContext().getOutputResolver().resolveOutputStream(href, input.getBaseUri().toString());
+                targetOutputStream = input.getPipelineContext().getOutputResolver()
+                        .resolveOutputStream(href, input.getBaseUri().toString());
             }
         }
         catch (final Exception e)
         {
             throw XProcExceptions.xc0050(input.getLocation());
         }
-        
+
         final Serializer serializer = new Serializer();
         serializer.setOutputStream(targetOutputStream);
         if (doctypePublicId != null)

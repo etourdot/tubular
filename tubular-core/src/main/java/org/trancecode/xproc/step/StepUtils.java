@@ -44,9 +44,7 @@ import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.variable.XProcOptions;
 
 /**
- * User: Emmanuel Tourdot
- * Date: 12 febr. 2011
- * Time: 21:41:42
+ * User: Emmanuel Tourdot Date: 12 febr. 2011 Time: 21:41:42
  */
 public final class StepUtils
 {
@@ -56,9 +54,11 @@ public final class StepUtils
     public static final String METHOD_XHTML = "xhtml";
     public static final String METHOD_TEXT = "text";
     public static final String ENCODING_BASE64 = "base64";
-    public static final Set<String> SUPPORTED_CONTENTTYPE = ImmutableSet.of(MediaTypes.MEDIA_XML,MediaTypes.MEDIA_TYPE_HTML);
-    private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML, MediaTypes.MEDIA_TYPE_XML,
-        METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML, MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
+    public static final Set<String> SUPPORTED_CONTENTTYPE = ImmutableSet.of(MediaTypes.MEDIA_XML,
+            MediaTypes.MEDIA_TYPE_HTML);
+    private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML,
+            MediaTypes.MEDIA_TYPE_XML, METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML,
+            MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
 
     private StepUtils()
     {
@@ -66,7 +66,7 @@ public final class StepUtils
     }
 
     public static ImmutableMap<String, Object> getSerializationOptions(final AbstractStepProcessor.StepInput input,
-        final ImmutableMap<QName, String> defaultOptions)
+            final ImmutableMap<QName, String> defaultOptions)
     {
         final ImmutableMap.Builder builder = new ImmutableMap.Builder<String, String>();
 
@@ -74,26 +74,29 @@ public final class StepUtils
         {
             final String encoding = input.getOptionValue(XProcOptions.ENCODING, DEFAULT_ENCODING);
             builder.put(XProcOptions.ENCODING, encoding);
-            final Boolean byteOrderMark = "UTF-16".equals(encoding) ? Boolean.valueOf(input.getOptionValue(XProcOptions.BYTE_ORDER_MARK)) : false;
+            final Boolean byteOrderMark = "UTF-16".equals(encoding) ? Boolean.valueOf(input
+                    .getOptionValue(XProcOptions.BYTE_ORDER_MARK)) : false;
             builder.put(XProcOptions.BYTE_ORDER_MARK, byteOrderMark);
         }
 
         if (input.getStep().hasOptionDeclared(XProcOptions.CDATA_SECTION_ELEMENTS))
         {
-        final String cDataSection = input.getOptionValue(XProcOptions.CDATA_SECTION_ELEMENTS, defaultOptions.get(XProcOptions.CDATA_SECTION_ELEMENTS.getLocalName()));
-        if (cDataSection != null)
-        {
-            final Iterable<String> sections = Splitter.on(" ").omitEmptyStrings().split(cDataSection);
-            final ImmutableList.Builder<QName> cDataBuilder = new ImmutableList.Builder<QName>();
-            for (final String section : sections)
+            final String cDataSection = input.getOptionValue(XProcOptions.CDATA_SECTION_ELEMENTS,
+                    defaultOptions.get(XProcOptions.CDATA_SECTION_ELEMENTS.getLocalName()));
+            if (cDataSection != null)
             {
-                cDataBuilder.add(new QName(section));
-            }
-            builder.put(XProcOptions.CDATA_SECTION_ELEMENTS, cDataBuilder.build());
+                final Iterable<String> sections = Splitter.on(" ").omitEmptyStrings().split(cDataSection);
+                final ImmutableList.Builder<QName> cDataBuilder = new ImmutableList.Builder<QName>();
+                for (final String section : sections)
+                {
+                    cDataBuilder.add(new QName(section));
+                }
+                builder.put(XProcOptions.CDATA_SECTION_ELEMENTS, cDataBuilder.build());
             }
         }
 
-        final QName method = new QName(input.getOptionValue(XProcOptions.METHOD, defaultOptions.get(XProcOptions.METHOD.getLocalName())));
+        final QName method = new QName(input.getOptionValue(XProcOptions.METHOD,
+                defaultOptions.get(XProcOptions.METHOD.getLocalName())));
         builder.put(XProcOptions.METHOD, method);
 
         putInBuilder(builder, input, defaultOptions, XProcOptions.DOCTYPE_PUBLIC, false);
@@ -113,7 +116,7 @@ public final class StepUtils
         }
         else
         {
-            builder.put(XProcOptions.MEDIA_TYPE , mediaType);
+            builder.put(XProcOptions.MEDIA_TYPE, mediaType);
         }
 
         if (input.getStep().hasOptionDeclared(XProcOptions.NORMALIZATION_FORM))
@@ -134,23 +137,30 @@ public final class StepUtils
         serializer.setOutputStream(stream);
         if (options.containsKey(XProcOptions.DOCTYPE_PUBLIC))
         {
-            serializer.setOutputProperty(Serializer.Property.DOCTYPE_PUBLIC, options.get(XProcOptions.DOCTYPE_PUBLIC).toString());
+            serializer.setOutputProperty(Serializer.Property.DOCTYPE_PUBLIC, options.get(XProcOptions.DOCTYPE_PUBLIC)
+                    .toString());
         }
         if (options.containsKey(XProcOptions.DOCTYPE_SYSTEM))
         {
-            serializer.setOutputProperty(Serializer.Property.DOCTYPE_SYSTEM, options.get(XProcOptions.DOCTYPE_PUBLIC).toString());
+            serializer.setOutputProperty(Serializer.Property.DOCTYPE_SYSTEM, options.get(XProcOptions.DOCTYPE_PUBLIC)
+                    .toString());
         }
-        serializer.setOutputProperty(Serializer.Property.METHOD, ((QName) options.get(XProcOptions.METHOD)).getLocalName());
-        serializer.setOutputProperty(Serializer.Property.ESCAPE_URI_ATTRIBUTES, (Boolean) options.get(XProcOptions.ESCAPE_URI_ATTRIBUTES) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.METHOD,
+                ((QName) options.get(XProcOptions.METHOD)).getLocalName());
+        serializer.setOutputProperty(Serializer.Property.ESCAPE_URI_ATTRIBUTES,
+                (Boolean) options.get(XProcOptions.ESCAPE_URI_ATTRIBUTES) ? "yes" : "no");
         serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, options.get(XProcOptions.MEDIA_TYPE).toString());
-        serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, (Boolean) options.get(XProcOptions.OMIT_XML_DECLARATION) ? "yes" : "no");
-        serializer.setOutputProperty(Serializer.Property.INDENT, (Boolean) options.get(XProcOptions.INDENT) ? "yes" : "no");
-        serializer.setOutputProperty(Serializer.Property.INCLUDE_CONTENT_TYPE, (Boolean) options.get(XProcOptions.INCLUDE_CONTENT_TYPE) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION,
+                (Boolean) options.get(XProcOptions.OMIT_XML_DECLARATION) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.INDENT, (Boolean) options.get(XProcOptions.INDENT) ? "yes"
+                : "no");
+        serializer.setOutputProperty(Serializer.Property.INCLUDE_CONTENT_TYPE,
+                (Boolean) options.get(XProcOptions.INCLUDE_CONTENT_TYPE) ? "yes" : "no");
         return serializer;
     }
 
     private static void putInBuilder(final ImmutableMap.Builder builder, final AbstractStepProcessor.StepInput input,
-                                     final ImmutableMap<QName, String> defaultOptions, final QName option, final boolean isBoolean)
+            final ImmutableMap<QName, String> defaultOptions, final QName option, final boolean isBoolean)
     {
         if (input.getOptionValue(option) == null)
         {
@@ -209,7 +219,7 @@ public final class StepUtils
         else
         {
             final String prefix = (newPrefix == null) ? node.getProcessor().getUnderlyingConfiguration().getNamePool()
-                    .suggestPrefixForURI(newNamespace) : newPrefix ;
+                    .suggestPrefixForURI(newNamespace) : newPrefix;
             return new QName(prefix, newNamespace, newName);
         }
     }
@@ -218,7 +228,8 @@ public final class StepUtils
     {
         try
         {
-            final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)), ENCODING_BASE64);
+            final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)),
+                    ENCODING_BASE64);
             final StringWriter writer = new StringWriter();
             IOUtils.copy(b64is, writer, charset);
             return writer.toString();

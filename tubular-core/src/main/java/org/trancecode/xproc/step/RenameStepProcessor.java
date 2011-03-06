@@ -71,8 +71,8 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         assert newNameOption != null;
         LOG.trace("new_name = {}", newNameOption);
 
-        final QName newName = StepUtils.getNewNamespace(newPrefixOption, newNamespaceOption, newNameOption, input.getStep().getLocation(),
-                input.getStep().getNode());
+        final QName newName = StepUtils.getNewNamespace(newPrefixOption, newNamespaceOption, newNameOption, input
+                .getStep().getLocation(), input.getStep().getNode());
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override
