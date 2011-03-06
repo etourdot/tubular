@@ -99,6 +99,11 @@ public final class XProcExceptions
                 "It is a dynamic error to specify a new namespace or prefix if the lexical value of the specified name contains a colon (or if no wrapper is explicitly specified).");
     }
 
+    public static XProcException xs0004(final Variable option)
+    {
+        return newXProcException(Type.STATIC, 4, option.getLocation(), "It is a static error if an option or variable declaration duplicates the name of any other option or variable in the same environment.");
+    }
+
     public static XProcException xs0018(final Variable option)
     {
         return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
