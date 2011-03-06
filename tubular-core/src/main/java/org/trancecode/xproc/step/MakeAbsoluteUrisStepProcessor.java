@@ -22,7 +22,6 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.EnumSet;
 import java.util.Set;
 import net.sf.saxon.s9api.QName;
@@ -65,7 +64,7 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
         final String match = input.getOptionValue(XProcOptions.MATCH);
         assert match != null;
         final String baseUriOption = input.getOptionValue(XProcOptions.BASE_URI);
-        final URI baseUriURI = getUri(baseUriOption);
+        final URI baseUriURI = StepUtils.getUri(baseUriOption);
 
         final SaxonProcessorDelegate makeUrisDelegate = new AbstractSaxonProcessorDelegate()
         {
@@ -137,29 +136,5 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
         final XdmNode result = makeUrisProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
 
-    }
-
-    private static URI getUri(final String namespace)
-    {
-        if (namespace == null)
-        {
-            return null;
-        }
-        try
-        {
-            final URI uri = new URI(namespace);
-            if (!uri.isAbsolute())
-            {
-                return null;
-            }
-            else
-            {
-                return uri.resolve(namespace);
-            }
-        }
-        catch (URISyntaxException e)
-        {
-            return null;
-        }
     }
 }
