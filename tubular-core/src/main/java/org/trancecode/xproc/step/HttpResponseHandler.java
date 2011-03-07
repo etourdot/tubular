@@ -121,29 +121,36 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
     private Iterable<XdmNode> constructBody(final ContentType contentMimeType, final String contentType,
             final BodypartResponseParser.BodypartEntity part) throws IOException
     {
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
+        builder.startDocument();
+        builder.startElement(XProcXmlModel.Elements.BODY);
+        builder.attribute(XProcXmlModel.Attributes.CONTENT_TYPE, contentType);
         if (contentMimeType.getSubType().contains("xml"))
         {
             try
             {
                 final XdmNode node = processor.newDocumentBuilder().build(
                         new StreamSource(part.getEntity().getContent()));
-                return ImmutableList.of(node);
+                if (!detailed)
+                {
+                    return ImmutableList.of(node);
+                }
+                else
+                {
+                    builder.nodes(node);
+                }
             }
             catch (SaxonApiException sae)
             {
+                return null;
             }
         }
         else
         {
-            final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
-            builder.startDocument();
-            builder.startElement(XProcXmlModel.Elements.BODY);
-            builder.attribute(XProcXmlModel.Attributes.CONTENT_TYPE, contentType);
             if ("text".equals(contentMimeType.getPrimaryType()))
             {
                 builder.startContent();
                 builder.text(IOUtils.toString(part.getEntity().getContent()));
-                builder.endDocument();
             }
             else
             {
@@ -156,11 +163,10 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
                     builder.text(split);
                     builder.text("\n");
                 }
-                builder.endDocument();
             }
-            return ImmutableList.of(builder.getNode());
         }
-        return null;
+        builder.endDocument();
+        return ImmutableList.of(builder.getNode());
     }
 
     private Iterable<XdmNode> constructMultipart(final HttpEntity entity, final ContentType contentMimeType,
