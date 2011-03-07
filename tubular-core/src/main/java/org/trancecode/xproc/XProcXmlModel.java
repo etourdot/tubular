@@ -57,6 +57,7 @@ public final class XProcXmlModel
         public static final QName ITERATION_SOURCE = xprocNamespace().newSaxonQName("iteration-source");
         public static final QName LIBRARY = xprocNamespace().newSaxonQName("library");
         public static final QName LINE = xprocStepNamespace().newSaxonQName("line");
+        public static final QName NAMESPACE_RENAME = xprocNamespace().newSaxonQName("namespace-rename");
         public static final QName OPTION = xprocNamespace().newSaxonQName("option");
         public static final QName OTHERWISE = xprocNamespace().newSaxonQName("otherwise");
         public static final QName OUTPUT = xprocNamespace().newSaxonQName("output");

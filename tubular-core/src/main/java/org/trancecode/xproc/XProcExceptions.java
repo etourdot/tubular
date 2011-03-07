@@ -186,6 +186,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
     }
 
+    public static XProcException xc0014(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 14, SaxonLocation.of(node),
+                "It is a dynamic error if the XML namespace (http://www.w3.org/XML/1998/namespace) or the XMLNS namespace (http://www.w3.org/2000/xmlns/) is the value of either the from option or the to option.");
+    }
+
     public static XProcException xc0019(final Step step)
     {
         return newXProcException(Type.STEP, 19, step.getLocation(), "Documents are not equal in step %s",

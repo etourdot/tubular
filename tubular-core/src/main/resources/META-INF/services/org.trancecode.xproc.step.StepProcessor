@@ -13,6 +13,7 @@ org.trancecode.xproc.step.InsertStepProcessor
 org.trancecode.xproc.step.LabelElementsStepProcessor
 org.trancecode.xproc.step.LoadStepProcessor
 org.trancecode.xproc.step.MakeAbsoluteUrisStepProcessor
+org.trancecode.xproc.step.NamespaceRenameStepProcessor
 org.trancecode.xproc.step.PackStepProcessor
 org.trancecode.xproc.step.RenameStepProcessor
 org.trancecode.xproc.step.ReplaceStepProcessor
