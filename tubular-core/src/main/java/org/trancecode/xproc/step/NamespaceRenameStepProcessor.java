@@ -114,27 +114,11 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-            public void attribute(XdmNode node, SaxonBuilder builder)
+            public void attribute(final XdmNode node, final SaxonBuilder builder)
             {
                 if (!APPLY_TO_ELEMENTS.equals(apply_to))
                 {
                     final QName newNodeTo;
-                    /*if (node.getNodeName().getNamespaceURI().equals(from))
-                    {
-                        if (StringUtils.isNotBlank(to))
-                        {
-                            newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
-                                    .getLocalName(), SaxonLocation.of(node), node);
-                        }
-                        else
-                        {
-                            newNodeTo = new QName(node.getNodeName().getLocalName());
-                        }
-                    }
-                    else
-                    {
-                        newNodeTo = node.getNodeName();
-                    }*/
                     if (StringUtils.isNotBlank(to))
                     {
                         if (node.getNodeName().getNamespaceURI().equals(from))
@@ -142,7 +126,8 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                             newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
                                     .getLocalName(), SaxonLocation.of(node), node);
                         }
-                        else if (StringUtils.isNotBlank(from) || StringUtils.isNotBlank(node.getNodeName().getNamespaceURI()))
+                        else if (StringUtils.isNotBlank(from) ||
+                                 StringUtils.isNotBlank(node.getNodeName().getNamespaceURI()))
                         {
                             newNodeTo = node.getNodeName();
                         }
