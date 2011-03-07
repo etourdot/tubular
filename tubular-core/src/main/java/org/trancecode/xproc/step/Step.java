@@ -27,11 +27,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.ReturnsNullable;
@@ -42,6 +40,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;

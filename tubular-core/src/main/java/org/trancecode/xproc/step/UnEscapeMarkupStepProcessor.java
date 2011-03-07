@@ -21,13 +21,10 @@ package org.trancecode.xproc.step;
 
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.EnumSet;
-
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.sax.SAXSource;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -42,6 +39,7 @@ import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
