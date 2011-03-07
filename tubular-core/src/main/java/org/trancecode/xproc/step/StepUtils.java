@@ -222,7 +222,7 @@ public final class StepUtils
         {
             final String prefix = (newPrefix == null) ? node.getProcessor().getUnderlyingConfiguration().getNamePool()
                     .suggestPrefixForURI(newNamespace) : newPrefix;
-            return new QName(prefix, newNamespace, newName);
+            return new QName((prefix == null) ? "" : prefix, newNamespace, newName);
         }
     }
 

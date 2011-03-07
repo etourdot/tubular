@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonProcessor;
 import org.trancecode.xml.saxon.SaxonProcessorDelegate;
 import org.trancecode.xproc.XProcExceptions;
@@ -59,8 +60,10 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
         final String from = input.getOptionValue(XProcOptions.FROM);
         final String to = input.getOptionValue(XProcOptions.TO);
         final String apply_to = input.getOptionValue(XProcOptions.APPLY_TO, APPLY_TO_ALL);
-        if (StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, from) || StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, to) ||
-            StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, from) || StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, to))
+        if (StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, from) ||
+                StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, to) ||
+            StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, from) ||
+                StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, to))
         {
             throw XProcExceptions.xc0014(sourceDocument);
         }
@@ -70,30 +73,102 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
             @Override
             public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
             {
+                final QName newNodeTo;
                 if (APPLY_TO_ATTRIBUTE.equals(apply_to))
                 {
-                    builder.startElement(node.getNodeName());
-                    return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
-                }
-                final QName newNodeTo;
-                if (StringUtils.isNotBlank(to))
-                {
-                    newNodeTo = new QName(to, node.getNodeName().getLocalName());
+                    newNodeTo = node.getNodeName();
                 }
                 else
                 {
-                    if (node.getNodeName().getNamespaceURI().equals(from))
+                    if (StringUtils.isNotBlank(to))
                     {
-                        newNodeTo = new QName(node.getNodeName().getLocalName());
+                        if (node.getNodeName().getNamespaceURI().equals(from))
+                        {
+                            newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
+                                    .getLocalName(), SaxonLocation.of(node), node);
+                        }
+                        else if (StringUtils.isNotBlank(from))
+                        {
+                            newNodeTo = node.getNodeName();                            
+                        }
+                        else
+                        {
+                            newNodeTo = StepUtils.getNewNamespace("", to, node.getNodeName().getLocalName(),
+                                    SaxonLocation.of(node), node);
+                        }
+                    }
+                    else
+                    {
+                        if (node.getNodeName().getNamespaceURI().equals(from))
+                        {
+                            newNodeTo = new QName(node.getNodeName().getLocalName());
+                        }
+                        else
+                        {
+                            newNodeTo = node.getNodeName();
+                        }
+                    }
+                }
+                builder.startElement(newNodeTo);
+                return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+            }
+
+            @Override
+            public void attribute(XdmNode node, SaxonBuilder builder)
+            {
+                if (!APPLY_TO_ELEMENTS.equals(apply_to))
+                {
+                    final QName newNodeTo;
+                    /*if (node.getNodeName().getNamespaceURI().equals(from))
+                    {
+                        if (StringUtils.isNotBlank(to))
+                        {
+                            newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
+                                    .getLocalName(), SaxonLocation.of(node), node);
+                        }
+                        else
+                        {
+                            newNodeTo = new QName(node.getNodeName().getLocalName());
+                        }
                     }
                     else
                     {
                         newNodeTo = node.getNodeName();
+                    }*/
+                    if (StringUtils.isNotBlank(to))
+                    {
+                        if (node.getNodeName().getNamespaceURI().equals(from))
+                        {
+                            newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
+                                    .getLocalName(), SaxonLocation.of(node), node);
+                        }
+                        else if (StringUtils.isNotBlank(from) || StringUtils.isNotBlank(node.getNodeName().getNamespaceURI()))
+                        {
+                            newNodeTo = node.getNodeName();
+                        }
+                        else
+                        {
+                            newNodeTo = StepUtils.getNewNamespace(null, to, node.getNodeName().getLocalName(),
+                                    SaxonLocation.of(node), node);
+                        }
                     }
+                    else
+                    {
+                        if (node.getNodeName().getNamespaceURI().equals(from))
+                        {
+                            newNodeTo = new QName(node.getNodeName().getLocalName());
+                        }
+                        else
+                        {
+                            newNodeTo = node.getNodeName();
+                        }
+                    }
+                    builder.attribute(newNodeTo, node.getStringValue());
                 }
-
-                builder.startElement(newNodeTo, node);
-                return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
+                else
+                {
+                    super.attribute(node, builder);
+                }
             }
         };
 
