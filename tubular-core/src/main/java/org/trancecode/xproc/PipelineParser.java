@@ -494,7 +494,7 @@ public final class PipelineParser
 
     private Step parseDeclareVariable(final XdmNode node, final Step step)
     {
-        final QName name = new QName(node.getAttributeValue(Attributes.NAME));
+        final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
         final String select = node.getAttributeValue(Attributes.SELECT);
         Variable variable = Variable.newVariable(name);
         variable = variable.setLocation(getLocation(node));
