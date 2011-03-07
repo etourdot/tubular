@@ -69,10 +69,13 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
 
         final String namespaceOption = input.getOptionValue(XProcOptions.NAMESPACE, null);
-        final URI namespaceURI = getUri(namespaceOption);
+        final URI namespaceURI = StepUtils.getUri(namespaceOption);
         final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, MediaTypes.MEDIA_XML);
         final String encodingOption = input.getOptionValue(XProcOptions.ENCODING, null);
-
+        if (encodingOption!=null && !StepUtils.ENCODING_BASE64.equals(encodingOption))
+        {
+            throw XProcExceptions.xc0052(SaxonLocation.of(sourceDocument));
+        }
         final ContentType contentType = getContentType(contentTypeOption, input.getStep());
         final String charsetOption = input.getOptionValue(XProcOptions.CHARSET, null);
         final String charset = (charsetOption == null) ? contentType.getParameter("charset") : charsetOption;
@@ -197,30 +200,6 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         catch (final SaxonApiException e)
         {
             throw XProcExceptions.xc0051(null);
-        }
-    }
-
-    private static URI getUri(final String namespace)
-    {
-        if (namespace == null)
-        {
-            return null;
-        }
-        try
-        {
-            final URI uri = new URI(namespace);
-            if (!uri.isAbsolute())
-            {
-                return null;
-            }
-            else
-            {
-                return uri;
-            }
-        }
-        catch (final URISyntaxException e)
-        {
-            return null;
         }
     }
 
