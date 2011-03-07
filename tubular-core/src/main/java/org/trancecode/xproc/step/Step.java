@@ -170,8 +170,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step declareVariable(final Variable variable)
     {
-        assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
-                + " ; variables = " + variables;
+        //assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
+        //        + " ; variables = " + variables;
+        if (variables.containsKey(variable.getName()))
+        {
+            throw XProcExceptions.xs0004(variable);
+        }
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
                 variables, variable.getName(), variable), parameters, ports, steps);
     }
@@ -389,6 +393,10 @@ public final class Step extends AbstractHasLocation implements StepContainer
         final Variable option = variables.get(name);
         Preconditions.checkArgument(option != null, "no such option: %s", name);
         Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
+        if (option.getSelect() != null)
+        {
+            throw XProcExceptions.xs0004(option);
+        }
 
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
                 variables, name, option.setSelect(select).setNode(node)), parameters, ports, steps);
