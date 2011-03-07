@@ -311,8 +311,10 @@ public final class PipelineParser
 
         final String select = portNode.getAttributeValue(Attributes.SELECT);
         LOG.trace("select = {}", select);
+        final String sequence = portNode.getAttributeValue(Attributes.SEQUENCE);
+        LOG.trace("sequence = {}", sequence);
 
-        final Port configuredPort = port.setSelect(select).setPortBindings(parsePortBindings(portNode));
+        final Port configuredPort = port.setSelect(select).setSequence(sequence).setPortBindings(parsePortBindings(portNode));
 
         LOG.trace("step {} with port {}", step, port);
 
@@ -475,7 +477,7 @@ public final class PipelineParser
     private Step parseWithParam(final XdmNode node, final Step step)
     {
         LOG.trace("step = {}", step.getType());
-        final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
+        final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
         return step.withParam(name, select, null, getLocation(node), node);
@@ -484,7 +486,7 @@ public final class PipelineParser
     private Step parseWithOption(final XdmNode node, final Step step)
     {
         LOG.trace("step = {}", step.getType());
-        final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
+        final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
         return step.withOption(name, select, node);

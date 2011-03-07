@@ -35,6 +35,7 @@ public final class XProcOptions
     public static final Map<QName, Object> EMPTY_OPTIONS_MAP = ImmutableMap.of();
 
     public static final QName ALL = new QName("all");
+    public static final QName APPLY_TO = new QName("apply-to");
     public static final QName ARGS = new QName("args");
     public static final QName ARG_SEPARATOR = new QName("arg-separator");
     public static final QName ASSERT_VALID = new QName("assert-valid");
@@ -61,6 +62,7 @@ public final class XProcOptions
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
     public static final QName FAIL_IF_NOT_EQUAL = new QName("fail-if-not-equal");
     public static final QName FAILURE_THRESHOLD = new QName("failure-threshold");
+    public static final QName FROM = new QName("from");
     public static final QName GROUP_ADJACENT = new QName("group-adjacent");
     public static final QName HREF = new QName("href");
     public static final QName INCLUDE_CONTENT_TYPE = new QName("include-content-type");
@@ -94,6 +96,7 @@ public final class XProcOptions
     public static final QName TEMP_BASE_URI = new QName("temp-base-uri");
     public static final QName TEMPLATE_NAME = new QName("template-name");
     public static final QName TEST = new QName("test");
+    public static final QName TO = new QName("to");
     public static final QName TRY_NAMESPACES = new QName("try-namespaces");
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
     public static final QName USE_LOCATION_HINTS = new QName("use-location-hints");

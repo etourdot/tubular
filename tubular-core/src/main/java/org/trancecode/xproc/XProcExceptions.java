@@ -99,6 +99,11 @@ public final class XProcExceptions
                 "It is a dynamic error to specify a new namespace or prefix if the lexical value of the specified name contains a colon (or if no wrapper is explicitly specified).");
     }
 
+    public static XProcException xs0004(final Variable option)
+    {
+        return newXProcException(Type.STATIC, 4, option.getLocation(), "It is a static error if an option or variable declaration duplicates the name of any other option or variable in the same environment.");
+    }
+
     public static XProcException xs0018(final Variable option)
     {
         return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
@@ -181,6 +186,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
     }
 
+    public static XProcException xc0014(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 14, SaxonLocation.of(node),
+                "It is a dynamic error if the XML namespace (http://www.w3.org/XML/1998/namespace) or the XMLNS namespace (http://www.w3.org/2000/xmlns/) is the value of either the from option or the to option.");
+    }
+
     public static XProcException xc0019(final Step step)
     {
         return newXProcException(Type.STEP, 19, step.getLocation(), "Documents are not equal in step %s",
@@ -253,6 +264,12 @@ public final class XProcExceptions
     {
         return newXProcException(Type.STEP, 51, location,
                 "It is a dynamic error if the content-type specified is not supported by the implementation.");
+    }
+
+    public static XProcException xc0052(final Location location)
+    {
+        return newXProcException(Type.STEP, 52, location,
+                "It is a dynamic error if the encoding specified is not supported by the implementation.");
     }
 
     public static XProcException xc0053(final Location location)
