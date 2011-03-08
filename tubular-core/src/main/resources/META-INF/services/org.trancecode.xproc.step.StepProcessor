@@ -29,3 +29,4 @@ org.trancecode.xproc.step.WrapSequenceStepProcessor
 org.trancecode.xproc.step.WrapStepProcessor
 org.trancecode.xproc.step.XslFormatterStepProcessor
 org.trancecode.xproc.step.XsltStepProcessor
+org.trancecode.xproc.step.XQueryStepProcessor

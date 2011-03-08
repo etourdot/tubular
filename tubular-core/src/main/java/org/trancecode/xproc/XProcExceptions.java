@@ -278,6 +278,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the assert-valid option is true and the input document is not valid.");
     }
 
+    public static XProcException xc0057(final Location location)
+    {
+        return newXProcException(Type.STEP, 57, location,
+                "It is a dynamic error if the sequence that results from evaluating the XQuery contains items other than documents and elements.");
+    }
+
     public static XProcException xc0058(final Location location)
     {
         return newXProcException(Type.STEP, 58, location,
