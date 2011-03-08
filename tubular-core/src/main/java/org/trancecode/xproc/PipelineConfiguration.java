@@ -51,6 +51,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xproc.step.CoreStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
+import org.trancecode.xproc.step.StepProcessors;
 import org.trancecode.xproc.step.XProcSteps;
 import org.trancecode.xproc.xpath.XPathExtensionFunction;
 
@@ -113,20 +114,7 @@ public final class PipelineConfiguration extends AbstractPipelineContext
         {
             if (!processors.containsKey(stepType))
             {
-                processors.put(stepType, new StepProcessor()
-                {
-                    @Override
-                    public QName getStepType()
-                    {
-                        return stepType;
-                    }
-
-                    @Override
-                    public Environment run(final Step step, final Environment environment)
-                    {
-                        throw new UnsupportedOperationException("step not supported: " + stepType);
-                    }
-                });
+                processors.put(stepType, StepProcessors.unsupportedStepProcessor(stepType));
             }
         }
 
