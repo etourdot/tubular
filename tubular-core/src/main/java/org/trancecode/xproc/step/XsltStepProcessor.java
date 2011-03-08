@@ -55,7 +55,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class XsltStepProcessor extends AbstractStepProcessor
 {
     private static final String DEFAULT_VERSION = "2.0";
-    private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("2.0");
+    private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("1.0", "2.0");
 
     private static final Logger LOG = Logger.getLogger(XsltStepProcessor.class);
 
@@ -96,6 +96,12 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         {
             throw XProcExceptions.xc0038(input.getStep().getLocation(), version);
         }
+
+        if (version.equals("1.0") && Iterables.size(sourceDocuments) != 1)
+        {
+            throw XProcExceptions.xc0039(input.getLocation(), Iterables.size(sourceDocuments));
+        }
+
         final XdmNode stylesheet = input.readNode(XProcPorts.STYLESHEET);
         assert stylesheet != null;
 

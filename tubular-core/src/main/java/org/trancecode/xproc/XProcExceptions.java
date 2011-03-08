@@ -242,6 +242,16 @@ public final class XProcExceptions
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
     }
 
+    public static XProcException xc0039(final Location location, final int numberOfInputDocuments)
+    {
+        return newXProcException(
+                Type.STEP,
+                39,
+                location,
+                "It is a dynamic error if a sequence of documents (including an empty sequence) is provided to an XSLT 1.0 step. (%s input documents)",
+                numberOfInputDocuments);
+    }
+
     public static XProcException xc0040(final Location location)
     {
         return newXProcException(Type.STEP, 40, location,
