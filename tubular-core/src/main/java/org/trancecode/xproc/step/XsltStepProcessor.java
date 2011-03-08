@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.net.URI;
@@ -67,8 +68,8 @@ public final class XsltStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
-        assert sourceDocument != null;
+        final Iterable<XdmNode> sourceDocuments = input.readNodes(XProcPorts.SOURCE);
+        final XdmNode sourceDocument = Iterables.getFirst(sourceDocuments, null);
 
         final String providedOutputBaseUri = input.getOptionValue(XProcOptions.OUTPUT_BASE_URI);
         final URI outputBaseUri;
@@ -76,7 +77,8 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         {
             outputBaseUri = URI.create(providedOutputBaseUri);
         }
-        else if (sourceDocument.getBaseURI() != null && sourceDocument.getBaseURI().toString().length() > 0)
+        else if (sourceDocument != null && sourceDocument.getBaseURI() != null
+                && sourceDocument.getBaseURI().toString().length() > 0)
         {
             outputBaseUri = sourceDocument.getBaseURI();
         }
@@ -104,7 +106,10 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         try
         {
             transformer = processor.newXsltCompiler().compile(stylesheet.asSource()).load();
-            transformer.setSource(sourceDocument.asSource());
+            if (sourceDocument != null)
+            {
+                transformer.setInitialContextNode(sourceDocument);
+            }
         }
         catch (final SaxonApiException e)
         {
