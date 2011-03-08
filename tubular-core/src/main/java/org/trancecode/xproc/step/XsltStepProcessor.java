@@ -88,6 +88,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         LOG.trace("outputBaseUri = {}", outputBaseUri);
 
         final String version = input.getOptionValue(XProcOptions.VERSION, DEFAULT_VERSION);
+        LOG.trace("version = {}", version);
 
         if (!SUPPORTED_VERSIONS.contains(version))
         {
