@@ -60,6 +60,7 @@ import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.PipelineStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
+import org.trancecode.xproc.step.XProcSteps;
 import org.trancecode.xproc.variable.Variable;
 
 /**
@@ -278,7 +279,7 @@ public final class PipelineParser
             final String value = node.getStringValue();
 
             if (name.getNamespaceURI().isEmpty() && !name.equals(Attributes.NAME) && !name.equals(Attributes.TYPE)
-                    && !name.equals(Attributes.VERSION))
+                    && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType())))
             {
                 if (!step.hasOptionDeclared(name))
                 {
