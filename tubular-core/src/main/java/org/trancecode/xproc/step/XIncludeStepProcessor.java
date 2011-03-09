@@ -78,7 +78,7 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
             final AugmentedSource source = AugmentedSource.makeAugmentedSource(new StreamSource(bais));
             source.setXIncludeAware(true);
             source.setPleaseCloseAfterUse(true);
-            source.setSystemId(node.getUnderlyingNode().getBaseURI().toString());
+            source.setSystemId(input.getBaseUri().toString());
             final XMLReader xmlReader = XMLReaderFactory.createXMLReader(DEFAULT_PARSER_NAME);
             xmlReader.setFeature(XINCLUDE_FEATURE_ID, true);
             xmlReader.setFeature(XINCLUDE_FIXUP_BASE_URIS_FEATURE_ID, xmlBase);
