@@ -27,6 +27,7 @@ org.trancecode.xproc.step.UuidStepProcessor
 org.trancecode.xproc.step.ValidateWithSchemaStepProcessor
 org.trancecode.xproc.step.WrapSequenceStepProcessor
 org.trancecode.xproc.step.WrapStepProcessor
+org.trancecode.xproc.step.XIncludeStepProcessor
 org.trancecode.xproc.step.XslFormatterStepProcessor
 org.trancecode.xproc.step.XsltStepProcessor
 org.trancecode.xproc.step.XQueryStepProcessor

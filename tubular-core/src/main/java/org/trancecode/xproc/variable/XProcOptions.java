@@ -62,6 +62,8 @@ public final class XProcOptions
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
     public static final QName FAIL_IF_NOT_EQUAL = new QName("fail-if-not-equal");
     public static final QName FAILURE_THRESHOLD = new QName("failure-threshold");
+    public static final QName FIXUP_XML_BASE = new QName("fixup-xml-base");
+    public static final QName FIXUP_XML_LANG = new QName("fixup-xml-lang");
     public static final QName FROM = new QName("from");
     public static final QName GROUP_ADJACENT = new QName("group-adjacent");
     public static final QName HREF = new QName("href");

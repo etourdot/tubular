@@ -237,6 +237,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the document is not valid or the step doesn't support DTD validation.");
     }
 
+    public static XProcException xc0029(final Location location)
+    {
+        return newXProcException(Type.STEP, 29, location,
+                "It is a dynamic error if an XInclude error occurs during processing.");
+    }
+
     public static XProcException xc0035(final Location location)
     {
         return newXProcException(Type.STEP, 35, location,
