@@ -286,7 +286,7 @@ public class XProcTestParser
                 for (final XdmNode documentNode : documentElements)
                 {
                     final String documentHref = documentNode.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
-                    if (href != null)
+                    if (documentHref != null)
                     {
                         LOG.trace("New external document: {}", documentHref);
                         documents.add(loadExternalDocument(documentHref, documentNode));
