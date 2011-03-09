@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -262,8 +263,8 @@ public final class Step extends AbstractHasLocation implements StepContainer
     @ReturnsNullable
     public Port getPrimaryInputPort()
     {
-        final List<Port> inputPorts = ImmutableList.copyOf(getInputPorts());
-        LOG.trace("inputPorts = {}", inputPorts);
+        final List<Port> inputPorts = ImmutableList.copyOf(getInputPorts(false));
+        LOG.trace("{@method} inputPorts = {}", inputPorts);
         if (inputPorts.size() == 1)
         {
             final Port inputPort = Iterables.getOnlyElement(inputPorts);
@@ -374,7 +375,20 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Iterable<Port> getInputPorts()
     {
-        return Iterables.filter(ports.values(), PortPredicates.isInputPort());
+        return getInputPorts(true);
+    }
+
+    public Iterable<Port> getInputPorts(final boolean includeParameterPorts)
+    {
+        if (includeParameterPorts)
+        {
+            return Iterables.filter(ports.values(), PortPredicates.isInputPort());
+        }
+        else
+        {
+            return Iterables.filter(ports.values(),
+                    Predicates.and(PortPredicates.isInputPort(), Predicates.not(PortPredicates.isParameterPort())));
+        }
     }
 
     public Iterable<Port> getOutputPorts()

@@ -42,6 +42,7 @@ public final class XProcExceptions
     {
         // No instantiation
     }
+
     public static XProcException xd0001(final Location location)
     {
         return newXProcException(Type.DYNAMIC, 1, location,
@@ -200,7 +201,11 @@ public final class XProcExceptions
 
     public static XProcException xc0020(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 20, SaxonLocation.of(node), "It is a dynamic error if the the user specifies a value or values that are inconsistent with each other or with the requirements of the step or protocol.");
+        return newXProcException(
+                Type.STEP,
+                20,
+                SaxonLocation.of(node),
+                "It is a dynamic error if the the user specifies a value or values that are inconsistent with each other or with the requirements of the step or protocol.");
     }
 
     public static XProcException xc0022(final XdmNode node)
@@ -252,6 +257,16 @@ public final class XProcExceptions
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
+    }
+
+    public static XProcException xc0039(final Location location, final int numberOfInputDocuments)
+    {
+        return newXProcException(
+                Type.STEP,
+                39,
+                location,
+                "It is a dynamic error if a sequence of documents (including an empty sequence) is provided to an XSLT 1.0 step. (%s input documents)",
+                numberOfInputDocuments);
     }
 
     public static XProcException xc0040(final Location location)

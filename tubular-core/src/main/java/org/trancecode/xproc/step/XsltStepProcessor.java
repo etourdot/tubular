@@ -20,6 +20,7 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.net.URI;
@@ -54,7 +55,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class XsltStepProcessor extends AbstractStepProcessor
 {
     private static final String DEFAULT_VERSION = "2.0";
-    private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("2.0");
+    private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.of("1.0", "2.0");
 
     private static final Logger LOG = Logger.getLogger(XsltStepProcessor.class);
 
@@ -67,8 +68,8 @@ public final class XsltStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
-        assert sourceDocument != null;
+        final Iterable<XdmNode> sourceDocuments = input.readNodes(XProcPorts.SOURCE);
+        final XdmNode sourceDocument = Iterables.getFirst(sourceDocuments, null);
 
         final String providedOutputBaseUri = input.getOptionValue(XProcOptions.OUTPUT_BASE_URI);
         final URI outputBaseUri;
@@ -76,7 +77,8 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         {
             outputBaseUri = URI.create(providedOutputBaseUri);
         }
-        else if (sourceDocument.getBaseURI() != null && sourceDocument.getBaseURI().toString().length() > 0)
+        else if (sourceDocument != null && sourceDocument.getBaseURI() != null
+                && sourceDocument.getBaseURI().toString().length() > 0)
         {
             outputBaseUri = sourceDocument.getBaseURI();
         }
@@ -88,11 +90,18 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         LOG.trace("outputBaseUri = {}", outputBaseUri);
 
         final String version = input.getOptionValue(XProcOptions.VERSION, DEFAULT_VERSION);
+        LOG.trace("version = {}", version);
 
         if (!SUPPORTED_VERSIONS.contains(version))
         {
             throw XProcExceptions.xc0038(input.getStep().getLocation(), version);
         }
+
+        if (version.equals("1.0") && Iterables.size(sourceDocuments) != 1)
+        {
+            throw XProcExceptions.xc0039(input.getLocation(), Iterables.size(sourceDocuments));
+        }
+
         final XdmNode stylesheet = input.readNode(XProcPorts.STYLESHEET);
         assert stylesheet != null;
 
@@ -103,7 +112,10 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         try
         {
             transformer = processor.newXsltCompiler().compile(stylesheet.asSource()).load();
-            transformer.setSource(sourceDocument.asSource());
+            if (sourceDocument != null)
+            {
+                transformer.setInitialContextNode(sourceDocument);
+            }
         }
         catch (final SaxonApiException e)
         {

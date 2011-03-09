@@ -22,10 +22,12 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.s9api.QName;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.trancecode.AbstractTest;
 import org.trancecode.xproc.PipelineProcessor;
+import org.trancecode.xproc.port.Port;
 
 /**
  * Tests for {@link Step}.
@@ -62,5 +64,20 @@ public final class StepTest extends AbstractTest
         Assert.assertEquals(dependencies.get(load1), store2);
         Assert.assertEquals(dependencies.get(identity5), load1);
         Assert.assertEquals(dependencies.get(identity6), identity2);
+    }
+
+    @Test
+    public void getPrimaryInputPort()
+    {
+        Step step = Step.newStep(new QName("test"), StepProcessors.unsupportedStepProcessor(new QName("test")), false);
+        final Port input1 = Port.newInputPort("input1");
+        step = step.declarePort(input1);
+        Assert.assertSame(step.getPrimaryInputPort(), input1);
+        final Port parameters1 = Port.newParameterPort("parameters1");
+        step = step.declarePort(parameters1);
+        Assert.assertSame(step.getPrimaryInputPort(), input1);
+        final Port input2 = Port.newInputPort("input2").setPrimary(true);
+        step = step.declarePort(input2);
+        Assert.assertSame(step.getPrimaryInputPort(), input2);
     }
 }
