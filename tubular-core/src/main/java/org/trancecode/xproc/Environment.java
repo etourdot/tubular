@@ -25,13 +25,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -46,6 +44,7 @@ import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonNamespaces;
 import org.trancecode.xproc.binding.PortBinding;
@@ -65,6 +64,7 @@ public final class Environment
     private static final Logger LOG = Logger.getLogger(Environment.class);
 
     private static final QName ATTRIBUTE_NAME = new QName("name");
+    private static final QName ATTRIBUTE_NAMESPACE= new QName("namespace");
     private static final QName ATTRIBUTE_VALUE = new QName("value");
     private static final QName ELEMENT_PARAM = XProcXmlModel.xprocStepNamespace().newSaxonQName("param");
     private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
@@ -762,14 +762,29 @@ public final class Environment
             final XPathCompiler xpathCompiler = getPipelineContext().getProcessor().newXPathCompiler();
             try
             {
-                final XPathSelector nameSelector = xpathCompiler.compile("string(//@name)").load();
-                nameSelector.setContextItem(parameterNode);
-                final String name = nameSelector.evaluateSingle().toString();
-                final XPathSelector valueSelector = xpathCompiler.compile("string(//@value)").load();
-                valueSelector.setContextItem(parameterNode);
-                final String value = valueSelector.evaluateSingle().toString();
-                // TODO name should be real QName
-                parameters.put(new QName(name), value);
+                final XPathSelector paramsSelector = xpathCompiler.compile("//.[@name]").load();
+                paramsSelector.setContextItem(parameterNode);
+                final Iterator<XdmItem> iteratorParams = paramsSelector.iterator();
+                while (iteratorParams.hasNext())
+                {
+                    final XdmNode item = (XdmNode) iteratorParams.next();
+                    final Iterable<XdmNode> attributes = SaxonAxis.attributes(item);
+                    final Iterator<XdmNode> iterator = attributes.iterator();
+                    while (iterator.hasNext())
+                    {
+                        final XdmNode attribute = iterator.next();
+                        final String name = attribute.getNodeName().getLocalName();
+                        if (!ATTRIBUTE_NAME.equals(name) && !ATTRIBUTE_NAMESPACE.equals(name) && !ATTRIBUTE_VALUE.equals(name))
+                        {
+                            throw XProcExceptions.xd0014(item);
+                        }
+                    }
+                    final String name = item.getAttributeValue(ATTRIBUTE_NAME);
+                    final String namespace = item.getAttributeValue(ATTRIBUTE_NAMESPACE);
+                    final String value = item.getAttributeValue(ATTRIBUTE_VALUE);
+                    // TODO name should be real QName
+                    parameters.put(new QName(namespace, name), value);
+                }
             }
             catch (final SaxonApiException e)
             {

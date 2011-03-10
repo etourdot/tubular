@@ -85,6 +85,12 @@ public final class XProcExceptions
         return exception;
     }
 
+    public static XProcException xd0014(final XdmNode node)
+    {
+        return newXProcException(Type.DYNAMIC, 14, SaxonLocation.of(node),
+                "It is a dynamic error for any unqualified attribute names other than 'name', 'namespace', or 'value' to appear on a c:param element.");
+    }
+
     public static XProcException xd0023(final Location location, final String select, final String errorMessage)
     {
         return newXProcException(Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select,
