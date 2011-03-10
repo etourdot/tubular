@@ -270,6 +270,11 @@ public final class PipelineParser
                 return step;
             }
 
+            if (node.getNodeName().equals(Elements.LOG))
+            {
+                return parseLog(node, step);
+            }
+
             throw XProcExceptions.xs0044(node);
         }
         else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
@@ -301,6 +306,13 @@ public final class PipelineParser
         }
 
         return step;
+    }
+
+    private Step parseLog(final XdmNode logNode, final Step step)
+    {
+        final String port = logNode.getAttributeValue(Attributes.PORT);
+        final String href = logNode.getAttributeValue(Attributes.HREF);
+        return step.addLog(port, href);
     }
 
     private Step parseWithPort(final XdmNode portNode, final Step step)

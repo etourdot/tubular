@@ -26,6 +26,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -38,6 +39,7 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.collection.TcMaps;
+import org.trancecode.collection.TcSets;
 import org.trancecode.lang.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
@@ -63,6 +65,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private static final Map<QName, Variable> EMPTY_PARAMETER_MAP = ImmutableMap.of();
     private static final Map<String, Port> EMPTY_PORT_MAP = ImmutableMap.of();
     private static final List<Step> EMPTY_STEP_LIST = ImmutableList.of();
+    private static final Iterable<Log> EMPTY_LOG_LIST = ImmutableSet.of();
 
     private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
     {
@@ -84,27 +87,74 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private final StepProcessor stepProcessor;
     private final List<Step> steps;
     private final boolean compoundStep;
+    private final Iterable<Log> logs;
 
     private final Supplier<Integer> hashCode;
     private final Supplier<String> toString;
 
+    public static final class Log
+    {
+        private final String port;
+        private final String href;
+
+        private Log(final String port, final String href)
+        {
+            this.port = Preconditions.checkNotNull(port);
+            this.href = Preconditions.checkNotNull(href);
+        }
+
+        public String getPort()
+        {
+            return this.port;
+        }
+
+        public String getHref()
+        {
+            return this.href;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return TcObjects.hashCode(port, href);
+        }
+
+        @Override
+        public boolean equals(final Object o)
+        {
+            if (o != null && o instanceof Log)
+            {
+                final Log other = (Log) o;
+                return TcObjects.pairEquals(port, other.port, href, other.href);
+            }
+
+            return false;
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("p:log[%s = %s]", port, href);
+        }
+    }
+
     public static Step newStep(final QName type, final StepProcessor stepProcessor, final boolean compoundStep)
     {
         return new Step(null, type, null, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_LIST,
-                EMPTY_PARAMETER_MAP, EMPTY_PORT_MAP, EMPTY_STEP_LIST);
+                EMPTY_PARAMETER_MAP, EMPTY_PORT_MAP, EMPTY_STEP_LIST, EMPTY_LOG_LIST);
     }
 
     public static Step newStep(final XdmNode node, final QName type, final StepProcessor stepProcessor,
             final boolean compoundStep)
     {
         return new Step(node, type, null, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_LIST,
-                EMPTY_PARAMETER_MAP, EMPTY_PORT_MAP, EMPTY_STEP_LIST);
+                EMPTY_PARAMETER_MAP, EMPTY_PORT_MAP, EMPTY_STEP_LIST, EMPTY_LOG_LIST);
     }
 
     private Step(final XdmNode node, final QName type, final String name, final String internalName,
             final Location location, final StepProcessor stepProcessor, final boolean compoundStep,
             final Map<QName, Variable> variables, final Map<QName, Variable> parameters, final Map<String, Port> ports,
-            final Iterable<Step> steps)
+            final Iterable<Step> steps, final Iterable<Log> logs)
     {
         super(location);
 
@@ -122,6 +172,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         this.parameters = ImmutableMap.copyOf(parameters);
         this.ports = ImmutableMap.copyOf(ports);
         this.steps = ImmutableList.copyOf(steps);
+        this.logs = ImmutableList.copyOf(logs);
 
         hashCode = TcObjects.immutableObjectHashCode(Step.class, node, type, name, location, stepProcessor,
                 compoundStep, variables, parameters, ports, steps);
@@ -155,7 +206,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
             newInternalName = null;
         }
         Step step = new Step(node, type, name, newInternalName, location, stepProcessor, compoundStep, variables,
-                parameters, ports, steps);
+                parameters, ports, steps, logs);
         for (final Port port : ports.values())
         {
             step = step.withPort(port.setStepName(name));
@@ -174,7 +225,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
                 + " ; variables = " + variables;
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
-                variables, variable.getName(), variable), parameters, ports, steps);
+                variables, variable.getName(), variable), parameters, ports, steps, logs);
     }
 
     public Step declareVariables(final Map<QName, Variable> variables)
@@ -214,7 +265,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         newPorts.putAll(Maps.uniqueIndex(ports, PortFunctions.getPortName()));
 
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                newPorts, steps);
+                newPorts, steps, logs);
     }
 
     public Port getPort(final String name)
@@ -405,7 +456,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
 
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
-                variables, name, option.setSelect(select).setNode(node)), parameters, ports, steps);
+                variables, name, option.setSelect(select).setNode(node)), parameters, ports, steps, logs);
     }
 
     public Step withParam(final QName name, final String select, final String value, final Location location)
@@ -420,7 +471,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, variables,
                 TcMaps.copyAndPut(parameters, name,
                         Variable.newParameter(name, location).setSelect(select).setValue(value).setNode(node)), ports,
-                steps);
+                steps, logs);
     }
 
     public Step withOptionValue(final QName name, final String value)
@@ -435,7 +486,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
 
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
-                variables, name, option.setValue(value).setNode(node)), parameters, ports, steps);
+                variables, name, option.setValue(value).setNode(node)), parameters, ports, steps, logs);
     }
 
     public boolean hasOptionDeclared(final QName name)
@@ -465,7 +516,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         assert ports.containsKey(port.getPortName());
 
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                TcMaps.copyAndPut(ports, port.getPortName(), port), steps);
+                TcMaps.copyAndPut(ports, port.getPortName(), port), steps, logs);
     }
 
     @ReturnsNullable
@@ -494,7 +545,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
             return this;
         }
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                ports, steps);
+                ports, steps, logs);
     }
 
     public XdmNode getNode()
@@ -509,7 +560,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         Preconditions.checkState(isCompoundStep());
 
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                ports, TcIterables.append(steps, step));
+                ports, TcIterables.append(steps, step), logs);
 
     }
 
@@ -523,7 +574,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
         LOG.trace("{@method} step = {} ; steps = {}", name, steps);
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                ports, steps);
+                ports, steps, logs);
     }
 
     public List<Step> getSubpipeline()
@@ -539,7 +590,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         }
 
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                ports, steps);
+                ports, steps, logs);
     }
 
     public Variable getVariable(final QName name)
@@ -715,5 +766,16 @@ public final class Step extends AbstractHasLocation implements StepContainer
     public Step getStepByName(final String name)
     {
         return Iterables.find(getAllSteps(), StepPredicates.hasName(name));
+    }
+
+    public Iterable<Log> getLogs()
+    {
+        return logs;
+    }
+
+    public Step addLog(final String port, final String href)
+    {
+        return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
+                ports, steps, TcSets.immutableSet(logs, new Log(port, href)));
     }
 }
