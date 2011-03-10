@@ -69,7 +69,10 @@ public abstract class AbstractStepProcessor implements StepProcessor
 
             }
 
-            return resultEnvironment.setupOutputPorts(step);
+            resultEnvironment = resultEnvironment.setupOutputPorts(step);
+            StepUtils.writeLogs(step, resultEnvironment);
+
+            return resultEnvironment;
         }
         catch (final XProcException e)
         {
