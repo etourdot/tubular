@@ -97,6 +97,15 @@ public final class XProcExceptions
                 errorMessage);
     }
 
+    public static XProcException xd0025(final Location location)
+    {
+        return newXProcException(
+                Type.DYNAMIC,
+                25,
+                location,
+                "It is a dynamic error if the namespace attribute is specified, the name contains a colon, and the specified namespace is not the same as the in-scope namespace binding for the specified prefix.");
+    }
+
     public static XProcException xd0034(final Location location)
     {
         return newXProcException(

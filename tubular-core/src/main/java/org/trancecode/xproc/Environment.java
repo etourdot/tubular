@@ -39,6 +39,7 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
+import org.apache.commons.lang.StringUtils;
 import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
@@ -46,6 +47,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonNamespaces;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
@@ -773,14 +775,22 @@ public final class Environment
                     while (iterator.hasNext())
                     {
                         final XdmNode attribute = iterator.next();
-                        final String name = attribute.getNodeName().getLocalName();
-                        if (!ATTRIBUTE_NAME.equals(name) && !ATTRIBUTE_NAMESPACE.equals(name) && !ATTRIBUTE_VALUE.equals(name))
+                        final QName attName = attribute.getNodeName();
+                        if (!ATTRIBUTE_NAME.equals(attName) && !ATTRIBUTE_NAMESPACE.equals(attName) && !ATTRIBUTE_VALUE.equals(attName))
                         {
                             throw XProcExceptions.xd0014(item);
                         }
                     }
                     final String name = item.getAttributeValue(ATTRIBUTE_NAME);
                     final String namespace = item.getAttributeValue(ATTRIBUTE_NAMESPACE);
+                    if (!StringUtils.isEmpty(namespace) && name.contains(":"))
+                    {
+                        final QName aNode = new QName(StringUtils.substringAfter(name, ":"), item);
+                        if (!namespace.equals(aNode.getNamespaceURI()))
+                        {
+                            throw XProcExceptions.xd0025(SaxonLocation.of(item));
+                        }
+                    }
                     final String value = item.getAttributeValue(ATTRIBUTE_VALUE);
                     // TODO name should be real QName
                     parameters.put(new QName(namespace, name), value);
