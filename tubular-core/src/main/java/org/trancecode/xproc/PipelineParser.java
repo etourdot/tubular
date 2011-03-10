@@ -312,6 +312,7 @@ public final class PipelineParser
     {
         final String port = logNode.getAttributeValue(Attributes.PORT);
         final String href = logNode.getAttributeValue(Attributes.HREF);
+        LOG.trace("{@method} port = {} ; href = {}", port, href);
         return step.addLog(port, href);
     }
 
