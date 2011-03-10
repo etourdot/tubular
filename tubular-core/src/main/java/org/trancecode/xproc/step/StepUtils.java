@@ -23,6 +23,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +31,12 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
@@ -234,15 +237,15 @@ public final class StepUtils
             IOUtils.copy(b64is, writer, charset);
             return writer.toString();
         }
-        catch (MessagingException e)
+        catch (final MessagingException e)
         {
             throw XProcExceptions.xc0010(null);
         }
-        catch (UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException e)
         {
             throw XProcExceptions.xc0010(null);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw XProcExceptions.xc0010(null);
         }
@@ -255,7 +258,7 @@ public final class StepUtils
         {
             contentType = new ContentType(mimeType);
         }
-        catch (ParseException e)
+        catch (final ParseException e)
         {
             throw XProcExceptions.xc0020(node);
         }
