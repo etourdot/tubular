@@ -26,7 +26,6 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -38,8 +37,8 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcIterables;
+import org.trancecode.collection.TcLists;
 import org.trancecode.collection.TcMaps;
-import org.trancecode.collection.TcSets;
 import org.trancecode.lang.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
@@ -65,7 +64,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private static final Map<QName, Variable> EMPTY_PARAMETER_MAP = ImmutableMap.of();
     private static final Map<String, Port> EMPTY_PORT_MAP = ImmutableMap.of();
     private static final List<Step> EMPTY_STEP_LIST = ImmutableList.of();
-    private static final Iterable<Log> EMPTY_LOG_LIST = ImmutableSet.of();
+    private static final Iterable<Log> EMPTY_LOG_LIST = ImmutableList.of();
 
     private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
     {
@@ -742,7 +741,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
             final Step other = (Step) o;
             return TcObjects.pairEquals(node, other.node, type, other.type, name, other.name, location, other.location,
                     stepProcessor, other.stepProcessor, compoundStep, other.compoundStep, variables, other.variables,
-                    parameters, other.parameters, ports, other.ports, steps, other.steps);
+                    parameters, other.parameters, ports, other.ports, steps, other.steps, logs, other.logs);
         }
 
         return false;
@@ -775,7 +774,10 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step addLog(final String port, final String href)
     {
+        LOG.trace("{@method} step = {} ; port = {} ; href = {}", name, port, href);
+        final Log log = new Log(port, href);
+        assert !Iterables.contains(logs, log) : name + " / " + logs + " / " + log;
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
-                ports, steps, TcSets.immutableSet(logs, new Log(port, href)));
+                ports, steps, TcLists.immutableList(logs, log));
     }
 }
