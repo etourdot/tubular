@@ -1,0 +1,15 @@
+target
+tags
+test-output
+syntax: glob
+checkstyle.xml
+trancecode-util/trancecode-util.iml
+tubular-cli/tubular-cli.iml
+tubular-core/tubular-core.iml
+tubular-core/src/test/resources/doc
+tubular-core/src/test/resources/tests
+xml-catalog/xml-catalog.iml
+tubular.iml
+tubular.ipr
+tubular.iws
+tubular-core/src/test/java/org/trancecode/xproc/XProcFileTestSuiteTest.java

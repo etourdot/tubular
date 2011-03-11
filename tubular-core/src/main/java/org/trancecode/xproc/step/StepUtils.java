@@ -61,6 +61,7 @@ public final class StepUtils
     private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML,
             MediaTypes.MEDIA_TYPE_XML, METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML,
             MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
+    private static Logger LOG = Logger.getLogger(StepUtils.class);
 
     private StepUtils()
     {
@@ -236,15 +237,15 @@ public final class StepUtils
             IOUtils.copy(b64is, writer, charset);
             return writer.toString();
         }
-        catch (MessagingException e)
+        catch (final MessagingException e)
         {
             throw XProcExceptions.xc0010(null);
         }
-        catch (UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException e)
         {
             throw XProcExceptions.xc0010(null);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw XProcExceptions.xc0010(null);
         }
@@ -257,13 +258,61 @@ public final class StepUtils
         {
             contentType = new ContentType(mimeType);
         }
-        catch (ParseException e)
+        catch (final ParseException e)
         {
             throw XProcExceptions.xc0020(node);
         }
         return contentType;
     }
 
+
+    public static void writeLogs(final Step step, final Environment environment)
+    {
+        LOG.trace("{@method} step = {}", step.getName());
+        for (final Log log : step.getLogs())
+        {
+            LOG.trace("  write {}/{} to {}", step.getName(), log.getPort(), log.getHref());
+            final EnvironmentPort port = environment.getEnvironmentPort(PortReference.newReference(step.getName(),
+                    log.getPort()));
+            for (final XdmNode node : port.readNodes())
+            {
+                final OutputURIResolver resolver = environment.getPipelineContext().getProcessor()
+                        .getUnderlyingConfiguration().getOutputURIResolver();
+                final Result result;
+                try
+                {
+                    result = resolver.resolve(log.getHref(), environment.getBaseUri().toString());
+                }
+                catch (final TransformerException e)
+                {
+                    throw new XmlException(e, "cannot write node from port %s/%s to %s", step.getName(), log.getPort(),
+                            log.getHref());
+                }
+                LOG.trace("  output URI = %s", result.getSystemId());
+
+                try
+                {
+                    new TransformerFactoryImpl().newTransformer().transform(node.asSource(), result);
+                }
+                catch (final TransformerException e)
+                {
+                    throw new XmlException(e, "cannot write node from port %s/%s to %s", step.getName(), log.getPort(),
+                            log.getHref());
+                }
+                finally
+                {
+                    try
+                    {
+                        resolver.close(result);
+                    }
+                    catch (final TransformerException e)
+                    {
+                        LOG.error("{}", e);
+                        LOG.trace("{stackTrace}", e);
+                    }
+                }
+            }
+        }
     public static URI getUri(final String namespace)
     {
         if (namespace == null)
