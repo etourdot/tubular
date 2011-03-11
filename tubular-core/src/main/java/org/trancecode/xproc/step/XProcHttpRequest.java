@@ -35,6 +35,7 @@ public class XProcHttpRequest
     private HttpRequestBase httpRequest;
     private boolean detailled;
     private boolean statusOnly;
+    private String overrideContentType;
     private HttpEntity entity;
     private CredentialsProvider credentials;
 
@@ -111,5 +112,15 @@ public class XProcHttpRequest
     public void setCredentials(final CredentialsProvider credentials)
     {
         this.credentials = credentials;
+    }
+
+    public String getOverrideContentType()
+    {
+        return overrideContentType;
+    }
+
+    public void setOverrideContentType(final String overrideContentType)
+    {
+        this.overrideContentType = overrideContentType;
     }
 }

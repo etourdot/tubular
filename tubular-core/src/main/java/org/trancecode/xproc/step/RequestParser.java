@@ -136,6 +136,7 @@ class RequestParser
         final CredentialsProvider credentialsProvider = parseAuthentication(requestNode);
         request.setCredentials(credentialsProvider);
         request.setHttpRequest(constructMethod(method, hrefUri));
+        request.setOverrideContentType(requestNode.getAttributeValue(XProcXmlModel.Attributes.OVERRIDE_CONTENT_TYPE));
 
         return request;
     }

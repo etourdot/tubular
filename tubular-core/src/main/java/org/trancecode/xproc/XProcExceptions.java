@@ -269,6 +269,12 @@ public final class XProcExceptions
                 "It is a dynamic error if an XInclude error occurs during processing.");
     }
 
+    public static XProcException xc0030()
+    {
+        return newXProcException(Type.STEP, 30, null,
+                "It is a dynamic error if the override-content-type value cannot be used (e.g. text/plain to override image/png).");
+    }
+
     public static XProcException xc0035(final Location location)
     {
         return newXProcException(Type.STEP, 35, location,

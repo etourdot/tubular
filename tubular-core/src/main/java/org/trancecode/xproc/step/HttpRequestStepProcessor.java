@@ -98,7 +98,7 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         {
             final Processor processor = input.getPipelineContext().getProcessor();
             final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor,
-                    xProcRequest.isDetailled(), xProcRequest.isStatusOnly());
+                    xProcRequest.isDetailled(), xProcRequest.isStatusOnly(), xProcRequest.getOverrideContentType());
             final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler,
                     localContext);
             final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());

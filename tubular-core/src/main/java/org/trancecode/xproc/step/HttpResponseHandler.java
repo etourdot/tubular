@@ -31,6 +31,7 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -39,8 +40,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
+import org.trancecode.api.Nullable;
 import org.trancecode.http.BodypartResponseParser;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
 
 class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
@@ -48,12 +51,15 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
     private final boolean detailed;
     private final boolean statusOnly;
     private final Processor processor;
+    private final String overrideContentType;
 
-    public HttpResponseHandler(final Processor processor, final boolean detailed, final boolean statusOnly)
+    public HttpResponseHandler(final Processor processor, final boolean detailed, final boolean statusOnly,
+                               @Nullable final String overrideContentType)
     {
         this.processor = processor;
         this.detailed = detailed;
         this.statusOnly = statusOnly;
+        this.overrideContentType = overrideContentType;
     }
 
     @Override
@@ -72,6 +78,10 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         catch (ParseException e)
         {
             contentMimeType = new ContentType("text", "plain", null);
+        }
+        if (!StringUtils.isEmpty(overrideContentType))
+        {
+            contentMimeType = verifyContentType(contentMimeType, overrideContentType);
         }
         final BodypartResponseParser parser = new BodypartResponseParser(entity.getContent(), null,
                 httpResponse.getParams(), contentType, contentCharset);
@@ -132,6 +142,33 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         }
         EntityUtils.consume(entity);
         return response;
+    }
+
+    private ContentType verifyContentType(final ContentType contentMimeType, final String overrideContentType)
+    {
+        ContentType overrideMimeType = null;
+        try
+        {
+            overrideMimeType = new ContentType(overrideContentType);
+        }
+        catch (ParseException e)
+        {
+            throw XProcExceptions.xc0030();
+        }
+        if (StringUtils.equalsIgnoreCase(overrideMimeType.toString(),contentMimeType.toString()))
+        {
+            return contentMimeType;
+        }
+        if (("multipart".equals(contentMimeType.getPrimaryType()) && !"multipart".equals(overrideMimeType.getPrimaryType())) ||
+            ("multipart".equals(overrideMimeType.getPrimaryType()) && !"multipart".equals(contentMimeType.getPrimaryType())) ||
+            (contentMimeType.getSubType().contains("xml") || "text".equals(contentMimeType.getPrimaryType()) &&
+                "image".equals(overrideMimeType.getPrimaryType())) ||
+            ("image".equals(contentMimeType.getPrimaryType()) && (overrideMimeType.getSubType().contains("xml") ||
+                "text".equals(overrideMimeType.getPrimaryType()))))
+        {
+            throw XProcExceptions.xc0030();
+        }
+        return overrideMimeType;
     }
 
     private Iterable<XdmNode> constructBody(final ContentType contentMimeType, final String contentType,
