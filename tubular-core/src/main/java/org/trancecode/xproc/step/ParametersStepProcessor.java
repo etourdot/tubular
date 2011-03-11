@@ -25,6 +25,8 @@ import java.util.Set;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNodeKind;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.port.XProcPorts;
 
 /**
@@ -51,6 +53,19 @@ public final class ParametersStepProcessor extends AbstractStepProcessor
     {
         final Map<QName, String> parameters = input.getParameters(XProcPorts.PARAMETERS);
         LOG.debug("parameters = {}", parameters);
+        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
+                .getUnderlyingConfiguration());
+        builder.startDocument();
+        builder.startElement(XProcXmlModel.Elements.PARAM_SET);
+        for (final Map.Entry<QName, String> entry : parameters.entrySet())
+        {
+            builder.startElement(XProcXmlModel.Elements.PARAM);
+            builder.attribute(entry.getKey(), entry.getValue());
+            builder.endElement();
+        }
+        builder.endElement();
+        builder.endDocument();
+        output.writeNodes(XProcPorts.RESULT, builder.getNode());
 
     }
 }
