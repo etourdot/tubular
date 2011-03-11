@@ -32,17 +32,29 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
+import javax.xml.transform.Result;
+import javax.xml.transform.TransformerException;
+
+import net.sf.saxon.TransformerFactoryImpl;
+import net.sf.saxon.lib.OutputURIResolver;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.IOUtils;
 import org.trancecode.io.MediaTypes;
+import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
+import org.trancecode.xml.XmlException;
+import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.port.EnvironmentPort;
+import org.trancecode.xproc.port.PortReference;
+import org.trancecode.xproc.step.Step.Log;
 import org.trancecode.xproc.variable.XProcOptions;
 
 /**
@@ -265,7 +277,6 @@ public final class StepUtils
         return contentType;
     }
 
-
     public static void writeLogs(final Step step, final Environment environment)
     {
         LOG.trace("{@method} step = {}", step.getName());
@@ -313,6 +324,8 @@ public final class StepUtils
                 }
             }
         }
+    }
+    
     public static URI getUri(final String namespace)
     {
         if (namespace == null)
