@@ -3524,7 +3524,7 @@ public class XProcTestSuiteTest extends AbstractXProcTest
         test(new URL("http://tests.xproc.org/tests/required/xslt-006.xml"), "required");
     }
 
-    /*@Test
+    @Test
     public void optional_document_template_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/optional/document-template-001.xml"), "optional");
@@ -4188,5 +4188,5 @@ public class XProcTestSuiteTest extends AbstractXProcTest
     public void optional_xslt2_003() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/optional/xslt2-003.xml"), "optional");
-    }*/
+    }
 }
