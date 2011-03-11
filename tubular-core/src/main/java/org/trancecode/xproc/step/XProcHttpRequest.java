@@ -19,19 +19,18 @@
  */
 package org.trancecode.xproc.step;
 
-import java.util.List;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.HeaderGroup;
 
 /**
  * User: Emmanuel Tourdot Date: 20 feb. 2011 Time: 09:19:56
  */
 public class XProcHttpRequest
 {
-    private List<Header> headers;
+    private HeaderGroup headers;
     private HttpHost httpHost;
     private HttpRequestBase httpRequest;
     private boolean detailled;
@@ -39,12 +38,12 @@ public class XProcHttpRequest
     private HttpEntity entity;
     private CredentialsProvider credentials;
 
-    public List<Header> getHeaders()
+    public HeaderGroup getHeaders()
     {
         return headers;
     }
 
-    public void setHeaders(final List<Header> headers)
+    public void setHeaders(final HeaderGroup headers)
     {
         this.headers = headers;
     }

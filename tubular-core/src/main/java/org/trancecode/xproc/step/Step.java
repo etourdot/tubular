@@ -28,11 +28,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.ReturnsNullable;
@@ -44,6 +42,7 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
@@ -221,8 +220,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step declareVariable(final Variable variable)
     {
-        assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
-                + " ; variables = " + variables;
+        //assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
+        //        + " ; variables = " + variables;
+        if (variables.containsKey(variable.getName()))
+        {
+            throw XProcExceptions.xs0004(variable);
+        }
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
                 variables, variable.getName(), variable), parameters, ports, steps, logs);
     }
@@ -453,6 +456,10 @@ public final class Step extends AbstractHasLocation implements StepContainer
         final Variable option = variables.get(name);
         Preconditions.checkArgument(option != null, "no such option: %s", name);
         Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
+        if (option.getSelect() != null)
+        {
+            throw XProcExceptions.xs0004(option);
+        }
 
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
                 variables, name, option.setSelect(select).setNode(node)), parameters, ports, steps, logs);

@@ -85,10 +85,25 @@ public final class XProcExceptions
         return exception;
     }
 
+    public static XProcException xd0014(final XdmNode node)
+    {
+        return newXProcException(Type.DYNAMIC, 14, SaxonLocation.of(node),
+                "It is a dynamic error for any unqualified attribute names other than 'name', 'namespace', or 'value' to appear on a c:param element.");
+    }
+
     public static XProcException xd0023(final Location location, final String select, final String errorMessage)
     {
         return newXProcException(Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select,
                 errorMessage);
+    }
+
+    public static XProcException xd0025(final Location location)
+    {
+        return newXProcException(
+                Type.DYNAMIC,
+                25,
+                location,
+                "It is a dynamic error if the namespace attribute is specified, the name contains a colon, and the specified namespace is not the same as the in-scope namespace binding for the specified prefix.");
     }
 
     public static XProcException xd0034(final Location location)
@@ -98,6 +113,11 @@ public final class XProcExceptions
                 34,
                 location,
                 "It is a dynamic error to specify a new namespace or prefix if the lexical value of the specified name contains a colon (or if no wrapper is explicitly specified).");
+    }
+
+    public static XProcException xs0004(final Variable option)
+    {
+        return newXProcException(Type.STATIC, 4, option.getLocation(), "It is a static error if an option or variable declaration duplicates the name of any other option or variable in the same environment.");
     }
 
     public static XProcException xs0018(final Variable option)
@@ -182,6 +202,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the pattern matches a processing instruction and the new name has a non-null namespace.");
     }
 
+    public static XProcException xc0014(final XdmNode node)
+    {
+        return newXProcException(Type.STEP, 14, SaxonLocation.of(node),
+                "It is a dynamic error if the XML namespace (http://www.w3.org/XML/1998/namespace) or the XMLNS namespace (http://www.w3.org/2000/xmlns/) is the value of either the from option or the to option.");
+    }
+
     public static XProcException xc0019(final Step step)
     {
         return newXProcException(Type.STEP, 19, step.getLocation(), "Documents are not equal in step %s",
@@ -231,6 +257,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the document is not valid or the step doesn't support DTD validation.");
     }
 
+    public static XProcException xc0029(final Location location)
+    {
+        return newXProcException(Type.STEP, 29, location,
+                "It is a dynamic error if an XInclude error occurs during processing.");
+    }
+
     public static XProcException xc0035(final Location location)
     {
         return newXProcException(Type.STEP, 35, location,
@@ -270,10 +302,22 @@ public final class XProcExceptions
                 "It is a dynamic error if the content-type specified is not supported by the implementation.");
     }
 
+    public static XProcException xc0052(final Location location)
+    {
+        return newXProcException(Type.STEP, 52, location,
+                "It is a dynamic error if the encoding specified is not supported by the implementation.");
+    }
+
     public static XProcException xc0053(final Location location)
     {
         return newXProcException(Type.STEP, 53, location,
                 "It is a dynamic error if the assert-valid option is true and the input document is not valid.");
+    }
+
+    public static XProcException xc0057(final Location location)
+    {
+        return newXProcException(Type.STEP, 57, location,
+                "It is a dynamic error if the sequence that results from evaluating the XQuery contains items other than documents and elements.");
     }
 
     public static XProcException xc0058(final Location location)

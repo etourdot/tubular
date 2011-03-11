@@ -77,7 +77,7 @@ public abstract class AbstractXProcTest extends AbstractTest
     @BeforeClass
     public static void setupLoggingLevel()
     {
-        Logger.getLogger("org.trancecode").setLevel(Level.INFO);
+        Logger.getLogger("org.trancecode").setLevel(Level.TRACE);
         Logger.getLogger("org.apache").setLevel(Level.TRACE);
     }
 

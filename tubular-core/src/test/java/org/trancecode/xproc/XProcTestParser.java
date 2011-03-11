@@ -202,9 +202,16 @@ public class XProcTestParser
             {
                 LOG.trace("Parameter: [{}] {}={}", port, name, value);
                 final Map<QName, String> portParams = (parameters.containsKey(port)) ? parameters.get(port)
-                        : new HashMap<QName, String>();
+                         : new HashMap<QName, String>();
                 portParams.put(new QName(name, node), value);
-                parameters.put(port, portParams);
+                if (port != null)
+                {
+                    parameters.put(port, portParams);
+                }
+                else
+                {
+                    parameters.put("", portParams);
+                }
             }
         }
     }
@@ -279,7 +286,7 @@ public class XProcTestParser
                 for (final XdmNode documentNode : documentElements)
                 {
                     final String documentHref = documentNode.getAttributeValue(XProcTestSuiteXmlModel.ATTRIBUTE_HREF);
-                    if (href != null)
+                    if (documentHref != null)
                     {
                         LOG.trace("New external document: {}", documentHref);
                         documents.add(loadExternalDocument(documentHref, documentNode));

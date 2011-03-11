@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Set;
 
 import javax.mail.MessagingException;
@@ -234,7 +236,7 @@ public final class StepUtils
         {
             final String prefix = (newPrefix == null) ? node.getProcessor().getUnderlyingConfiguration().getNamePool()
                     .suggestPrefixForURI(newNamespace) : newPrefix;
-            return new QName(prefix, newNamespace, newName);
+            return new QName((prefix == null) ? "" : prefix, newNamespace, newName);
         }
     }
 
@@ -274,6 +276,30 @@ public final class StepUtils
             throw XProcExceptions.xc0020(node);
         }
         return contentType;
+    }
+
+    public static URI getUri(final String namespace)
+    {
+        if (namespace == null)
+        {
+            return null;
+        }
+        try
+        {
+            final URI uri = new URI(namespace);
+            if (!uri.isAbsolute())
+            {
+                return null;
+            }
+            else
+            {
+                return uri.resolve(namespace);
+            }
+        }
+        catch (URISyntaxException e)
+        {
+            return null;
+        }
     }
 
     public static void writeLogs(final Step step, final Environment environment)

@@ -20,16 +20,13 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
-import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import net.sf.saxon.s9api.Axis;
@@ -40,8 +37,10 @@ import net.sf.saxon.s9api.XdmNodeKind;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -66,6 +65,7 @@ import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.HeaderGroup;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.trancecode.logging.Logger;
@@ -102,11 +102,14 @@ class RequestParser
         {
             request.setEntity(parseBody(requestNode));
         }
-        if (request.hasEntity()
-                && !(StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method) || StringUtils.equalsIgnoreCase(
-                        HttpPost.METHOD_NAME, method)))
+        if (request.hasEntity())
         {
-            throw XProcExceptions.xc0005(requestNode);
+            checkCoherenceHeaders(request.getHeaders(), request.getEntity(), requestNode);
+            if (!(StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method) ||
+                  StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method)))
+            {
+                throw XProcExceptions.xc0005(requestNode);
+            }
         }
 
         final boolean status = Boolean.valueOf(requestNode.getAttributeValue(XProcXmlModel.Attributes.STATUS_ONLY));
@@ -136,25 +139,47 @@ class RequestParser
         return request;
     }
 
-    /*
-     * private void checkCoherenceHeaders(final ImmutableList<Header> headers,
-     * final HttpEntity entity) { }
-     */
-
-    private List<Header> parseHeaders(final XdmNode requestNode)
+    private void checkCoherenceHeaders(final HeaderGroup headers, final HttpEntity entity, final XdmNode requestNode)
     {
-        final List<Header> list = Lists.newArrayList();
-        final Iterable<XdmNode> childs = SaxonAxis.childElements(requestNode, XProcXmlModel.Elements.HEADER);
-        for (final XdmNode child : childs)
+        final Header ctHeaders = headers.getFirstHeader("content-type");
+        final Header ctEntity = entity.getContentType();
+        if (ctHeaders != null && ctEntity != null)
+        {
+            final HeaderElement elmHeaderCt = ctHeaders.getElements()[0];
+            final HeaderElement elmEntityCt = ctEntity.getElements()[0];
+            if (!StringUtils.equalsIgnoreCase(elmHeaderCt.getName(),elmEntityCt.getName()))
+            {
+                throw XProcExceptions.xc0020(requestNode);
+            }
+            for (final NameValuePair pairEntity : elmEntityCt.getParameters())
+            {
+                final NameValuePair pairHeader = elmHeaderCt.getParameterByName(pairEntity.getName());
+                if (pairHeader != null)
+                {
+                    if (!StringUtils.equalsIgnoreCase(pairHeader.getValue(), pairEntity.getValue()))
+                    {
+                        throw XProcExceptions.xc0020(requestNode);
+                    }
+                }
+            }
+        }
+
+    }
+
+    private HeaderGroup parseHeaders(final XdmNode requestNode)
+    {
+        final HeaderGroup group = new HeaderGroup();
+        final Iterable<XdmNode> children = SaxonAxis.childElements(requestNode, XProcXmlModel.Elements.HEADER);
+        for (final XdmNode child : children)
         {
             final String nameHeader = child.getAttributeValue(XProcXmlModel.Attributes.NAME);
             final String valueHeader = child.getAttributeValue(XProcXmlModel.Attributes.VALUE);
             if (!Strings.isNullOrEmpty(nameHeader) && !Strings.isNullOrEmpty(valueHeader))
             {
-                list.add(new BasicHeader(nameHeader, valueHeader));
+                group.addHeader(new BasicHeader(nameHeader, valueHeader));
             }
         }
-        return list;
+        return group;
     }
 
     private MultipartEntity parseMultipart(final XdmNode requestNode)
@@ -201,8 +226,8 @@ class RequestParser
         if (!StringUtils.equalsIgnoreCase("xml", contentType.getSubType())
                 || StringUtils.equalsIgnoreCase("base64", encoding))
         {
-            final Iterable<XdmItem> childs = SaxonAxis.axis(node, Axis.CHILD);
-            for (final XdmItem aNode : childs)
+            final Iterable<XdmItem> children = SaxonAxis.axis(node, Axis.CHILD);
+            for (final XdmItem aNode : children)
             {
                 if (!XdmNodeKind.TEXT.equals(((XdmNode) aNode).getNodeKind()))
                 {
@@ -233,6 +258,12 @@ class RequestParser
             }
             contentBuilder.append(targetOutputStream.toString());
         }
+        final String id = node.getAttributeValue(XProcXmlModel.Attributes.ID);
+        verifyHeader(id, "Content-ID", node);
+        final String description = node.getAttributeValue(XProcXmlModel.Attributes.DESCRIPTION);
+        verifyHeader(description, "Content-Description", node);
+        final String disposition = node.getAttributeValue(XProcXmlModel.Attributes.DISPOSITION);
+        verifyHeader(disposition, "Content-Disposition", node);
         return contentBuilder.toString();
     }
 
@@ -328,6 +359,21 @@ class RequestParser
         return bodyPart;
     }
 
+    private void verifyHeader(final String headerVal, final String headerName , final XdmNode node)
+    {
+        if (StringUtils.isNotBlank(headerVal))
+        {
+            final Header header = request.getHeaders().getFirstHeader(headerName);
+            if (header != null)
+            {
+                if (!StringUtils.equalsIgnoreCase(headerVal, header.getValue()))
+                {
+                    throw XProcExceptions.xc0020(node);
+                }
+            }
+        }
+    }
+
     private StringEntity parseBody(final XdmNode node)
     {
         final XdmNode body = SaxonAxis.childElement(node, XProcXmlModel.Elements.BODY);
@@ -395,18 +441,15 @@ class RequestParser
     private HttpRequestBase constructMethod(final String method, final URI hrefUri)
     {
         final HttpEntity httpEntity = request.getEntity();
-        final List<Header> headers = request.getHeaders();
+        final HeaderGroup headers = request.getHeaders();
         if (StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method))
         {
             final HttpPost httpPost = new HttpPost(hrefUri);
-            if (headers != null && headers.size() > 0)
+            for (final Header h : headers.getAllHeaders())
             {
-                for (final Header h : headers)
+                if (!StringUtils.equalsIgnoreCase("Content-Type", h.getName()))
                 {
-                    if (!StringUtils.equalsIgnoreCase("Content-Type", h.getName()))
-                    {
-                        httpPost.addHeader(h);
-                    }
+                    httpPost.addHeader(h);
                 }
             }
             httpPost.setEntity(httpEntity);
@@ -414,22 +457,28 @@ class RequestParser
         }
         else if (StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method))
         {
+            final HttpPut httpPut = new HttpPut(hrefUri);
+            httpPut.setEntity(httpEntity);
+            return httpPut;
         }
         else if (StringUtils.equalsIgnoreCase(HttpDelete.METHOD_NAME, method))
         {
+            final HttpDelete httpDelete = new HttpDelete(hrefUri);
+            httpDelete.setHeaders(headers.getAllHeaders());
+            return httpDelete;
         }
         else if (StringUtils.equalsIgnoreCase(HttpGet.METHOD_NAME, method))
         {
             final HttpGet httpGet = new HttpGet(hrefUri);
-            if (headers != null && headers.size() > 0)
-            {
-                httpGet.setHeaders((Header[]) headers.toArray());
-            }
+            httpGet.setHeaders(headers.getAllHeaders());
             return httpGet;
 
         }
         else if (StringUtils.equalsIgnoreCase(HttpHead.METHOD_NAME, method))
         {
+            final HttpHead httpHead = new HttpHead(hrefUri);
+            httpHead.setHeaders(headers.getAllHeaders());
+            return httpHead;
         }
         return null;
     }

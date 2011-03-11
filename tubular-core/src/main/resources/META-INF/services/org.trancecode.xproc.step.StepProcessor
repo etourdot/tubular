@@ -13,7 +13,9 @@ org.trancecode.xproc.step.InsertStepProcessor
 org.trancecode.xproc.step.LabelElementsStepProcessor
 org.trancecode.xproc.step.LoadStepProcessor
 org.trancecode.xproc.step.MakeAbsoluteUrisStepProcessor
+org.trancecode.xproc.step.NamespaceRenameStepProcessor
 org.trancecode.xproc.step.PackStepProcessor
+org.trancecode.xproc.step.ParametersStepProcessor
 org.trancecode.xproc.step.RenameStepProcessor
 org.trancecode.xproc.step.ReplaceStepProcessor
 org.trancecode.xproc.step.SetAttributesStepProcessor
@@ -26,5 +28,7 @@ org.trancecode.xproc.step.UuidStepProcessor
 org.trancecode.xproc.step.ValidateWithSchemaStepProcessor
 org.trancecode.xproc.step.WrapSequenceStepProcessor
 org.trancecode.xproc.step.WrapStepProcessor
+org.trancecode.xproc.step.XIncludeStepProcessor
 org.trancecode.xproc.step.XslFormatterStepProcessor
 org.trancecode.xproc.step.XsltStepProcessor
+org.trancecode.xproc.step.XQueryStepProcessor

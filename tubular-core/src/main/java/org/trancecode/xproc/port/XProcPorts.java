@@ -32,6 +32,7 @@ public final class XProcPorts
     public static final String EXIT_STATUS = "exit-status";
     public static final String ITERATION_SOURCE = "iteration-source";
     public static final String PARAMETERS = "parameters";
+    public static final String QUERY = "query";
     public static final String REPLACEMENT = "replacement";
     public static final String RESULT = "result";
     public static final String SECONDARY = "secondary";
