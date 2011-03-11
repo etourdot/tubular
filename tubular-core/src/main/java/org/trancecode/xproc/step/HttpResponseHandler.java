@@ -93,7 +93,6 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
                         response.setNodes(body);
                     }
                 }
-                EntityUtils.consume(entity);
             }
         }
         else
@@ -105,16 +104,33 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
                     Integer.toString(httpResponse.getStatusLine().getStatusCode()));
             if (!statusOnly)
             {
-                final BodypartResponseParser.BodypartEntity part = parser.parseBodypart(false);
-                final Iterable<XdmNode> body = constructBody(contentMimeType, contentType, part);
-                if (body != null)
+                final Header[] headers = httpResponse.getAllHeaders();
+                for (final Header header : headers)
                 {
-                    builder.nodes(body);
+                    builder.startElement(XProcXmlModel.Elements.HEADER);
+                    builder.attribute(XProcXmlModel.Attributes.NAME, header.getName());
+                    builder.attribute(XProcXmlModel.Attributes.VALUE, header.getValue());
+                    builder.endElement();
+                }
+                if ("multipart".equals(contentMimeType.getPrimaryType()))
+                {
+                    builder.nodes(constructMultipart(entity, contentMimeType, contentType, parser));
+                }
+                else
+                {
+                    final BodypartResponseParser.BodypartEntity part = parser.parseBodypart(false);
+                    final Iterable<XdmNode> body = constructBody(contentMimeType, contentType, part);
+                    if (body != null)
+                    {
+                        builder.nodes(body);
+                    }
                 }
             }
+            builder.endElement();
             builder.endDocument();
             response.setNodes(ImmutableList.of(builder.getNode()));
         }
+        EntityUtils.consume(entity);
         return response;
     }
 
