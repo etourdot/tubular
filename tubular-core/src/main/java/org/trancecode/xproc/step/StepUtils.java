@@ -59,7 +59,7 @@ import org.trancecode.xproc.step.Step.Log;
 import org.trancecode.xproc.variable.XProcOptions;
 
 /**
- * User: Emmanuel Tourdot Date: 12 febr. 2011 Time: 21:41:42
+ * @author Emmanuel Tourdot
  */
 public final class StepUtils
 {
@@ -296,7 +296,7 @@ public final class StepUtils
                 return uri.resolve(namespace);
             }
         }
-        catch (URISyntaxException e)
+        catch (final URISyntaxException e)
         {
             return null;
         }
