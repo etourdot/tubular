@@ -20,7 +20,6 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
 
 import java.io.ByteArrayOutputStream;
@@ -28,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.util.Map;
 
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
@@ -84,10 +84,11 @@ class RequestParser
 {
     private static final Logger LOG = Logger.getLogger(RequestParser.class);
     private static final String DEFAULT_MULTIPART_TYPE = "multipart/mixed";
-    private final ImmutableMap<String, Object> serializationOptions;
+
+    private final Map<String, Object> serializationOptions;
     private final XProcHttpRequest request = new XProcHttpRequest();
 
-    public RequestParser(final ImmutableMap<String, Object> serializationOptions)
+    public RequestParser(final Map<String, Object> serializationOptions)
     {
         this.serializationOptions = serializationOptions;
     }
