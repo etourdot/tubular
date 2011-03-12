@@ -23,12 +23,12 @@ import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.NameBasedGenerator;
 import com.fasterxml.uuid.impl.RandomBasedGenerator;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.EnumSet;
 import java.util.UUID;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -134,25 +134,26 @@ public final class UuidStepProcessor extends AbstractStepProcessor
                     final TimeBasedGenerator tUuidGen = Generators.timeBasedGenerator();
                     return tUuidGen.generate();
                 case 3:
-                    final NameBasedGenerator nUuidGen;
-                    try
-                    {
-                        nUuidGen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL,
+                    final NameBasedGenerator nUuidGen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL,
                                 MessageDigest.getInstance("MD5"));
-                    }
-                    catch (final NoSuchAlgorithmException e)
-                    {
-                        throw XProcExceptions.xc0060(inputStep.getLocation());
-                    }
                     return nUuidGen.generate("tubular_uuid");
                 case 4:
-                    final RandomBasedGenerator rUuidGen = Generators.randomBasedGenerator();
+                    final SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+                    final RandomBasedGenerator rUuidGen = Generators.randomBasedGenerator(sr);
                     return rUuidGen.generate();
                 default:
                     throw XProcExceptions.xc0060(inputStep.getLocation());
             }
         }
         catch (final NumberFormatException e)
+        {
+            throw XProcExceptions.xc0060(inputStep.getLocation());
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            throw XProcExceptions.xc0060(inputStep.getLocation());
+        }
+        catch (NoSuchProviderException e)
         {
             throw XProcExceptions.xc0060(inputStep.getLocation());
         }
