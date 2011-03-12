@@ -22,13 +22,16 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
+
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
+
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmItem;
@@ -105,8 +108,8 @@ class RequestParser
         if (request.hasEntity())
         {
             checkCoherenceHeaders(request.getHeaders(), request.getEntity(), requestNode);
-            if (!(StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method) ||
-                  StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method)))
+            if (!(StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method) || StringUtils.equalsIgnoreCase(
+                    HttpPost.METHOD_NAME, method)))
             {
                 throw XProcExceptions.xc0005(requestNode);
             }
@@ -147,7 +150,7 @@ class RequestParser
         {
             final HeaderElement elmHeaderCt = ctHeaders.getElements()[0];
             final HeaderElement elmEntityCt = ctEntity.getElements()[0];
-            if (!StringUtils.equalsIgnoreCase(elmHeaderCt.getName(),elmEntityCt.getName()))
+            if (!StringUtils.equalsIgnoreCase(elmHeaderCt.getName(), elmEntityCt.getName()))
             {
                 throw XProcExceptions.xc0020(requestNode);
             }
@@ -284,7 +287,7 @@ class RequestParser
             body = new StringBody(contentString, contentType.toString(), getCharset(
                     contentType.getParameter("charset"), "utf-8"));
         }
-        catch (UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException e)
         {
             throw XProcExceptions.xc0020(node);
         }
@@ -335,11 +338,11 @@ class RequestParser
                             buffer.append("; charset=utf-8");
                         }
                     }
-                    catch (ParseException e)
+                    catch (final ParseException e)
                     {
                         throw XProcExceptions.xc0020(node);
                     }
-                    catch (IllegalCharsetNameException e)
+                    catch (final IllegalCharsetNameException e)
                     {
                         throw XProcExceptions.xc0020(node);
                     }
@@ -359,7 +362,7 @@ class RequestParser
         return bodyPart;
     }
 
-    private void verifyHeader(final String headerVal, final String headerName , final XdmNode node)
+    private void verifyHeader(final String headerVal, final String headerName, final XdmNode node)
     {
         if (StringUtils.isNotBlank(headerVal))
         {
@@ -388,7 +391,7 @@ class RequestParser
                 return new StringEntity(contentString, contentType.toString(), getCharset(
                         contentType.getParameter("charset"), "utf-8").toString());
             }
-            catch (UnsupportedEncodingException e)
+            catch (final UnsupportedEncodingException e)
             {
                 throw XProcExceptions.xc0020(body);
             }
