@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +33,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.Set;
 
 import javax.mail.MessagingException;
@@ -48,6 +50,8 @@ import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.IOUtils;
 import org.trancecode.io.MediaTypes;
+import org.trancecode.lang.TcBooleans;
+import org.trancecode.lang.TcStrings;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.XmlException;
@@ -59,6 +63,8 @@ import org.trancecode.xproc.step.Step.Log;
 import org.trancecode.xproc.variable.XProcOptions;
 
 /**
+ * Utility methods related to steps.
+ * 
  * @author Emmanuel Tourdot
  */
 public final class Steps
@@ -81,10 +87,10 @@ public final class Steps
         // No instantiation
     }
 
-    public static ImmutableMap<String, Object> getSerializationOptions(final AbstractStepProcessor.StepInput input,
-            final ImmutableMap<QName, String> defaultOptions)
+    public static Map<QName, Object> getSerializationOptions(final AbstractStepProcessor.StepInput input,
+            final Map<QName, String> defaultOptions)
     {
-        final ImmutableMap.Builder builder = new ImmutableMap.Builder<String, String>();
+        final Builder<QName, Object> builder = ImmutableMap.builder();
 
         if (input.getStep().hasOptionDeclared(XProcOptions.ENCODING))
         {
@@ -147,7 +153,7 @@ public final class Steps
         return builder.build();
     }
 
-    public static Serializer getSerializer(final OutputStream stream, final ImmutableMap<String, Object> options)
+    public static Serializer getSerializer(final OutputStream stream, final Map<QName, Object> options)
     {
         final Serializer serializer = new Serializer();
         serializer.setOutputStream(stream);
@@ -161,37 +167,37 @@ public final class Steps
             serializer.setOutputProperty(Serializer.Property.DOCTYPE_SYSTEM, options.get(XProcOptions.DOCTYPE_PUBLIC)
                     .toString());
         }
-        serializer.setOutputProperty(Serializer.Property.METHOD,
-                ((QName) options.get(XProcOptions.METHOD)).getLocalName());
+        serializer.setOutputProperty(Serializer.Property.METHOD, TcStrings.toString(options.get(XProcOptions.METHOD)));
         serializer.setOutputProperty(Serializer.Property.ESCAPE_URI_ATTRIBUTES,
-                (Boolean) options.get(XProcOptions.ESCAPE_URI_ATTRIBUTES) ? "yes" : "no");
-        serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, options.get(XProcOptions.MEDIA_TYPE).toString());
+                TcBooleans.getValue((Boolean) options.get(XProcOptions.ESCAPE_URI_ATTRIBUTES)) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE,
+                TcStrings.toString(options.get(XProcOptions.MEDIA_TYPE)));
         serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION,
-                (Boolean) options.get(XProcOptions.OMIT_XML_DECLARATION) ? "yes" : "no");
-        serializer.setOutputProperty(Serializer.Property.INDENT, (Boolean) options.get(XProcOptions.INDENT) ? "yes"
-                : "no");
+                TcBooleans.getValue((Boolean) options.get(XProcOptions.OMIT_XML_DECLARATION)) ? "yes" : "no");
+        serializer.setOutputProperty(Serializer.Property.INDENT,
+                TcBooleans.getValue((Boolean) options.get(XProcOptions.INDENT)) ? "yes" : "no");
         serializer.setOutputProperty(Serializer.Property.INCLUDE_CONTENT_TYPE,
-                (Boolean) options.get(XProcOptions.INCLUDE_CONTENT_TYPE) ? "yes" : "no");
+                TcBooleans.getValue((Boolean) options.get(XProcOptions.INCLUDE_CONTENT_TYPE)) ? "yes" : "no");
         return serializer;
     }
 
-    private static void putInBuilder(final ImmutableMap.Builder builder, final AbstractStepProcessor.StepInput input,
-            final ImmutableMap<QName, String> defaultOptions, final QName option, final boolean isBoolean)
+    private static void putInBuilder(final Builder<QName, Object> builder, final AbstractStepProcessor.StepInput input,
+            final Map<QName, String> defaultOptions, final QName option, final boolean isBoolean)
     {
         if (input.getOptionValue(option) == null)
         {
             return;
         }
-        final String defOption = defaultOptions.get(option.getLocalName());
-        if (defOption != null)
+        final String defaultOption = defaultOptions.get(option);
+        if (defaultOption != null)
         {
             if (isBoolean)
             {
-                builder.put(option, Boolean.valueOf(input.getOptionValue(option, defOption)));
+                builder.put(option, Boolean.valueOf(input.getOptionValue(option, defaultOption)));
             }
             else
             {
-                builder.put(option, input.getOptionValue(option, defOption));
+                builder.put(option, input.getOptionValue(option, defaultOption));
             }
         }
         else

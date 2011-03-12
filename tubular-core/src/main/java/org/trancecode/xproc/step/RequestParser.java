@@ -33,6 +33,7 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 
 import net.sf.saxon.s9api.Axis;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
@@ -85,10 +86,10 @@ class RequestParser
     private static final Logger LOG = Logger.getLogger(RequestParser.class);
     private static final String DEFAULT_MULTIPART_TYPE = "multipart/mixed";
 
-    private final Map<String, Object> serializationOptions;
+    private final Map<QName, Object> serializationOptions;
     private final XProcHttpRequest request = new XProcHttpRequest();
 
-    public RequestParser(final Map<String, Object> serializationOptions)
+    public RequestParser(final Map<QName, Object> serializationOptions)
     {
         this.serializationOptions = serializationOptions;
     }
