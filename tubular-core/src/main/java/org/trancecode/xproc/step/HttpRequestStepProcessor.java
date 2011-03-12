@@ -86,7 +86,7 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
                 .put(XProcOptions.OMIT_XML_DECLARATION, "true").put(XProcOptions.STANDALONE, "omit")
                 .put(XProcOptions.VERSION, "1.0");
         final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
-        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input,
+        final ImmutableMap<String, Object> serializationOptions = Steps.getSerializationOptions(input,
                 defaultOptions);
         LOG.trace("  options = {}", serializationOptions);
 

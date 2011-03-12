@@ -242,7 +242,7 @@ class RequestParser
         if (StringUtils.equalsIgnoreCase("xml", contentType.getSubType()))
         {
             final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-            final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
+            final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions);
             serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, contentType.toString());
             try
             {
@@ -276,7 +276,7 @@ class RequestParser
     {
         final String contentTypeAtt = node.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
         final String encoding = node.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
-        final ContentType contentType = StepUtils.getContentType(contentTypeAtt, node);
+        final ContentType contentType = Steps.getContentType(contentTypeAtt, node);
         final String contentString = getContentString(node, contentType, encoding);
         final StringBody body;
         try
@@ -381,7 +381,7 @@ class RequestParser
         {
             final String contentTypeAtt = body.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
             final String encoding = body.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
-            final ContentType contentType = StepUtils.getContentType(contentTypeAtt, body);
+            final ContentType contentType = Steps.getContentType(contentTypeAtt, body);
             final String contentString = getContentString(body, contentType, encoding);
             try
             {

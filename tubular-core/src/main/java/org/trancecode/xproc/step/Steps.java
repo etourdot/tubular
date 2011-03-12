@@ -61,7 +61,7 @@ import org.trancecode.xproc.variable.XProcOptions;
 /**
  * @author Emmanuel Tourdot
  */
-public final class StepUtils
+public final class Steps
 {
     public static final String DEFAULT_ENCODING = "UTF-8";
     public static final String METHOD_XML = "xml";
@@ -74,9 +74,9 @@ public final class StepUtils
     private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML,
             MediaTypes.MEDIA_TYPE_XML, METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML,
             MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
-    private static Logger LOG = Logger.getLogger(StepUtils.class);
+    private static Logger LOG = Logger.getLogger(Steps.class);
 
-    private StepUtils()
+    private Steps()
     {
         // No instantiation
     }

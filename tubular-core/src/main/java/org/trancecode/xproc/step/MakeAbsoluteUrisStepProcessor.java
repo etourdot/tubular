@@ -69,7 +69,7 @@ public final class MakeAbsoluteUrisStepProcessor extends AbstractStepProcessor
         final String match = input.getOptionValue(XProcOptions.MATCH);
         assert match != null;
         final String baseUriOption = input.getOptionValue(XProcOptions.BASE_URI);
-        final URI baseUriURI = StepUtils.getUri(baseUriOption);
+        final URI baseUriURI = Steps.getUri(baseUriOption);
 
         final SaxonProcessorDelegate makeUrisDelegate = new AbstractSaxonProcessorDelegate()
         {

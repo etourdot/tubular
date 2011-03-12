@@ -58,13 +58,13 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
                 .put(XProcOptions.INDENT, "false").put(XProcOptions.METHOD, "xml")
                 .put(XProcOptions.MEDIA_TYPE, MediaTypes.MEDIA_TYPE_XML).put(XProcOptions.OMIT_XML_DECLARATION, "true");
         final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
-        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input,
+        final ImmutableMap<String, Object> serializationOptions = Steps.getSerializationOptions(input,
                 defaultOptions);
         LOG.trace("  options = {}", serializationOptions);
 
         final XdmNode root = SaxonAxis.childElement(node);
         final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-        final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
+        final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions);
 
         try
         {

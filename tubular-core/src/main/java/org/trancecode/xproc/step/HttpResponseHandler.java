@@ -183,7 +183,7 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         for (final BodypartResponseParser.BodypartEntity part : parts)
         {
             final String mimeType = part.getHeaderGroup().getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
-            final ContentType bodyCt = StepUtils.getContentType(mimeType, null);
+            final ContentType bodyCt = Steps.getContentType(mimeType, null);
             if (bodyCt.getSubType().contains("xml"))
             {
                 builder.startElement(XProcXmlModel.Elements.BODY);
