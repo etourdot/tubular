@@ -25,11 +25,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -66,7 +68,7 @@ public final class Environment
     private static final Logger LOG = Logger.getLogger(Environment.class);
 
     private static final QName ATTRIBUTE_NAME = new QName("name");
-    private static final QName ATTRIBUTE_NAMESPACE= new QName("namespace");
+    private static final QName ATTRIBUTE_NAMESPACE = new QName("namespace");
     private static final QName ATTRIBUTE_VALUE = new QName("value");
     private static final QName ELEMENT_PARAM = XProcXmlModel.xprocStepNamespace().newSaxonQName("param");
     private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
@@ -217,7 +219,15 @@ public final class Environment
             }
         }
 
-        return addPorts(newPorts).setPrimaryOutputPortAsDefaultReadablePort(step, sourceEnvironment);
+        Environment result = addPorts(newPorts);
+        result = result.setPrimaryOutputPortAsDefaultReadablePort(step, sourceEnvironment);
+        result = result.setDefaultReadablePortAsXPathContextPort();
+        return result;
+    }
+
+    private Environment setDefaultReadablePortAsXPathContextPort()
+    {
+        return setXPathContextPort(getDefaultReadablePort());
     }
 
     private Environment setPrimaryInputPortAsDefaultReadablePort(final Step step)
@@ -776,7 +786,8 @@ public final class Environment
                     {
                         final XdmNode attribute = iterator.next();
                         final QName attName = attribute.getNodeName();
-                        if (!ATTRIBUTE_NAME.equals(attName) && !ATTRIBUTE_NAMESPACE.equals(attName) && !ATTRIBUTE_VALUE.equals(attName))
+                        if (!ATTRIBUTE_NAME.equals(attName) && !ATTRIBUTE_NAMESPACE.equals(attName)
+                                && !ATTRIBUTE_VALUE.equals(attName))
                         {
                             throw XProcExceptions.xd0014(item);
                         }

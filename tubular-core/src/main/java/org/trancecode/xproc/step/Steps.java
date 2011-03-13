@@ -42,6 +42,7 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
 
 import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.lib.OutputURIResolver;
@@ -323,7 +324,14 @@ public final class Steps
                 final Result result;
                 try
                 {
-                    result = resolver.resolve(log.getHref(), environment.getBaseUri().toString());
+                    if (log.getHref() != null)
+                    {
+                        result = resolver.resolve(log.getHref(), environment.getBaseUri().toString());
+                    }
+                    else
+                    {
+                        result = new StreamResult(System.err);
+                    }
                 }
                 catch (final TransformerException e)
                 {
@@ -343,14 +351,17 @@ public final class Steps
                 }
                 finally
                 {
-                    try
+                    if (log.getHref() != null)
                     {
-                        resolver.close(result);
-                    }
-                    catch (final TransformerException e)
-                    {
-                        LOG.error("{}", e);
-                        LOG.trace("{stackTrace}", e);
+                        try
+                        {
+                            resolver.close(result);
+                        }
+                        catch (final TransformerException e)
+                        {
+                            LOG.error("{}", e);
+                            LOG.trace("{stackTrace}", e);
+                        }
                     }
                 }
             }

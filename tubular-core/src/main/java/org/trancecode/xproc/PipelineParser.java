@@ -313,6 +313,10 @@ public final class PipelineParser
         final String port = logNode.getAttributeValue(Attributes.PORT);
         final String href = logNode.getAttributeValue(Attributes.HREF);
         LOG.trace("{@method} port = {} ; href = {}", port, href);
+        if (!step.hasPortDeclared(port) || step.hasLogDeclaredForPort(port))
+        {
+            throw XProcExceptions.xs0026(getLocation(logNode), step, port);
+        }
         return step.addLog(port, href);
     }
 
@@ -328,7 +332,8 @@ public final class PipelineParser
         final String sequence = portNode.getAttributeValue(Attributes.SEQUENCE);
         LOG.trace("sequence = {}", sequence);
 
-        final Port configuredPort = port.setSelect(select).setSequence(sequence).setPortBindings(parsePortBindings(portNode));
+        final Port configuredPort = port.setSelect(select).setSequence(sequence)
+                .setPortBindings(parsePortBindings(portNode));
 
         LOG.trace("step {} with port {}", step, port);
 

@@ -87,7 +87,10 @@ public final class XProcExceptions
 
     public static XProcException xd0014(final XdmNode node)
     {
-        return newXProcException(Type.DYNAMIC, 14, SaxonLocation.of(node),
+        return newXProcException(
+                Type.DYNAMIC,
+                14,
+                SaxonLocation.of(node),
                 "It is a dynamic error for any unqualified attribute names other than 'name', 'namespace', or 'value' to appear on a c:param element.");
     }
 
@@ -117,13 +120,27 @@ public final class XProcExceptions
 
     public static XProcException xs0004(final Variable option)
     {
-        return newXProcException(Type.STATIC, 4, option.getLocation(), "It is a static error if an option or variable declaration duplicates the name of any other option or variable in the same environment.");
+        return newXProcException(
+                Type.STATIC,
+                4,
+                option.getLocation(),
+                "It is a static error if an option or variable declaration duplicates the name of any other option or variable in the same environment.");
     }
 
     public static XProcException xs0018(final Variable option)
     {
         return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
                 option.getName());
+    }
+
+    public static XProcException xs0026(final Location location, final Step step, final String port)
+    {
+        return newXProcException(
+                Type.STATIC,
+                26,
+                location,
+                "It is a static error if the port specified on the p:log is not the name of an output port on the step in which it appears or if more than one p:log element is applied to the same port ; step = %s ; port = %s",
+                step.getName(), port);
     }
 
     public static XProcException xs0031(final Location location, final QName optionName, final QName stepType)
@@ -204,7 +221,10 @@ public final class XProcExceptions
 
     public static XProcException xc0014(final XdmNode node)
     {
-        return newXProcException(Type.STEP, 14, SaxonLocation.of(node),
+        return newXProcException(
+                Type.STEP,
+                14,
+                SaxonLocation.of(node),
                 "It is a dynamic error if the XML namespace (http://www.w3.org/XML/1998/namespace) or the XMLNS namespace (http://www.w3.org/2000/xmlns/) is the value of either the from option or the to option.");
     }
 
@@ -328,7 +348,10 @@ public final class XProcExceptions
 
     public static XProcException xc0057(final Location location)
     {
-        return newXProcException(Type.STEP, 57, location,
+        return newXProcException(
+                Type.STEP,
+                57,
+                location,
                 "It is a dynamic error if the sequence that results from evaluating the XQuery contains items other than documents and elements.");
     }
 
