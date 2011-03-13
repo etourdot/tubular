@@ -138,52 +138,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
         }
     }
 
-    public static final class Log
-    {
-        private final String port;
-        private final String href;
-
-        private Log(final String port, final String href)
-        {
-            this.port = Preconditions.checkNotNull(port);
-            this.href = Preconditions.checkNotNull(href);
-        }
-
-        public String getPort()
-        {
-            return this.port;
-        }
-
-        public String getHref()
-        {
-            return this.href;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return TcObjects.hashCode(port, href);
-        }
-
-        @Override
-        public boolean equals(final Object o)
-        {
-            if (o != null && o instanceof Log)
-            {
-                final Log other = (Log) o;
-                return TcObjects.pairEquals(port, other.port, href, other.href);
-            }
-
-            return false;
-        }
-
-        @Override
-        public String toString()
-        {
-            return String.format("p:log[%s = %s]", port, href);
-        }
-    }
-
     public static Step newStep(final QName type, final StepProcessor stepProcessor, final boolean compoundStep)
     {
         return new Step(null, type, null, null, null, stepProcessor, compoundStep, EMPTY_VARIABLE_LIST,

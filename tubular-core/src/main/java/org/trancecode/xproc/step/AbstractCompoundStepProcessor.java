@@ -53,7 +53,7 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
         final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
         Environment resultEnvironment = runSteps(step.getSubpipeline(), stepEnvironment);
         resultEnvironment = stepEnvironment.setupOutputPorts(step, resultEnvironment);
-        StepUtils.writeLogs(step, resultEnvironment);
+        Steps.writeLogs(step, resultEnvironment);
         return resultEnvironment;
     }
 
