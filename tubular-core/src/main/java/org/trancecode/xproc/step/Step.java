@@ -507,7 +507,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
     {
         if (name != null)
         {
-            return name + "(" + SaxonQNames.toPrefixString(type) + ")";
+            if (type != null)
+            {
+                return name + "(" + SaxonQNames.toPrefixString(type) + ")";
+            }
+
+            return name;
         }
 
         return SaxonQNames.toPrefixString(type);
@@ -675,6 +680,8 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     protected static Map<Step, Step> getSubpipelineStepDependencies(final Iterable<Step> steps)
     {
+        LOG.trace("{@method} steps = {}", steps);
+
         final List<Step> indexedSteps = ImmutableList.copyOf(steps);
         int lastWriteStepIndex = -1;
         int defaultReadblePortStepIndex = -1;
@@ -683,6 +690,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         for (int stepIndex = 0; stepIndex < indexedSteps.size(); stepIndex++)
         {
             final Step step = indexedSteps.get(stepIndex);
+            LOG.trace("  {} = {}", stepIndex, step);
 
             // find out about the dependency of the current step in the pipeline
             if (stepIndex > 0)
@@ -691,13 +699,18 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
                 if (step.readsExternalResources())
                 {
+                    LOG.trace("  step {} reads external resources and thus from output of step {}", step,
+                            lastWriteStepIndex);
                     dependencyIndex = lastWriteStepIndex;
                 }
 
                 for (final Port inputPort : step.getInputPorts())
                 {
-                    if (inputPort.getPortBindings().isEmpty() && step.isPrimary(inputPort))
+                    if (inputPort.getPortBindings().isEmpty()
+                            && (step.isPrimary(inputPort) || step.isXPathContextPort(inputPort)))
                     {
+                        LOG.trace("  step {} reads implicitly from output of step {}", step,
+                                defaultReadblePortStepIndex);
                         dependencyIndex = Math.max(dependencyIndex, defaultReadblePortStepIndex);
                     }
                     else
@@ -706,6 +719,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
                                 PipePortBinding.class))
                         {
                             final PortReference dependencyPortReference = portBinding.getPortReference();
+                            LOG.trace("  step {} reads from output port {}", step, dependencyPortReference);
                             assert subpipelineStepNames.containsKey(dependencyPortReference.getStepName()) : step
                                     .getName() + " -> " + dependencyPortReference;
                             dependencyIndex = Math.max(dependencyIndex,
@@ -716,7 +730,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
                 if (dependencyIndex >= 0)
                 {
+                    LOG.trace("  => step {} depends on step {}", stepIndex, dependencyIndex);
                     dependencies.put(step, indexedSteps.get(dependencyIndex));
+                }
+                else
+                {
+                    LOG.trace("  => step {} has no dependency", stepIndex);
                 }
             }
 
