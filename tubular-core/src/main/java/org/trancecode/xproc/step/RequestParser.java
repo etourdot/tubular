@@ -20,16 +20,20 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
+
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.util.Map;
+
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
+
 import net.sf.saxon.s9api.Axis;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
@@ -82,10 +86,11 @@ class RequestParser
 {
     private static final Logger LOG = Logger.getLogger(RequestParser.class);
     private static final String DEFAULT_MULTIPART_TYPE = "multipart/mixed";
-    private final ImmutableMap<String, Object> serializationOptions;
+
+    private final Map<QName, Object> serializationOptions;
     private final XProcHttpRequest request = new XProcHttpRequest();
 
-    public RequestParser(final ImmutableMap<String, Object> serializationOptions)
+    public RequestParser(final Map<QName, Object> serializationOptions)
     {
         this.serializationOptions = serializationOptions;
     }
@@ -106,8 +111,8 @@ class RequestParser
         if (request.hasEntity())
         {
             checkCoherenceHeaders(request.getHeaders(), request.getEntity(), requestNode);
-            if (!(StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method) ||
-                  StringUtils.equalsIgnoreCase(HttpPost.METHOD_NAME, method)))
+            if (!(StringUtils.equalsIgnoreCase(HttpPut.METHOD_NAME, method) || StringUtils.equalsIgnoreCase(
+                    HttpPost.METHOD_NAME, method)))
             {
                 throw XProcExceptions.xc0005(requestNode);
             }
@@ -149,7 +154,7 @@ class RequestParser
         {
             final HeaderElement elmHeaderCt = ctHeaders.getElements()[0];
             final HeaderElement elmEntityCt = ctEntity.getElements()[0];
-            if (!StringUtils.equalsIgnoreCase(elmHeaderCt.getName(),elmEntityCt.getName()))
+            if (!StringUtils.equalsIgnoreCase(elmHeaderCt.getName(), elmEntityCt.getName()))
             {
                 throw XProcExceptions.xc0020(requestNode);
             }
@@ -268,7 +273,7 @@ class RequestParser
         if (StringUtils.equalsIgnoreCase("xml", contentType.getSubType()))
         {
             final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-            final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
+            final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions);
             serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, contentType.toString());
             try
             {
@@ -302,7 +307,7 @@ class RequestParser
     {
         final String contentTypeAtt = node.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
         final String encoding = node.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
-        final ContentType contentType = StepUtils.getContentType(contentTypeAtt, node);
+        final ContentType contentType = Steps.getContentType(contentTypeAtt, node);
         final String contentString = getContentString(node, contentType, encoding);
         final StringBody body;
         try
@@ -310,7 +315,7 @@ class RequestParser
             body = new StringBody(contentString, contentType.toString(), getCharset(
                     contentType.getParameter("charset"), "utf-8"));
         }
-        catch (UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException e)
         {
             throw XProcExceptions.xc0020(node);
         }
@@ -361,11 +366,11 @@ class RequestParser
                             buffer.append("; charset=utf-8");
                         }
                     }
-                    catch (ParseException e)
+                    catch (final ParseException e)
                     {
                         throw XProcExceptions.xc0020(node);
                     }
-                    catch (IllegalCharsetNameException e)
+                    catch (final IllegalCharsetNameException e)
                     {
                         throw XProcExceptions.xc0020(node);
                     }
@@ -385,7 +390,7 @@ class RequestParser
         return bodyPart;
     }
 
-    private void verifyHeader(final String headerVal, final String headerName , final XdmNode node)
+    private void verifyHeader(final String headerVal, final String headerName, final XdmNode node)
     {
         if (StringUtils.isNotBlank(headerVal))
         {
@@ -407,14 +412,14 @@ class RequestParser
         {
             final String contentTypeAtt = body.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
             final String encoding = body.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
-            final ContentType contentType = StepUtils.getContentType(contentTypeAtt, body);
+            final ContentType contentType = Steps.getContentType(contentTypeAtt, body);
             final String contentString = getContentString(body, contentType, encoding);
             try
             {
                 return new StringEntity(contentString, contentType.toString(), getCharset(
                         contentType.getParameter("charset"), "utf-8").toString());
             }
-            catch (UnsupportedEncodingException e)
+            catch (final UnsupportedEncodingException e)
             {
                 throw XProcExceptions.xc0020(body);
             }

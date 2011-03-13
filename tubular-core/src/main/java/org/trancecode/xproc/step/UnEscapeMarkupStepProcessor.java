@@ -67,10 +67,10 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
 
         final String namespaceOption = input.getOptionValue(XProcOptions.NAMESPACE, null);
-        final URI namespaceURI = StepUtils.getUri(namespaceOption);
+        final URI namespaceURI = Steps.getUri(namespaceOption);
         final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, MediaTypes.MEDIA_XML);
         final String encodingOption = input.getOptionValue(XProcOptions.ENCODING, null);
-        if (encodingOption!=null && !StepUtils.ENCODING_BASE64.equals(encodingOption))
+        if (encodingOption!=null && !Steps.ENCODING_BASE64.equals(encodingOption))
         {
             throw XProcExceptions.xc0052(SaxonLocation.of(sourceDocument));
         }
@@ -78,7 +78,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         final String charsetOption = input.getOptionValue(XProcOptions.CHARSET, null);
         final String charset = (charsetOption == null) ? contentType.getParameter("charset") : charsetOption;
 
-        if (StepUtils.ENCODING_BASE64.equals(encodingOption))
+        if (Steps.ENCODING_BASE64.equals(encodingOption))
         {
             if (charset == null)
             {
@@ -206,7 +206,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         try
         {
             final ContentType ct = new ContentType(content_type);
-            if (!StepUtils.SUPPORTED_CONTENTTYPE.contains(ct.getBaseType()))
+            if (!Steps.SUPPORTED_CONTENTTYPE.contains(ct.getBaseType()))
             {
                 throw XProcExceptions.xc0051(inputStep.getLocation());
             }
@@ -221,9 +221,9 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
     private static String getUnEscapeContent(final String content, final String encoding,
             final ContentType contentType, final String charset)
     {
-        if (StepUtils.ENCODING_BASE64.equals(encoding))
+        if (Steps.ENCODING_BASE64.equals(encoding))
         {
-            return StepUtils.getBase64Content(content, contentType, charset);
+            return Steps.getBase64Content(content, contentType, charset);
         }
         else if (MediaTypes.MEDIA_XML.equals(contentType.getBaseType()))
         {

@@ -20,9 +20,11 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.io.Closeables;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
@@ -42,6 +44,17 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(EscapeMarkupStepProcessor.class);
+    private static final Map<QName, String> DEFAULT_SERIALIZATION_OPTIONS;
+
+    static
+    {
+        final Builder<QName, String> builder = ImmutableMap.builder();
+        builder.put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false").put(XProcOptions.INCLUDE_CONTENT_TYPE, "true")
+                .put(XProcOptions.INDENT, "false").put(XProcOptions.METHOD, "xml")
+                .put(XProcOptions.MEDIA_TYPE, MediaTypes.MEDIA_TYPE_XML).put(XProcOptions.OMIT_XML_DECLARATION, "true")
+                .build();
+        DEFAULT_SERIALIZATION_OPTIONS = builder.build();
+    }
 
     @Override
     public QName getStepType()
@@ -53,18 +66,13 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         final XdmNode node = input.readNode(XProcPorts.SOURCE);
-        final ImmutableMap.Builder<QName, String> defaultBuilder = new ImmutableMap.Builder<QName, String>();
-        defaultBuilder.put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false").put(XProcOptions.INCLUDE_CONTENT_TYPE, "true")
-                .put(XProcOptions.INDENT, "false").put(XProcOptions.METHOD, "xml")
-                .put(XProcOptions.MEDIA_TYPE, MediaTypes.MEDIA_TYPE_XML).put(XProcOptions.OMIT_XML_DECLARATION, "true");
-        final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
-        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input,
-                defaultOptions);
+        final Map<QName, Object> serializationOptions = Steps.getSerializationOptions(input,
+                DEFAULT_SERIALIZATION_OPTIONS);
         LOG.trace("  options = {}", serializationOptions);
 
         final XdmNode root = SaxonAxis.childElement(node);
         final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-        final Serializer serializer = StepUtils.getSerializer(targetOutputStream, serializationOptions);
+        final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions);
 
         try
         {

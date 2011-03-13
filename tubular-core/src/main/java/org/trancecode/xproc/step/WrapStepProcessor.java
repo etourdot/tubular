@@ -72,7 +72,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
         final String groupAdjacent = input.getOptionValue(XProcOptions.GROUP_ADJACENT);
 
-        final QName newName = StepUtils.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
+        final QName newName = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
                 .getStep().getLocation(), input.getStep().getNode());
 
         final SaxonProcessorDelegate wrapDelegate = new AbstractSaxonProcessorDelegate()

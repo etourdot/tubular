@@ -84,7 +84,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                     {
                         if (node.getNodeName().getNamespaceURI().equals(from))
                         {
-                            newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
+                            newNodeTo = Steps.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
                                     .getLocalName(), SaxonLocation.of(node), node);
                         }
                         else if (StringUtils.isNotBlank(from))
@@ -93,7 +93,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         }
                         else
                         {
-                            newNodeTo = StepUtils.getNewNamespace("", to, node.getNodeName().getLocalName(),
+                            newNodeTo = Steps.getNewNamespace("", to, node.getNodeName().getLocalName(),
                                     SaxonLocation.of(node), node);
                         }
                     }
@@ -123,7 +123,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                     {
                         if (node.getNodeName().getNamespaceURI().equals(from))
                         {
-                            newNodeTo = StepUtils.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
+                            newNodeTo = Steps.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
                                     .getLocalName(), SaxonLocation.of(node), node);
                         }
                         else if (StringUtils.isNotBlank(from) ||
@@ -133,7 +133,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         }
                         else
                         {
-                            newNodeTo = StepUtils.getNewNamespace(null, to, node.getNodeName().getLocalName(),
+                            newNodeTo = Steps.getNewNamespace(null, to, node.getNodeName().getLocalName(),
                                     SaxonLocation.of(node), node);
                         }
                     }

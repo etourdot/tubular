@@ -20,11 +20,13 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -62,6 +64,18 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class HttpRequestStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(HttpRequestStepProcessor.class);
+    private static final Map<QName, String> DEFAULT_SERIALIZATION_OPTIONS;
+
+    static
+    {
+        final Builder<QName, String> builder = ImmutableMap.builder();
+        builder.put(XProcOptions.CDATA_SECTION_ELEMENTS, "").put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false")
+                .put(XProcOptions.INCLUDE_CONTENT_TYPE, "true").put(XProcOptions.INDENT, "false")
+                .put(XProcOptions.METHOD, "xml").put(XProcOptions.NORMALIZATION_FORM, "none")
+                .put(XProcOptions.OMIT_XML_DECLARATION, "true").put(XProcOptions.STANDALONE, "omit")
+                .put(XProcOptions.VERSION, "1.0");
+        DEFAULT_SERIALIZATION_OPTIONS = builder.build();
+    }
 
     @Override
     public QName getStepType()
@@ -79,16 +93,9 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
             throw XProcExceptions.xc0040(input.getStep().getLocation());
         }
 
-        final ImmutableMap.Builder<QName, String> defaultBuilder = new ImmutableMap.Builder<QName, String>();
-        defaultBuilder.put(XProcOptions.CDATA_SECTION_ELEMENTS, "").put(XProcOptions.ESCAPE_URI_ATTRIBUTES, "false")
-                .put(XProcOptions.INCLUDE_CONTENT_TYPE, "true").put(XProcOptions.INDENT, "false")
-                .put(XProcOptions.METHOD, "xml").put(XProcOptions.NORMALIZATION_FORM, "none")
-                .put(XProcOptions.OMIT_XML_DECLARATION, "true").put(XProcOptions.STANDALONE, "omit")
-                .put(XProcOptions.VERSION, "1.0");
-        final ImmutableMap<QName, String> defaultOptions = defaultBuilder.build();
-        final ImmutableMap<String, Object> serializationOptions = StepUtils.getSerializationOptions(input,
-                defaultOptions);
-        LOG.trace("  options = {}", serializationOptions);
+        final Map<QName, Object> serializationOptions = Steps.getSerializationOptions(input,
+                DEFAULT_SERIALIZATION_OPTIONS);
+        LOG.trace("  serializationOptions = {}", serializationOptions);
 
         final RequestParser parser = new RequestParser(serializationOptions);
         final XProcHttpRequest xProcRequest = parser.parseRequest(request);
