@@ -37,7 +37,7 @@ import org.trancecode.xproc.port.Port;
 public final class StepTest extends AbstractTest
 {
     @Test
-    public void getSubpipelineStepDependencies()
+    public void getSubpipelineStepDependencies1()
     {
         final PipelineProcessor processor = new PipelineProcessor();
         final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
@@ -64,6 +64,24 @@ public final class StepTest extends AbstractTest
         Assert.assertEquals(dependencies.get(load1), store2);
         Assert.assertEquals(dependencies.get(identity5), load1);
         Assert.assertEquals(dependencies.get(identity6), identity2);
+    }
+
+    @Test
+    public void getSubpipelineStepDependencies2()
+    {
+        final PipelineProcessor processor = new PipelineProcessor();
+        final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
+                "/StepTest/getSubpipelineStepDependencies2.xpl"), "/StepTest/getSubpipelineStepDependencies2.xpl");
+        final Step pipeline = processor.buildPipeline(pipelineSource).getUnderlyingPipeline();
+        final Map<Step, Step> dependencies = pipeline.getSubpipelineStepDependencies();
+
+        final Step wrap = pipeline.getStepByName("wrap");
+        final Step escapeMarkup = pipeline.getStepByName("escape-markup");
+        final Step choose = pipeline.getStepByName("choose");
+
+        Assert.assertEquals(dependencies.get(wrap), null);
+        Assert.assertEquals(dependencies.get(escapeMarkup), wrap);
+        Assert.assertEquals(dependencies.get(choose), escapeMarkup);
     }
 
     @Test
