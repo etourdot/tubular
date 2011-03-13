@@ -28,9 +28,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.api.ReturnsNullable;
@@ -41,6 +43,7 @@ import org.trancecode.lang.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
+import org.trancecode.xml.saxon.SaxonQNames;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.binding.DocumentPortBinding;
@@ -88,7 +91,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private final Iterable<Log> logs;
 
     private final Supplier<Integer> hashCode;
-    private final Supplier<String> toString;
 
     public static final class Log
     {
@@ -174,8 +176,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
         hashCode = TcObjects.immutableObjectHashCode(Step.class, node, type, name, location, stepProcessor,
                 compoundStep, variables, parameters, ports, steps);
-        toString = TcObjects.immutableObjectToString("%s ; name = %s ; ports = %s ; variables = %s", type, name, ports,
-                variables);
     }
 
     public boolean isPipelineStep()
@@ -220,8 +220,9 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step declareVariable(final Variable variable)
     {
-        //assert !variables.containsKey(variable.getName()) : "step = " + name + " ; variable = " + variable.getName()
-        //        + " ; variables = " + variables;
+        // assert !variables.containsKey(variable.getName()) : "step = " + name
+        // + " ; variable = " + variable.getName()
+        // + " ; variables = " + variables;
         if (variables.containsKey(variable.getName()))
         {
             throw XProcExceptions.xs0004(variable);
@@ -504,7 +505,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
     @Override
     public String toString()
     {
-        return toString.get();
+        if (name != null)
+        {
+            return name + "(" + SaxonQNames.toPrefixString(type) + ")";
+        }
+
+        return SaxonQNames.toPrefixString(type);
     }
 
     public Step setPortBindings(final String portName, final PortBinding... portBindings)
