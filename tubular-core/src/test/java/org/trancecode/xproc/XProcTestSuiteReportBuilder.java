@@ -163,7 +163,7 @@ public final class XProcTestSuiteReportBuilder
 
                     if (result.error instanceof XProcException)
                     {
-                        builder.text(((XProcException) result.error).getName().getClarkName());
+                        builder.text(((XProcException) result.error).getName().toString());
                     }
                     else
                     {
