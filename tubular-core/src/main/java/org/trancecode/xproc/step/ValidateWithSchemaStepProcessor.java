@@ -19,17 +19,17 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.Iterables;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-
 import javax.xml.XMLConstants;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
+import net.sf.saxon.s9api.BuildingContentHandler;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -40,7 +40,9 @@ import org.trancecode.logging.Logger;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Step processor for the p:validate-with-xml-schema standard XProc step.
@@ -53,6 +55,11 @@ import org.xml.sax.SAXException;
 public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ValidateWithSchemaStepProcessor.class);
+    private static final String EXTERNAL_SCHEMALOCATION =
+            "http://apache.org/xml/properties/schema/external-schemaLocation";
+    private static final String EXTERNAL_NONAMESPACESCHEMALOCATION =
+            "http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation";
+    private static final String DEFAULT_PARSER_NAME = "org.apache.xerces.parsers.SAXParser";
 
     @Override
     public QName getStepType()
@@ -70,48 +77,68 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
         final boolean assertValid = Boolean.parseBoolean(input.getOptionValue(XProcOptions.ASSERT_VALID, "true"));
         final String mode = input.getOptionValue(XProcOptions.MODE, "strict");
         final Iterable<XdmNode> shemas = input.readNodes(XProcPorts.SCHEMA);
+        XdmNode resultNode = sourceDoc;
         boolean valid = false;
         try
         {
-            final StringReader stringSource = new StringReader(getXmlDocument(sourceDoc));
-            final StreamSource sourceSource = new StreamSource(stringSource);
-            sourceSource.setSystemId(sourceDoc.getBaseURI().toASCIIString());
-            for (final XdmNode schema : shemas)
+            final StringReader reader = new StringReader(getXmlDocument(sourceDoc));
+            final InputSource source = new InputSource(reader);
+            source.setSystemId(sourceDoc.getBaseURI().toASCIIString());
+            final BuildingContentHandler handler = input.getPipelineContext().getProcessor().newDocumentBuilder().
+                    newBuildingContentHandler();
+            final SAXResult result = new SAXResult(handler);
+            final SAXSource saxSource = new SAXSource(source);
+            final XMLReader xmlReader = XMLReaderFactory.createXMLReader(DEFAULT_PARSER_NAME);
+            saxSource.setXMLReader(xmlReader);
+            final InputSource sourceSchema = new InputSource();
+            if (Iterables.size(shemas) > 0)
             {
+                final XdmNode schema = shemas.iterator().next();
                 final StringReader stringSchema = new StringReader(getXmlDocument(schema));
-                final StreamSource sourceSchema = new StreamSource(stringSchema);
+                sourceSchema.setCharacterStream(stringSchema);
                 sourceSchema.setSystemId(schema.getBaseURI().toASCIIString());
-                valid = valid || validate(sourceSource, sourceSchema);
+            }
+            else
+            {
+                sourceSchema.setCharacterStream(new StringReader(""));
+            }
+
+            final SAXSource saxSchema = new SAXSource(sourceSchema);
+            valid = validate(saxSource, saxSchema, result, useLocalHints, tryNamespaces);
+            if (valid)
+            {
+                resultNode = handler.getDocumentNode();
             }
         }
-        catch (final SaxonApiException e)
+        catch (Exception e)
         {
+            valid = false;
         }
+
         if (assertValid && !valid)
         {
             throw XProcExceptions.xc0053(input.getLocation());
         }
-
-        output.writeNodes(XProcPorts.RESULT, sourceDoc);
+        output.writeNodes(XProcPorts.RESULT, resultNode);
     }
 
-    private boolean validate(final StreamSource sourceSource, final StreamSource schemaSource)
+    private boolean validate(final SAXSource saxSource, final SAXSource saxSchema, final SAXResult result,
+                             final boolean useLocalHints, final boolean tryNamespaces)
     {
         try
         {
             final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            final Schema schema = factory.newSchema(schemaSource);
+            //factory.setProperty(EXTERNAL_SCHEMALOCATION, useLocalHints);
+            //factory.setProperty(EXTERNAL_NONAMESPACESCHEMALOCATION, tryNamespaces);
+            final Schema schema = factory.newSchema(saxSchema);
             final Validator validator = schema.newValidator();
-            validator.validate(sourceSource);
+            validator.validate(saxSource, result);
             return true;
         }
-        catch (final SAXException e)
+        catch (final Exception e)
         {
+            return false;
         }
-        catch (final IOException e)
-        {
-        }
-        return false;
     }
 
     private static String getXmlDocument(final XdmNode node) throws SaxonApiException
