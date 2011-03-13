@@ -219,7 +219,15 @@ public final class Environment
             }
         }
 
-        return addPorts(newPorts).setPrimaryOutputPortAsDefaultReadablePort(step, sourceEnvironment);
+        Environment result = addPorts(newPorts);
+        result = result.setPrimaryOutputPortAsDefaultReadablePort(step, sourceEnvironment);
+        result = result.setDefaultReadablePortAsXPathContextPort();
+        return result;
+    }
+
+    private Environment setDefaultReadablePortAsXPathContextPort()
+    {
+        return setXPathContextPort(getDefaultReadablePort());
     }
 
     private Environment setPrimaryInputPortAsDefaultReadablePort(final Step step)
