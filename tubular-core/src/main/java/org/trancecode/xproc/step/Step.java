@@ -813,4 +813,16 @@ public final class Step extends AbstractHasLocation implements StepContainer
         return new Step(node, type, name, internalName, location, stepProcessor, compoundStep, variables, parameters,
                 ports, steps, TcLists.immutableList(logs, log));
     }
+
+    public boolean hasLogDeclaredForPort(final String port)
+    {
+        return Iterables.any(logs, new Predicate<Log>()
+        {
+            @Override
+            public boolean apply(final Log log)
+            {
+                return log.port.equals(port);
+            }
+        });
+    }
 }

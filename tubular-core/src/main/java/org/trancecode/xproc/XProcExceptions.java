@@ -133,6 +133,16 @@ public final class XProcExceptions
                 option.getName());
     }
 
+    public static XProcException xs0026(final Location location, final Step step, final String port)
+    {
+        return newXProcException(
+                Type.STATIC,
+                26,
+                location,
+                "It is a static error if the port specified on the p:log is not the name of an output port on the step in which it appears or if more than one p:log element is applied to the same port ; step = %s ; port = %s",
+                step.getName(), port);
+    }
+
     public static XProcException xs0031(final Location location, final QName optionName, final QName stepType)
     {
         return newXProcException(Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)",
