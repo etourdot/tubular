@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.api.Nullable;
 import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.collection.TcLists;
@@ -97,10 +98,10 @@ public final class Step extends AbstractHasLocation implements StepContainer
         private final String port;
         private final String href;
 
-        private Log(final String port, final String href)
+        private Log(final String port, @Nullable final String href)
         {
             this.port = Preconditions.checkNotNull(port);
-            this.href = Preconditions.checkNotNull(href);
+            this.href = href;
         }
 
         public String getPort()
