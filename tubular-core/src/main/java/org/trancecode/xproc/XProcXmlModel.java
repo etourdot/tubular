@@ -47,9 +47,11 @@ public final class XProcXmlModel
     {
         public static final QName CHOOSE = xprocNamespace().newSaxonQName("choose");
         public static final QName DECLARE_STEP = xprocNamespace().newSaxonQName("declare-step");
+        public static final QName DIRECTORY = xprocStepNamespace().newSaxonQName("directory");
         public static final QName DOCUMENT = xprocNamespace().newSaxonQName("document");
         public static final QName DOCUMENTATION = xprocNamespace().newSaxonQName("documentation");
         public static final QName EMPTY = xprocNamespace().newSaxonQName("empty");
+        public static final QName FILE = xprocStepNamespace().newSaxonQName("file");
         public static final QName FOR_EACH = xprocNamespace().newSaxonQName("for-each");
         public static final QName IMPORT = xprocNamespace().newSaxonQName("import");
         public static final QName INLINE = xprocNamespace().newSaxonQName("inline");
@@ -60,6 +62,7 @@ public final class XProcXmlModel
         public static final QName LOG = xprocNamespace().newSaxonQName("log");
         public static final QName NAMESPACE_RENAME = xprocNamespace().newSaxonQName("namespace-rename");
         public static final QName OPTION = xprocNamespace().newSaxonQName("option");
+        public static final QName OTHER = xprocStepNamespace().newSaxonQName("other");        
         public static final QName OTHERWISE = xprocNamespace().newSaxonQName("otherwise");
         public static final QName OUTPUT = xprocNamespace().newSaxonQName("output");
 		public static final QName PARAM = xprocNamespace().newSaxonQName("param");

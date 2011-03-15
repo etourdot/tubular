@@ -3,6 +3,7 @@ org.trancecode.xproc.step.AddXmlBaseStepProcessor
 org.trancecode.xproc.step.CompareStepProcessor
 org.trancecode.xproc.step.CountStepProcessor
 org.trancecode.xproc.step.DeleteStepProcessor
+org.trancecode.xproc.step.DirectoryListStepProcessor
 org.trancecode.xproc.step.ErrorStepProcessor
 org.trancecode.xproc.step.EscapeMarkupStepProcessor
 org.trancecode.xproc.step.ExecStepProcessor

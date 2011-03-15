@@ -213,6 +213,15 @@ public final class XProcExceptions
                 "It is a dynamic error if an encoding of base64 is specified and the character set is not specified or if the specified character set is not supported by the implementation.");
     }
 
+    public static XProcException xc0012(final Step step)
+    {
+        return newXProcException(
+                Type.STEP,
+                12,
+                step.getLocation(),
+                "It is a dynamic error if the contents of the directory path are not available to the step due to access restrictions in the environment in which the pipeline is run.");
+    }
+
     public static XProcException xc0013(final XdmNode node)
     {
         return newXProcException(Type.STEP, 13, SaxonLocation.of(node),
@@ -226,6 +235,15 @@ public final class XProcExceptions
                 14,
                 SaxonLocation.of(node),
                 "It is a dynamic error if the XML namespace (http://www.w3.org/XML/1998/namespace) or the XMLNS namespace (http://www.w3.org/2000/xmlns/) is the value of either the from option or the to option.");
+    }
+
+    public static XProcException xc0017(final Step step)
+    {
+        return newXProcException(
+                Type.STEP,
+                17,
+                step.getLocation(),
+                "It is a dynamic error if the absolute path does not identify a directory.");
     }
 
     public static XProcException xc0019(final Step step)

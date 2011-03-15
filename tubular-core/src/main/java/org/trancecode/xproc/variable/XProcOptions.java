@@ -60,6 +60,7 @@ public final class XProcOptions
     public static final QName ENCODING = new QName("encoding");
     public static final QName ERRORS_IS_XML = new QName("errors-is-xml");
     public static final QName ESCAPE_URI_ATTRIBUTES = new QName("escape-uri-attributes");
+    public static final QName EXCLUDE_FILTER = new QName("exclude-filter");
     public static final QName FAIL_IF_NOT_EQUAL = new QName("fail-if-not-equal");
     public static final QName FAILURE_THRESHOLD = new QName("failure-threshold");
     public static final QName FIXUP_XML_BASE = new QName("fixup-xml-base");
@@ -68,6 +69,7 @@ public final class XProcOptions
     public static final QName GROUP_ADJACENT = new QName("group-adjacent");
     public static final QName HREF = new QName("href");
     public static final QName INCLUDE_CONTENT_TYPE = new QName("include-content-type");
+    public static final QName INCLUDE_FILTER = new QName("include-filter");
     public static final QName INDENT = new QName("indent");
     public static final QName INITIAL_MODE = new QName("initial-mode");
     public static final QName LABEL = new QName("label");
@@ -84,6 +86,7 @@ public final class XProcOptions
     public static final QName OMIT_XML_DECLARATION = new QName("omit-xml-declaration");
     public static final QName OUTPUT_BASE_URI = new QName("output-base-uri");
     public static final QName PATH_SEPARATOR = new QName("path-separator");
+    public static final QName PATH = new QName("path");
     public static final QName POSITION = new QName("position");
     public static final QName RELATIVE = new QName("relative");
     public static final QName REPLACE = new QName("replace");
