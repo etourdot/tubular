@@ -8,6 +8,7 @@ org.trancecode.xproc.step.ErrorStepProcessor
 org.trancecode.xproc.step.EscapeMarkupStepProcessor
 org.trancecode.xproc.step.ExecStepProcessor
 org.trancecode.xproc.step.FilterStepProcessor
+org.trancecode.xproc.step.HashStepProcessor
 org.trancecode.xproc.step.HttpRequestStepProcessor
 org.trancecode.xproc.step.IdentityStepProcessor
 org.trancecode.xproc.step.InsertStepProcessor

@@ -34,6 +34,7 @@ public final class XProcOptions
 {
     public static final Map<QName, Object> EMPTY_OPTIONS_MAP = ImmutableMap.of();
 
+    public static final QName ALGORITHM = new QName("algorithm");
     public static final QName ALL = new QName("all");
     public static final QName APPLY_TO = new QName("apply-to");
     public static final QName ARGS = new QName("args");
@@ -106,6 +107,7 @@ public final class XProcOptions
     public static final QName UNDECLARE_PREFIXES = new QName("undeclare-prefixes");
     public static final QName USE_LOCATION_HINTS = new QName("use-location-hints");
     public static final QName VALIDATE = new QName("validate");
+    public static final QName VALUE = new QName("value");
     public static final QName VERSION = new QName("version");
     public static final QName WRAP_ERROR_LINES = new QName("wrap-error-lines");
     public static final QName WRAP_RESULT_LINES = new QName("wrap-result-lines");

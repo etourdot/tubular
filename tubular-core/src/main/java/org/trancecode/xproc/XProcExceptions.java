@@ -319,6 +319,15 @@ public final class XProcExceptions
                 "It is a dynamic error to specify both result-is-xml and wrap-result-lines.");
     }
 
+    public static XProcException xc0036(final Location location)
+    {
+        return newXProcException(
+                Type.STEP,
+                36,
+                location,
+                "It is a dynamic error if the requested hash algorithm is not one that the processor understands or if the value or parameters are not appropriate for that algorithm.");
+    }
+
     public static XProcException xc0038(final Location location, final String version)
     {
         return newXProcException(Type.STEP, 38, location, "XSLT version %s not supported", version);
