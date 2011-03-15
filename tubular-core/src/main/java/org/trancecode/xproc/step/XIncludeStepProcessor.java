@@ -65,7 +65,9 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
         final XdmNode node = input.readNode(XProcPorts.SOURCE);
         assert node != null;
         final boolean xmlBase = Boolean.parseBoolean(input.getOptionValue(XProcOptions.FIXUP_XML_BASE, "false"));
+        LOG.trace("xmlBase = {}", xmlBase);
         final boolean xmlLang = Boolean.parseBoolean(input.getOptionValue(XProcOptions.FIXUP_XML_LANG, "false"));
+        LOG.trace("xmlLang = {}", xmlLang);
 
         final Processor processor = input.getPipelineContext().getProcessor();
         final Configuration configuration = processor.getUnderlyingConfiguration();
