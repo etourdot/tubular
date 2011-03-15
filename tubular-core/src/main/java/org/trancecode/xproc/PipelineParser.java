@@ -283,8 +283,10 @@ public final class PipelineParser
             final QName name = node.getNodeName();
             final String value = node.getStringValue();
 
+            // TODO: it's not very good to test step's type here !
             if (name.getNamespaceURI().isEmpty() && !name.equals(Attributes.NAME) && !name.equals(Attributes.TYPE)
-                    && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType())))
+                    && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType()) ||
+                        XProcSteps.HASH.equals(step.getType())))
             {
                 if (!step.hasOptionDeclared(name))
                 {
