@@ -29,8 +29,10 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
+import org.apache.commons.lang.StringUtils;
 import org.trancecode.TcAssert.XdmNodeCompareAssertionError;
 import org.trancecode.io.Files;
+import org.trancecode.lang.TcStrings;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcTestReportXmlModel.Attributes;
 import org.trancecode.xproc.XProcTestReportXmlModel.Elements;
@@ -152,22 +154,24 @@ public final class XProcTestSuiteReportBuilder
                 builder.text(result.test.getTitle());
                 builder.endElement();
 
-                if (result.error != null)
+                final String resultErrorCode = result.error == null ?
+                                                    null :
+                                                    result.error instanceof XProcException ?
+                                                        ((XProcException) result.error).getName().toString() :
+                                                        result.error.getClass().getSimpleName();
+                final String expectedErrorCode = TcStrings.toString(result.test.getError());
+                if ((resultErrorCode != null || expectedErrorCode != null) &&
+                     !StringUtils.equalsIgnoreCase(resultErrorCode, expectedErrorCode))
                 {
                     builder.startElement(Elements.ERROR);
 
-                    if (result.test.getError() != null)
+                    if (expectedErrorCode != null)
                     {
-                        builder.attribute(Attributes.EXPECTED, result.test.getError().toString());
+                        builder.attribute(Attributes.EXPECTED, expectedErrorCode);
                     }
-
-                    if (result.error instanceof XProcException)
+                    if (resultErrorCode != null)
                     {
-                        builder.text(((XProcException) result.error).getName().toString());
-                    }
-                    else
-                    {
-                        builder.text(result.error.getClass().getSimpleName());
+                        builder.text(resultErrorCode);
                     }
                     builder.endElement();
 
