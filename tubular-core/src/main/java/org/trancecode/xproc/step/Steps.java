@@ -24,32 +24,24 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
-
-import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
-import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
-
+import net.iharder.Base64;
 import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.lib.OutputURIResolver;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
-import org.apache.commons.io.IOUtils;
 import org.trancecode.io.MediaTypes;
 import org.trancecode.lang.TcBooleans;
 import org.trancecode.lang.TcStrings;
@@ -251,16 +243,17 @@ public final class Steps
     {
         try
         {
-            final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)),
+            return new String(Base64.decode(content.getBytes(charset)), charset);
+            /*final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)),
                     ENCODING_BASE64);
             final StringWriter writer = new StringWriter();
             IOUtils.copy(b64is, writer, charset);
-            return writer.toString();
+            return writer.toString();*/
         }
-        catch (final MessagingException e)
+        /*catch (final MessagingException e)
         {
             throw XProcExceptions.xc0010(null);
-        }
+        }*/
         catch (final UnsupportedEncodingException e)
         {
             throw XProcExceptions.xc0010(null);

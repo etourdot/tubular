@@ -231,7 +231,7 @@ class RequestParser
     {
         final StringBuilder contentBuilder = new StringBuilder();
         if (!StringUtils.containsIgnoreCase(contentType.getSubType(), "xml")
-                || StringUtils.equalsIgnoreCase(encoding, "base64"))
+                || StringUtils.equalsIgnoreCase(encoding, Steps.ENCODING_BASE64))
         {
             final Iterable<XdmItem> children = SaxonAxis.axis(node, Axis.CHILD);
             for (final XdmItem aNode : children)

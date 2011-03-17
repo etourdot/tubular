@@ -26,10 +26,10 @@ import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.xml.transform.stream.StreamSource;
+import net.iharder.Base64;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
@@ -207,9 +207,9 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
             }
             else
             {
-                builder.attribute(XProcXmlModel.Attributes.ENCODING, "base64");
+                builder.attribute(XProcXmlModel.Attributes.ENCODING, Steps.ENCODING_BASE64);
                 builder.startContent();
-                final String b64 = Base64.encodeBase64String(IOUtils.toByteArray(part.getEntity().getContent()));
+                final String b64 = Base64.encodeBytes(IOUtils.toByteArray(part.getEntity().getContent()), Base64.DO_BREAK_LINES);
                 final Iterable<String> splitter = Splitter.on("\r\n").split(b64);
                 for (final String split : splitter)
                 {
