@@ -1,4 +1,8 @@
+org.trancecode.xproc.xpath.BaseUriXPathExtensionFunction
 org.trancecode.xproc.xpath.IterationPositionXPathExtensionFunction
 org.trancecode.xproc.xpath.IterationSizeXPathExtensionFunction
+org.trancecode.xproc.xpath.ResolveUriXPathExtensionFunction
 org.trancecode.xproc.xpath.StepAvailableXPathExtensionFunction
 org.trancecode.xproc.xpath.SystemPropertyXPathExtensionFunction
+org.trancecode.xproc.xpath.VersionAvailableXPathExtensionFunction
+org.trancecode.xproc.xpath.XPathVersionAvailableXPathExtensionFunction

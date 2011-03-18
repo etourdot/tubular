@@ -57,7 +57,7 @@ public final class IterationSizeXPathExtensionFunction extends AbstractXPathExte
             @Override
             public StructuredQName getFunctionQName()
             {
-                return XProcXmlModel.xprocNamespace().newStructuredQName("iteration-size");
+                return XProcXmlModel.Functions.ITERATION_SIZE;
             }
 
             @Override
