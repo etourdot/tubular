@@ -84,13 +84,13 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                     {
                         final String relative = arguments[0].next().getStringValue();
                         final String base;
-                        if (arguments.length == 0)
+                        if (arguments.length == 1)
                         {
                             base = Environment.getCurrentXPathContext().getBaseURI().toASCIIString();
                         }
                         else
                         {
-                            base = arguments[0].next().getStringValue();
+                            base = arguments[1].next().getStringValue();
                         }
                         final String resolvedUri;
                         try
