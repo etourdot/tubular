@@ -24,6 +24,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -31,6 +32,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.transform.Source;
@@ -73,11 +75,14 @@ public final class PipelineParser
     private final URI baseUri;
     private final PipelineContext context;
     private final Source source;
-    private PipelineLibrary library;
+    private final PipelineLibrary library;
     private final Map<QName, Step> localLibrary = Maps.newHashMap();
 
     private Step mainPipeline;
     private XdmNode rootNode;
+
+    private final Map<URI, XdmNode> imports = Maps.newHashMap();
+    private final Collection<XdmNode> declareStepNodes = Lists.newArrayList();
 
     public static PipelineLibrary parseLibrary(final PipelineContext context, final Source source)
     {
@@ -135,6 +140,7 @@ public final class PipelineParser
             rootNode = SaxonAxis.childElement(pipelineDocument, Elements.ELEMENTS_ROOT);
 
             parseImports(rootNode);
+            parseDeclareSteps();
 
             if (Elements.ELEMENTS_DECLARE_STEP_OR_PIPELINE.contains(rootNode.getNodeName()))
             {
@@ -146,8 +152,23 @@ public final class PipelineParser
             }
             else
             {
-                unsupportedElement(rootNode);
+                throw new IllegalStateException("invalid root node: " + rootNode.getNodeName());
             }
+        }
+        catch (final SaxonApiException e)
+        {
+            throw new PipelineException(e);
+        }
+    }
+
+    private XdmNode getRootElement(final Source source)
+    {
+        try
+        {
+            final DocumentBuilder documentBuilder = context.getProcessor().newDocumentBuilder();
+            documentBuilder.setLineNumbering(true);
+            final XdmNode pipelineDocument = documentBuilder.build(source);
+            return SaxonAxis.childElement(pipelineDocument, Elements.ELEMENTS_ROOT);
         }
         catch (final SaxonApiException e)
         {
@@ -158,6 +179,28 @@ public final class PipelineParser
     private void declareStep(final Step step)
     {
         localLibrary.put(step.getType(), step);
+    }
+
+    private void parseDeclareSteps()
+    {
+        LOG.trace("{@method}");
+        for (final Entry<URI, XdmNode> importEntry : imports.entrySet())
+        {
+            LOG.trace("  parsing imported library from {}", importEntry.getKey());
+            final XdmNode importRootNode = importEntry.getValue();
+            if (Elements.ELEMENTS_DECLARE_STEP_OR_PIPELINE.contains(importRootNode.getNodeName()))
+            {
+                mainPipeline = parseDeclareStep(importRootNode);
+            }
+            else if (importRootNode.getNodeName().equals(Elements.LIBRARY))
+            {
+                parseDeclareSteps(importRootNode);
+            }
+            else
+            {
+                unsupportedElement(importRootNode);
+            }
+        }
     }
 
     private void parseDeclareSteps(final XdmNode node)
@@ -215,6 +258,8 @@ public final class PipelineParser
     {
         if (node.getNodeKind() == XdmNodeKind.ELEMENT)
         {
+            LOG.trace("{@method} element = {} ; step = {}", node.getNodeName(), step);
+
             if (node.getNodeName().equals(Elements.IMPORT))
             {
                 parseImport(node);
@@ -275,6 +320,20 @@ public final class PipelineParser
                 return parseLog(node, step);
             }
 
+            // try and declare the missing step
+            final QName childStepType = node.getNodeName();
+            LOG.trace("  step {} is missing from the current library ; trying to declare it", childStepType);
+            for (final XdmNode declareStepNode : declareStepNodes)
+            {
+                final QName declareStepType = Saxon.getAttributeAsQName(declareStepNode, Attributes.TYPE);
+                LOG.trace("    declared step: {}", declareStepType);
+                if (childStepType.equals(declareStepType))
+                {
+                    parseDeclareStep(declareStepNode);
+                    return step.addChildStep(parseInstanceStep(node));
+                }
+            }
+
             throw XProcExceptions.xs0044(node);
         }
         else if (node.getNodeKind() == XdmNodeKind.ATTRIBUTE)
@@ -284,9 +343,11 @@ public final class PipelineParser
             final String value = node.getStringValue();
 
             // TODO: it's not very good to test step's type here !
-            if (name.getNamespaceURI().isEmpty() && !name.equals(Attributes.NAME) && !name.equals(Attributes.TYPE)
-                    && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType()) ||
-                        XProcSteps.HASH.equals(step.getType())))
+            if (name.getNamespaceURI().isEmpty()
+                    && !name.equals(Attributes.NAME)
+                    && !name.equals(Attributes.TYPE)
+                    && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType()) || XProcSteps.HASH
+                            .equals(step.getType())))
             {
                 if (!step.hasOptionDeclared(name))
                 {
@@ -534,6 +595,16 @@ public final class PipelineParser
         {
             parseImport(importNode);
         }
+
+        for (final XdmNode declareStepNode : SaxonAxis.childElements(node, Elements.ELEMENTS_DECLARE_STEP_OR_PIPELINE))
+        {
+            parseImports(declareStepNode);
+        }
+
+        if (Elements.ELEMENTS_DECLARE_STEP_OR_PIPELINE.contains(node.getNodeName()))
+        {
+            declareStepNodes.add(node);
+        }
     }
 
     private void parseImport(final XdmNode node)
@@ -542,23 +613,23 @@ public final class PipelineParser
         assert href != null;
         LOG.trace("{@method} href = {}", href);
         final URI libraryUri = baseUri.resolve(href);
-        LOG.trace("libraryUri = {} ; libraries = {}", libraryUri, library.getImportedUris());
-        if (!library.getImportedUris().contains(libraryUri))
+        LOG.trace("libraryUri = {} ; libraries = {keys}", libraryUri, imports);
+        if (!imports.containsKey(libraryUri))
         {
             final Source librarySource;
             try
             {
                 librarySource = context.getProcessor().getUnderlyingConfiguration().getURIResolver()
-                        .resolve(href, source.getSystemId());
+                        .resolve(href, node.getBaseURI().toString());
             }
             catch (final TransformerException e)
             {
                 throw XProcExceptions.xs0052(SaxonLocation.of(node), libraryUri);
             }
 
-            final PipelineLibrary newLibrary = parseLibrary(context, librarySource, getLibrary());
-            LOG.trace("new steps = {}", newLibrary.getStepTypes());
-            library = library.importLibrary(newLibrary);
+            final XdmNode importedRootNode = getRootElement(librarySource);
+            imports.put(libraryUri, importedRootNode);
+            parseImports(importedRootNode);
         }
         else
         {
