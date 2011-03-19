@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import org.trancecode.collection.TcIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
@@ -274,6 +275,11 @@ public final class Port extends AbstractHasLocation implements HasPortReference
     public Port setPortBindings(final Iterable<PortBinding> portBindings)
     {
         return new Port(portReference, location, type, primary, sequence, select, portBindings);
+    }
+
+    public Port addPortBinding(final PortBinding portBinding)
+    {
+        return setPortBindings(TcIterables.append(portBindings, portBinding));
     }
 
     public Port pipe(final String stepName, final String portName, final Location location)
