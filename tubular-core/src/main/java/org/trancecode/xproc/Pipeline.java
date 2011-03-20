@@ -30,7 +30,7 @@ public final class Pipeline
     private final PipelineContext context;
     private final Step pipeline;
 
-    protected Pipeline(final PipelineContext context, final Step pipeline)
+    Pipeline(final PipelineContext context, final Step pipeline)
     {
         this.context = Preconditions.checkNotNull(context);
         this.pipeline = Preconditions.checkNotNull(pipeline);
