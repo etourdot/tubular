@@ -54,7 +54,7 @@ public final class StepAvailableXPathExtensionFunction extends AbstractXPathExte
             @Override
             public StructuredQName getFunctionQName()
             {
-                return XProcXmlModel.xprocNamespace().newStructuredQName("step-available");
+                return XProcXmlModel.Functions.STEP_AVAILABLE;
             }
 
             @Override

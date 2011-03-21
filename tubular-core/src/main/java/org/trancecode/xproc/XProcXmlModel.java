@@ -19,9 +19,8 @@ package org.trancecode.xproc;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-
 import java.util.Set;
-
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.xml.Namespace;
 
@@ -138,6 +137,23 @@ public final class XProcXmlModel
         public static final QName OVERRIDE_CONTENT_TYPE = new QName("override-content-type");
 
         private Attributes()
+        {
+            // No instantiation
+        }
+    }
+
+    public static final class Functions
+    {
+        public static final StructuredQName BASE_URI = xprocNamespace().newStructuredQName("base-uri");
+        public static final StructuredQName ITERATION_POSITION = xprocNamespace().newStructuredQName("iteration-position");
+        public static final StructuredQName ITERATION_SIZE = xprocNamespace().newStructuredQName("iteration-size");
+        public static final StructuredQName RESOLVE_URI = xprocNamespace().newStructuredQName("resolve-uri");
+        public static final StructuredQName STEP_AVAILABLE = xprocNamespace().newStructuredQName("step-available");
+        public static final StructuredQName SYSTEM_PROPERTY = xprocNamespace().newStructuredQName("system-property");
+        public static final StructuredQName VERSION_AVAILABLE = xprocNamespace().newStructuredQName("version-available");
+        public static final StructuredQName XPATH_VERSION_AVAILABLE = xprocNamespace().newStructuredQName("xpath-version-available");
+
+        private Functions()
         {
             // No instantiation
         }

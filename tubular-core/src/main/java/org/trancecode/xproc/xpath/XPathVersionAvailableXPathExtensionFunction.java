@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Herve Quiroz
+ * Copyright (C) 2011 Emmanuel Tourdot
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,58 +24,51 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
-import net.sf.saxon.value.Int64Value;
+import net.sf.saxon.value.BooleanValue;
+import net.sf.saxon.value.DoubleValue;
 import net.sf.saxon.value.SequenceType;
-import org.trancecode.lang.TcThreads;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.XProcXmlModel;
 
-public final class IterationSizeXPathExtensionFunction extends AbstractXPathExtensionFunction
+public final class XPathVersionAvailableXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
-    private static final Logger LOG = Logger.getLogger(IterationSizeXPathExtensionFunction.class);
-    private static final ThreadLocal<Integer> ITERATION_SIZE = new ThreadLocal<Integer>();
-
-    static
-    {
-        ITERATION_SIZE.set(1);
-    }
-
-    public static int setIterationSize(final int value)
-    {
-        final int previousValue = TcThreads.set(ITERATION_SIZE, value);
-        LOG.trace("{@method} {} -> {}", previousValue, value);
-        return previousValue;
-    }
+    private static final Logger LOG = Logger.getLogger(XPathVersionAvailableXPathExtensionFunction.class);
 
     @Override
     public ExtensionFunctionDefinition getExtensionFunctionDefinition()
     {
         return new ExtensionFunctionDefinition()
         {
-            private static final long serialVersionUID = -2376250179411225176L;
+            private static final long serialVersionUID = -7606555388141355464L;
 
             @Override
             public StructuredQName getFunctionQName()
             {
-                return XProcXmlModel.Functions.ITERATION_SIZE;
+                return XProcXmlModel.Functions.XPATH_VERSION_AVAILABLE;
             }
 
             @Override
             public int getMinimumNumberOfArguments()
             {
-                return 0;
+                return 1;
+            }
+
+            @Override
+            public int getMaximumNumberOfArguments()
+            {
+                return 1;
             }
 
             @Override
             public SequenceType[] getArgumentTypes()
             {
-                return new SequenceType[0];
+                return new SequenceType[] { SequenceType.SINGLE_DOUBLE };
             }
 
             @Override
             public SequenceType getResultType(final SequenceType[] suppliedArgumentTypes)
             {
-                return SequenceType.SINGLE_INTEGER;
+                return SequenceType.SINGLE_BOOLEAN;
             }
 
             @Override
@@ -83,13 +76,15 @@ public final class IterationSizeXPathExtensionFunction extends AbstractXPathExte
             {
                 return new ExtensionFunctionCall()
                 {
-                    private static final long serialVersionUID = -8363336682570398286L;
+                    private static final long serialVersionUID = -1349293887849720884L;
 
                     @Override
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
                             throws XPathException
                     {
-                        return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(ITERATION_SIZE.get()));
+                        final double version = ((DoubleValue) arguments[0].next()).getDoubleValue();
+                        LOG.trace("version = {}", version);
+                        return SingletonIterator.makeIterator((version == 1.0 || version == 2.0) ? BooleanValue.TRUE : BooleanValue.FALSE);
                     }
                 };
             }

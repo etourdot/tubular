@@ -76,7 +76,7 @@ public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExt
             @Override
             public StructuredQName getFunctionQName()
             {
-                return XProcXmlModel.xprocNamespace().newStructuredQName("system-property");
+                return XProcXmlModel.Functions.SYSTEM_PROPERTY;
             }
 
             @Override

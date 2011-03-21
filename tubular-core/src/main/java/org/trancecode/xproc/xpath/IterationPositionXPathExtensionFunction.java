@@ -57,7 +57,7 @@ public final class IterationPositionXPathExtensionFunction extends AbstractXPath
             @Override
             public StructuredQName getFunctionQName()
             {
-                return XProcXmlModel.xprocNamespace().newStructuredQName("iteration-position");
+                return XProcXmlModel.Functions.ITERATION_POSITION;
             }
 
             @Override
