@@ -178,7 +178,10 @@ public final class PipelineParser
 
     private void declareStep(final Step step)
     {
-        localLibrary.put(step.getType(), step);
+        if (step.getType() != null)
+        {
+            localLibrary.put(step.getType(), step);
+        }
     }
 
     private void parseDeclareSteps()
@@ -713,7 +716,7 @@ public final class PipelineParser
     private PipelineLibrary getLibrary()
     {
         final Set<URI> uris = ImmutableSet.of();
-        return new PipelineLibrary(baseUri, localLibrary, uris).importLibrary(library);
+        return new PipelineLibrary(baseUri, localLibrary, uris, mainPipeline).importLibrary(library);
     }
 
     private Step getPipeline()

@@ -79,7 +79,7 @@ public final class PipelineConfiguration extends AbstractPipelineContext
         properties.put(PROPERTY_PROCESSOR, processor);
         properties.put(PROPERTY_URI_RESOLVER, processor.getUnderlyingConfiguration().getURIResolver());
         properties.put(PROPERTY_PIPELINE_LIBRARY, new PipelineLibrary(DEFAULT_LIBRARY_URI, CORE_LIBRARY,
-                EMPTY_SET_OF_URIS));
+                EMPTY_SET_OF_URIS, null));
         properties.put(PROPERTY_STEP_PROCESSORS, DEFAULT_STEP_PROCESSORS);
         final PipelineContext context = new ImmutablePipelineContext(properties);
         final URL xprocLibraryUrl = PipelineConfiguration.class.getResource(RESOURCE_PATH_XPROC_LIBRARY_1_0);
