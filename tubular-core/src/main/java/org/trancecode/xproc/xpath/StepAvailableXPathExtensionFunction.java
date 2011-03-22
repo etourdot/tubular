@@ -31,6 +31,7 @@ import net.sf.saxon.value.SequenceType;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcXmlModel;
+import org.trancecode.xproc.step.Step;
 
 /**
  * {@code p:step-available()}.
@@ -88,10 +89,22 @@ public final class StepAvailableXPathExtensionFunction extends AbstractXPathExte
                         Preconditions.checkArgument(arguments.length == 1);
                         final String stepName = arguments[0].next().getStringValue();
                         final QName stepQName = resolveQName(stepName);
-                        LOG.trace("step-name = {}", stepQName);
-                        final boolean available = Environment.getCurrentEnvironment().getPipelineContext()
-                                .getPipelineLibrary().getStepTypes().contains(stepQName);
-                        LOG.trace("available = {}", available);
+                        LOG.trace("{@method} step-name = {}", stepQName);
+                        LOG.trace("  availables steps = {}", Environment.getCurrentEnvironment().getPipelineContext()
+                                .getPipelineLibrary().getStepTypes());
+                        final boolean available;
+                        if (Environment.getCurrentEnvironment().getPipelineContext().getPipelineLibrary()
+                                .getStepTypes().contains(stepQName))
+                        {
+                            final Step step = Environment.getCurrentEnvironment().getPipelineContext()
+                                    .getPipelineLibrary().newStep(stepQName);
+                            available = !step.isCompoundStep() || !step.getSubpipeline().isEmpty();
+                        }
+                        else
+                        {
+                            available = false;
+                        }
+                        LOG.trace("  available = {}", available);
                         return SingletonIterator.makeIterator(BooleanValue.get(available));
                     }
                 };

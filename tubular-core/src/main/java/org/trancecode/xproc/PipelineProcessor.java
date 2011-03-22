@@ -19,6 +19,7 @@ package org.trancecode.xproc;
 
 import javax.xml.transform.Source;
 
+import org.trancecode.collection.TcMaps;
 import org.trancecode.xproc.step.Step;
 
 /**
@@ -55,7 +56,10 @@ public final class PipelineProcessor
 
     public Pipeline buildPipeline(final Source source)
     {
-        final Step pipelineStep = PipelineParser.parsePipeline(context, source);
-        return new Pipeline(context, pipelineStep);
+        final PipelineLibrary library = PipelineParser.parseLibrary(context, source);
+        final Step pipelineStep = library.getMainPipeline();
+        final PipelineContext contextWithNewLibrary = new ImmutablePipelineContext(TcMaps.copyAndPut(
+                context.getProperties(), AbstractPipelineContext.PROPERTY_PIPELINE_LIBRARY, library));
+        return new Pipeline(contextWithNewLibrary, pipelineStep);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Herve Quiroz
+ * Copyright (C) 2011 Herve Quiroz
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,40 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
- *
- * $Id$
  */
-package org.trancecode.xproc;
+package org.trancecode.collection;
 
-import com.google.common.base.Preconditions;
-import org.trancecode.xproc.step.Step;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.trancecode.AbstractTest;
 
 /**
+ * Tests for {@link TcMaps}.
+ * 
  * @author Herve Quiroz
  */
-public final class Pipeline
+public final class TcMapsTest extends AbstractTest
 {
-    private final PipelineContext context;
-    private final Step pipeline;
-
-    Pipeline(final PipelineContext context, final Step pipeline)
+    @Test
+    public void merge()
     {
-        this.context = Preconditions.checkNotNull(context);
-        this.pipeline = Preconditions.checkNotNull(pipeline);
-    }
-
-    public RunnablePipeline load()
-    {
-        return new RunnablePipeline(this);
-    }
-
-    public Step getUnderlyingPipeline()
-    {
-        return pipeline;
-    }
-
-    public PipelineContext getPipelineContext()
-    {
-        return context;
+        final Map<Integer, String> map1 = ImmutableMap.of(1, "1", 2, "2", 3, "3");
+        final Map<Integer, String> map2 = ImmutableMap.of(2, "2", 3, "3", 4, "4");
+        Assert.assertEquals(TcMaps.merge(map1, map2), ImmutableMap.of(1, "1", 2, "2", 3, "3", 4, "4"));
     }
 }

@@ -82,7 +82,7 @@ abstract class AbstractPipelineContext implements PipelineContext
         return value;
     }
 
-    final Map<String, Object> getProperties()
+    public final Map<String, Object> getProperties()
     {
         return properties;
     }

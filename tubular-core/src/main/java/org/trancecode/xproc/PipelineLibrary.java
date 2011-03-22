@@ -26,6 +26,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import net.sf.saxon.s9api.QName;
+import org.trancecode.api.Nullable;
+import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.collection.TcSets;
 import org.trancecode.logging.Logger;
@@ -39,15 +41,18 @@ public final class PipelineLibrary
     private static final Logger LOG = Logger.getLogger(PipelineLibrary.class);
 
     private final URI baseUri;
+    private final Step mainPipeline;
     private final Map<QName, Step> steps;
     private final Set<URI> importedUris;
 
-    public PipelineLibrary(final URI baseUri, final Map<QName, Step> steps, final Set<URI> importedUris)
+    PipelineLibrary(final URI baseUri, final Map<QName, Step> steps, final Set<URI> importedUris,
+            @Nullable final Step mainPipeline)
     {
         LOG.trace("baseUri = {} ; steps = {keys} ; importedUris = {}", baseUri, steps, importedUris);
         this.baseUri = Preconditions.checkNotNull(baseUri);
         this.steps = ImmutableMap.copyOf(steps);
         this.importedUris = TcSets.immutableSet(importedUris, baseUri);
+        this.mainPipeline = mainPipeline;
     }
 
     public URI getBaseUri()
@@ -58,6 +63,12 @@ public final class PipelineLibrary
     public Set<URI> getImportedUris()
     {
         return importedUris;
+    }
+
+    @ReturnsNullable
+    public Step getMainPipeline()
+    {
+        return mainPipeline;
     }
 
     public Set<QName> getStepTypes()
@@ -99,6 +110,6 @@ public final class PipelineLibrary
 
         final Map<QName, Step> mergedSteps = TcMaps.merge(library.steps, steps);
         final Set<URI> mergedImportedUris = TcSets.immutableSet(importedUris, library.importedUris);
-        return new PipelineLibrary(baseUri, mergedSteps, mergedImportedUris);
+        return new PipelineLibrary(baseUri, mergedSteps, mergedImportedUris, mainPipeline);
     }
 }

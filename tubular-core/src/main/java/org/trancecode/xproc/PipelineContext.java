@@ -51,5 +51,7 @@ public interface PipelineContext
 
     PipelineLibrary getPipelineLibrary();
 
+    Map<String, Object> getProperties();
+
     <T> T getProperty(String name);
 }
