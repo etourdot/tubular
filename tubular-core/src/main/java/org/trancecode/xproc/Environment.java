@@ -159,13 +159,21 @@ public final class Environment
 
     private Environment setupStepEnvironment(final Step step)
     {
+        return setupStepEnvironment(step, true);
+    }
+
+    private Environment setupStepEnvironment(final Step step, final boolean evaluteVariables)
+    {
         LOG.trace("{@method} step = {}", step.getName());
 
         Environment environment = setupInputPorts(step);
         environment = environment.setPrimaryInputPortAsDefaultReadablePort(step);
         environment = environment.setXPathContextPort(step);
         environment = environment.setDefaultParametersPort(step);
-        environment = environment.setupVariables(step);
+        if (evaluteVariables)
+        {
+            environment = environment.setupVariables(step);
+        }
 
         return environment;
     }
@@ -299,7 +307,7 @@ public final class Environment
         return setXPathContextPort(getEnvironmentPort(xpathContextPort));
     }
 
-    private Environment setupVariables(final Step step)
+    public Environment setupVariables(final Step step)
     {
         LOG.trace("{@method} step = {}", step.getName());
         LOG.trace("variables = {keys}", step.getVariables());
@@ -436,9 +444,14 @@ public final class Environment
 
     public Environment newFollowingStepEnvironment(final Step step)
     {
+        return newFollowingStepEnvironment(step, true);
+    }
+
+    public Environment newFollowingStepEnvironment(final Step step, final boolean evaluateVariables)
+    {
         LOG.trace("{@method} step = {}", step.getName());
 
-        return newFollowingStepEnvironment().setupStepEnvironment(step).setupStepAlias(step);
+        return newFollowingStepEnvironment().setupStepEnvironment(step, evaluateVariables).setupStepAlias(step);
     }
 
     public Environment newFollowingStepEnvironment()

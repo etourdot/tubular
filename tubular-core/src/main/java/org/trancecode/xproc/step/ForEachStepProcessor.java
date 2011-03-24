@@ -75,7 +75,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         LOG.trace("step = {}", step.getName());
         assert step.getType().equals(XProcSteps.FOR_EACH);
 
-        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step);
+        final Environment stepEnvironment = environment.newFollowingStepEnvironment(step, false);
 
         final List<XdmNode> inputNodes = ImmutableList.copyOf(stepEnvironment.readNodes(step
                 .getPortReference(XProcPorts.ITERATION_SOURCE)));
@@ -100,7 +100,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
                         final Port iterationPort = newIterationPort(step, inputNode);
                         final Environment iterationEnvironment = environment.newChildStepEnvironment()
                                 .addPorts(EnvironmentPort.newEnvironmentPort(iterationPort, environment))
-                                .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT));
+                                .setDefaultReadablePort(step.getPortReference(XProcPorts.CURRENT)).setupVariables(step);
                         final Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
                         return resultEnvironment.getDefaultReadablePort().readNodes();
                     }
