@@ -658,6 +658,14 @@ public final class PipelineParser
 
         step = parseStepChildNodes(node, step);
 
+        if (step.getType().equals(XProcSteps.FOR_EACH) && Iterables.isEmpty(step.getOutputPorts()))
+        {
+            final Port port = Port.newOutputPort(step.getName(), XProcPorts.RESULT, getLocation(node))
+                    .setSequence(true);
+            LOG.trace("  add implicit output port: {}", port);
+            step = step.declarePort(port);
+        }
+
         return step;
     }
 

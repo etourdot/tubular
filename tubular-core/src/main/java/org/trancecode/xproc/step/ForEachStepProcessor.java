@@ -52,8 +52,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
     public Step getStepDeclaration()
     {
         final Iterable<Port> ports = ImmutableList.of(Port.newInputPort(XProcPorts.ITERATION_SOURCE).setPrimary(true)
-                .setSequence(true), Port.newInputPort(XProcPorts.CURRENT), Port.newOutputPort(XProcPorts.RESULT)
-                .setSequence(true));
+                .setSequence(true), Port.newInputPort(XProcPorts.CURRENT));
         return Step.newStep(XProcSteps.FOR_EACH, this, true).declarePorts(ports);
     }
 
