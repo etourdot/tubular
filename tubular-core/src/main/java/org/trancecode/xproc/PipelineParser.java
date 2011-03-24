@@ -231,14 +231,13 @@ public final class PipelineParser
             final String name = getStepName(stepNode);
             step = PipelineStepProcessor.newPipeline(type);
             step = step.setName(name);
+            if (Elements.PIPELINE.equals(stepNode.getNodeName()))
+            {
+                step = PipelineStepProcessor.addImplicitPorts(step);
+            }
         }
 
         step = step.setLocation(getLocation(stepNode));
-
-        if (PipelineStepProcessor.isPipeline(step))
-        {
-            step = PipelineStepProcessor.addImplicitPorts(step);
-        }
 
         step = parseStepChildNodes(stepNode, step);
 
@@ -389,6 +388,7 @@ public final class PipelineParser
     private Step parseWithPort(final XdmNode portNode, final Step step)
     {
         final String portName = getPortName(portNode);
+        LOG.trace("{@method} step = {} ; port = {}", step, portName);
         final Port port = step.getPort(portName);
         assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
                 + " ; with-port = " + getPortType(portNode);
