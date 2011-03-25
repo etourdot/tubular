@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -122,11 +123,7 @@ public abstract class AbstractXProcTest extends AbstractTest
         catch (final Throwable e)
         {
             reportBuilder.result(test, e);
-            if (e instanceof RuntimeException)
-            {
-                throw (RuntimeException) e;
-            }
-
+            Throwables.propagateIfPossible(e);
             Assert.fail(e.getMessage(), e);
         }
 
