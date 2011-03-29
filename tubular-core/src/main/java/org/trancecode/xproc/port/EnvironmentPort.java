@@ -207,13 +207,13 @@ public final class EnvironmentPort implements HasPortReference
     {
         assert port != null : getDeclaredPort();
         assert port != this : getDeclaredPort();
-        LOG.trace("{} -> {}", port.getDeclaredPort(), getDeclaredPort());
+        LOG.trace("{@method} {} -> {}", port.getDeclaredPort(), getDeclaredPort());
 
         final EnvironmentPortBinding portBinding = new EnvironmentPortBinding()
         {
             public Iterable<XdmNode> readNodes()
             {
-                LOG.trace("read from {}", port);
+                LOG.trace("{@method} port = {} ; pipe = {}", EnvironmentPort.this, port);
                 return port.readNodes();
             }
 
