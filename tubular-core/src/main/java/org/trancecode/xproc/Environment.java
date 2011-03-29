@@ -190,6 +190,7 @@ public final class Environment
             if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT) && port.getPortBindings().isEmpty()
                     && getXPathContextPort() != null)
             {
+                LOG.trace("  {} is XPath context port", environmentPort);
                 environmentPort = environmentPort.pipe(getXPathContextPort());
             }
             newPorts.put(port.getPortReference(), environmentPort);
@@ -235,7 +236,9 @@ public final class Environment
 
     private Environment setDefaultReadablePortAsXPathContextPort()
     {
-        return setXPathContextPort(getDefaultReadablePort());
+        final EnvironmentPort port = getDefaultReadablePort();
+        LOG.trace("{@method} port = {}", port);
+        return setXPathContextPort(port);
     }
 
     private Environment setPrimaryInputPortAsDefaultReadablePort(final Step step)
@@ -517,6 +520,7 @@ public final class Environment
 
     public Environment setXPathContextPort(final EnvironmentPort xpathContextPort)
     {
+        LOG.trace("{@method} port = {}", xpathContextPort);
         assert xpathContextPort != null;
         assert ports.containsValue(xpathContextPort);
 
@@ -657,9 +661,12 @@ public final class Environment
     @ReturnsNullable
     public XdmNode getXPathContextNode()
     {
+        LOG.trace("{@method}");
+
         // TODO cache
 
         final EnvironmentPort xpathContextPort = getXPathContextPort();
+        LOG.trace("  xpathContextPort = {}", xpathContextPort);
         if (xpathContextPort != null)
         {
             final Iterator<XdmNode> contextNodes = xpathContextPort.readNodes().iterator();
@@ -669,7 +676,7 @@ public final class Environment
                 if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
                 {
                     // TODO XProc error
-                    assert !contextNodes.hasNext();
+                    assert !contextNodes.hasNext() : xpathContextPort.readNodes();
                 }
 
                 return Saxon.asDocumentNode(contextNode, configuration.getProcessor());
