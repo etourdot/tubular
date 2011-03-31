@@ -107,6 +107,24 @@ public final class StepTest extends AbstractTest
     }
 
     @Test
+    public void getSubpipelineStepDependencies4()
+    {
+        final PipelineProcessor processor = new PipelineProcessor();
+        final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
+                "/StepTest/getSubpipelineStepDependencies4.xpl"), "/StepTest/getSubpipelineStepDependencies4.xpl");
+        final Step pipeline = processor.buildPipeline(pipelineSource).getUnderlyingPipeline();
+        final Map<Step, Step> dependencies = pipeline.getSubpipelineStepDependencies();
+
+        final Step identity1 = pipeline.getStepByName("identity1");
+        final Step identity2 = pipeline.getStepByName("identity2");
+        final Step forEach = pipeline.getStepByName("for-each");
+
+        Assert.assertEquals(dependencies.get(identity1), null);
+        Assert.assertEquals(dependencies.get(forEach), identity1);
+        Assert.assertEquals(dependencies.get(identity2), null);
+    }
+
+    @Test
     public void getPrimaryInputPort()
     {
         Step step = Step.newStep(new QName("test"), StepProcessors.unsupportedStepProcessor(new QName("test")), false);
