@@ -738,7 +738,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
                 for (final Variable variable : step.getVariables().values())
                 {
-                    LOG.trace("HHHHHH {} {}", variable, variable.getPortBinding());
                     if (variable.getPortBinding() != null && variable.getPortBinding() instanceof PipePortBinding)
                     {
                         final PipePortBinding portBinding = (PipePortBinding) variable.getPortBinding();
