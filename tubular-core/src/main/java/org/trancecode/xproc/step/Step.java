@@ -478,11 +478,17 @@ public final class Step extends AbstractHasLocation implements StepContainer
     public Step withParam(final QName name, final String select, final String value, final Location location,
             final XdmNode node)
     {
+        return withParam(name, select, value, location, node, null);
+    }
+
+    public Step withParam(final QName name, final String select, final String value, final Location location,
+            final XdmNode node, final PortBinding portBinding)
+    {
         Preconditions.checkArgument(!parameters.containsKey(name), "parameter already set: %s", name);
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, variables,
                 TcMaps.copyAndPut(parameters, name,
-                        Variable.newParameter(name, location).setSelect(select).setValue(value).setNode(node)), ports,
-                steps, logs);
+                        Variable.newParameter(name, location).setSelect(select).setValue(value).setNode(node)
+                                .setPortBinding(portBinding)), ports, steps, logs);
     }
 
     public Step withOptionValue(final QName name, final String value)
