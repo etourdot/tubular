@@ -458,10 +458,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
         final Variable option = variables.get(name);
         Preconditions.checkArgument(option != null, "no such option: %s", name);
         Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
-        if (option.getSelect() != null)
-        {
-            throw XProcExceptions.xs0004(option);
-        }
 
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
                 variables, name, option.setSelect(select).setNode(node)), parameters, ports, steps, logs);
