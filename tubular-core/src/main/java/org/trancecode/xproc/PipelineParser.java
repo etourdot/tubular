@@ -565,7 +565,8 @@ public final class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
-        return step.withParam(name, select, null, getLocation(node), node);
+        return step.withParam(name, select, null, getLocation(node), node,
+                Iterables.getOnlyElement(parsePortBindings(node), null));
     }
 
     private Step parseWithOption(final XdmNode node, final Step step)
@@ -574,7 +575,7 @@ public final class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
-        return step.withOption(name, select, node);
+        return step.withOption(name, select, node, Iterables.getOnlyElement(parsePortBindings(node), null));
     }
 
     private Step parseDeclareVariable(final XdmNode node, final Step step)
