@@ -10,8 +10,11 @@
   <p:identity name="identity3" />
 
   <p:store name="store1">
-    <p:with-option name="method" select="'xml'">
-      <p:pipe step="identity1" port="result"></p:pipe>
+    <p:input port="source">
+      <p:pipe step="identity1" port="result" />
+    </p:input>
+    <p:with-option name="method" select="'whatever'">
+      <p:pipe step="identity2" port="result"></p:pipe>
     </p:with-option>
   </p:store>
 

@@ -103,7 +103,7 @@ public final class StepTest extends AbstractTest
         Assert.assertEquals(dependencies.get(identity3), identity2);
 
         // variable port binding
-        Assert.assertEquals(dependencies.get(store1), identity1);
+        Assert.assertEquals(dependencies.get(store1), identity2);
     }
 
     @Test
