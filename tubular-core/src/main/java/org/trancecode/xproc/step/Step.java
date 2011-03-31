@@ -92,6 +92,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private final Iterable<Log> logs;
 
     private final Supplier<Integer> hashCode;
+    private Map<Step, Step> dependencies;
 
     public static final class Log
     {
@@ -671,8 +672,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
     protected Map<Step, Step> getSubpipelineStepDependencies()
     {
         Preconditions.checkState(isCompoundStep(), "not a compound step: %s", getName());
-        // TODO memoization
-        return getSubpipelineStepDependencies(getSubpipeline());
+        if (dependencies == null)
+        {
+            dependencies = getSubpipelineStepDependencies(getSubpipeline());
+        }
+
+        return dependencies;
     }
 
     protected static Map<Step, Step> getSubpipelineStepDependencies(final Iterable<Step> steps)
