@@ -456,12 +456,18 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step withOption(final QName name, final String select, final XdmNode node)
     {
+        return withOption(name, select, node, null);
+    }
+
+    public Step withOption(final QName name, final String select, final XdmNode node, final PortBinding portBinding)
+    {
         final Variable option = variables.get(name);
         Preconditions.checkArgument(option != null, "no such option: %s", name);
         Preconditions.checkArgument(option.isOption(), "not an options: %s", name);
 
         return new Step(node, type, this.name, internalName, location, stepProcessor, compoundStep, TcMaps.copyAndPut(
-                variables, name, option.setSelect(select).setNode(node)), parameters, ports, steps, logs);
+                variables, name, option.setSelect(select).setNode(node).setPortBinding(portBinding)), parameters,
+                ports, steps, logs);
     }
 
     public Step withParam(final QName name, final String select, final String value, final Location location)
@@ -727,6 +733,22 @@ public final class Step extends AbstractHasLocation implements StepContainer
                             dependencyIndex = Math.max(dependencyIndex,
                                     subpipelineStepNames.get(dependencyPortReference.getStepName()));
                         }
+                    }
+                }
+
+                for (final Variable variable : step.getVariables().values())
+                {
+                    LOG.trace("HHHHHH {} {}", variable, variable.getPortBinding());
+                    if (variable.getPortBinding() != null && variable.getPortBinding() instanceof PipePortBinding)
+                    {
+                        final PipePortBinding portBinding = (PipePortBinding) variable.getPortBinding();
+                        final PortReference dependencyPortReference = portBinding.getPortReference();
+                        LOG.trace("  variable {} in step {} reads from output port {}", variable.getName(), step,
+                                dependencyPortReference);
+                        assert subpipelineStepNames.containsKey(dependencyPortReference.getStepName()) : step.getName()
+                                + " -> " + dependencyPortReference;
+                        dependencyIndex = Math.max(dependencyIndex,
+                                subpipelineStepNames.get(dependencyPortReference.getStepName()));
                     }
                 }
 
