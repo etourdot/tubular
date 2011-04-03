@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -234,7 +235,7 @@ public final class Environment
         return result;
     }
 
-    private Environment setDefaultReadablePortAsXPathContextPort()
+    public Environment setDefaultReadablePortAsXPathContextPort()
     {
         final EnvironmentPort port = getDefaultReadablePort();
         LOG.trace("{@method} port = {}", port);
@@ -270,7 +271,7 @@ public final class Environment
         return addPorts(nonEmptyEnvironmentPort).setDefaultReadablePort(nonEmptyEnvironmentPort);
     }
 
-    private Environment setPrimaryOutputPortAsDefaultReadablePort(final Step step, final Environment sourceEnvironment)
+    public Environment setPrimaryOutputPortAsDefaultReadablePort(final Step step, final Environment sourceEnvironment)
     {
         LOG.trace("{@method} step = {}", step.getName());
 
@@ -345,8 +346,16 @@ public final class Environment
                 final XdmNode xpathContextNode;
                 if (xpathPortBinding != null)
                 {
-                    xpathContextNode = Iterables.getOnlyElement(xpathPortBinding.newEnvironmentPortBinding(this)
-                            .readNodes());
+                    try
+                    {
+                        xpathContextNode = Iterables.getOnlyElement(xpathPortBinding.newEnvironmentPortBinding(this)
+                                .readNodes());
+                    }
+                    catch (final NoSuchElementException e)
+                    {
+                        // TODO XProc error?
+                        throw new IllegalStateException("error while evaluating " + variable.getName(), e);
+                    }
                 }
                 else
                 {
