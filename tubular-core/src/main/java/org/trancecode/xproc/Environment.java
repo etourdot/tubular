@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -159,13 +160,21 @@ public final class Environment
 
     private Environment setupStepEnvironment(final Step step)
     {
+        return setupStepEnvironment(step, true);
+    }
+
+    private Environment setupStepEnvironment(final Step step, final boolean evaluteVariables)
+    {
         LOG.trace("{@method} step = {}", step.getName());
 
         Environment environment = setupInputPorts(step);
         environment = environment.setPrimaryInputPortAsDefaultReadablePort(step);
         environment = environment.setXPathContextPort(step);
         environment = environment.setDefaultParametersPort(step);
-        environment = environment.setupVariables(step);
+        if (evaluteVariables)
+        {
+            environment = environment.setupVariables(step);
+        }
 
         return environment;
     }
@@ -182,6 +191,7 @@ public final class Environment
             if (port.getPortName().equals(XProcPorts.XPATH_CONTEXT) && port.getPortBindings().isEmpty()
                     && getXPathContextPort() != null)
             {
+                LOG.trace("  {} is XPath context port", environmentPort);
                 environmentPort = environmentPort.pipe(getXPathContextPort());
             }
             newPorts.put(port.getPortReference(), environmentPort);
@@ -225,9 +235,11 @@ public final class Environment
         return result;
     }
 
-    private Environment setDefaultReadablePortAsXPathContextPort()
+    public Environment setDefaultReadablePortAsXPathContextPort()
     {
-        return setXPathContextPort(getDefaultReadablePort());
+        final EnvironmentPort port = getDefaultReadablePort();
+        LOG.trace("{@method} port = {}", port);
+        return setXPathContextPort(port);
     }
 
     private Environment setPrimaryInputPortAsDefaultReadablePort(final Step step)
@@ -259,7 +271,7 @@ public final class Environment
         return addPorts(nonEmptyEnvironmentPort).setDefaultReadablePort(nonEmptyEnvironmentPort);
     }
 
-    private Environment setPrimaryOutputPortAsDefaultReadablePort(final Step step, final Environment sourceEnvironment)
+    public Environment setPrimaryOutputPortAsDefaultReadablePort(final Step step, final Environment sourceEnvironment)
     {
         LOG.trace("{@method} step = {}", step.getName());
 
@@ -299,7 +311,7 @@ public final class Environment
         return setXPathContextPort(getEnvironmentPort(xpathContextPort));
     }
 
-    private Environment setupVariables(final Step step)
+    public Environment setupVariables(final Step step)
     {
         LOG.trace("{@method} step = {}", step.getName());
         LOG.trace("variables = {keys}", step.getVariables());
@@ -334,8 +346,16 @@ public final class Environment
                 final XdmNode xpathContextNode;
                 if (xpathPortBinding != null)
                 {
-                    xpathContextNode = Iterables.getOnlyElement(xpathPortBinding.newEnvironmentPortBinding(this)
-                            .readNodes());
+                    try
+                    {
+                        xpathContextNode = Iterables.getOnlyElement(xpathPortBinding.newEnvironmentPortBinding(this)
+                                .readNodes());
+                    }
+                    catch (final NoSuchElementException e)
+                    {
+                        // TODO XProc error?
+                        throw new IllegalStateException("error while evaluating " + variable.getName(), e);
+                    }
                 }
                 else
                 {
@@ -436,9 +456,14 @@ public final class Environment
 
     public Environment newFollowingStepEnvironment(final Step step)
     {
+        return newFollowingStepEnvironment(step, true);
+    }
+
+    public Environment newFollowingStepEnvironment(final Step step, final boolean evaluateVariables)
+    {
         LOG.trace("{@method} step = {}", step.getName());
 
-        return newFollowingStepEnvironment().setupStepEnvironment(step).setupStepAlias(step);
+        return newFollowingStepEnvironment().setupStepEnvironment(step, evaluateVariables).setupStepAlias(step);
     }
 
     public Environment newFollowingStepEnvironment()
@@ -504,6 +529,7 @@ public final class Environment
 
     public Environment setXPathContextPort(final EnvironmentPort xpathContextPort)
     {
+        LOG.trace("{@method} port = {}", xpathContextPort);
         assert xpathContextPort != null;
         assert ports.containsValue(xpathContextPort);
 
@@ -644,9 +670,12 @@ public final class Environment
     @ReturnsNullable
     public XdmNode getXPathContextNode()
     {
+        LOG.trace("{@method}");
+
         // TODO cache
 
         final EnvironmentPort xpathContextPort = getXPathContextPort();
+        LOG.trace("  xpathContextPort = {}", xpathContextPort);
         if (xpathContextPort != null)
         {
             final Iterator<XdmNode> contextNodes = xpathContextPort.readNodes().iterator();
@@ -656,7 +685,7 @@ public final class Environment
                 if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
                 {
                     // TODO XProc error
-                    assert !contextNodes.hasNext();
+                    assert !contextNodes.hasNext() : xpathContextPort.readNodes();
                 }
 
                 return Saxon.asDocumentNode(contextNode, configuration.getProcessor());

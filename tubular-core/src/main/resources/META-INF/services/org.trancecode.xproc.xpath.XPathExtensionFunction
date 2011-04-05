@@ -4,5 +4,6 @@ org.trancecode.xproc.xpath.IterationSizeXPathExtensionFunction
 org.trancecode.xproc.xpath.ResolveUriXPathExtensionFunction
 org.trancecode.xproc.xpath.StepAvailableXPathExtensionFunction
 org.trancecode.xproc.xpath.SystemPropertyXPathExtensionFunction
+org.trancecode.xproc.xpath.ValueAvailableXPathExtensionFunction
 org.trancecode.xproc.xpath.VersionAvailableXPathExtensionFunction
 org.trancecode.xproc.xpath.XPathVersionAvailableXPathExtensionFunction

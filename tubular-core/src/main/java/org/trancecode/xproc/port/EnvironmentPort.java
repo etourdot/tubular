@@ -22,13 +22,13 @@ package org.trancecode.xproc.port;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+
 import java.util.List;
+
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathExecutable;
 import net.sf.saxon.s9api.XPathSelector;
-import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
@@ -70,6 +70,7 @@ public final class EnvironmentPort implements HasPortReference
                 }));
 
         final String declaredPortSelect = declaredPort.getSelect();
+        LOG.trace("declaredPortSelect = {}", declaredPortSelect);
         final XPathExecutable select;
         if (declaredPortSelect != null)
         {
@@ -116,43 +117,55 @@ public final class EnvironmentPort implements HasPortReference
         return declaredPort;
     }
 
+    /**
+     * Read without evaluating the 'select' attribute.
+     */
+    private Iterable<XdmNode> readRawNodes()
+    {
+        return Iterables.concat(Iterables.transform(portBindings,
+                new Function<EnvironmentPortBinding, Iterable<XdmNode>>()
+                {
+                    @Override
+                    public Iterable<XdmNode> apply(final EnvironmentPortBinding portBinding)
+                    {
+                        return portBinding.readNodes();
+                    }
+                }));
+    }
+
+    private Iterable<XdmNode> select(final Iterable<XdmNode> nodes)
+    {
+        LOG.trace("{@method} select = {}", select);
+
+        if (select == null)
+        {
+            return nodes;
+        }
+
+        return Iterables.concat(Iterables.transform(nodes, new Function<XdmNode, Iterable<XdmNode>>()
+        {
+            @Override
+            public Iterable<XdmNode> apply(final XdmNode node)
+            {
+                try
+                {
+                    final XPathSelector selector = select.load();
+                    selector.setContextItem(node);
+                    return Iterables.filter(selector.evaluate(), XdmNode.class);
+                }
+                catch (final SaxonApiException e)
+                {
+                    throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(), e.getMessage());
+                }
+            }
+        }));
+    }
+
     public Iterable<XdmNode> readNodes()
     {
         LOG.trace("{@method} declaredPort = {}", declaredPort);
 
-        // TODO improve this by returning a true Iterable
-        final List<XdmNode> nodes = Lists.newArrayList();
-        for (final EnvironmentPortBinding portBinding : portBindings)
-        {
-            for (final XdmNode node : portBinding.readNodes())
-            {
-                if (select != null)
-                {
-                    LOG.trace("select = {}", select);
-                    try
-                    {
-                        final XPathSelector selector = select.load();
-                        selector.setContextItem(node);
-                        for (final XdmItem xdmItem : selector.evaluate())
-                        {
-                            nodes.add((XdmNode) xdmItem);
-                        }
-                    }
-                    catch (final SaxonApiException e)
-                    {
-                        throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(),
-                                e.getMessage());
-                    }
-                }
-                else
-                {
-                    nodes.add(node);
-                }
-            }
-        }
-
-        // defensive programming
-        return ImmutableList.copyOf(nodes);
+        return ImmutableList.copyOf(select(readRawNodes()));
     }
 
     public EnvironmentPort writeNodes(final XdmNode... nodes)
@@ -194,13 +207,13 @@ public final class EnvironmentPort implements HasPortReference
     {
         assert port != null : getDeclaredPort();
         assert port != this : getDeclaredPort();
-        LOG.trace("{} -> {}", port.getDeclaredPort(), getDeclaredPort());
+        LOG.trace("{@method} {} -> {}", port.getDeclaredPort(), getDeclaredPort());
 
         final EnvironmentPortBinding portBinding = new EnvironmentPortBinding()
         {
             public Iterable<XdmNode> readNodes()
             {
-                LOG.trace("read from {}", port);
+                LOG.trace("{@method} port = {} ; pipe = {}", EnvironmentPort.this, port);
                 return port.readNodes();
             }
 

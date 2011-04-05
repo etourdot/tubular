@@ -19,7 +19,9 @@ package org.trancecode.xproc;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+
 import java.util.Set;
+
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.xml.Namespace;
@@ -61,11 +63,11 @@ public final class XProcXmlModel
         public static final QName LOG = xprocNamespace().newSaxonQName("log");
         public static final QName NAMESPACE_RENAME = xprocNamespace().newSaxonQName("namespace-rename");
         public static final QName OPTION = xprocNamespace().newSaxonQName("option");
-        public static final QName OTHER = xprocStepNamespace().newSaxonQName("other");        
+        public static final QName OTHER = xprocStepNamespace().newSaxonQName("other");
         public static final QName OTHERWISE = xprocNamespace().newSaxonQName("otherwise");
         public static final QName OUTPUT = xprocNamespace().newSaxonQName("output");
-		public static final QName PARAM = xprocNamespace().newSaxonQName("param");
-		public static final QName PARAM_SET = xprocNamespace().newSaxonQName("param-set");
+        public static final QName PARAM = xprocNamespace().newSaxonQName("param");
+        public static final QName PARAM_SET = xprocNamespace().newSaxonQName("param-set");
         public static final QName PIPE = xprocNamespace().newSaxonQName("pipe");
         public static final QName PIPEINFO = xprocNamespace().newSaxonQName("pipeinfo");
         public static final QName PIPELINE = xprocNamespace().newSaxonQName("pipeline");
@@ -145,13 +147,17 @@ public final class XProcXmlModel
     public static final class Functions
     {
         public static final StructuredQName BASE_URI = xprocNamespace().newStructuredQName("base-uri");
-        public static final StructuredQName ITERATION_POSITION = xprocNamespace().newStructuredQName("iteration-position");
+        public static final StructuredQName ITERATION_POSITION = xprocNamespace().newStructuredQName(
+                "iteration-position");
         public static final StructuredQName ITERATION_SIZE = xprocNamespace().newStructuredQName("iteration-size");
         public static final StructuredQName RESOLVE_URI = xprocNamespace().newStructuredQName("resolve-uri");
         public static final StructuredQName STEP_AVAILABLE = xprocNamespace().newStructuredQName("step-available");
         public static final StructuredQName SYSTEM_PROPERTY = xprocNamespace().newStructuredQName("system-property");
-        public static final StructuredQName VERSION_AVAILABLE = xprocNamespace().newStructuredQName("version-available");
-        public static final StructuredQName XPATH_VERSION_AVAILABLE = xprocNamespace().newStructuredQName("xpath-version-available");
+        public static final StructuredQName VALUE_AVAILABLE = xprocNamespace().newStructuredQName("value-available");
+        public static final StructuredQName VERSION_AVAILABLE = xprocNamespace()
+                .newStructuredQName("version-available");
+        public static final StructuredQName XPATH_VERSION_AVAILABLE = xprocNamespace().newStructuredQName(
+                "xpath-version-available");
 
         private Functions()
         {

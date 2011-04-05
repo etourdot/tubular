@@ -278,7 +278,9 @@ public class XProcTestParser
                 else
                 {
                     LOG.trace("New inline document");
-                    documents.add(Saxon.asDocumentNode(processor, nodes));
+                    final XdmNode aNode = Saxon.asDocumentNode(processor, nodes);
+                    aNode.getUnderlyingNode().setSystemId(node.getBaseURI().toASCIIString());
+                    documents.add(aNode);
                 }
             }
             else
@@ -326,7 +328,9 @@ public class XProcTestParser
         final SAXSource source = new SAXSource(new InputSource(uri.toString()));
         try
         {
-            return builder.build(source);
+            final XdmNode aNode = builder.build(source);
+            aNode.getUnderlyingNode().setSystemId(uri.toASCIIString());
+            return aNode;
         }
         catch (final SaxonApiException e)
         {

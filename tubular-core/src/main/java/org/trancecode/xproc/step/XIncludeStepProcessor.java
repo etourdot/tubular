@@ -92,7 +92,6 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             throw XProcExceptions.xc0029(SaxonLocation.of(node));
         }
         finally

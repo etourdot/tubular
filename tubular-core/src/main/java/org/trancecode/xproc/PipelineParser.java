@@ -178,7 +178,10 @@ public final class PipelineParser
 
     private void declareStep(final Step step)
     {
-        localLibrary.put(step.getType(), step);
+        if (step.getType() != null)
+        {
+            localLibrary.put(step.getType(), step);
+        }
     }
 
     private void parseDeclareSteps()
@@ -228,14 +231,13 @@ public final class PipelineParser
             final String name = getStepName(stepNode);
             step = PipelineStepProcessor.newPipeline(type);
             step = step.setName(name);
+            if (Elements.PIPELINE.equals(stepNode.getNodeName()))
+            {
+                step = PipelineStepProcessor.addImplicitPorts(step);
+            }
         }
 
         step = step.setLocation(getLocation(stepNode));
-
-        if (PipelineStepProcessor.isPipeline(step))
-        {
-            step = PipelineStepProcessor.addImplicitPorts(step);
-        }
 
         step = parseStepChildNodes(stepNode, step);
 
@@ -386,6 +388,7 @@ public final class PipelineParser
     private Step parseWithPort(final XdmNode portNode, final Step step)
     {
         final String portName = getPortName(portNode);
+        LOG.trace("{@method} step = {} ; port = {}", step, portName);
         final Port port = step.getPort(portName);
         assert port.isParameter() || port.getType().equals(getPortType(portNode)) : "port = " + port.getType()
                 + " ; with-port = " + getPortType(portNode);
@@ -562,7 +565,8 @@ public final class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
-        return step.withParam(name, select, null, getLocation(node), node);
+        return step.withParam(name, select, null, getLocation(node), node,
+                Iterables.getOnlyElement(parsePortBindings(node), null));
     }
 
     private Step parseWithOption(final XdmNode node, final Step step)
@@ -571,7 +575,7 @@ public final class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
-        return step.withOption(name, select, node);
+        return step.withOption(name, select, node, Iterables.getOnlyElement(parsePortBindings(node), null));
     }
 
     private Step parseDeclareVariable(final XdmNode node, final Step step)
@@ -655,6 +659,14 @@ public final class PipelineParser
 
         step = parseStepChildNodes(node, step);
 
+        if (step.getType().equals(XProcSteps.FOR_EACH) && Iterables.isEmpty(step.getOutputPorts()))
+        {
+            final Port port = Port.newOutputPort(step.getName(), XProcPorts.RESULT, getLocation(node))
+                    .setSequence(true);
+            LOG.trace("  add implicit output port: {}", port);
+            step = step.declarePort(port);
+        }
+
         return step;
     }
 
@@ -713,7 +725,7 @@ public final class PipelineParser
     private PipelineLibrary getLibrary()
     {
         final Set<URI> uris = ImmutableSet.of();
-        return new PipelineLibrary(baseUri, localLibrary, uris).importLibrary(library);
+        return new PipelineLibrary(baseUri, localLibrary, uris, mainPipeline).importLibrary(library);
     }
 
     private Step getPipeline()
