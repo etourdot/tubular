@@ -530,12 +530,12 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step setPortBindings(final String portName, final PortBinding... portBindings)
     {
-        return withPort(getPort(portName).setPortBindings(portBindings));
+        return setPortBindings(portName, ImmutableList.copyOf(portBindings));
     }
 
     public Step setPortBindings(final String portName, final Iterable<PortBinding> portBindings)
     {
-        return withPort(getPort(portName).setPortBindings(portBindings));
+        return withPort(getPort(portName).setPortBindings(portBindings).setSelect(null));
     }
 
     public Step withPort(final Port port)
