@@ -24,12 +24,12 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
 import org.etourdot.xinclude.XIncProcEngine;
-import org.etourdot.xinclude.XIncludeException;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.SaxonLocation;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
@@ -43,10 +43,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class XIncludeStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(XIncludeStepProcessor.class);
-    private static final String XINCLUDE_FEATURE_ID = "http://apache.org/xml/features/xinclude";
-    private static final String XINCLUDE_FIXUP_BASE_URIS_FEATURE_ID = "http://apache.org/xml/features/xinclude/fixup-base-uris";
-    private static final String XINCLUDE_FIXUP_LANGUAGE_FEATURE_ID = "http://apache.org/xml/features/xinclude/fixup-language";
-    private static final String DEFAULT_PARSER_NAME = "org.apache.xerces.parsers.SAXParser";
 
     @Override
     public QName getStepType()
@@ -79,42 +75,9 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
             final ByteArrayInputStream bais2 = new ByteArrayInputStream(baos2.toByteArray());
             output.writeNodes(XProcPorts.RESULT, processor.newDocumentBuilder().build(new StreamSource(bais2)));
         }
-        catch (XIncludeException e)
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        catch (SaxonApiException e)
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        /*final Configuration configuration = processor.getUnderlyingConfiguration();
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try
-        {
-            final Serializer serializer = processor.newSerializer(baos);
-            serializer.serializeNode(node);
-            final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            final AugmentedSource source = AugmentedSource.makeAugmentedSource(new StreamSource(bais));
-            source.setXIncludeAware(true);
-            source.setPleaseCloseAfterUse(true);
-            source.setSystemId(node.getBaseURI().toASCIIString());
-            final XMLReader xmlReader = XMLReaderFactory.createXMLReader(DEFAULT_PARSER_NAME);
-            xmlReader.setFeature(XINCLUDE_FEATURE_ID, true);
-            xmlReader.setFeature(XINCLUDE_FIXUP_BASE_URIS_FEATURE_ID, xmlBase);
-            xmlReader.setFeature(XINCLUDE_FIXUP_LANGUAGE_FEATURE_ID, xmlLang);
-            source.setXMLReader(xmlReader);
-            final DocumentInfo doc = configuration.buildDocument(source);
-            Closeables.closeQuietly(bais);
-            output.writeNodes(XProcPorts.RESULT, new XdmNode(doc));
-        }
         catch (Exception e)
         {
             throw XProcExceptions.xc0029(SaxonLocation.of(node));
         }
-        finally
-        {
-            Closeables.closeQuietly(baos);
-        }*/
     }
 }
