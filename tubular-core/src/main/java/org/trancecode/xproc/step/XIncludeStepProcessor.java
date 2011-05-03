@@ -19,24 +19,19 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.io.Closeables;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import javax.xml.transform.stream.StreamSource;
-import net.sf.saxon.Configuration;
-import net.sf.saxon.lib.AugmentedSource;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
+import org.etourdot.xinclude.XIncProcEngine;
+import org.etourdot.xinclude.XIncludeException;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.SaxonLocation;
-import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * {@code p:xinclude}.
@@ -70,7 +65,30 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
         LOG.trace("xmlLang = {}", xmlLang);
 
         final Processor processor = input.getPipelineContext().getProcessor();
-        final Configuration configuration = processor.getUnderlyingConfiguration();
+        final XIncProcEngine engine = new XIncProcEngine(processor);
+        engine.getConfiguration().setBaseUrisFixup(xmlBase);
+        engine.getConfiguration().setLanguageFixup(xmlLang);
+        try
+        {
+            final ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+            final Serializer serializer = processor.newSerializer(baos1);
+            serializer.serializeNode(node);
+            final ByteArrayInputStream bais1 = new ByteArrayInputStream(baos1.toByteArray());
+            final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+            engine.parse(bais1, node.getBaseURI().toASCIIString(), baos2);
+            final ByteArrayInputStream bais2 = new ByteArrayInputStream(baos2.toByteArray());
+            output.writeNodes(XProcPorts.RESULT, processor.newDocumentBuilder().build(new StreamSource(bais2)));
+        }
+        catch (XIncludeException e)
+        {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        catch (SaxonApiException e)
+        {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        /*final Configuration configuration = processor.getUnderlyingConfiguration();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try
         {
@@ -97,6 +115,6 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
         finally
         {
             Closeables.closeQuietly(baos);
-        }
+        }*/
     }
 }

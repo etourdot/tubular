@@ -17,7 +17,13 @@
   <description>TranceCode XProc pipeline processor</description>
 
   <!-- ===================================================================== -->
-
+    <repositories>
+        <repository>
+            <id>xincproc</id>
+            <url>http://xincproc.googlecode.com/svn/maven/repository/</url>
+        </repository>
+    </repositories>
+    
   <dependencies>
 
     <dependency>
@@ -137,6 +143,12 @@
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
         <version>2.9.1</version>
+    </dependency>
+
+      <dependency>
+      <groupId>org.etourdot</groupId>
+      <artifactId>xinclude</artifactId>
+      <version>0.1.7-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
