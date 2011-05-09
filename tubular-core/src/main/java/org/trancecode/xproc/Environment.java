@@ -573,7 +573,8 @@ public final class Environment
     public Environment setDefaultReadablePort(final EnvironmentPort defaultReadablePort)
     {
         assert defaultReadablePort != null;
-        assert ports.containsValue(defaultReadablePort);
+        assert ports.containsValue(defaultReadablePort) : defaultReadablePort.getPortReference() + " ; "
+                + ports.keySet();
         LOG.trace("{@method} defaultReadablePort = {}", defaultReadablePort);
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
