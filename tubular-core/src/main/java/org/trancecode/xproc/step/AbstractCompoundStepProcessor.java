@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.trancecode.concurrent.TcFutures;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.port.EnvironmentPort;
 
 /**
  * @author Herve Quiroz
@@ -124,6 +125,18 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
             throw new IllegalStateException(e);
         }
 
-        return Iterables.getLast(resultEnvironments, initialEnvironment);
+        Environment resultEnvironment = Iterables.getLast(resultEnvironments, initialEnvironment);
+        for (final Environment intermediateResultEnvironment : resultEnvironments)
+        {
+            for (final EnvironmentPort port : intermediateResultEnvironment.getOutputPorts())
+            {
+                if (!resultEnvironment.getPorts().containsKey(port.getPortReference()))
+                {
+                    resultEnvironment = resultEnvironment.addPorts(port);
+                }
+            }
+        }
+
+        return resultEnvironment;
     }
 }
