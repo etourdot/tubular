@@ -20,6 +20,7 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -877,5 +878,17 @@ public final class Environment
         builder.endDocument();
 
         return builder.getNode();
+    }
+
+    public Iterable<EnvironmentPort> getOutputPorts()
+    {
+        return Iterables.filter(ports.values(), new Predicate<EnvironmentPort>()
+        {
+            @Override
+            public boolean apply(final EnvironmentPort port)
+            {
+                return port.getDeclaredPort().isOutput();
+            }
+        });
     }
 }
