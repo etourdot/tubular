@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -126,7 +127,8 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
         }
 
         Environment resultEnvironment = Iterables.getLast(resultEnvironments, initialEnvironment);
-        for (final Environment intermediateResultEnvironment : resultEnvironments)
+        for (final Environment intermediateResultEnvironment : Iterables.filter(resultEnvironments,
+                Predicates.notNull()))
         {
             for (final EnvironmentPort port : intermediateResultEnvironment.getOutputPorts())
             {
