@@ -148,7 +148,7 @@
       <dependency>
       <groupId>org.etourdot</groupId>
       <artifactId>xinclude</artifactId>
-      <version>0.1.7</version>
+      <version>0.2.0</version>
     </dependency>
   </dependencies>
 

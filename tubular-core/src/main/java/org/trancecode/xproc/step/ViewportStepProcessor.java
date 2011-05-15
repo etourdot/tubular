@@ -64,8 +64,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
     {
         return Step.newStep(XProcSteps.VIEWPORT, this, true)
                 .declareVariable(Variable.newOption(XProcOptions.MATCH).setRequired(true))
-                .declarePort(Port.newInputPort(XProcPorts.VIEWPORT_SOURCE).setSequence(false))
-                .declarePort(Port.newOutputPort(XProcPorts.RESULT).setSequence(false));
+                .declarePort(Port.newInputPort(XProcPorts.VIEWPORT_SOURCE).setSequence(false));
     }
 
     @Override
@@ -110,6 +109,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 subpipelineEnvironment = subpipelineEnvironment.addPorts(currentEnvironmentPort);
                 subpipelineEnvironment = subpipelineEnvironment.setDefaultReadablePort(currentEnvironmentPort);
                 subpipelineEnvironment = subpipelineEnvironment.setXPathContextPort(currentEnvironmentPort);
+                subpipelineEnvironment.setCurrentEnvironment();
                 final int previousIterationPosition = IterationPositionXPathExtensionFunction
                         .setIterationPosition(iterationPosition++);
                 final int previousIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
@@ -172,9 +172,12 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
 
         final XdmNode resultDocument = matchProcessor.apply(sourceDocument);
         LOG.trace("resultDocument = {}", resultDocument);
-        Environment resultEnvironment = viewportEnvironment.writeNodes(step.getPortReference(XProcPorts.RESULT),
-                resultDocument);
-        resultEnvironment = resultEnvironment.setupOutputPorts(step, environment);
+        Environment resultEnvironment = viewportEnvironment;
+        final Port resultPort = Port.newOutputPort(step.getName(), XProcPorts.RESULT, step.getLocation())
+                .setPrimary(true).setPortBindings(new InlinePortBinding(resultDocument, step.getLocation()));
+        final EnvironmentPort resultEnvironmentPort = EnvironmentPort.newEnvironmentPort(resultPort, resultEnvironment);
+        resultEnvironment = resultEnvironment.addPorts(resultEnvironmentPort);
+        resultEnvironment = resultEnvironment.setDefaultReadablePort(resultEnvironmentPort);
         return resultEnvironment;
     }
 
