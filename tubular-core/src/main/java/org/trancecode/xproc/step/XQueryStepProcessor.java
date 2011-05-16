@@ -19,9 +19,14 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Iterator;
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.lib.CollectionURIResolver;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -29,9 +34,9 @@ import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmNodeKind;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.NodeListIterator;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
@@ -61,6 +66,10 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         LOG.trace("query = {}", queryNode.getStringValue());
 
         final Processor processor = input.getPipelineContext().getProcessor();
+        final CollectionURIResolver oldCollResolver = processor.getUnderlyingConfiguration().getCollectionURIResolver();
+        final XQCollectionResolver collResolver = new XQCollectionResolver(oldCollResolver);
+        collResolver.addToCollection(sourcesDoc);
+        processor.getUnderlyingConfiguration().setCollectionURIResolver(collResolver);
         final XQueryCompiler xQueryCompiler = processor.newXQueryCompiler();
         try
         {
@@ -81,6 +90,10 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         {
             e.printStackTrace();
         }
+        finally
+        {
+            processor.getUnderlyingConfiguration().setCollectionURIResolver(oldCollResolver);
+        }
     }
 
     private Iterable<XdmNode> readSequencePort(final StepInput input, final String portName)
@@ -91,15 +104,39 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         while (iterator.hasNext())
         {
             final XdmNode node = iterator.next();
-            if (XdmNodeKind.DOCUMENT.equals(node.getNodeKind()))
-            {
-                builder.addAll(SaxonAxis.childNodes(node));
-            }
-            else
-            {
-                builder.add(node);
-            }
+            builder.add(node);
         }
         return builder.build();
+    }
+
+    private class XQCollectionResolver implements CollectionURIResolver
+    {
+        final private CollectionURIResolver oldCollResolver;
+        final private ImmutableList.Builder<Item> collectionBuilder;
+
+        private XQCollectionResolver(final CollectionURIResolver oldCollResolver)
+        {
+            this.oldCollResolver = oldCollResolver;
+            collectionBuilder = new ImmutableList.Builder<Item>();
+        }
+
+        public void addToCollection(final Iterable<XdmNode> nodes)
+        {
+            for (final XdmNode node : nodes)
+            {
+                collectionBuilder.add(node.getUnderlyingNode());
+            }
+        }
+
+        @Override
+        public SequenceIterator resolve(final String href, final String base, final XPathContext context)
+                throws XPathException
+        {
+            if (Strings.isNullOrEmpty(href))
+            {
+                return new NodeListIterator(collectionBuilder.build());
+            }
+            return oldCollResolver.resolve(href, base, context);
+        }
     }
 }
