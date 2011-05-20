@@ -83,8 +83,7 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
             final Map<QName, String> params = getParameters(input);
             for (final Map.Entry<QName, String> param : params.entrySet())
             {
-                xQueryEvaluator.setExternalVariable(new QName(param.getKey().getLocalName()),
-                        new XdmAtomicValue(param.getValue()));
+                xQueryEvaluator.setExternalVariable(param.getKey(), new XdmAtomicValue(param.getValue()));
             }
             final Iterator<XdmItem> iterator = xQueryEvaluator.iterator();
             while (iterator.hasNext())
