@@ -23,12 +23,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
@@ -38,6 +36,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.XProcException;
+import org.trancecode.xproc.variable.Variable;
 
 /**
  * Base class for {@link StepProcessor} implementations.

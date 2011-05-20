@@ -201,17 +201,11 @@ public class XProcTestParser
             else
             {
                 LOG.trace("Parameter: [{}] {}={}", port, name, value);
-                final Map<QName, String> portParams = (parameters.containsKey(port)) ? parameters.get(port)
+                final String newPort = (port != null)? port : "";
+                final Map<QName, String> portParams = (parameters.containsKey(newPort)) ? parameters.get(newPort)
                          : new HashMap<QName, String>();
                 portParams.put(new QName(name, node), value);
-                if (port != null)
-                {
-                    parameters.put(port, portParams);
-                }
-                else
-                {
-                    parameters.put("", portParams);
-                }
+                parameters.put(newPort, portParams);
             }
         }
     }
