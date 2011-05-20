@@ -21,8 +21,10 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.Iterator;
+import java.util.Map;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.CollectionURIResolver;
 import net.sf.saxon.om.Item;
@@ -32,14 +34,17 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
+import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.NodeListIterator;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonLocation;
+import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
+import org.trancecode.xproc.variable.Variable;
 
 /**
  * {@code p:xquery}.
@@ -75,6 +80,12 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         {
             final XQueryEvaluator xQueryEvaluator = xQueryCompiler.compile(queryNode.getStringValue()).load();
             xQueryEvaluator.setContextItem(Iterables.getFirst(sourcesDoc, null));
+            final Map<QName, String> params = getParameters(input);
+            for (final Map.Entry<QName, String> param : params.entrySet())
+            {
+                xQueryEvaluator.setExternalVariable(new QName(param.getKey().getLocalName()),
+                        new XdmAtomicValue(param.getValue()));
+            }
             final Iterator<XdmItem> iterator = xQueryEvaluator.iterator();
             while (iterator.hasNext())
             {
@@ -94,6 +105,19 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         {
             processor.getUnderlyingConfiguration().setCollectionURIResolver(oldCollResolver);
         }
+    }
+
+    private Map<QName, String> getParameters(final StepInput input)
+    {
+        final ImmutableMap.Builder<QName, String> builder = new ImmutableMap.Builder<QName, String>();
+        final Map<QName, Variable> stepParams = Environment.getCurrentEnvironment().getPipeline().getParameters();
+        for (final Map.Entry<QName, Variable> entry : stepParams.entrySet())
+        {
+            builder.put(entry.getKey(), entry.getValue().getValue());
+        }
+        final Map<QName, String> inputParams = input.getParameters(XProcSteps.PARAMETERS.getLocalName());
+        builder.putAll(inputParams);
+        return builder.build();
     }
 
     private Iterable<XdmNode> readSequencePort(final StepInput input, final String portName)
