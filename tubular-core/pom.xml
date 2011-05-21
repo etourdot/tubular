@@ -18,6 +18,14 @@
 
   <!-- ===================================================================== -->
 
+  <properties>
+
+    <surefire.vm.args>-Xmx1g</surefire.vm.args>
+
+  </properties>
+
+  <!-- ===================================================================== -->
+
   <repositories>
     <repository>
       <id>xincproc</id>
@@ -166,13 +174,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-Xmx787m</argLine>
-        </configuration>
-      </plugin>
+
     </plugins>
   </build>
 
