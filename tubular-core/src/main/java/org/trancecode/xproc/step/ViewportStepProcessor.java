@@ -109,10 +109,10 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 subpipelineEnvironment = subpipelineEnvironment.addPorts(currentEnvironmentPort);
                 subpipelineEnvironment = subpipelineEnvironment.setDefaultReadablePort(currentEnvironmentPort);
                 subpipelineEnvironment = subpipelineEnvironment.setXPathContextPort(currentEnvironmentPort);
-                subpipelineEnvironment.setCurrentEnvironment();
                 final int previousIterationPosition = IterationPositionXPathExtensionFunction
                         .setIterationPosition(iterationPosition++);
-                final int previousIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
+                subpipelineEnvironment = subpipelineEnvironment.setupVariables(step);
+                subpipelineEnvironment.setCurrentEnvironment();
                 Environment resultEnvironment;
                 try
                 {
@@ -121,7 +121,6 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 finally
                 {
                     IterationPositionXPathExtensionFunction.setIterationPosition(previousIterationPosition);
-                    IterationSizeXPathExtensionFunction.setIterationSize(previousIterationSize);
                 }
                 resultEnvironment = resultEnvironment.setupOutputPorts(step, resultEnvironment);
                 final Iterable<XdmNode> resultNodes = resultEnvironment.getDefaultReadablePort().readNodes();
@@ -170,7 +169,17 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
                 SaxonProcessorDelegates.forXsltMatchPattern(environment.getPipelineContext().getProcessor(), match,
                         step.getNode(), runSubpipelineForElements, new CopyingSaxonProcessorDelegate()));
 
-        final XdmNode resultDocument = matchProcessor.apply(sourceDocument);
+        final int previousIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
+        final XdmNode resultDocument;
+        try
+        {
+            resultDocument = matchProcessor.apply(sourceDocument);
+        }
+        finally
+        {
+            IterationSizeXPathExtensionFunction.setIterationSize(previousIterationSize);
+        }
+
         LOG.trace("resultDocument = {}", resultDocument);
         Environment resultEnvironment = viewportEnvironment;
         final Port resultPort = Port.newOutputPort(step.getName(), XProcPorts.RESULT, step.getLocation())
