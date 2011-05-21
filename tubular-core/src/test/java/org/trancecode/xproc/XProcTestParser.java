@@ -201,17 +201,11 @@ public class XProcTestParser
             else
             {
                 LOG.trace("Parameter: [{}] {}={}", port, name, value);
-                final Map<QName, String> portParams = (parameters.containsKey(port)) ? parameters.get(port)
+                final String newPort = (port != null)? port : "";
+                final Map<QName, String> portParams = (parameters.containsKey(newPort)) ? parameters.get(newPort)
                          : new HashMap<QName, String>();
                 portParams.put(new QName(name, node), value);
-                if (port != null)
-                {
-                    parameters.put(port, portParams);
-                }
-                else
-                {
-                    parameters.put("", portParams);
-                }
+                parameters.put(newPort, portParams);
             }
         }
     }
@@ -278,7 +272,9 @@ public class XProcTestParser
                 else
                 {
                     LOG.trace("New inline document");
-                    documents.add(Saxon.asDocumentNode(processor, nodes));
+                    final XdmNode aNode = Saxon.asDocumentNode(processor, nodes);
+                    aNode.getUnderlyingNode().setSystemId(node.getBaseURI().toASCIIString());
+                    documents.add(aNode);
                 }
             }
             else
@@ -326,7 +322,9 @@ public class XProcTestParser
         final SAXSource source = new SAXSource(new InputSource(uri.toString()));
         try
         {
-            return builder.build(source);
+            final XdmNode aNode = builder.build(source);
+            aNode.getUnderlyingNode().setSystemId(uri.toASCIIString());
+            return aNode;
         }
         catch (final SaxonApiException e)
         {

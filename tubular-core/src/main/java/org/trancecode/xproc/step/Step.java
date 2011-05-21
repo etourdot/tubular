@@ -555,6 +555,11 @@ public final class Step extends AbstractHasLocation implements StepContainer
         return xpathContextPort;
     }
 
+    public Map<QName, Variable> getParameters()
+    {
+        return parameters;
+    }
+
     public Map<QName, Variable> getVariables()
     {
         return variables;
