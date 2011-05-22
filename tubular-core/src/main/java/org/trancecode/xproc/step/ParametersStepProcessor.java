@@ -60,7 +60,8 @@ public final class ParametersStepProcessor extends AbstractStepProcessor
         for (final Map.Entry<QName, String> entry : parameters.entrySet())
         {
             builder.startElement(XProcXmlModel.Elements.PARAM);
-            builder.attribute(entry.getKey(), entry.getValue());
+            builder.attribute(XProcXmlModel.Attributes.NAME, entry.getKey().getLocalName());
+            builder.attribute(XProcXmlModel.Attributes.VALUE, entry.getValue());
             builder.endElement();
         }
         builder.endElement();
