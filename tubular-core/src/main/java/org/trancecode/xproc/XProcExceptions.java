@@ -71,6 +71,12 @@ public final class XProcExceptions
         return newXProcException(Type.DYNAMIC, 7, location, "wrong number of input documents in ");
     }
 
+    public static XProcException xd0008(final Location location)
+    {
+        return newXProcException(Type.DYNAMIC, 8, location,
+                "It is a dynamic error if a document sequence appears where a document to be used as the context node is expected.");
+    }
+
     public static XProcException xd0010(final XdmNode node)
     {
         return newXProcException(Type.DYNAMIC, 10, SaxonLocation.of(node),

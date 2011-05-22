@@ -360,7 +360,7 @@ public final class Environment
                 }
                 else
                 {
-                    xpathContextNode = getXPathContextNode();
+                    xpathContextNode = getXPathContextNode(variable);
                 }
 
                 final XdmValue result = evaluateXPath(variable.getSelect(), getPipelineContext().getProcessor(),
@@ -694,6 +694,25 @@ public final class Environment
             }
         }
 
+        return Saxon.getEmptyDocument(configuration.getProcessor());
+    }
+
+    @ReturnsNullable
+    public XdmNode getXPathContextNode(final Variable variable)
+    {
+        final EnvironmentPort xpathContextPort = getXPathContextPort();
+        if (xpathContextPort != null)
+        {
+            Iterable<XdmNode> nodes = xpathContextPort.readNodes();
+            if (((List)nodes).size() > 1 && variable.isVariable())
+            {
+                throw XProcExceptions.xd0008(SaxonLocation.of(variable.getNode()));
+            }
+            else if (!((List) nodes).isEmpty())
+            {
+                return nodes.iterator().next();
+            }
+        }
         return Saxon.getEmptyDocument(configuration.getProcessor());
     }
 
