@@ -20,10 +20,12 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
+
 import net.sf.saxon.s9api.QName;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.FilenameUtils;
@@ -38,7 +40,8 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:directory-list}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.directory-list">p:directory-list</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.directory-list">p:directory-list</a>
  */
 @ExternalResources(read = false, write = false)
 public final class DirectoryListStepProcessor extends AbstractStepProcessor
@@ -80,7 +83,7 @@ public final class DirectoryListStepProcessor extends AbstractStepProcessor
         {
             resultBuilder.start(directory);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw XProcExceptions.xc0012(input.getStep());
         }
@@ -102,23 +105,23 @@ public final class DirectoryListStepProcessor extends AbstractStepProcessor
         }
 
         @Override
-        protected boolean handleDirectory(final File directory, final int depth,
-                                          final Collection results) throws IOException
+        protected boolean handleDirectory(final File directory, final int depth, final Collection results)
+                throws IOException
         {
             return depth == 0 || gotIt(directory);
         }
 
         @Override
-        protected void handleDirectoryStart(final File directory, final int depth,
-                                            final Collection results) throws IOException
+        protected void handleDirectoryStart(final File directory, final int depth, final Collection results)
+                throws IOException
         {
             builder.startElement(XProcXmlModel.Elements.DIRECTORY);
             builder.attribute(XProcXmlModel.Attributes.NAME, FilenameUtils.getName(directory.getAbsolutePath()));
         }
 
         @Override
-        protected void handleDirectoryEnd(final File directory, final int depth,
-                                          final Collection results) throws IOException
+        protected void handleDirectoryEnd(final File directory, final int depth, final Collection results)
+                throws IOException
         {
             builder.endElement();
         }
