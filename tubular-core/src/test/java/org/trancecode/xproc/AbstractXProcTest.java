@@ -155,7 +155,9 @@ public abstract class AbstractXProcTest extends AbstractTest
         // Set options
         for (final QName name : test.getOptions().keySet())
         {
-            runnablePipeline.withOption(name, test.getOptions().get(name));
+            final String value = test.getOptions().get(name);
+            LOG.trace("  option {} = {}", name, value);
+            runnablePipeline.withOption(name, value);
         }
 
         // Set parameters

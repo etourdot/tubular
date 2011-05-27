@@ -75,6 +75,12 @@
     <dependencies>
 
       <dependency>
+        <groupId>com.fasterxml.uuid</groupId>
+        <artifactId>java-uuid-generator</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.google.code.guice</groupId>
         <artifactId>guice</artifactId>
         <version>1.0</version>
@@ -99,6 +105,12 @@
       </dependency>
 
       <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4.1</version>
+      </dependency>
+
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.8.2</version>
@@ -111,9 +123,45 @@
       </dependency>
 
       <dependency>
+        <groupId>net.iharder</groupId>
+        <artifactId>base64</artifactId>
+        <version>2.3.8</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>saxon-he</artifactId>
+        <version>${saxon9.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.1-beta1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpmime</artifactId>
+        <version>4.1-beta1</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>fop</artifactId>
         <version>1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.ccil.cowan.tagsoup</groupId>
+        <artifactId>tagsoup</artifactId>
+        <version>1.2</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.etourdot</groupId>
+        <artifactId>xinclude</artifactId>
+        <version>0.2.0</version>
       </dependency>
 
       <dependency>
@@ -174,22 +222,17 @@
       </dependency>
 
       <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>2.9.1</version>
+      </dependency>
+
+      <dependency>
         <groupId>xmlunit</groupId>
         <artifactId>xmlunit</artifactId>
         <version>1.2</version>
       </dependency>
 
-      <dependency>
-        <groupId>net.sf.saxon</groupId>
-        <artifactId>saxon-he</artifactId>
-        <version>${saxon9.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.uuid</groupId>
-        <artifactId>java-uuid-generator</artifactId>
-        <version>3.1.0</version>
-      </dependency>
     </dependencies>
 
   </dependencyManagement>

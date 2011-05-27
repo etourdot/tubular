@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Herve Quiroz
+ * Copyright (C) 2011 Herve Quiroz
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,53 +14,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
- *
- * $Id$
  */
 package org.trancecode.io;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.InputSupplier;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
- * Utility methods related to file paths handling.
+ * Utility methods related to {@link URL}.
  * 
  * @author Herve Quiroz
  */
-public final class Paths
+public final class Urls
 {
-    private Paths()
+    public static InputSupplier<InputStream> asInputSupplier(final URL url)
+    {
+        Preconditions.checkNotNull(url);
+
+        return new InputSupplier<InputStream>()
+        {
+            @Override
+            public InputStream getInput() throws IOException
+            {
+                return url.openStream();
+            }
+        };
+    }
+
+    private Urls()
     {
         // No instantiation
-    }
-
-    public static String delimiter()
-    {
-        return "/";
-    }
-
-    public static String asAbsolutePath(final String path)
-    {
-        if (path.startsWith(delimiter()))
-        {
-            return path;
-        }
-
-        return delimiter() + path;
-    }
-
-    public static String asDirectory(final String path)
-    {
-        if (path.endsWith(delimiter()))
-        {
-            return path;
-        }
-
-        return path + delimiter();
-    }
-
-    public static String getName(final String path)
-    {
-        Preconditions.checkNotNull(path);
-        return path.replaceAll("/+$", "").replaceAll(".*/", "");
     }
 }
