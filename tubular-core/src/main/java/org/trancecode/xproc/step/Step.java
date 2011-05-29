@@ -27,6 +27,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;
@@ -92,7 +93,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private final Iterable<Log> logs;
 
     private final Supplier<Integer> hashCode;
-    private Map<Step, Step> dependencies;
+    private Map<Step, Iterable<Step>> dependencies;
 
     public static final class Log
     {
@@ -686,7 +687,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         return true;
     }
 
-    protected Map<Step, Step> getSubpipelineStepDependencies()
+    protected Map<Step, Iterable<Step>> getSubpipelineStepDependencies()
     {
         Preconditions.checkState(isCompoundStep(), "not a compound step: %s", getName());
         if (dependencies == null)
@@ -697,92 +698,82 @@ public final class Step extends AbstractHasLocation implements StepContainer
         return dependencies;
     }
 
-    protected static Map<Step, Step> getSubpipelineStepDependencies(final Iterable<Step> steps)
+    protected static Map<Step, Iterable<Step>> getSubpipelineStepDependencies(final Iterable<Step> steps)
     {
         LOG.trace("{@method} steps = {}", steps);
 
-        final List<Step> indexedSteps = ImmutableList.copyOf(steps);
-        int lastWriteStepIndex = -1;
-        int defaultReadblePortStepIndex = -1;
-        final Map<String, Integer> subpipelineStepNames = Maps.newHashMap();
-        final Map<Step, Step> dependencies = Maps.newHashMap();
-        for (int stepIndex = 0; stepIndex < indexedSteps.size(); stepIndex++)
+        Step lastWriteStep = null;
+        Step defaultReadblePortStep = null;
+        final Map<String, Step> subpipelineStepByName = Maps.newHashMap();
+        final Map<Step, Iterable<Step>> dependencies = Maps.newHashMap();
+        for (final Step step : steps)
         {
-            final Step step = indexedSteps.get(stepIndex);
-            LOG.trace("  {} = {}", stepIndex, step);
+            LOG.trace("  step {}", step);
 
-            // find out about the dependency of the current step in the pipeline
-            if (stepIndex > 0)
+            final List<Step> stepDependencies = Lists.newArrayListWithExpectedSize(16);
+            dependencies.put(step, stepDependencies);
+
+            // dependencies related to external resources
+            if (lastWriteStep != null && step.readsExternalResources())
             {
-                int dependencyIndex = -1;
+                LOG.trace("  step {} reads external resources and thus from output of step {}", step, lastWriteStep);
+                stepDependencies.add(lastWriteStep);
+            }
 
-                if (step.readsExternalResources())
+            // dependencies related to port binding (pipe)
+            for (final Port inputPort : step.getInputPorts())
+            {
+                if (defaultReadblePortStep != null && inputPort.getPortBindings().isEmpty()
+                        && (step.isPrimary(inputPort) || step.isXPathContextPort(inputPort)))
                 {
-                    LOG.trace("  step {} reads external resources and thus from output of step {}", step,
-                            lastWriteStepIndex);
-                    dependencyIndex = lastWriteStepIndex;
-                }
-
-                for (final Port inputPort : step.getInputPorts())
-                {
-                    if (inputPort.getPortBindings().isEmpty()
-                            && (step.isPrimary(inputPort) || step.isXPathContextPort(inputPort)))
-                    {
-                        LOG.trace("  step {} reads implicitly from output of step {}", step,
-                                defaultReadblePortStepIndex);
-                        dependencyIndex = Math.max(dependencyIndex, defaultReadblePortStepIndex);
-                    }
-                    else
-                    {
-                        for (final PipePortBinding portBinding : Iterables.filter(inputPort.getPortBindings(),
-                                PipePortBinding.class))
-                        {
-                            final PortReference dependencyPortReference = portBinding.getPortReference();
-                            LOG.trace("  step {} reads from output port {}", step, dependencyPortReference);
-                            assert subpipelineStepNames.containsKey(dependencyPortReference.getStepName()) : step
-                                    .getName() + " -> " + dependencyPortReference;
-                            dependencyIndex = Math.max(dependencyIndex,
-                                    subpipelineStepNames.get(dependencyPortReference.getStepName()));
-                        }
-                    }
-                }
-
-                for (final Variable variable : step.getVariables().values())
-                {
-                    if (variable.getPortBinding() != null && variable.getPortBinding() instanceof PipePortBinding)
-                    {
-                        final PipePortBinding portBinding = (PipePortBinding) variable.getPortBinding();
-                        final PortReference dependencyPortReference = portBinding.getPortReference();
-                        LOG.trace("  variable {} in step {} reads from output port {}", variable.getName(), step,
-                                dependencyPortReference);
-                        assert subpipelineStepNames.containsKey(dependencyPortReference.getStepName()) : step.getName()
-                                + " -> " + dependencyPortReference;
-                        dependencyIndex = Math.max(dependencyIndex,
-                                subpipelineStepNames.get(dependencyPortReference.getStepName()));
-                    }
-                }
-
-                if (dependencyIndex >= 0)
-                {
-                    LOG.trace("  => step {} depends on step {}", stepIndex, dependencyIndex);
-                    dependencies.put(step, indexedSteps.get(dependencyIndex));
+                    LOG.trace("  step {} reads implicitly from output of step {}", step, defaultReadblePortStep);
+                    stepDependencies.add(defaultReadblePortStep);
                 }
                 else
                 {
-                    LOG.trace("  => step {} has no dependency", stepIndex);
+                    for (final PipePortBinding portBinding : Iterables.filter(inputPort.getPortBindings(),
+                            PipePortBinding.class))
+                    {
+                        final PortReference dependencyPortReference = portBinding.getPortReference();
+                        LOG.trace("  step {} reads from output port {}", step, dependencyPortReference);
+                        final Step dependency = subpipelineStepByName.get(dependencyPortReference.getStepName());
+                        if (dependency != null)
+                        {
+                            stepDependencies.add(dependency);
+                        }
+                    }
                 }
             }
+
+            // dependencies related to variable binding (pipe)
+            for (final Variable variable : step.getVariables().values())
+            {
+                if (variable.getPortBinding() != null && variable.getPortBinding() instanceof PipePortBinding)
+                {
+                    final PipePortBinding portBinding = (PipePortBinding) variable.getPortBinding();
+                    final PortReference dependencyPortReference = portBinding.getPortReference();
+                    LOG.trace("  variable {} in step {} reads from output port {}", variable.getName(), step,
+                            dependencyPortReference);
+                    final Step dependency = subpipelineStepByName.get(dependencyPortReference.getStepName());
+                    if (dependency != null)
+                    {
+                        stepDependencies.add(dependency);
+                    }
+                }
+            }
+
+            LOG.trace("  => stepDependencies = {}", stepDependencies);
 
             // update current information about the step
             if (step.writesExternalResources())
             {
-                lastWriteStepIndex = stepIndex;
+                lastWriteStep = step;
             }
             if (step.getPrimaryOutputPort() != null)
             {
-                defaultReadblePortStepIndex = stepIndex;
+                defaultReadblePortStep = step;
             }
-            subpipelineStepNames.put(step.getName(), stepIndex);
+            subpipelineStepByName.put(step.getName(), step);
         }
 
         return dependencies;

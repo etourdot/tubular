@@ -17,6 +17,8 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.Map;
 
 import javax.xml.transform.Source;
@@ -26,6 +28,7 @@ import net.sf.saxon.s9api.QName;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.trancecode.AbstractTest;
+import org.trancecode.TcAssert;
 import org.trancecode.xproc.PipelineProcessor;
 import org.trancecode.xproc.port.Port;
 
@@ -43,7 +46,7 @@ public final class StepTest extends AbstractTest
         final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
                 "/StepTest/getSubpipelineStepDependencies.xpl"), "/StepTest/getSubpipelineStepDependencies.xpl");
         final Step pipeline = processor.buildPipeline(pipelineSource).getUnderlyingPipeline();
-        final Map<Step, Step> dependencies = pipeline.getSubpipelineStepDependencies();
+        final Map<Step, Iterable<Step>> dependencies = pipeline.getSubpipelineStepDependencies();
 
         final Step identity1 = pipeline.getStepByName("identity1");
         final Step identity2 = pipeline.getStepByName("identity2");
@@ -55,15 +58,15 @@ public final class StepTest extends AbstractTest
         final Step store1 = pipeline.getStepByName("store1");
         final Step store2 = pipeline.getStepByName("store2");
 
-        Assert.assertEquals(dependencies.get(identity1), null);
-        Assert.assertEquals(dependencies.get(store1), identity1);
-        Assert.assertEquals(dependencies.get(identity2), store1);
-        Assert.assertEquals(dependencies.get(identity3), identity2);
-        Assert.assertEquals(dependencies.get(store2), identity3);
-        Assert.assertEquals(dependencies.get(identity4), identity3);
-        Assert.assertEquals(dependencies.get(load1), store2);
-        Assert.assertEquals(dependencies.get(identity5), load1);
-        Assert.assertEquals(dependencies.get(identity6), identity2);
+        TcAssert.assertSetEquals(dependencies.get(identity1), ImmutableSet.of());
+        TcAssert.assertSetEquals(dependencies.get(store1), identity1);
+        TcAssert.assertSetEquals(dependencies.get(identity2), store1);
+        TcAssert.assertSetEquals(dependencies.get(identity3), identity2);
+        TcAssert.assertSetEquals(dependencies.get(store2), identity3);
+        TcAssert.assertSetEquals(dependencies.get(identity4), identity3);
+        TcAssert.assertSetEquals(dependencies.get(load1), store2);
+        TcAssert.assertSetEquals(dependencies.get(identity5), load1);
+        TcAssert.assertSetEquals(dependencies.get(identity6), identity2);
     }
 
     @Test
@@ -73,15 +76,15 @@ public final class StepTest extends AbstractTest
         final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
                 "/StepTest/getSubpipelineStepDependencies2.xpl"), "/StepTest/getSubpipelineStepDependencies2.xpl");
         final Step pipeline = processor.buildPipeline(pipelineSource).getUnderlyingPipeline();
-        final Map<Step, Step> dependencies = pipeline.getSubpipelineStepDependencies();
+        final Map<Step, Iterable<Step>> dependencies = pipeline.getSubpipelineStepDependencies();
 
         final Step wrap = pipeline.getStepByName("wrap");
         final Step escapeMarkup = pipeline.getStepByName("escape-markup");
         final Step choose = pipeline.getStepByName("choose");
 
-        Assert.assertEquals(dependencies.get(wrap), null);
-        Assert.assertEquals(dependencies.get(escapeMarkup), wrap);
-        Assert.assertEquals(dependencies.get(choose), escapeMarkup);
+        TcAssert.assertSetEquals(dependencies.get(wrap), ImmutableSet.of());
+        TcAssert.assertSetEquals(dependencies.get(escapeMarkup), wrap);
+        TcAssert.assertSetEquals(dependencies.get(choose), escapeMarkup);
     }
 
     @Test
@@ -91,19 +94,19 @@ public final class StepTest extends AbstractTest
         final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
                 "/StepTest/getSubpipelineStepDependencies3.xpl"), "/StepTest/getSubpipelineStepDependencies3.xpl");
         final Step pipeline = processor.buildPipeline(pipelineSource).getUnderlyingPipeline();
-        final Map<Step, Step> dependencies = pipeline.getSubpipelineStepDependencies();
+        final Map<Step, Iterable<Step>> dependencies = pipeline.getSubpipelineStepDependencies();
 
         final Step identity1 = pipeline.getStepByName("identity1");
         final Step identity2 = pipeline.getStepByName("identity2");
         final Step identity3 = pipeline.getStepByName("identity3");
         final Step store1 = pipeline.getStepByName("store1");
 
-        Assert.assertEquals(dependencies.get(identity1), null);
-        Assert.assertEquals(dependencies.get(identity2), identity1);
-        Assert.assertEquals(dependencies.get(identity3), identity2);
+        TcAssert.assertSetEquals(dependencies.get(identity1), ImmutableSet.of());
+        TcAssert.assertSetEquals(dependencies.get(identity2), identity1);
+        TcAssert.assertSetEquals(dependencies.get(identity3), identity2);
 
         // variable port binding
-        Assert.assertEquals(dependencies.get(store1), identity2);
+        TcAssert.assertSetEquals(dependencies.get(store1), identity1, identity2);
     }
 
     @Test
@@ -113,15 +116,15 @@ public final class StepTest extends AbstractTest
         final Source pipelineSource = new StreamSource(getClass().getResourceAsStream(
                 "/StepTest/getSubpipelineStepDependencies4.xpl"), "/StepTest/getSubpipelineStepDependencies4.xpl");
         final Step pipeline = processor.buildPipeline(pipelineSource).getUnderlyingPipeline();
-        final Map<Step, Step> dependencies = pipeline.getSubpipelineStepDependencies();
+        final Map<Step, Iterable<Step>> dependencies = pipeline.getSubpipelineStepDependencies();
 
         final Step identity1 = pipeline.getStepByName("identity1");
         final Step identity2 = pipeline.getStepByName("identity2");
         final Step forEach = pipeline.getStepByName("for-each");
 
-        Assert.assertEquals(dependencies.get(identity1), null);
-        Assert.assertEquals(dependencies.get(forEach), identity1);
-        Assert.assertEquals(dependencies.get(identity2), null);
+        TcAssert.assertSetEquals(dependencies.get(identity1), ImmutableSet.of());
+        TcAssert.assertSetEquals(dependencies.get(forEach), identity1);
+        TcAssert.assertSetEquals(forEach.getSubpipelineStepDependencies().get(identity2), ImmutableSet.of());
     }
 
     @Test
