@@ -350,7 +350,7 @@ public final class Environment
                     try
                     {
                         xpathContextNode = Iterables.getOnlyElement(xpathPortBinding.newEnvironmentPortBinding(this)
-                                .readNodes());
+                                .readNodes(), null);
                     }
                     catch (final NoSuchElementException e)
                     {
