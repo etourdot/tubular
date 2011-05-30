@@ -531,8 +531,7 @@ public final class Environment
     public Environment setXPathContextPort(final EnvironmentPort xpathContextPort)
     {
         LOG.trace("{@method} port = {}", xpathContextPort);
-        assert xpathContextPort != null;
-        assert ports.containsValue(xpathContextPort);
+        assert xpathContextPort == null || ports.containsValue(xpathContextPort);
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
                 xpathContextPort, inheritedVariables, localVariables);
@@ -573,9 +572,8 @@ public final class Environment
 
     public Environment setDefaultReadablePort(final EnvironmentPort defaultReadablePort)
     {
-        assert defaultReadablePort != null;
-        assert ports.containsValue(defaultReadablePort) : defaultReadablePort.getPortReference() + " ; "
-                + ports.keySet();
+        assert defaultReadablePort == null || ports.containsValue(defaultReadablePort) : defaultReadablePort
+                .getPortReference() + " ; " + ports.keySet();
         LOG.trace("{@method} defaultReadablePort = {}", defaultReadablePort);
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
@@ -661,8 +659,7 @@ public final class Environment
 
     public Environment setDefaultParametersPort(final EnvironmentPort defaultParametersPort)
     {
-        assert defaultParametersPort != null;
-        assert ports.containsValue(defaultParametersPort);
+        assert defaultParametersPort == null || ports.containsValue(defaultParametersPort);
         LOG.trace("{@method} defaultParametersPort = {}", defaultParametersPort);
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
