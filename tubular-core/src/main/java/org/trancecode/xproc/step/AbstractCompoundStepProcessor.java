@@ -91,6 +91,12 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
                                 {
                                     final Environment dependencyResult = stepResults.get(dependency).get();
                                     inputEnvironment = inputEnvironment.addPorts(dependencyResult.getOutputPorts());
+                                    inputEnvironment = inputEnvironment.setDefaultReadablePort(dependencyResult
+                                            .getDefaultReadablePort());
+                                    inputEnvironment = inputEnvironment.setDefaultParametersPort(dependencyResult
+                                            .getDefaultParametersPort());
+                                    inputEnvironment = inputEnvironment.setXPathContextPort(dependencyResult
+                                            .getXPathContextPort());
                                 }
                                 catch (final ExecutionException e)
                                 {
