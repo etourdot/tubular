@@ -27,6 +27,7 @@ import org.trancecode.lang.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
 import org.trancecode.xml.Location;
+import org.trancecode.xproc.binding.EmptyPortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 
 /**
@@ -93,7 +94,14 @@ public final class Variable extends AbstractHasLocation
 
         this.required = required;
         this.type = type;
-        this.portBinding = portBinding;
+        if (portBinding != null && !(portBinding instanceof EmptyPortBinding))
+        {
+            this.portBinding = portBinding;
+        }
+        else
+        {
+            this.portBinding = null;
+        }
         this.node = node;
     }
 
