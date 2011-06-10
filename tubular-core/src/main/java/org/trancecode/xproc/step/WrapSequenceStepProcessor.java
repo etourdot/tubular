@@ -47,28 +47,13 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         final String wrapperLocalName = input.getOptionValue(XProcOptions.WRAPPER);
         final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
-        final QName wrapper;
-        if (wrapperPrefix == null || wrapperNamespaceUri == null)
-        {
-            wrapper = new QName(wrapperLocalName, input.getStep().getNode());
-        }
-        else
-        {
-            wrapper = new QName(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName);
-        }
-
+        final QName wrapper = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
+                .getStep().getLocation(), input.getStep().getNode());
         // TODO handle 'group-adjacent' option
 
         builder.startDocument();
         builder.startElement(wrapper, input.getStep().getNode());
-
-        /*
-         * for (final XdmNode inputDocument :
-         * input.readNodes(XProcPorts.SOURCE)) {
-         * builder.nodes(SaxonAxis.childElement(inputDocument)); }
-         */
         builder.nodes(input.readNodes(XProcPorts.SOURCE));
-
         builder.endElement();
         builder.endDocument();
 
