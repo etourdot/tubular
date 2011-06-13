@@ -314,7 +314,6 @@ public final class Environment
 
     public Environment setupVariables(final Step step)
     {
-        LOG.trace(this.toString());
         LOG.trace("{@method} step = {}", step.getName());
         LOG.trace("variables = {keys}", step.getVariables());
 
