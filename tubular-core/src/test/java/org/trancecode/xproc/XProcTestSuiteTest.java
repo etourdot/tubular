@@ -456,7 +456,7 @@ public class XProcTestSuiteTest extends AbstractXProcTest
     @Test
     public void required_err_c0012_001() throws Exception
     {
-        test(new URL("http://tests.xproc.org/tests/required/err-c0012-001.xml"), "required");
+        testDirectoryList(new URL("http://tests.xproc.org/tests/required/err-c0012-001.xml"), "required");
     }
 
     @Test
@@ -480,7 +480,7 @@ public class XProcTestSuiteTest extends AbstractXProcTest
     @Test
     public void required_err_c0017_001() throws Exception
     {
-        test(new URL("http://tests.xproc.org/tests/required/err-c0017-001.xml"), "required");
+        testDirectoryList(new URL("http://tests.xproc.org/tests/required/err-c0017-001.xml"), "required");
     }
 
     @Test
