@@ -61,6 +61,15 @@ public final class XProcExceptions
                 "no subpipeline is selected by the p:choose and no default is provided");
     }
 
+    public static XProcException xd0005(final Location location)
+    {
+        return newXProcException(
+                Type.DYNAMIC, 
+                5,
+                location,
+                "It is a dynamic error if more than one document appears on the connection for the xpath-context.");
+    }
+
     public static XProcException xd0006(final Location location, final PortReference port)
     {
         return newXProcException(Type.DYNAMIC, 6, location, "wrong number of input documents in port %s", port);
