@@ -314,6 +314,7 @@ public final class Environment
 
     public Environment setupVariables(final Step step)
     {
+        LOG.trace(this.toString());
         LOG.trace("{@method} step = {}", step.getName());
         LOG.trace("variables = {keys}", step.getVariables());
 
@@ -385,6 +386,10 @@ public final class Environment
                     newLocalVariables.put(variable.getName(), value);
                 }
             }
+            else
+            {
+                newLocalVariables.put(variable.getName(), null);
+            }
         }
 
         final EnvironmentPort parametersPort = getDefaultParametersPort();
@@ -433,7 +438,6 @@ public final class Environment
                 selector.setContextItem(processor.newDocumentBuilder().build(xpathContextNode.asSource()));
                 setCurrentXPathContext(xpathContextNode);
             }
-
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
             {
                 if (variableEntry.getValue() != null)
@@ -509,8 +513,26 @@ public final class Environment
     {
         assert localVariables != null;
 
+        final ImmutableMap.Builder<QName, String> builder = new ImmutableMap.Builder<QName, String>();
+        final Map newLocalMap = Maps.newHashMap(this.localVariables);
+        for (Map.Entry<QName, String> entry : localVariables.entrySet())
+        {
+            if (entry.getValue()==null)
+            {
+                if (newLocalMap.containsKey(entry.getKey()))
+                {
+                    newLocalMap.remove(entry.getKey());
+                }
+            }
+            else
+            {
+                builder.put(entry.getKey(), entry.getValue());
+            }
+        }
+        final Map<QName, String> mergedMap = TcMaps.merge(newLocalMap, builder.build());
+
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-                xpathContextPort, inheritedVariables, TcMaps.merge(this.localVariables, localVariables));
+                xpathContextPort, inheritedVariables, mergedMap);
     }
 
     public void setLocalVariable(final QName name, final String value)
