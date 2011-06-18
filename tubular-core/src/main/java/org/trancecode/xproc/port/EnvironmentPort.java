@@ -135,7 +135,7 @@ public final class EnvironmentPort implements HasPortReference
 
     private Iterable<XdmNode> select(final Iterable<XdmNode> nodes)
     {
-        LOG.trace("{@method} select = {}", select);
+        LOG.trace("{@method} select = {}", declaredPort.getSelect());
 
         if (select == null)
         {
