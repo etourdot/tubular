@@ -229,6 +229,10 @@ class RequestParser
 
     private String getContentString(final XdmNode node, final ContentType contentType, final String encoding)
     {
+        if (!StringUtils.isEmpty(encoding) && !StringUtils.equalsIgnoreCase(encoding, Steps.ENCODING_BASE64))
+        {
+            throw XProcExceptions.xc0052(SaxonLocation.of(node));
+        }
         final StringBuilder contentBuilder = new StringBuilder();
         if (!StringUtils.containsIgnoreCase(contentType.getSubType(), "xml")
                 || StringUtils.equalsIgnoreCase(encoding, Steps.ENCODING_BASE64))

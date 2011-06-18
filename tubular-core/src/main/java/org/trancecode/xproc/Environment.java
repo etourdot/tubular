@@ -360,7 +360,7 @@ public final class Environment
                 }
                 else
                 {
-                    xpathContextNode = getXPathContextNode();
+                    xpathContextNode = getXPathContextNode(variable);
                 }
 
                 final XdmValue result = evaluateXPath(variable.getSelect(), getPipelineContext().getProcessor(),
@@ -384,6 +384,10 @@ public final class Environment
                     allVariables.put(variable.getName(), value);
                     newLocalVariables.put(variable.getName(), value);
                 }
+            }
+            else
+            {
+                newLocalVariables.put(variable.getName(), null);
             }
         }
 
@@ -433,7 +437,6 @@ public final class Environment
                 selector.setContextItem(processor.newDocumentBuilder().build(xpathContextNode.asSource()));
                 setCurrentXPathContext(xpathContextNode);
             }
-
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
             {
                 if (variableEntry.getValue() != null)
@@ -509,8 +512,26 @@ public final class Environment
     {
         assert localVariables != null;
 
+        final ImmutableMap.Builder<QName, String> builder = new ImmutableMap.Builder<QName, String>();
+        final Map newLocalMap = Maps.newHashMap(this.localVariables);
+        for (Map.Entry<QName, String> entry : localVariables.entrySet())
+        {
+            if (entry.getValue()==null)
+            {
+                if (newLocalMap.containsKey(entry.getKey()))
+                {
+                    newLocalMap.remove(entry.getKey());
+                }
+            }
+            else
+            {
+                builder.put(entry.getKey(), entry.getValue());
+            }
+        }
+        final Map<QName, String> mergedMap = TcMaps.merge(newLocalMap, builder.build());
+
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
-                xpathContextPort, inheritedVariables, TcMaps.merge(this.localVariables, localVariables));
+                xpathContextPort, inheritedVariables, mergedMap);
     }
 
     public void setLocalVariable(final QName name, final String value)
@@ -691,6 +712,25 @@ public final class Environment
             }
         }
 
+        return Saxon.getEmptyDocument(configuration.getProcessor());
+    }
+
+    @ReturnsNullable
+    public XdmNode getXPathContextNode(final Variable variable)
+    {
+        final EnvironmentPort xpathContextPort = getXPathContextPort();
+        if (xpathContextPort != null)
+        {
+            Iterable<XdmNode> nodes = xpathContextPort.readNodes();
+            if (((List)nodes).size() > 1 && variable.isVariable())
+            {
+                throw XProcExceptions.xd0008(SaxonLocation.of(variable.getNode()));
+            }
+            else if (!((List) nodes).isEmpty())
+            {
+                return nodes.iterator().next();
+            }
+        }
         return Saxon.getEmptyDocument(configuration.getProcessor());
     }
 

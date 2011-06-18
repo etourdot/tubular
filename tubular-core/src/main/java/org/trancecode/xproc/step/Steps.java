@@ -97,7 +97,7 @@ public final class Steps
         if (input.getStep().hasOptionDeclared(XProcOptions.CDATA_SECTION_ELEMENTS))
         {
             final String cDataSection = input.getOptionValue(XProcOptions.CDATA_SECTION_ELEMENTS,
-                    defaultOptions.get(XProcOptions.CDATA_SECTION_ELEMENTS.getLocalName()));
+                    defaultOptions.get(XProcOptions.CDATA_SECTION_ELEMENTS));
             if (cDataSection != null)
             {
                 final Iterable<String> sections = Splitter.on(" ").omitEmptyStrings().split(cDataSection);
@@ -110,29 +110,31 @@ public final class Steps
             }
         }
 
-        final QName method = new QName(input.getOptionValue(XProcOptions.METHOD,
-                defaultOptions.get(XProcOptions.METHOD.getLocalName())));
-        builder.put(XProcOptions.METHOD, method);
+        if (input.getStep().hasOptionDeclared(XProcOptions.METHOD))
+        {
+            final QName method = new QName(input.getOptionValue(XProcOptions.METHOD,
+                defaultOptions.get(XProcOptions.METHOD)));
+            builder.put(XProcOptions.METHOD, method);
+            if (METHOD_XML.equals(method.getLocalName()) || METHOD_HTML.equals(method.getLocalName()))
+            {
+                putInBuilder(builder, input, defaultOptions, XProcOptions.ESCAPE_URI_ATTRIBUTES, true);
+                putInBuilder(builder, input, defaultOptions, XProcOptions.INCLUDE_CONTENT_TYPE, true);
+            }
+            final String mediaType = input.getOptionValue(XProcOptions.MEDIA_TYPE, null);
+            if (mediaType == null)
+            {
+                builder.put(XProcOptions.MEDIA_TYPE, MEDIATYPES.get(method.getLocalName()));
+            }
+            else
+            {
+                builder.put(XProcOptions.MEDIA_TYPE, mediaType);
+            }
+        }
 
         putInBuilder(builder, input, defaultOptions, XProcOptions.DOCTYPE_PUBLIC, false);
         putInBuilder(builder, input, defaultOptions, XProcOptions.DOCTYPE_SYSTEM, false);
 
-        if (METHOD_XML.equals(method.getLocalName()) || METHOD_HTML.equals(method.getLocalName()))
-        {
-            putInBuilder(builder, input, defaultOptions, XProcOptions.ESCAPE_URI_ATTRIBUTES, true);
-            putInBuilder(builder, input, defaultOptions, XProcOptions.INCLUDE_CONTENT_TYPE, true);
-        }
         putInBuilder(builder, input, defaultOptions, XProcOptions.INDENT, true);
-
-        final String mediaType = input.getOptionValue(XProcOptions.MEDIA_TYPE, null);
-        if (mediaType == null)
-        {
-            builder.put(XProcOptions.MEDIA_TYPE, MEDIATYPES.get(method.getLocalName()));
-        }
-        else
-        {
-            builder.put(XProcOptions.MEDIA_TYPE, mediaType);
-        }
 
         if (input.getStep().hasOptionDeclared(XProcOptions.NORMALIZATION_FORM))
         {

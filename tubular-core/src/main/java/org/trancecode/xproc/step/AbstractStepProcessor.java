@@ -36,7 +36,6 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.XProcException;
-import org.trancecode.xproc.variable.Variable;
 
 /**
  * Base class for {@link StepProcessor} implementations.
@@ -50,7 +49,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
     @Override
     public final Environment run(final Step step, final Environment environment)
     {
-        LOG.trace("{@method} step = {} ; type = {}", step.getName(), step.getType());
+        LOG.trace("{@method} step = {} ; type = {} ; environment = {}", step.getName(), step.getType(), environment.toString());
         assert getStepType().equals(step.getType()) || getStepType().equals(XProcSteps.ANY);
 
         try
@@ -88,6 +87,8 @@ public abstract class AbstractStepProcessor implements StepProcessor
      */
     protected static final class StepInput implements HasLocation
     {
+        private static final Logger LOG = Logger.getLogger(StepInput.class);
+
         private final Environment environment;
         private final Step step;
 
