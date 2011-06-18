@@ -23,12 +23,14 @@ import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.NameBasedGenerator;
 import com.fasterxml.uuid.impl.RandomBasedGenerator;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.EnumSet;
 import java.util.UUID;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -67,7 +69,7 @@ public final class UuidStepProcessor extends AbstractStepProcessor
         LOG.trace("version = {}", version);
 
         final UUID uuid = getUuid(version, input.getStep());
-        LOG.trace("uuid = {}", uuid.toString());
+        LOG.trace("uuid = {}", uuid);
         final String textUuid = uuid.toString();
 
         final SaxonProcessorDelegate uuidReplace = new CopyingSaxonProcessorDelegate()
@@ -135,7 +137,7 @@ public final class UuidStepProcessor extends AbstractStepProcessor
                     return tUuidGen.generate();
                 case 3:
                     final NameBasedGenerator nUuidGen = Generators.nameBasedGenerator(NameBasedGenerator.NAMESPACE_URL,
-                                MessageDigest.getInstance("MD5"));
+                            MessageDigest.getInstance("MD5"));
                     return nUuidGen.generate("tubular_uuid");
                 case 4:
                     final SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
@@ -149,11 +151,11 @@ public final class UuidStepProcessor extends AbstractStepProcessor
         {
             throw XProcExceptions.xc0060(inputStep.getLocation());
         }
-        catch (NoSuchAlgorithmException e)
+        catch (final NoSuchAlgorithmException e)
         {
             throw XProcExceptions.xc0060(inputStep.getLocation());
         }
-        catch (NoSuchProviderException e)
+        catch (final NoSuchProviderException e)
         {
             throw XProcExceptions.xc0060(inputStep.getLocation());
         }
