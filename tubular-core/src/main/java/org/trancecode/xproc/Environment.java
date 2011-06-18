@@ -395,7 +395,7 @@ public final class Environment
         }
         else
         {
-            assert parametersPort != null : step.toString();
+            assert parametersPort != null : step;
             resultEnvironment = writeNodes(parametersPort, newParameterNodes);
         }
 
@@ -700,8 +700,8 @@ public final class Environment
         final EnvironmentPort xpathContextPort = getXPathContextPort();
         if (xpathContextPort != null)
         {
-            Iterable<XdmNode> nodes = xpathContextPort.readNodes();
-            if (((List)nodes).size() > 1 && variable.isVariable())
+            final Iterable<XdmNode> nodes = xpathContextPort.readNodes();
+            if (((List) nodes).size() > 1 && variable.isVariable())
             {
                 throw XProcExceptions.xd0008(SaxonLocation.of(variable.getNode()));
             }
@@ -777,7 +777,7 @@ public final class Environment
 
     private EnvironmentPort getPort(final PortReference portReference)
     {
-        assert ports.containsKey(portReference) : "port = " + portReference.toString() + " ; ports = " + ports.keySet();
+        assert ports.containsKey(portReference) : "port = " + portReference + " ; ports = " + ports.keySet();
         return ports.get(portReference);
     }
 
