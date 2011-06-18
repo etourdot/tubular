@@ -21,6 +21,7 @@ package org.trancecode.xproc.step;
 
 import java.util.EnumSet;
 import java.util.zip.CRC32;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -93,7 +94,7 @@ public final class HashStepProcessor extends AbstractStepProcessor
         }
         else if (StringUtils.equalsIgnoreCase("sha", algorithm))
         {
-            if ("1".equals(version)|| version == null)
+            if ("1".equals(version) || version == null)
             {
                 hashValue = DigestUtils.shaHex(value);
             }
@@ -152,7 +153,7 @@ public final class HashStepProcessor extends AbstractStepProcessor
             }
 
             @Override
-             public void comment(final XdmNode node, final SaxonBuilder builder)
+            public void comment(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.comment(hashValue);
             }
@@ -177,5 +178,5 @@ public final class HashStepProcessor extends AbstractStepProcessor
         final XdmNode result = hashProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
     }
-    
+
 }

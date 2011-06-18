@@ -19,9 +19,11 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
@@ -72,7 +74,6 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         final QName newName = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
                 .getStep().getLocation(), input.getStep().getNode());
         wrapAdjacent.set(null);
-
 
         final SaxonProcessorDelegate wrapDelegate = new AbstractSaxonProcessorDelegate()
         {
@@ -152,8 +153,8 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         output.writeNodes(XProcPorts.RESULT, result);
     }
 
-    private void doStartWrap(final String groupAdjacent, final QName newName,
-                        final XdmNode node, final SaxonBuilder builder)
+    private void doStartWrap(final String groupAdjacent, final QName newName, final XdmNode node,
+            final SaxonBuilder builder)
     {
         if (groupAdjacent == null)
         {
@@ -172,16 +173,16 @@ public final class WrapStepProcessor extends AbstractStepProcessor
                 final XdmItem currItem = getGroupAdjacent(groupAdjacent, node);
                 if (!itemGroup.getStringValue().equals(currItem.getStringValue()))
                 {
-                    builder.endElement();                    
+                    builder.endElement();
                     builder.startElement(newName);
-                    wrapAdjacent.set(currItem);                    
+                    wrapAdjacent.set(currItem);
                 }
             }
         }
     }
 
-    private void doEndWrap(final String groupAdjacent, final QName newName,
-                        final XdmNode node, final SaxonBuilder builder)
+    private void doEndWrap(final String groupAdjacent, final QName newName, final XdmNode node,
+            final SaxonBuilder builder)
     {
         if (groupAdjacent == null)
         {
