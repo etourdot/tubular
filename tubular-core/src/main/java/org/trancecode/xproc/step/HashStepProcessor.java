@@ -83,7 +83,7 @@ public final class HashStepProcessor extends AbstractStepProcessor
         }
         else if (StringUtils.equalsIgnoreCase("md", algorithm))
         {
-            if ("5".equals(version) || version == null)
+            if (version == null || "5".equals(version))
             {
                 hashValue = DigestUtils.md5Hex(value);
             }
@@ -94,7 +94,7 @@ public final class HashStepProcessor extends AbstractStepProcessor
         }
         else if (StringUtils.equalsIgnoreCase("sha", algorithm))
         {
-            if ("1".equals(version) || version == null)
+            if (version == null || "1".equals(version))
             {
                 hashValue = DigestUtils.shaHex(value);
             }
