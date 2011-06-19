@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -815,7 +816,7 @@ public final class Environment
 
     public Map<QName, String> readParameters(final PortReference portReference)
     {
-        final Map<QName, String> parameters = TcMaps.newSmallWriteOnceMap();
+        final Builder<QName, String> parameters = ImmutableMap.builder();
         for (final XdmNode parameterNode : readNodes(portReference))
         {
             final XPathCompiler xpathCompiler = getPipelineContext().getProcessor().newXPathCompiler();
@@ -860,7 +861,7 @@ public final class Environment
             }
         }
 
-        return ImmutableMap.copyOf(parameters);
+        return parameters.build();
     }
 
     public XdmNode newParameterElement(final QName name, final String value)
