@@ -19,10 +19,10 @@
  */
 package org.trancecode.xproc.step;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.net.URI;
 import java.util.List;
