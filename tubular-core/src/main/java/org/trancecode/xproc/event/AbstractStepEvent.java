@@ -18,7 +18,6 @@
 package org.trancecode.xproc.event;
 
 import com.google.common.base.Preconditions;
-import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.step.Step;
 
 /**
@@ -28,7 +27,7 @@ abstract class AbstractStepEvent extends AbstractPipelineEvent implements StepEv
 {
     private final Step step;
 
-    public AbstractStepEvent(final Pipeline pipeline, final Step step)
+    public AbstractStepEvent(final Step pipeline, final Step step)
     {
         super(pipeline);
         this.step = Preconditions.checkNotNull(step);

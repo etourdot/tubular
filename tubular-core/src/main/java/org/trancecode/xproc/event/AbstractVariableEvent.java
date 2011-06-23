@@ -18,7 +18,6 @@
 package org.trancecode.xproc.event;
 
 import com.google.common.base.Preconditions;
-import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
 
@@ -29,7 +28,7 @@ abstract class AbstractVariableEvent extends AbstractStepEvent implements Variab
 {
     private final Variable variable;
 
-    public AbstractVariableEvent(final Pipeline pipeline, final Step step, final Variable variable)
+    public AbstractVariableEvent(final Step pipeline, final Step step, final Variable variable)
     {
         super(pipeline, step);
         this.variable = Preconditions.checkNotNull(variable);

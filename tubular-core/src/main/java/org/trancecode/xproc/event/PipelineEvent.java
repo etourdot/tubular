@@ -17,12 +17,12 @@
  */
 package org.trancecode.xproc.event;
 
-import org.trancecode.xproc.Pipeline;
+import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz
  */
 public interface PipelineEvent
 {
-    Pipeline getPipeline();
+    Step getPipeline();
 }

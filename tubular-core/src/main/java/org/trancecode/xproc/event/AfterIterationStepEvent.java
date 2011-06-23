@@ -18,7 +18,6 @@
 package org.trancecode.xproc.event;
 
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.step.Step;
 
 /**
@@ -31,7 +30,7 @@ public final class AfterIterationStepEvent extends AbstractStepEvent
     private final Environment resultEnvironment;
     private final Environment sourceEnvironment;
 
-    public AfterIterationStepEvent(final Pipeline pipeline, final Step step, final Environment sourceEnvironment,
+    public AfterIterationStepEvent(final Step pipeline, final Step step, final Environment sourceEnvironment,
             final Environment resultEnvironment, final int iterationPosition, final int iterationSize)
     {
         super(pipeline, step);

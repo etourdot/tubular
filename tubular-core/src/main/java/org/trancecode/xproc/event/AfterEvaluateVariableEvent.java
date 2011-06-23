@@ -18,7 +18,6 @@
 package org.trancecode.xproc.event;
 
 import net.sf.saxon.s9api.XdmNode;
-import org.trancecode.xproc.Pipeline;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
 
@@ -30,7 +29,7 @@ public final class AfterEvaluateVariableEvent extends AbstractVariableEvent
     private final String value;
     private final XdmNode xpathContextNode;
 
-    public AfterEvaluateVariableEvent(final Pipeline pipeline, final Step step, final Variable variable,
+    public AfterEvaluateVariableEvent(final Step pipeline, final Step step, final Variable variable,
             final XdmNode xpathContextNode, final String value)
     {
         super(pipeline, step, variable);

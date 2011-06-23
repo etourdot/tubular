@@ -18,22 +18,22 @@
 package org.trancecode.xproc.event;
 
 import com.google.common.base.Preconditions;
-import org.trancecode.xproc.Pipeline;
+import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz
  */
 abstract class AbstractPipelineEvent extends AbstractXProcEvent implements PipelineEvent
 {
-    private final Pipeline pipeline;
+    private final Step pipeline;
 
-    public AbstractPipelineEvent(final Pipeline pipeline)
+    public AbstractPipelineEvent(final Step pipeline)
     {
         this.pipeline = Preconditions.checkNotNull(pipeline);
     }
 
     @Override
-    public Pipeline getPipeline()
+    public Step getPipeline()
     {
         return pipeline;
     }

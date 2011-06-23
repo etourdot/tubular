@@ -17,14 +17,14 @@
  */
 package org.trancecode.xproc.event;
 
-import org.trancecode.xproc.Pipeline;
+import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz
  */
 public final class AfterRunPipelineEvent extends AbstractPipelineEvent
 {
-    public AfterRunPipelineEvent(final Pipeline pipeline)
+    public AfterRunPipelineEvent(final Step pipeline)
     {
         super(pipeline);
     }
