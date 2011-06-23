@@ -43,11 +43,14 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.concurrent.TaskExecutor;
 import org.trancecode.concurrent.TaskExecutors;
+import org.trancecode.event.EventDispatcher;
+import org.trancecode.event.EventDispatchers;
 import org.trancecode.io.DefaultInputResolver;
 import org.trancecode.io.DefaultOutputResolver;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
 import org.trancecode.logging.Logger;
+import org.trancecode.xproc.event.XProcEvent;
 import org.trancecode.xproc.step.CoreStepProcessor;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
@@ -74,6 +77,7 @@ public final class PipelineConfiguration extends AbstractPipelineContext
     private static PipelineLibrary getDefaultPipelineLibrary()
     {
         final Map<String, Object> properties = Maps.newHashMap();
+        properties.put(PROPERTY_EVENT_DISPATCHER, newEventDispatcher());
         properties.put(PROPERTY_EXECUTOR, TaskExecutors.onDemandExecutor());
         final Processor processor = new Processor(false);
         properties.put(PROPERTY_PROCESSOR, processor);
@@ -95,6 +99,11 @@ public final class PipelineConfiguration extends AbstractPipelineContext
         final PipelineLibrary library = PipelineParser.parseLibrary(context, defaultLibrarySource);
         LOG.trace("supported steps: {}", library.getStepTypes());
         return library;
+    }
+
+    private static EventDispatcher<XProcEvent> newEventDispatcher()
+    {
+        return EventDispatchers.newEventDispatcher();
     }
 
     private static Map<QName, StepProcessor> getDefaultStepProcessors()
@@ -145,6 +154,7 @@ public final class PipelineConfiguration extends AbstractPipelineContext
     public PipelineConfiguration(final Processor processor)
     {
         super(newEmptyPropertiesMap());
+        getProperties().put(PROPERTY_EVENT_DISPATCHER, newEventDispatcher());
         getProperties().put(PROPERTY_EXECUTOR, TaskExecutors.onDemandExecutor());
         getProperties().put(PROPERTY_INPUT_RESOLVER, DefaultInputResolver.INSTANCE);
         getProperties().put(PROPERTY_OUTPUT_RESOLVER, DefaultOutputResolver.INSTANCE);
