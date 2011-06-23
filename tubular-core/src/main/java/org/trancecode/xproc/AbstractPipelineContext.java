@@ -29,9 +29,11 @@ import javax.xml.transform.URIResolver;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.concurrent.TaskExecutor;
+import org.trancecode.event.EventDispatcher;
 import org.trancecode.function.TcSuppliers;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
+import org.trancecode.xproc.event.XProcEvent;
 import org.trancecode.xproc.step.StepProcessor;
 
 /**
@@ -42,6 +44,7 @@ abstract class AbstractPipelineContext implements PipelineContext
     static final String PROPERTY_PREFIX = "http://www.trancecode.org/tubular/1/property/";
 
     static final String PROPERTY_EPISODE = PROPERTY_PREFIX + "episode";
+    static final String PROPERTY_EVENT_DISPATCHER = PROPERTY_PREFIX + "eventDispatcher";
     static final String PROPERTY_EXECUTOR = PROPERTY_PREFIX + "executor";
     static final String PROPERTY_INPUT_RESOLVER = PROPERTY_PREFIX + "inputResolver";
     static final String PROPERTY_OUTPUT_RESOLVER = PROPERTY_PREFIX + "outputResolver";
@@ -53,6 +56,7 @@ abstract class AbstractPipelineContext implements PipelineContext
     final Map<String, Object> properties;
 
     Supplier<Episode> episode;
+    Supplier<EventDispatcher<XProcEvent>> eventDispatcher;
     Supplier<TaskExecutor> executor;
     Supplier<InputResolver> inputResolver;
     Supplier<OutputResolver> outputResolver;
@@ -72,6 +76,9 @@ abstract class AbstractPipelineContext implements PipelineContext
         processor = TcSuppliers.getFromMap(properties, PROPERTY_PROCESSOR);
         stepProcessors = TcSuppliers.getFromMap(properties, PROPERTY_STEP_PROCESSORS);
         uriResolver = TcSuppliers.getFromMap(properties, PROPERTY_URI_RESOLVER);
+
+        eventDispatcher = TcSuppliers.getFromMap(properties, PROPERTY_EVENT_DISPATCHER);
+        eventDispatcher = TcSuppliers.memoize(eventDispatcher);
     }
 
     @Override
@@ -91,6 +98,11 @@ abstract class AbstractPipelineContext implements PipelineContext
     public final Episode getEpisode()
     {
         return episode.get();
+    }
+
+    public EventDispatcher<XProcEvent> getEventDispatcher()
+    {
+        return eventDispatcher.get();
     }
 
     @Override
