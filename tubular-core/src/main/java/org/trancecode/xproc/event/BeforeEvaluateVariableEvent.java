@@ -17,7 +17,7 @@
  */
 package org.trancecode.xproc.event;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -39,11 +39,16 @@ public final class BeforeEvaluateVariableEvent extends AbstractVariableEvent
     {
         super(pipeline, step, variable);
         this.xpathContextNode = xpathContextNode;
-        this.inScopeVariables = Preconditions.checkNotNull(inScopeVariables);
+        this.inScopeVariables = ImmutableMap.copyOf(inScopeVariables);
     }
 
     public XdmNode getXpathContextNode()
     {
         return xpathContextNode;
+    }
+
+    public Map<QName, String> getInScopeVariables()
+    {
+        return inScopeVariables;
     }
 }
