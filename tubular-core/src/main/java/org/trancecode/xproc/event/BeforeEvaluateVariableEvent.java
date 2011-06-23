@@ -17,6 +17,11 @@
  */
 package org.trancecode.xproc.event;
 
+import com.google.common.base.Preconditions;
+
+import java.util.Map;
+
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.variable.Variable;
@@ -27,12 +32,14 @@ import org.trancecode.xproc.variable.Variable;
 public final class BeforeEvaluateVariableEvent extends AbstractVariableEvent
 {
     private final XdmNode xpathContextNode;
+    private final Map<QName, String> inScopeVariables;
 
     public BeforeEvaluateVariableEvent(final Step pipeline, final Step step, final Variable variable,
-            final XdmNode xpathContextNode)
+            final XdmNode xpathContextNode, final Map<QName, String> inScopeVariables)
     {
         super(pipeline, step, variable);
         this.xpathContextNode = xpathContextNode;
+        this.inScopeVariables = Preconditions.checkNotNull(inScopeVariables);
     }
 
     public XdmNode getXpathContextNode()
