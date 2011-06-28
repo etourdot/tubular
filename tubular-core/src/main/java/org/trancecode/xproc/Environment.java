@@ -681,14 +681,15 @@ public final class Environment
             final Iterator<XdmNode> contextNodes = xpathContextPort.readNodes().iterator();
             if (contextNodes.hasNext())
             {
-                final XdmNode contextNode = contextNodes.next();
-                if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
-                {
-                    // TODO XProc error
-                    assert !contextNodes.hasNext() : xpathContextPort.readNodes();
+                final Iterable<XdmNode> cntNodes = xpathContextPort.readNodes();
+	            if (Iterables.size(cntNodes) > 1)
+	            {
+	                throw XProcExceptions.xd0005(pipeline.getLocation());
+	            }
+	            else if (Iterables.size(cntNodes) == 1)
+	            {
+                    return Saxon.asDocumentNode(cntNodes.iterator().next(), configuration.getProcessor());
                 }
-
-                return Saxon.asDocumentNode(contextNode, configuration.getProcessor());
             }
         }
 
