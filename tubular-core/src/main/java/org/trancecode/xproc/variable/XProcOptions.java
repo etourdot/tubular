@@ -73,6 +73,7 @@ public final class XProcOptions
     public static final QName INCLUDE_FILTER = new QName("include-filter");
     public static final QName INDENT = new QName("indent");
     public static final QName INITIAL_MODE = new QName("initial-mode");
+    public static final QName INITIAL_ONLY = new QName("initial-only");
     public static final QName LABEL = new QName("label");
     public static final QName LIMIT = new QName("limit");
     public static final QName MATCH = new QName("match");

@@ -22,6 +22,7 @@ org.trancecode.xproc.step.RenameStepProcessor
 org.trancecode.xproc.step.ReplaceStepProcessor
 org.trancecode.xproc.step.SetAttributesStepProcessor
 org.trancecode.xproc.step.SinkStepProcessor
+org.trancecode.xproc.step.SplitSequenceStepProcessor
 org.trancecode.xproc.step.StoreStepProcessor
 org.trancecode.xproc.step.StringReplaceStepProcessor
 org.trancecode.xproc.step.UnEscapeMarkupStepProcessor
