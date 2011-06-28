@@ -20,11 +20,7 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 import java.util.Iterator;
-import java.util.Set;
-
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -44,8 +40,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class PackStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(PackStepProcessor.class);
-    private static final Set<XdmNodeKind> NODE_KINDS = ImmutableSet.of(XdmNodeKind.ELEMENT, XdmNodeKind.ATTRIBUTE,
-            XdmNodeKind.PROCESSING_INSTRUCTION);
 
     @Override
     public QName getStepType()

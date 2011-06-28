@@ -161,12 +161,9 @@ class RequestParser
             for (final NameValuePair pairEntity : elmEntityCt.getParameters())
             {
                 final NameValuePair pairHeader = elmHeaderCt.getParameterByName(pairEntity.getName());
-                if (pairHeader != null)
+                if (pairHeader != null && !StringUtils.equalsIgnoreCase(pairHeader.getValue(), pairEntity.getValue()))
                 {
-                    if (!StringUtils.equalsIgnoreCase(pairHeader.getValue(), pairEntity.getValue()))
-                    {
-                        throw XProcExceptions.xc0020(requestNode);
-                    }
+                    throw XProcExceptions.xc0020(requestNode);
                 }
             }
         }
