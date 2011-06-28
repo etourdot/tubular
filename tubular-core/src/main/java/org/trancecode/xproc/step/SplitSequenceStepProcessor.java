@@ -105,7 +105,7 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
                 if (results.isEmpty())
                 {
                     pass.set(false);
-                    reached.set(true && initialOnly);
+                    reached.set(initialOnly);
                 }
                 else
                 {
@@ -119,9 +119,12 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
                         pass.set(item != null);
                     }
                 }
-                if (pass.get() && !reached.get()) {
+                if (pass.get() && !reached.get())
+                {
                     output.writeNodes(XProcPorts.MATCHED, new XdmNode(doc));
-                } else {
+                }
+                else 
+                {
                     output.writeNodes(XProcPorts.NOT_MATCHED, new XdmNode(doc));
                 }
             }
