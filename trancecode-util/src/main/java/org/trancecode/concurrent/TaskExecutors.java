@@ -17,6 +17,8 @@
  */
 package org.trancecode.concurrent;
 
+import com.google.common.util.concurrent.Futures;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -44,6 +46,10 @@ public final class TaskExecutors
         };
     }
 
+    /**
+     * Returns a {@link TaskExecutor} which executes tasks when the
+     * {@link Future#get()} method is invoked.
+     */
     public static TaskExecutor onDemandExecutor()
     {
         return OnDemandTaskExecutor.INSTANCE;
@@ -119,6 +125,34 @@ public final class TaskExecutors
                     return get();
                 }
             };
+        }
+    }
+
+    /**
+     * Returns a {@link TaskExecutor} that executes tasks as soon as they get
+     * submitted.
+     */
+    public static TaskExecutor directExecutor()
+    {
+        return DirectTaskExecutor.INSTANCE;
+    }
+
+    private static final class DirectTaskExecutor implements TaskExecutor
+    {
+        private static final DirectTaskExecutor INSTANCE = new DirectTaskExecutor();
+
+        @Override
+        public <T> Future<T> submit(final Callable<T> task)
+        {
+            try
+            {
+                final T result = task.call();
+                return Futures.immediateFuture(result);
+            }
+            catch (final Throwable error)
+            {
+                return Futures.immediateFailedFuture(error);
+            }
         }
     }
 

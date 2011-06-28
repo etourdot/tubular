@@ -24,8 +24,10 @@ import javax.xml.transform.URIResolver;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.concurrent.TaskExecutor;
+import org.trancecode.event.EventDispatcher;
 import org.trancecode.io.InputResolver;
 import org.trancecode.io.OutputResolver;
+import org.trancecode.xproc.event.XProcEvent;
 import org.trancecode.xproc.step.StepProcessor;
 
 /**
@@ -34,6 +36,8 @@ import org.trancecode.xproc.step.StepProcessor;
 public interface PipelineContext
 {
     Episode getEpisode();
+
+    EventDispatcher<XProcEvent> getEventDispatcher();
 
     TaskExecutor getExecutor();
 

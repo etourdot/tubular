@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.net.URI;
 import java.util.List;
@@ -40,7 +41,6 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltTransformer;
-import org.trancecode.collection.TcMaps;
 import org.trancecode.io.Uris;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.PipelineException;
@@ -131,7 +131,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         final List<XdmNode> secondaryPortNodes = Lists.newArrayList();
         transformer.getUnderlyingController().setOutputURIResolver(new OutputURIResolver()
         {
-            final Map<URI, XdmDestination> destinations = TcMaps.newSmallWriteOnceMap();
+            final Map<URI, XdmDestination> destinations = Maps.newHashMap();
 
             public void close(final Result result) throws TransformerException
             {

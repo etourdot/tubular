@@ -15,36 +15,40 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
-package org.trancecode.collection;
+package org.trancecode.xproc.event;
 
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-import org.trancecode.AbstractTest;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.xproc.step.Step;
+import org.trancecode.xproc.variable.Variable;
 
 /**
- * Tests for {@link TcMaps}.
- * 
  * @author Herve Quiroz
  */
-public final class TcMapsTest extends AbstractTest
+public final class BeforeEvaluateVariableEvent extends AbstractVariableEvent
 {
-    @Test
-    public void merge()
+    private final XdmNode xpathContextNode;
+    private final Map<QName, String> inScopeVariables;
+
+    public BeforeEvaluateVariableEvent(final Step pipeline, final Step step, final Variable variable,
+            final XdmNode xpathContextNode, final Map<QName, String> inScopeVariables)
     {
-        final Map<Integer, String> map1 = ImmutableMap.of(1, "1", 2, "2", 3, "3");
-        final Map<Integer, String> map2 = ImmutableMap.of(2, "2", 3, "3", 4, "4");
-        Assert.assertEquals(TcMaps.merge(map1, map2), ImmutableMap.of(1, "1", 2, "2", 3, "3", 4, "4"));
+        super(pipeline, step, variable);
+        this.xpathContextNode = xpathContextNode;
+        this.inScopeVariables = ImmutableMap.copyOf(inScopeVariables);
     }
 
-    @Test
-    public void copyAndPut()
+    public XdmNode getXpathContextNode()
     {
-        final Map<Integer, String> map = ImmutableMap.of(1, "1", 2, "2", 3, "3");
-        Assert.assertEquals(TcMaps.copyAndPut(map, 4, "4"), ImmutableMap.of(1, "1", 2, "2", 3, "3", 4, "4"));
-        Assert.assertEquals(TcMaps.copyAndPut(map, 3, "4"), ImmutableMap.of(1, "1", 2, "2", 3, "4"));
+        return xpathContextNode;
+    }
+
+    public Map<QName, String> getInScopeVariables()
+    {
+        return inScopeVariables;
     }
 }

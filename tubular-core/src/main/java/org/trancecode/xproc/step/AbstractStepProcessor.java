@@ -23,10 +23,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
@@ -49,7 +51,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
     @Override
     public final Environment run(final Step step, final Environment environment)
     {
-        LOG.trace("{@method} step = {} ; type = {} ; environment = {}", step.getName(), step.getType(), environment.toString());
+        LOG.trace("{@method} step = {} ; type = {}", step.getName(), step.getType());
         assert getStepType().equals(step.getType()) || getStepType().equals(XProcSteps.ANY);
 
         try
@@ -64,7 +66,6 @@ public abstract class AbstractStepProcessor implements StepProcessor
             for (final Entry<String, Collection<XdmNode>> port : output.ports.asMap().entrySet())
             {
                 resultEnvironment = resultEnvironment.writeNodes(step.getPortReference(port.getKey()), port.getValue());
-
             }
 
             resultEnvironment = resultEnvironment.setupOutputPorts(step);
@@ -87,8 +88,6 @@ public abstract class AbstractStepProcessor implements StepProcessor
      */
     protected static final class StepInput implements HasLocation
     {
-        private static final Logger LOG = Logger.getLogger(StepInput.class);
-
         private final Environment environment;
         private final Step step;
 

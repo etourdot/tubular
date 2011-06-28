@@ -1,0 +1,49 @@
+/*
+ * Copyright (C) 2011 Herve Quiroz
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ */
+package org.trancecode.xproc.event;
+
+import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.xproc.step.Step;
+import org.trancecode.xproc.variable.Variable;
+
+/**
+ * @author Herve Quiroz
+ */
+public final class AfterEvaluateVariableEvent extends AbstractVariableEvent
+{
+    private final String value;
+    private final XdmNode xpathContextNode;
+
+    public AfterEvaluateVariableEvent(final Step pipeline, final Step step, final Variable variable,
+            final XdmNode xpathContextNode, final String value)
+    {
+        super(pipeline, step, variable);
+        this.xpathContextNode = xpathContextNode;
+        this.value = value;
+    }
+
+    public String getValue()
+    {
+        return value;
+    }
+
+    public XdmNode getXpathContextNode()
+    {
+        return xpathContextNode;
+    }
+}

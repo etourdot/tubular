@@ -21,12 +21,17 @@ package org.trancecode.collection;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.trancecode.function.TcPredicates;
 import org.trancecode.lang.TcObjects;
 
 /**
@@ -41,19 +46,14 @@ public final class TcMaps
         // No instantiation
     }
 
-    public static <K, V> Map<K, V> newSmallWriteOnceMap()
-    {
-        // TODO
-        return Maps.newLinkedHashMap();
-    }
-
     public static <K, V> Map<K, V> merge(final Map<K, V> map1, final Map<? extends K, ? extends V> map2)
     {
-        final Map<K, V> map = Maps.newHashMapWithExpectedSize(map1.size() + map2.size());
-        map.putAll(map1);
-        map.putAll(map2);
-
-        return ImmutableMap.copyOf(map);
+        final Builder<K, V> builder = ImmutableMap.builder();
+        @SuppressWarnings("unchecked")
+        final Set<K> map2keys = (Set<K>) map2.keySet();
+        final Predicate<K> keyFilter = Predicates.not(TcPredicates.isContainedBy(map2keys));
+        final Map<K, V> map1WithoutKeysFromMap2 = Maps.filterKeys(map1, keyFilter);
+        return builder.putAll(map1WithoutKeysFromMap2).putAll(map2).build();
     }
 
     public static <K, V> Map<K, V> copyAndPut(final Map<K, V> map, final K key, final V value)
@@ -65,10 +65,9 @@ public final class TcMaps
             return map;
         }
 
-        final Map<K, V> newMap = Maps.newLinkedHashMap(map);
-        newMap.put(key, value);
-
-        return ImmutableMap.copyOf(newMap);
+        final Builder<K, V> builder = ImmutableMap.builder();
+        final Map<K, V> mapWithoutKey = Maps.filterKeys(map, Predicates.not(Predicates.equalTo(key)));
+        return builder.putAll(mapWithoutKey).put(key, value).build();
     }
 
     public static <K, V> V get(final Map<K, V> map, final K key, final V defaultValue)
