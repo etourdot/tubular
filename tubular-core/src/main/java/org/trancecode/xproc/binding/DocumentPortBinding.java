@@ -22,6 +22,8 @@ package org.trancecode.xproc.binding;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.transform.Source;
 
 import net.sf.saxon.s9api.XdmNode;
@@ -44,6 +46,14 @@ public class DocumentPortBinding extends AbstractPortBinding
     public DocumentPortBinding(final String href, final Location location)
     {
         super(location);
+        try
+        {
+            final URL url = new URL(href);
+        }
+        catch(final MalformedURLException e)
+        {
+            throw XProcExceptions.xd0012(location, href);
+        }
         this.href = Preconditions.checkNotNull(href);
     }
 

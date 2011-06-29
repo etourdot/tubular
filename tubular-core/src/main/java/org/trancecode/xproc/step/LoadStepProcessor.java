@@ -19,8 +19,9 @@
  */
 package org.trancecode.xproc.step;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.transform.Source;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -50,6 +51,14 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final String href = input.getOptionValue(XProcOptions.HREF);
         assert href != null;
         LOG.trace("href = {}", href);
+        try
+        {
+            final URL url = new URL(href);
+        }
+        catch(final MalformedURLException e)
+        {
+            throw XProcExceptions.xd0012(input.getLocation(), href);
+        }
 
         final boolean validate = Boolean.parseBoolean(input.getOptionValue(XProcOptions.DTD_VALIDATE));
         LOG.trace("dtd-validate = {}", validate);

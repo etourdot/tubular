@@ -100,6 +100,14 @@ public final class XProcExceptions
         return exception;
     }
 
+    public static XProcException xd0012(final Location location, final String resource)
+    {
+        final XProcException exception = newXProcException(Type.DYNAMIC, 12, location,
+                "It is a dynamic error if any attempt is made to dereference a URI where the scheme of the URI reference is not supported.",
+                resource);
+        return exception;
+    }
+
     public static XProcException xd0014(final XdmNode node)
     {
         return newXProcException(

@@ -22,12 +22,11 @@ package org.trancecode.xproc.step;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
-
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.ProxySelector;
 import java.util.List;
 import java.util.Map;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -99,6 +98,15 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
 
         final RequestParser parser = new RequestParser(serializationOptions);
         final XProcHttpRequest xProcRequest = parser.parseRequest(request);
+        try
+        {
+            xProcRequest.getHttpRequest().getURI().toURL();
+        }
+        catch(final MalformedURLException e)
+        {
+            throw XProcExceptions.xd0012(input.getLocation(), xProcRequest.getHttpRequest().getURI().toASCIIString());
+        }
+
         final BasicHttpContext localContext = new BasicHttpContext();
         final HttpClient httpClient = prepareHttpClient(xProcRequest, localContext);
         try
@@ -115,7 +123,6 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
                 builder.nodes(response.getNodes());
             }
             builder.endDocument();
-            output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
         catch (final IOException e)
         {
