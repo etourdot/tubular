@@ -18,6 +18,9 @@
 package org.trancecode.xproc.step;
 
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.logging.Logger;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * {@code p:sink}.
@@ -28,6 +31,8 @@ import net.sf.saxon.s9api.QName;
 @ExternalResources(read = false, write = false)
 public final class SinkStepProcessor extends AbstractStepProcessor
 {
+    private static final Logger LOG = Logger.getLogger(SinkStepProcessor.class);
+
     @Override
     public QName getStepType()
     {
@@ -37,6 +42,8 @@ public final class SinkStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        // Do nothing
+        // Document sequence must be read to be discard
+        final Iterable<XdmNode> nodes = input.readNodes(XProcPorts.SOURCE);
+        LOG.trace("nodes = {}", nodes);
     }
 }
