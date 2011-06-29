@@ -19,12 +19,12 @@
  */
 package org.trancecode.xproc.step;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import javax.xml.transform.Source;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import org.apache.commons.lang.StringUtils;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Jaxp;
 import org.trancecode.xproc.XProcExceptions;
@@ -51,11 +51,9 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         final String href = input.getOptionValue(XProcOptions.HREF);
         assert href != null;
         LOG.trace("href = {}", href);
-        try
-        {
-            final URL url = new URL(href);
-        }
-        catch(final MalformedURLException e)
+        final URI uri = URI.create(href);
+        if (uri.getScheme()!=null && !StringUtils.equals("file",uri.getScheme()) &&
+            !StringUtils.equals("http",uri.getScheme()))
         {
             throw XProcExceptions.xd0012(input.getLocation(), href);
         }

@@ -23,13 +23,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.ProxySelector;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.HttpClient;
@@ -98,13 +99,11 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
 
         final RequestParser parser = new RequestParser(serializationOptions);
         final XProcHttpRequest xProcRequest = parser.parseRequest(request);
-        try
+        final URI uri = xProcRequest.getHttpRequest().getURI();
+        if (uri.getScheme()!=null && !StringUtils.equals("file",uri.getScheme()) &&
+            !StringUtils.equals("http",uri.getScheme()))
         {
-            xProcRequest.getHttpRequest().getURI().toURL();
-        }
-        catch(final MalformedURLException e)
-        {
-            throw XProcExceptions.xd0012(input.getLocation(), xProcRequest.getHttpRequest().getURI().toASCIIString());
+            throw XProcExceptions.xd0012(input.getLocation(), uri.toASCIIString());
         }
 
         final BasicHttpContext localContext = new BasicHttpContext();
@@ -123,6 +122,7 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
                 builder.nodes(response.getNodes());
             }
             builder.endDocument();
+            output.writeNodes(XProcPorts.RESULT, builder.getNode());
         }
         catch (final IOException e)
         {
