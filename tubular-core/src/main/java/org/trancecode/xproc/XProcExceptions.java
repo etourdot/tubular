@@ -117,6 +117,15 @@ public final class XProcExceptions
                 "It is a dynamic error for any unqualified attribute names other than 'name', 'namespace', or 'value' to appear on a c:param element.");
     }
 
+    public static XProcException xd0015(final Location location)
+    {
+        return newXProcException(
+                Type.DYNAMIC,
+                15,
+                location,
+                "It is a dynamic error if the specified QName cannot be resolved with the in-scope namespace declarations.");
+    }
+
     public static XProcException xd0023(final Location location, final String select, final String errorMessage)
     {
         return newXProcException(Type.DYNAMIC, 23, location, "XPath expression cannot be evaluated: %s\n%s", select,

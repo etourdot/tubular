@@ -20,10 +20,8 @@ package org.trancecode.xproc.xpath;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-
 import java.util.Locale;
 import java.util.Map;
-
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
@@ -31,12 +29,14 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.Tubular;
+import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
 
 /**
@@ -109,22 +109,40 @@ public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExt
                             throws XPathException
                     {
                         Preconditions.checkArgument(arguments.length == 1);
-                        final QName property = resolveQName(arguments[0].next().getStringValue());
-                        final String value;
-                        if (property.equals(PROPERTY_EPISODE))
+                        try
                         {
-                            value = Environment.getCurrentEnvironment().getPipelineContext().getEpisode().getId();
+                            final QName property = resolveQName(arguments[0].next().getStringValue());
+                            final String value;
+                            if (property.equals(PROPERTY_EPISODE))
+                            {
+                                value = Environment.getCurrentEnvironment().getPipelineContext().getEpisode().getId();
+                            }
+                            else if (PROPERTIES.containsKey(property))
+                            {
+                                value = PROPERTIES.get(property);
+                            }
+                            else
+                            {
+                                value = "";
+                            }
+                            LOG.trace("{} = {}", property, value);
+                            return SingletonIterator.makeIterator(StringValue.makeStringValue(value));
                         }
-                        else if (PROPERTIES.containsKey(property))
+                        catch (final IllegalArgumentException e)
                         {
-                            value = PROPERTIES.get(property);
+                            if (e.getCause() instanceof XPathException)
+                            {
+                                if ("FONS0004".equals(((XPathException) e.getCause()).getErrorCodeLocalPart()))
+                                {
+                                    throw XProcExceptions.xd0015(Environment.getCurrentEnvironment().getPipeline().getLocation());
+                                }
+                            }
+                            else
+                            {
+                                e.printStackTrace();
+                            }
                         }
-                        else
-                        {
-                            value = "";
-                        }
-                        LOG.trace("{} = {}", property, value);
-                        return SingletonIterator.makeIterator(StringValue.makeStringValue(value));
+                        return EmptyIterator.getInstance();
                     }
                 };
             }
