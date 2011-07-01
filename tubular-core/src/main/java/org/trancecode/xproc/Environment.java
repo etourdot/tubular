@@ -661,7 +661,8 @@ public final class Environment
 
     public Environment setDefaultParametersPort(final EnvironmentPort defaultParametersPort)
     {
-        assert defaultParametersPort == null || ports.containsValue(defaultParametersPort);
+        assert defaultParametersPort == null || ports.containsValue(defaultParametersPort) : String.format(
+                "port = %s ; defaultParametersPort = %s", ports, defaultParametersPort);
         LOG.trace("{@method} defaultParametersPort = {}", defaultParametersPort);
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
