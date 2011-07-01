@@ -561,7 +561,7 @@ public final class PipelineParser
 
     private Step parseWithParam(final XdmNode node, final Step step)
     {
-        LOG.trace("{@method} step = {}", step.getType());
+        LOG.trace("{@method} step = {} ({})", step.getName(), step.getType());
         final QName name = new QName(node.getAttributeValue(Attributes.NAME));
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("  name = {} ; select = {}", name, select);
