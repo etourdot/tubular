@@ -316,17 +316,18 @@ public final class Environment
     public Environment setupVariables(final Step step)
     {
         LOG.trace("{@method} step = {}", step.getName());
-        LOG.trace("variables = {keys}", step.getVariables());
+        final Iterable<Variable> allDeclaredVariables = Iterables.concat(step.getVariables().values(), step
+                .getParameters().values());
+        LOG.trace("  variables = {}", allDeclaredVariables);
 
         final Map<QName, String> allVariables = Maps.newHashMap(inheritedVariables);
         allVariables.putAll(localVariables);
 
         final Map<QName, String> newLocalVariables = Maps.newHashMap(localVariables);
-        final List<XdmNode> newParameterNodes = Lists.newArrayList();
+        final List<XdmNode> newParameterNodes = Lists.newArrayListWithCapacity(step.getParameters().size());
 
-        for (final Entry<QName, Variable> variableEntry : step.getVariables().entrySet())
+        for (final Variable variable : allDeclaredVariables)
         {
-            final Variable variable = variableEntry.getValue();
             LOG.trace("variable = {}", variable);
             final String value;
             if (variable.getValue() != null)
@@ -816,6 +817,8 @@ public final class Environment
 
     public Map<QName, String> readParameters(final PortReference portReference)
     {
+        LOG.trace("{@method} portReference = {}", portReference);
+
         final Builder<QName, String> parameters = ImmutableMap.builder();
         for (final XdmNode parameterNode : readNodes(portReference))
         {
