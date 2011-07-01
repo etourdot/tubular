@@ -132,7 +132,7 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         return builder.build();
     }
 
-    private class XQCollectionResolver implements CollectionURIResolver
+    private final class XQCollectionResolver implements CollectionURIResolver
     {
         private final CollectionURIResolver oldCollResolver;
         private final ImmutableList.Builder<Item> collectionBuilder;

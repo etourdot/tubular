@@ -39,8 +39,6 @@ import org.trancecode.xproc.port.XProcPorts;
 public final class ParametersStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ParametersStepProcessor.class);
-    private static final Set<XdmNodeKind> NODE_KINDS = ImmutableSet.of(XdmNodeKind.ELEMENT, XdmNodeKind.ATTRIBUTE,
-            XdmNodeKind.PROCESSING_INSTRUCTION);
 
     @Override
     public QName getStepType()

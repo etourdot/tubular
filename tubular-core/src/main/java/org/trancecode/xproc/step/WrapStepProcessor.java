@@ -82,7 +82,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             {
                 doStartWrap(groupAdjacent, newName, node, builder);
                 builder.comment(node.getStringValue());
-                doEndWrap(groupAdjacent, newName, node, builder);
+                doEndWrap(groupAdjacent, builder);
             }
 
             @Override
@@ -90,7 +90,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             {
                 doStartWrap(groupAdjacent, newName, node, builder);
                 builder.processingInstruction(node.getNodeName().getLocalName(), node.getStringValue());
-                doEndWrap(groupAdjacent, newName, node, builder);
+                doEndWrap(groupAdjacent, builder);
             }
 
             @Override
@@ -122,7 +122,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             public void endElement(final XdmNode node, final SaxonBuilder builder)
             {
                 builder.endElement();
-                doEndWrap(groupAdjacent, newName, node, builder);
+                doEndWrap(groupAdjacent, builder);
             }
 
             @Override
@@ -130,7 +130,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             {
                 doStartWrap(groupAdjacent, newName, node, builder);
                 builder.text(node.getStringValue());
-                doEndWrap(groupAdjacent, newName, node, builder);
+                doEndWrap(groupAdjacent, builder);
             }
         };
 
@@ -181,8 +181,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         }
     }
 
-    private void doEndWrap(final String groupAdjacent, final QName newName, final XdmNode node,
-            final SaxonBuilder builder)
+    private void doEndWrap(final String groupAdjacent, final SaxonBuilder builder)
     {
         if (groupAdjacent == null)
         {

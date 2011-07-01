@@ -23,7 +23,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.EnumSet;
 import java.util.Set;
 
