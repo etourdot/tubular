@@ -38,6 +38,8 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.XProcException;
+import org.trancecode.xproc.event.AfterExecuteStepEvent;
+import org.trancecode.xproc.event.BeforeExecuteStepEvent;
 
 /**
  * Base class for {@link StepProcessor} implementations.
@@ -53,6 +55,9 @@ public abstract class AbstractStepProcessor implements StepProcessor
     {
         LOG.trace("{@method} step = {} ; type = {}", step.getName(), step.getType());
         assert getStepType().equals(step.getType()) || getStepType().equals(XProcSteps.ANY);
+
+        environment.getPipelineContext().getEventDispatcher()
+                .notify(new BeforeExecuteStepEvent(environment.getPipeline(), step, environment));
 
         try
         {
@@ -70,6 +75,9 @@ public abstract class AbstractStepProcessor implements StepProcessor
 
             resultEnvironment = resultEnvironment.setupOutputPorts(step);
             Steps.writeLogs(step, resultEnvironment);
+
+            environment.getPipelineContext().getEventDispatcher()
+                    .notify(new AfterExecuteStepEvent(environment.getPipeline(), step, environment, resultEnvironment));
 
             return resultEnvironment;
         }
