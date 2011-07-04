@@ -38,7 +38,7 @@
 
   <scm>
     <connection>scm:hg:https://tubular.googlecode.com/hg/</connection>
-    <developerConnection>scm:hg:https://tubular.googlecode.com/hg/</developerConnection>
+    <developerConnection>scm:hg:file:///${basedir}</developerConnection>
     <url>http://code.google.com/p/tubular/source/browse/</url>
   </scm>
 
