@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.trancecode</groupId>
     <artifactId>trancecode</artifactId>
-    <version>5</version>
+    <version>6</version>
   </parent>
 
   <groupId>org.trancecode</groupId>
@@ -89,7 +89,7 @@
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
-        <version>r07</version>
+        <version>r09</version>
       </dependency>
 
       <dependency>
