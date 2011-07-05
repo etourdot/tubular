@@ -50,8 +50,6 @@ import org.trancecode.xproc.step.Steps;
 @Immutable
 public class DataPortBinding extends AbstractPortBinding
 {
-    private static final Logger LOG = Logger.getLogger(DataPortBinding.class);
-
     private final String href;
     private final QName wrapper;
     private final XdmNode node;
@@ -122,7 +120,8 @@ public class DataPortBinding extends AbstractPortBinding
         {
             throw XProcExceptions.xd0012(this.getLocation(), uri.toASCIIString());
         }
-        try{
+        try
+        {
             final URL url;
             if (uri.isAbsolute())
             {

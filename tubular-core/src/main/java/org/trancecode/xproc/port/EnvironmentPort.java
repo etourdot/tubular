@@ -107,7 +107,7 @@ public final class EnvironmentPort implements HasPortReference
         this.select = select;
     }
 
-    public final List<EnvironmentPortBinding> portBindings()
+    public List<EnvironmentPortBinding> portBindings()
     {
         return portBindings;
     }

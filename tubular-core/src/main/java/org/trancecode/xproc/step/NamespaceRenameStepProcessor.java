@@ -42,7 +42,6 @@ import org.trancecode.xproc.variable.XProcOptions;
  */
 public class NamespaceRenameStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(NamespaceRenameStepProcessor.class);
     private static final String APPLY_TO_ALL = "all";
     private static final String APPLY_TO_ELEMENTS = "elements";
     private static final String APPLY_TO_ATTRIBUTE = "attributes";

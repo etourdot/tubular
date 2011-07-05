@@ -44,7 +44,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 public final class StoreStepProcessor extends AbstractStepProcessor
 {
     private static final String DEFAULT_ENCODING = "UTF-8";
-    private static final String DEFAULT_OMIT_XML_DECLARATION = "no";
     private static final String DEFAULT_DOCTYPE_PUBLIC = null;
     private static final String DEFAULT_DOCTYPE_SYSTEM = null;
     private static final String DEFAULT_METHOD = null;

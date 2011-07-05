@@ -56,7 +56,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 @ExternalResources(read = false, write = false)
 public final class LabelElementsStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(LabelElementsStepProcessor.class);
     private static final String ATTRIBUTE_DEFAULT_VALUE = "xml:id";
     private static final QName INDEX = new QName("p", XProcXmlModel.xprocNamespace().uri(), "index");
 

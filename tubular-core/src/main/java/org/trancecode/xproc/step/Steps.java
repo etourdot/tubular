@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 import javax.mail.internet.ContentType;
@@ -73,7 +74,7 @@ public final class Steps
     private static final ImmutableMap<String, String> MEDIATYPES = ImmutableMap.of(METHOD_XML,
             MediaTypes.MEDIA_TYPE_XML, METHOD_HTML, MediaTypes.MEDIA_TYPE_HTML, METHOD_XHTML,
             MediaTypes.MEDIA_TYPE_XHTML, METHOD_TEXT, MediaTypes.MEDIA_TYPE_TEXT);
-    private static Logger LOG = Logger.getLogger(Steps.class);
+    private static final Logger LOG = Logger.getLogger(Steps.class);
 
     private Steps()
     {
@@ -241,26 +242,17 @@ public final class Steps
         }
     }
 
-    public static String getBase64Content(final String content, final ContentType contentType, final String charset)
+    public static String getBase64Content(final String content, final String charset)
     {
         try
         {
             return new String(Base64.decode(content.getBytes(charset)), charset);
-            /*final InputStream b64is = MimeUtility.decode(new ByteArrayInputStream(content.getBytes(charset)),
-                    ENCODING_BASE64);
-            final StringWriter writer = new StringWriter();
-            IOUtils.copy(b64is, writer, charset);
-            return writer.toString();*/
         }
-        /*catch (final MessagingException e)
-        {
-            throw XProcExceptions.xc0010(null);
-        }*/
-        catch (final UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException uee)
         {
             throw XProcExceptions.xc0010(null);
         }
-        catch (final IOException e)
+        catch (final IOException ioe)
         {
             throw XProcExceptions.xc0010(null);
         }
@@ -372,5 +364,10 @@ public final class Steps
             buffer.append("; charset=\"").append(contentType.getParameter("charset").toLowerCase()).append("\"");
         }
         return buffer.toString();
+    }
+
+    public static Charset getCharset(final String charset)
+    {
+        return charset != null ? Charset.forName(charset) : Charset.forName("utf-8");
     }
 }

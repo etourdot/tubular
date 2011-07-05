@@ -21,17 +21,14 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Closeables;
-
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.Map;
-
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
-
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
@@ -47,7 +44,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -56,7 +52,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.FormBodyPart;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -64,15 +59,9 @@ import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.auth.DigestScheme;
-import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.PipelineException;
@@ -84,7 +73,6 @@ import org.trancecode.xproc.XProcXmlModel;
  */
 class RequestParser
 {
-    private static final Logger LOG = Logger.getLogger(RequestParser.class);
     private static final String DEFAULT_MULTIPART_TYPE = "multipart/mixed";
 
     private final Map<QName, Object> serializationOptions;
@@ -299,11 +287,6 @@ class RequestParser
         return contentBuilder.toString();
     }
 
-    private Charset getCharset(final String charset, final String defaultCharset)
-    {
-        return charset != null ? Charset.forName(charset) : Charset.forName("utf-8");
-    }
-
     private FormBodyPart getContentBody(final XdmNode node)
     {
         final String contentTypeAtt = node.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
@@ -313,8 +296,8 @@ class RequestParser
         final StringBody body;
         try
         {
-            body = new StringBody(contentString, contentType.toString(), getCharset(
-                    contentType.getParameter("charset"), "utf-8"));
+            body = new StringBody(contentString, contentType.toString(), Steps.getCharset(
+                    contentType.getParameter("charset")));
         }
         catch (final UnsupportedEncodingException e)
         {
@@ -396,12 +379,9 @@ class RequestParser
         if (StringUtils.isNotBlank(headerVal))
         {
             final Header header = request.getHeaders().getFirstHeader(headerName);
-            if (header != null)
+            if (header != null && !StringUtils.equalsIgnoreCase(headerVal, header.getValue()))
             {
-                if (!StringUtils.equalsIgnoreCase(headerVal, header.getValue()))
-                {
-                    throw XProcExceptions.xc0020(node);
-                }
+                throw XProcExceptions.xc0020(node);
             }
         }
     }
@@ -417,8 +397,8 @@ class RequestParser
             final String contentString = getContentString(body, contentType, encoding);
             try
             {
-                return new StringEntity(contentString, contentType.toString(), getCharset(
-                        contentType.getParameter("charset"), "utf-8").toString());
+                return new StringEntity(contentString, contentType.toString(), Steps.getCharset(
+                        contentType.getParameter("charset")).toString());
             }
             catch (final UnsupportedEncodingException e)
             {
@@ -451,6 +431,7 @@ class RequestParser
         return null;
     }
 
+    /*
     private HttpContext parseContext(final AuthPolicy policy)
     {
         final HttpHost httpHost = request.getHttpHost();
@@ -469,6 +450,7 @@ class RequestParser
         localContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
         return localContext;
     }
+    */
 
     private HttpRequestBase constructMethod(final String method, final URI hrefUri)
     {

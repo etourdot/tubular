@@ -178,5 +178,4 @@ public final class HashStepProcessor extends AbstractStepProcessor
         final XdmNode result = hashProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
     }
-
 }

@@ -92,7 +92,7 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
             {
                 if ("multipart".equals(contentMimeType.getPrimaryType()))
                 {
-                    response.setNodes(constructMultipart(entity, contentMimeType, contentType, parser));
+                    response.setNodes(constructMultipart(contentMimeType, contentType, parser));
                 }
                 else
                 {
@@ -124,7 +124,7 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
                 }
                 if ("multipart".equals(contentMimeType.getPrimaryType()))
                 {
-                    builder.nodes(constructMultipart(entity, contentMimeType, contentType, parser));
+                    builder.nodes(constructMultipart(contentMimeType, contentType, parser));
                 }
                 else
                 {
@@ -222,7 +222,7 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         return ImmutableList.of(builder.getNode());
     }
 
-    private Iterable<XdmNode> constructMultipart(final HttpEntity entity, final ContentType contentMimeType,
+    private Iterable<XdmNode> constructMultipart(final ContentType contentMimeType,
             final String contentType, final BodypartResponseParser parser) throws IOException
     {
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());

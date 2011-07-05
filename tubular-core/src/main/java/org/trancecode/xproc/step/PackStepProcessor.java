@@ -39,8 +39,6 @@ import org.trancecode.xproc.variable.XProcOptions;
 @ExternalResources(read = false, write = false)
 public final class PackStepProcessor extends AbstractStepProcessor
 {
-    private static final Logger LOG = Logger.getLogger(PackStepProcessor.class);
-
     @Override
     public QName getStepType()
     {

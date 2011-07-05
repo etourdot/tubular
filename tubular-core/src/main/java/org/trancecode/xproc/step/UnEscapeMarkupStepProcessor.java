@@ -20,7 +20,6 @@
 package org.trancecode.xproc.step;
 
 import java.io.StringReader;
-import java.net.URI;
 import java.util.EnumSet;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
@@ -67,7 +66,8 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         final XdmNode sourceDocument = input.readNode(XProcPorts.SOURCE);
 
         final String namespaceOption = input.getOptionValue(XProcOptions.NAMESPACE, null);
-        final URI namespaceURI = Steps.getUri(namespaceOption);
+        // Resolve namespace
+        Steps.getUri(namespaceOption);
         final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, MediaTypes.MEDIA_XML);
         final String encodingOption = input.getOptionValue(XProcOptions.ENCODING, null);
         if (encodingOption!=null && !Steps.ENCODING_BASE64.equals(encodingOption))
@@ -223,7 +223,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
     {
         if (Steps.ENCODING_BASE64.equals(encoding))
         {
-            return Steps.getBase64Content(content, contentType, charset);
+            return Steps.getBase64Content(content, charset);
         }
         else if (MediaTypes.MEDIA_XML.equals(contentType.getBaseType()))
         {
