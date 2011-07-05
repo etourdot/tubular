@@ -166,7 +166,9 @@ public abstract class AbstractXProcTest extends AbstractTest
         {
             for (final QName name : test.getParameters().get(port).keySet())
             {
-                runnablePipeline.withParam(name, test.getParameters().get(port).get(name));
+                final String value = test.getParameters().get(port).get(name);
+                LOG.trace("  parameter {} = {}", name, value);
+                runnablePipeline.withParam(name, value);
             }
         }
 

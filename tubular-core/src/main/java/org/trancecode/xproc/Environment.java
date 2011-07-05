@@ -316,17 +316,18 @@ public final class Environment
     public Environment setupVariables(final Step step)
     {
         LOG.trace("{@method} step = {}", step.getName());
-        LOG.trace("variables = {keys}", step.getVariables());
+        final Iterable<Variable> allDeclaredVariables = Iterables.concat(step.getVariables().values(), step
+                .getParameters().values());
+        LOG.trace("  variables = {}", allDeclaredVariables);
 
         final Map<QName, String> allVariables = Maps.newHashMap(inheritedVariables);
         allVariables.putAll(localVariables);
 
         final Map<QName, String> newLocalVariables = Maps.newHashMap(localVariables);
-        final List<XdmNode> newParameterNodes = Lists.newArrayList();
+        final List<XdmNode> newParameterNodes = Lists.newArrayListWithCapacity(step.getParameters().size());
 
-        for (final Entry<QName, Variable> variableEntry : step.getVariables().entrySet())
+        for (final Variable variable : allDeclaredVariables)
         {
-            final Variable variable = variableEntry.getValue();
             LOG.trace("variable = {}", variable);
             final String value;
             if (variable.getValue() != null)
@@ -660,7 +661,8 @@ public final class Environment
 
     public Environment setDefaultParametersPort(final EnvironmentPort defaultParametersPort)
     {
-        assert defaultParametersPort == null || ports.containsValue(defaultParametersPort);
+        assert defaultParametersPort == null || ports.containsValue(defaultParametersPort) : String.format(
+                "port = %s ; defaultParametersPort = %s", ports, defaultParametersPort);
         LOG.trace("{@method} defaultParametersPort = {}", defaultParametersPort);
 
         return new Environment(pipeline, configuration, ports, defaultReadablePort, defaultParametersPort,
@@ -681,15 +683,14 @@ public final class Environment
             final Iterator<XdmNode> contextNodes = xpathContextPort.readNodes().iterator();
             if (contextNodes.hasNext())
             {
-                final Iterable<XdmNode> cntNodes = xpathContextPort.readNodes();
-	            if (Iterables.size(cntNodes) > 1)
-	            {
-	                throw XProcExceptions.xd0005(pipeline.getLocation());
-	            }
-	            else if (Iterables.size(cntNodes) == 1)
-	            {
-                    return Saxon.asDocumentNode(cntNodes.iterator().next(), configuration.getProcessor());
+                final XdmNode contextNode = contextNodes.next();
+                if (xpathContextPort.getDeclaredPort().getPortName().equals(XProcPorts.XPATH_CONTEXT))
+                {
+                    // TODO XProc error
+                    assert !contextNodes.hasNext() : xpathContextPort.readNodes();
                 }
+
+                return Saxon.asDocumentNode(contextNode, configuration.getProcessor());
             }
         }
 
@@ -817,6 +818,8 @@ public final class Environment
 
     public Map<QName, String> readParameters(final PortReference portReference)
     {
+        LOG.trace("{@method} portReference = {}", portReference);
+
         final Builder<QName, String> parameters = ImmutableMap.builder();
         for (final XdmNode parameterNode : readNodes(portReference))
         {
