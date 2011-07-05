@@ -27,17 +27,14 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -50,6 +47,7 @@ import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcXmlModel.Attributes;
 import org.trancecode.xproc.XProcXmlModel.Elements;
+import org.trancecode.xproc.binding.DataPortBinding;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;
 import org.trancecode.xproc.binding.InlinePortBinding;
@@ -64,6 +62,7 @@ import org.trancecode.xproc.step.Step;
 import org.trancecode.xproc.step.StepProcessor;
 import org.trancecode.xproc.step.XProcSteps;
 import org.trancecode.xproc.variable.Variable;
+import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * @author Herve Quiroz
@@ -519,6 +518,16 @@ public final class PipelineParser
         if (portBindingNode.getNodeName().equals(Elements.EMPTY))
         {
             return new EmptyPortBinding(getLocation(portBindingNode));
+        }
+
+        if (portBindingNode.getNodeName().equals(Elements.DATA))
+        {
+            final String href = portBindingNode.getAttributeValue(Attributes.HREF);
+            final String wrapper = portBindingNode.getAttributeValue(XProcOptions.WRAPPER);
+            final String wrapperPrefix = portBindingNode.getAttributeValue(XProcOptions.WRAPPER_PREFIX);
+            final String wrapperNamespace = portBindingNode.getAttributeValue(XProcOptions.WRAPPER_NAMESPACE);
+            final String contentType = portBindingNode.getAttributeValue(XProcOptions.CONTENT_TYPE);
+            return new DataPortBinding(href, wrapper, wrapperPrefix, wrapperNamespace, contentType, portBindingNode);
         }
 
         if (portBindingNode.getNodeName().equals(Elements.DOCUMENT))

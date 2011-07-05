@@ -48,6 +48,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.SaxonQNames;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.binding.DataPortBinding;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
@@ -666,7 +667,8 @@ public final class Step extends AbstractHasLocation implements StepContainer
         {
             for (final PortBinding portBinding : inputPort.getPortBindings())
             {
-                if (portBinding instanceof DocumentPortBinding)
+                if (portBinding instanceof DocumentPortBinding ||
+                    portBinding instanceof DataPortBinding)
                 {
                     return true;
                 }

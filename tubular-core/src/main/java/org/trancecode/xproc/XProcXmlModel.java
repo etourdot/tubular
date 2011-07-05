@@ -47,6 +47,8 @@ public final class XProcXmlModel
     public static final class Elements
     {
         public static final QName CHOOSE = xprocNamespace().newSaxonQName("choose");
+        public static final QName C_DATA = xprocStepNamespace().newSaxonQName("data");                
+        public static final QName DATA = xprocNamespace().newSaxonQName("data");        
         public static final QName DECLARE_STEP = xprocNamespace().newSaxonQName("declare-step");
         public static final QName DIRECTORY = xprocStepNamespace().newSaxonQName("directory");
         public static final QName DOCUMENT = xprocNamespace().newSaxonQName("document");
@@ -89,7 +91,7 @@ public final class XProcXmlModel
         public static final Set<QName> ELEMENTS_IGNORED = ImmutableSet.of(DOCUMENTATION, PIPEINFO);
         public static final Set<QName> ELEMENTS_IN_PIPELINE = ImmutableSet.of(IMPORT, PIPELINE);
         public static final Set<QName> ELEMENTS_IN_PIPELINE_LIBRARY = ImmutableSet.of(IMPORT, DECLARE_STEP, PIPELINE);
-        public static final Set<QName> ELEMENTS_PORT_BINDINGS = ImmutableSet.of(INLINE, DOCUMENT, EMPTY, PIPE);
+        public static final Set<QName> ELEMENTS_PORT_BINDINGS = ImmutableSet.of(INLINE, DATA, DOCUMENT, EMPTY, PIPE);
         public static final Set<QName> ELEMENTS_INPUT_PORTS = ImmutableSet.of(INPUT, ITERATION_SOURCE, VIEWPORT_SOURCE,
                 XPATH_CONTEXT);
         public static final Set<QName> ELEMENTS_OUTPUT_PORTS = ImmutableSet.of(OUTPUT);
@@ -125,7 +127,9 @@ public final class XProcXmlModel
         public static final QName METHOD = new QName("method");
         public static final QName DETAILED = new QName("detailed");
         public static final QName CONTENT_TYPE = new QName("content-type");
+        public static final QName C_CONTENT_TYPE = xprocStepNamespace().newSaxonQName("content-type");
         public static final QName ENCODING = new QName("encoding");
+        public static final QName C_ENCODING = xprocStepNamespace().newSaxonQName("encoding");
         public static final QName ID = new QName("id");
         public static final QName DESCRIPTION = new QName("description");
         public static final QName DISPOSITION = new QName("disposition");

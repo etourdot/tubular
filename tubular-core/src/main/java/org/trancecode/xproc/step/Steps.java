@@ -362,4 +362,15 @@ public final class Steps
             }
         }
     }
+
+    public static String contentTypeToString(final ContentType contentType)
+    {
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append(contentType.getPrimaryType()).append("/").append(contentType.getSubType());
+        if (contentType.getParameter("charset") != null)
+        {
+            buffer.append("; charset=\"").append(contentType.getParameter("charset").toLowerCase()).append("\"");
+        }
+        return buffer.toString();
+    }
 }

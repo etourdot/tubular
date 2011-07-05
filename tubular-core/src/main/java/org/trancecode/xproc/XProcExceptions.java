@@ -141,6 +141,15 @@ public final class XProcExceptions
                 "It is a dynamic error if the namespace attribute is specified, the name contains a colon, and the specified namespace is not the same as the in-scope namespace binding for the specified prefix.");
     }
 
+    public static XProcException xd0029(final Location location)
+    {
+        return newXProcException(
+                Type.DYNAMIC,
+                29,
+                location,
+                "It is a dynamic error if the document referenced by a p:data element does not exist, cannot be accessed, or cannot be encoded as specified.");
+    }
+
     public static XProcException xd0034(final Location location)
     {
         return newXProcException(
