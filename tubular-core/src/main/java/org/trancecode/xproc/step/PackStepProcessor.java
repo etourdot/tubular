@@ -20,11 +20,13 @@
 package org.trancecode.xproc.step;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import java.util.Iterator;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
-import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.port.XProcPorts;
@@ -56,8 +58,8 @@ public final class PackStepProcessor extends AbstractStepProcessor
 
         final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
-        final QName wrapperQName = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName,
-                input.getStep().getLocation(), input.getStep().getNode());
+        final QName wrapperQName = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
+                .getStep().getLocation(), input.getStep().getNode());
 
         final Iterator<XdmNode> srcIterator = sourceDoc.iterator();
         final Iterator<XdmNode> altIterator = alternateDoc.iterator();
@@ -85,7 +87,7 @@ public final class PackStepProcessor extends AbstractStepProcessor
     {
         final Iterable<XdmNode> source = input.readNodes(portName);
         final Iterator<XdmNode> iterator = source.iterator();
-        final ImmutableList.Builder builder = new ImmutableList.Builder();
+        final Builder<XdmNode> builder = ImmutableList.builder();
         while (iterator.hasNext())
         {
             final XdmNode node = iterator.next();
