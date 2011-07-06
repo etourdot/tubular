@@ -475,13 +475,6 @@ public final class Environment
                 xpathContextPort, inheritedVariables, localVariables);
     }
 
-    public Environment newChildStepEnvironment(final Step step)
-    {
-        LOG.trace("{@method} step = {}", step.getName());
-
-        return newChildStepEnvironment().setupStepEnvironment(step);
-    }
-
     private Environment setupStepAlias(final Step step)
     {
         Environment environment = this;
