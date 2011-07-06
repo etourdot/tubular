@@ -160,11 +160,6 @@ public final class Environment
         this.localVariables = ImmutableMap.copyOf(localVariables);
     }
 
-    private Environment setupStepEnvironment(final Step step)
-    {
-        return setupStepEnvironment(step, true);
-    }
-
     private Environment setupStepEnvironment(final Step step, final boolean evaluteVariables)
     {
         LOG.trace("{@method} step = {}", step.getName());
@@ -793,13 +788,6 @@ public final class Environment
         LOG.trace("{@method} port = {}", portReference);
 
         return addPorts(getPort(portReference).writeNodes(nodes));
-    }
-
-    private Environment writeNodes(final EnvironmentPort port, final Iterable<XdmNode> nodes)
-    {
-        LOG.trace("{@method} port = {}", port);
-
-        return addPorts(port.writeNodes(nodes));
     }
 
     public Iterable<XdmNode> readNodes(final PortReference portReference)
