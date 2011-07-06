@@ -703,13 +703,13 @@ public final class Environment
         if (xpathContextPort != null)
         {
             final Iterable<XdmNode> nodes = xpathContextPort.readNodes();
-            if (((List) nodes).size() > 1 && variable.isVariable())
+            if (Iterables.size(nodes) > 1 && variable.isVariable())
             {
                 throw XProcExceptions.xd0008(SaxonLocation.of(variable.getNode()));
             }
-            else if (!((List) nodes).isEmpty())
+            else if (!Iterables.isEmpty(nodes))
             {
-                return nodes.iterator().next();
+                return Iterables.getFirst(nodes, null);
             }
         }
         return Saxon.getEmptyDocument(configuration.getProcessor());
