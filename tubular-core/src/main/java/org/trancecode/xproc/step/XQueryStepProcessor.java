@@ -21,10 +21,13 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+
 import java.util.Iterator;
 import java.util.Map;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.CollectionURIResolver;
 import net.sf.saxon.om.Item;
@@ -96,7 +99,7 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
                 output.writeNodes(XProcPorts.RESULT, (XdmNode) item);
             }
         }
-        catch (SaxonApiException e)
+        catch (final SaxonApiException e)
         {
             e.printStackTrace();
         }
@@ -123,7 +126,7 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
     {
         final Iterable<XdmNode> source = input.readNodes(portName);
         final Iterator<XdmNode> iterator = source.iterator();
-        final ImmutableList.Builder builder = new ImmutableList.Builder();
+        final Builder<XdmNode> builder = ImmutableList.builder();
         while (iterator.hasNext())
         {
             final XdmNode node = iterator.next();
@@ -135,12 +138,12 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
     private final class XQCollectionResolver implements CollectionURIResolver
     {
         private final CollectionURIResolver oldCollResolver;
-        private final ImmutableList.Builder<Item> collectionBuilder;
+        private final Builder<Item> collectionBuilder;
 
         private XQCollectionResolver(final CollectionURIResolver oldCollResolver)
         {
             this.oldCollResolver = oldCollResolver;
-            collectionBuilder = new ImmutableList.Builder<Item>();
+            collectionBuilder = ImmutableList.builder();
         }
 
         public void addToCollection(final Iterable<XdmNode> nodes)
