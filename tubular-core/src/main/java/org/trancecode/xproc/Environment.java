@@ -177,6 +177,7 @@ public final class Environment
         {
             environment = environment.setupVariables(step);
         }
+        environment = environment.setDefaultParametersPort(step);
 
         return environment;
     }
@@ -195,6 +196,10 @@ public final class Environment
             {
                 LOG.trace("  {} is XPath context port", environmentPort);
                 environmentPort = environmentPort.pipe(getXPathContextPort());
+            }
+            if (port.isParameter() && defaultParametersPort != null)
+            {
+                environmentPort = environmentPort.pipe(defaultParametersPort);
             }
             newPorts.put(port.getPortReference(), environmentPort);
         }
@@ -398,7 +403,8 @@ public final class Environment
         else
         {
             assert parametersPort != null : step;
-            resultEnvironment = writeNodes(parametersPort, newParameterNodes);
+            final EnvironmentPort newParametersPort = parametersPort.writeNodes(newParameterNodes, true);
+            resultEnvironment = addPorts(newParametersPort);
         }
 
         return resultEnvironment.setLocalVariables(newLocalVariables);

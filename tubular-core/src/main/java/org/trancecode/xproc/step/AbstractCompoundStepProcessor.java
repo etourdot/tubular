@@ -64,6 +64,8 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
         LOG.trace("steps = {}", steps);
 
         final Environment initialEnvironment = environment.newChildStepEnvironment();
+        final EnvironmentPort parametersPort = environment.getDefaultParametersPort();
+        LOG.trace("  parametersPort = {}", parametersPort);
 
         final Map<Step, Iterable<Step>> stepDependencies = Step.getSubpipelineStepDependencies(steps);
         final Map<Step, Future<Environment>> stepResults = new ConcurrentHashMap<Step, Future<Environment>>();
@@ -93,8 +95,7 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
                                     inputEnvironment = inputEnvironment.addPorts(dependencyResult.getOutputPorts());
                                     inputEnvironment = inputEnvironment.setDefaultReadablePort(dependencyResult
                                             .getDefaultReadablePort());
-                                    inputEnvironment = inputEnvironment.setDefaultParametersPort(dependencyResult
-                                            .getDefaultParametersPort());
+                                    inputEnvironment = inputEnvironment.setDefaultParametersPort(parametersPort);
                                     inputEnvironment = inputEnvironment.setXPathContextPort(dependencyResult
                                             .getXPathContextPort());
                                 }
