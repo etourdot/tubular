@@ -30,6 +30,7 @@ import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathExecutable;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
+import org.trancecode.collection.TcLists;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
@@ -175,7 +176,12 @@ public final class EnvironmentPort implements HasPortReference
 
     public EnvironmentPort writeNodes(final Iterable<XdmNode> nodes)
     {
-        assert portBindings.isEmpty();
+        return writeNodes(nodes, false);
+    }
+
+    public EnvironmentPort writeNodes(final Iterable<XdmNode> nodes, final boolean append)
+    {
+        assert append || portBindings.isEmpty();
 
         final List<XdmNode> nodeList = ImmutableList.copyOf(nodes);
         for (final XdmNode aNode : nodeList)
@@ -190,6 +196,7 @@ public final class EnvironmentPort implements HasPortReference
         {
             public Iterable<XdmNode> readNodes()
             {
+                LOG.trace("{@method} port = {} ; {size} nodes", getDeclaredPort(), nodeList);
                 return nodeList;
             }
 
@@ -200,7 +207,17 @@ public final class EnvironmentPort implements HasPortReference
             }
         };
 
-        return new EnvironmentPort(declaredPort, ImmutableList.of(portBinding), select);
+        final Iterable<EnvironmentPortBinding> newPortBindings;
+        if (append)
+        {
+            newPortBindings = TcLists.immutableList(portBindings, portBinding);
+        }
+        else
+        {
+            newPortBindings = ImmutableList.of(portBinding);
+        }
+
+        return new EnvironmentPort(declaredPort, newPortBindings, select);
     }
 
     public EnvironmentPort pipe(final EnvironmentPort port)
