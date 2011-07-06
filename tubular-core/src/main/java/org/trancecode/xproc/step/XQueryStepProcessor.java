@@ -137,6 +137,8 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
 
     private final class XQCollectionResolver implements CollectionURIResolver
     {
+        private static final long serialVersionUID = -482974065657067566L;
+
         private final CollectionURIResolver oldCollResolver;
         private final Builder<Item> collectionBuilder;
 
