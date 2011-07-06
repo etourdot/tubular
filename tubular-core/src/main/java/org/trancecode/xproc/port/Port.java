@@ -206,21 +206,6 @@ public final class Port extends AbstractHasLocation implements HasPortReference
         return new Port(portReference, location, type, primary, sequence, select, portBindings);
     }
 
-    private String getTag(final Boolean value, final String whenTrue, final String whenFalse)
-    {
-        if (value == null)
-        {
-            return "";
-        }
-
-        if (value)
-        {
-            return whenTrue;
-        }
-
-        return whenFalse;
-    }
-
     @Override
     public String toString()
     {
