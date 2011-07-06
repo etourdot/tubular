@@ -22,6 +22,7 @@ package org.trancecode.xproc.binding;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -29,14 +30,15 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+
 import javax.mail.internet.ContentType;
+
 import net.iharder.Base64;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.trancecode.api.Immutable;
-import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.Environment;
@@ -56,7 +58,7 @@ public class DataPortBinding extends AbstractPortBinding
     private final ContentType contentType;
 
     public DataPortBinding(final String href, final String wrapperName, final String wrapperPrefix,
-                           final String wrapperNamespace, final String contentType, final XdmNode node)
+            final String wrapperNamespace, final String contentType, final XdmNode node)
     {
         super(SaxonLocation.of(node));
         this.href = Preconditions.checkNotNull(href);
@@ -66,8 +68,8 @@ public class DataPortBinding extends AbstractPortBinding
         }
         else
         {
-            this.wrapper = Steps.getNewNamespace(wrapperPrefix, wrapperNamespace, wrapperName,
-                    this.getLocation(), node);
+            this.wrapper = Steps
+                    .getNewNamespace(wrapperPrefix, wrapperNamespace, wrapperName, this.getLocation(), node);
         }
         this.node = node;
         if (Strings.isNullOrEmpty(contentType))
@@ -88,7 +90,7 @@ public class DataPortBinding extends AbstractPortBinding
             public Iterable<XdmNode> readNodes()
             {
                 final SaxonBuilder builder = new SaxonBuilder(environment.getPipelineContext().getProcessor()
-                    .getUnderlyingConfiguration());
+                        .getUnderlyingConfiguration());
                 builder.startDocument();
                 if (wrapper != null)
                 {
@@ -115,8 +117,8 @@ public class DataPortBinding extends AbstractPortBinding
     private void writeContent(final SaxonBuilder builder)
     {
         final URI uri = URI.create(href);
-        if (uri.getScheme()!=null && !StringUtils.equals("file",uri.getScheme()) &&
-            !StringUtils.equals("http",uri.getScheme()))
+        if (uri.getScheme() != null && !StringUtils.equals("file", uri.getScheme())
+                && !StringUtils.equals("http", uri.getScheme()))
         {
             throw XProcExceptions.xd0012(this.getLocation(), uri.toASCIIString());
         }
@@ -131,10 +133,10 @@ public class DataPortBinding extends AbstractPortBinding
             {
                 url = node.getBaseURI().resolve(uri).toURL();
             }
-            final QName contentTypeAtt = (wrapper == null)? XProcXmlModel.Attributes.CONTENT_TYPE :
-                                                            XProcXmlModel.Attributes.C_CONTENT_TYPE;
-            final QName encodingAtt = (wrapper == null)? XProcXmlModel.Attributes.ENCODING :
-                                                            XProcXmlModel.Attributes.C_ENCODING;
+            final QName contentTypeAtt = (wrapper == null) ? XProcXmlModel.Attributes.CONTENT_TYPE
+                    : XProcXmlModel.Attributes.C_CONTENT_TYPE;
+            final QName encodingAtt = (wrapper == null) ? XProcXmlModel.Attributes.ENCODING
+                    : XProcXmlModel.Attributes.C_ENCODING;
             final URLConnection urlConnection = url.openConnection();
             final ContentType guessContentType;
             if (StringUtils.equals("http", url.getProtocol()))
@@ -150,7 +152,7 @@ public class DataPortBinding extends AbstractPortBinding
                 else
                 {
                     guessContentType = Steps.getContentType("application/octet-stream ; encoding="
-                                                            + Steps.ENCODING_BASE64, node);
+                            + Steps.ENCODING_BASE64, node);
                 }
             }
             final Charset charset;
@@ -165,8 +167,8 @@ public class DataPortBinding extends AbstractPortBinding
 
             final InputStream stream = urlConnection.getInputStream();
             builder.attribute(contentTypeAtt, Steps.contentTypeToString(guessContentType));
-            if (StringUtils.equals("text",guessContentType.getPrimaryType()) ||
-                StringUtils.contains(guessContentType.getSubType(), "xml"))
+            if (StringUtils.equals("text", guessContentType.getPrimaryType())
+                    || StringUtils.contains(guessContentType.getSubType(), "xml"))
             {
                 if (guessContentType.getParameter("encoding") != null)
                 {
