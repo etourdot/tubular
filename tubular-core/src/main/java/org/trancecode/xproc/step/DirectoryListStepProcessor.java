@@ -105,6 +105,7 @@ public final class DirectoryListStepProcessor extends AbstractStepProcessor
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         protected boolean handleDirectory(final File directory, final int depth, final Collection results)
                 throws IOException
         {
@@ -112,6 +113,7 @@ public final class DirectoryListStepProcessor extends AbstractStepProcessor
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         protected void handleDirectoryStart(final File directory, final int depth, final Collection results)
                 throws IOException
         {
@@ -120,6 +122,7 @@ public final class DirectoryListStepProcessor extends AbstractStepProcessor
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         protected void handleDirectoryEnd(final File directory, final int depth, final Collection results)
                 throws IOException
         {
@@ -127,6 +130,7 @@ public final class DirectoryListStepProcessor extends AbstractStepProcessor
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         protected void handleFile(final File file, final int depth, final Collection results) throws IOException
         {
             if (gotIt(file))
