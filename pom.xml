@@ -58,7 +58,7 @@
   <properties>
 
     <saxon9.version>9.3.0.4</saxon9.version>
-    <org.trancecode.logging.tc-logging.version>0.1.0</org.trancecode.logging.tc-logging.version>
+    <org.trancecode.logging.tc-logging.version>0.2.0-SNAPSHOT</org.trancecode.logging.tc-logging.version>
 
   </properties>
 
