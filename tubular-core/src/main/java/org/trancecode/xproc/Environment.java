@@ -378,6 +378,10 @@ public final class Environment
             {
                 if (variable.isParameter())
                 {
+                    if (getDefaultParametersPort() == null)
+                    {
+                        throw XProcExceptions.xs0034(variable.getLocation(), step, variable.getName());
+                    }
                     final XdmNode parameterNode = newParameterElement(variable.getName(), value);
                     newParameterNodes.add(parameterNode);
                 }
@@ -642,7 +646,9 @@ public final class Environment
 
     private Environment setDefaultParametersPort(final Step step)
     {
+        LOG.trace("{@method} step = {}", step);
         final Port port = step.getPrimaryParameterPort();
+        LOG.trace("  port = {}", port);
         if (port != null)
         {
             final EnvironmentPort environmentPort = getEnvironmentPort(port);

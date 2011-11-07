@@ -63,10 +63,7 @@ public final class XProcExceptions
 
     public static XProcException xd0005(final Location location)
     {
-        return newXProcException(
-                Type.DYNAMIC, 
-                5,
-                location,
+        return newXProcException(Type.DYNAMIC, 5, location,
                 "It is a dynamic error if more than one document appears on the connection for the xpath-context.");
     }
 
@@ -102,7 +99,10 @@ public final class XProcExceptions
 
     public static XProcException xd0012(final Location location, final String resource)
     {
-        final XProcException exception = newXProcException(Type.DYNAMIC, 12, location,
+        final XProcException exception = newXProcException(
+                Type.DYNAMIC,
+                12,
+                location,
                 "It is a dynamic error if any attempt is made to dereference a URI where the scheme of the URI reference is not supported.",
                 resource);
         return exception;
@@ -119,10 +119,7 @@ public final class XProcExceptions
 
     public static XProcException xd0015(final Location location)
     {
-        return newXProcException(
-                Type.DYNAMIC,
-                15,
-                location,
+        return newXProcException(Type.DYNAMIC, 15, location,
                 "It is a dynamic error if the specified QName cannot be resolved with the in-scope namespace declarations.");
     }
 
@@ -188,6 +185,16 @@ public final class XProcExceptions
     {
         return newXProcException(Type.STATIC, 31, location, "Option %s is not declared on this step type (%s)",
                 optionName, stepType);
+    }
+
+    public static XProcException xs0034(final Location location, final Step step, final QName parameterName)
+    {
+        return newXProcException(
+                Type.STATIC,
+                34,
+                location,
+                "at step '%s', parameter '%s': the specified port is not a parameter input port or no port is specified and the step does not have a primary parameter input port",
+                step, parameterName);
     }
 
     public static XProcException xs0044(final XdmNode element)
@@ -280,10 +287,7 @@ public final class XProcExceptions
 
     public static XProcException xc0017(final Step step)
     {
-        return newXProcException(
-                Type.STEP,
-                17,
-                step.getLocation(),
+        return newXProcException(Type.STEP, 17, step.getLocation(),
                 "It is a dynamic error if the absolute path does not identify a directory.");
     }
 
