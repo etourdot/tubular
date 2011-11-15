@@ -111,12 +111,8 @@ public final class XProcException extends BaseException
     private static String getLabel(final Type type, final int code)
     {
         final StringBuilder buffer = new StringBuilder();
-        buffer.append(code);
-        while (buffer.length() < 4)
-        {
-            buffer.insert(0, "0");
-        }
-        buffer.insert(0, type);
+        buffer.append(type);
+        buffer.append(Integer.toString(10000 + code).substring(1));
 
         return buffer.toString();
     }
