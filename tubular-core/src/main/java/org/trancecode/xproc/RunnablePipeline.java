@@ -36,6 +36,7 @@ import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.UriResolvers;
 import org.trancecode.xml.saxon.SaxonFunctions;
+import org.trancecode.xml.saxon.SaxonQNames;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.binding.PortBindingFunctions;
 import org.trancecode.xproc.step.Step;
@@ -65,10 +66,20 @@ public class RunnablePipeline
         return new PipelineResult(pipeline, resultEnvironment);
     }
 
+    public void withParam(final javax.xml.namespace.QName name, final String value)
+    {
+        withParam(SaxonQNames.asSaxonQName(name), value);
+    }
+
     public void withParam(final QName name, final String value)
     {
         LOG.trace("{@method} name = {} ; value = {}", name, value);
         pipeline = pipeline.withParam(name, null, value, pipeline.getLocation());
+    }
+
+    public void withOption(final javax.xml.namespace.QName name, final String value)
+    {
+        withOption(SaxonQNames.asSaxonQName(name), value);
     }
 
     public void withOption(final QName name, final String value)
