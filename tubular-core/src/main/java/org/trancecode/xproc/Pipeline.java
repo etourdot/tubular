@@ -20,12 +20,13 @@
 package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
 import org.trancecode.xproc.step.Step;
 
 /**
  * @author Herve Quiroz
  */
-public final class Pipeline
+public final class Pipeline implements Supplier<RunnablePipeline>
 {
     private final PipelineContext context;
     private final Step pipeline;
@@ -34,6 +35,12 @@ public final class Pipeline
     {
         this.context = Preconditions.checkNotNull(context);
         this.pipeline = Preconditions.checkNotNull(pipeline);
+    }
+
+    @Override
+    public RunnablePipeline get()
+    {
+        return load();
     }
 
     public RunnablePipeline load()
