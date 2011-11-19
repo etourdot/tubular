@@ -44,7 +44,7 @@ import org.trancecode.xproc.step.Step;
 /**
  * @author Herve Quiroz
  */
-public class RunnablePipeline
+public final class RunnablePipeline
 {
     private static final Logger LOG = Logger.getLogger(RunnablePipeline.class);
 
