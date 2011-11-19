@@ -122,6 +122,11 @@ public final class XProcException extends BaseException
         return getLabel(type, code);
     }
 
+    public Type getType()
+    {
+        return type;
+    }
+
     @Override
     public String getMessage()
     {
