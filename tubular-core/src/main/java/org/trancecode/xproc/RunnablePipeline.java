@@ -22,6 +22,7 @@ package org.trancecode.xproc;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -44,7 +45,7 @@ import org.trancecode.xproc.step.Step;
 /**
  * @author Herve Quiroz
  */
-public final class RunnablePipeline
+public final class RunnablePipeline implements Supplier<PipelineResult>
 {
     private static final Logger LOG = Logger.getLogger(RunnablePipeline.class);
 
@@ -56,6 +57,12 @@ public final class RunnablePipeline
         Preconditions.checkNotNull(pipeline);
         this.context = ImmutablePipelineContext.copyOf(pipeline.getPipelineContext()).withNewEpisode();
         this.pipeline = pipeline.getUnderlyingPipeline();
+    }
+
+    @Override
+    public PipelineResult get()
+    {
+        return run();
     }
 
     public PipelineResult run()
