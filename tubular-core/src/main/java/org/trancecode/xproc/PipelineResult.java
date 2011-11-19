@@ -57,6 +57,11 @@ public final class PipelineResult
         return pipeline;
     }
 
+    public XdmNode readNode(final String portName)
+    {
+        return Iterables.getOnlyElement(readNodes(portName));
+    }
+
     public Iterable<XdmNode> readNodes(final String portName)
     {
         Preconditions.checkNotNull(portName);
