@@ -17,6 +17,8 @@
  */
 package org.trancecode.xproc;
 
+import com.google.common.base.Function;
+
 import javax.xml.transform.Source;
 
 import org.trancecode.collection.TcMaps;
@@ -25,7 +27,7 @@ import org.trancecode.xproc.step.Step;
 /**
  * @author Herve Quiroz
  */
-public final class PipelineProcessor
+public final class PipelineProcessor implements Function<Source, Pipeline>
 {
     private final PipelineContext context;
 
@@ -61,5 +63,11 @@ public final class PipelineProcessor
         final PipelineContext contextWithNewLibrary = new ImmutablePipelineContext(TcMaps.copyAndPut(
                 context.getProperties(), AbstractPipelineContext.PROPERTY_PIPELINE_LIBRARY, library));
         return new Pipeline(contextWithNewLibrary, pipelineStep);
+    }
+
+    @Override
+    public Pipeline apply(final Source source)
+    {
+        return buildPipeline(source);
     }
 }
