@@ -27,14 +27,17 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -137,6 +140,7 @@ public final class PipelineParser
             documentBuilder.setLineNumbering(true);
             final XdmNode pipelineDocument = documentBuilder.build(source);
             rootNode = SaxonAxis.childElement(pipelineDocument, Elements.ELEMENTS_ROOT);
+            Preconditions.checkState(rootNode != null);
 
             parseImports(rootNode);
             parseDeclareSteps();
