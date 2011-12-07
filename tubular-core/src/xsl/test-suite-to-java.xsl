@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 /**
  * @author Herve Quiroz
  */
-public class XProcTestSuiteTest extends AbstractXProcTest
+public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
 {</xsl:text>
 
     <xsl:for-each select="('required', 'optional')">
