@@ -17,19 +17,14 @@
  */
 package org.trancecode.xproc;
 
-import com.google.common.io.Files;
-
-import java.io.File;
 import java.net.URL;
 
 import org.testng.annotations.Test;
-import org.trancecode.io.Paths;
-import org.trancecode.io.Urls;
 
 /**
  * @author Herve Quiroz
  */
-public class XProcTestSuiteTest extends AbstractXProcTest
+public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
 {
     @Test
     public void required_add_attribute_001() throws Exception
@@ -355,42 +350,16 @@ public class XProcTestSuiteTest extends AbstractXProcTest
         test(new URL("http://tests.xproc.org/tests/required/delete-004.xml"), "required");
     }
 
-    private File setupDirectoryListFiles() throws Exception
-    {
-        final File directory = File.createTempFile(getClass().getSimpleName(), "");
-        directory.delete();
-        directory.mkdir();
-        final File directoryListTest = new File(directory, "directory-list-test");
-        directoryListTest.mkdir();
-        new File(directoryListTest, "afile").createNewFile();
-        new File(directoryListTest, "bfile").createNewFile();
-        final File adir = new File(directoryListTest, "adir");
-        adir.mkdir();
-        new File(adir, "cfile").createNewFile();
-        final File bdir = new File(directoryListTest, "bdir");
-        bdir.mkdir();
-        bdir.setReadable(false);
-        return directory;
-    }
-
-    private void testDirectoryList(final URL url, final String testSuite) throws Exception
-    {
-        final File directory = setupDirectoryListFiles();
-        final File pipeline = new File(directory, Paths.getName(url.getPath()));
-        Files.copy(Urls.asInputSupplier(url), pipeline);
-        test(pipeline.toURI().toURL(), "required");
-    }
-
     @Test
     public void required_directory_list_001() throws Exception
     {
-        testDirectoryList(new URL("http://tests.xproc.org/tests/required/directory-list-001.xml"), "required");
+        test(new URL("http://tests.xproc.org/tests/required/directory-list-001.xml"), "required");
     }
 
     @Test
     public void required_directory_list_002() throws Exception
     {
-        testDirectoryList(new URL("http://tests.xproc.org/tests/required/directory-list-002.xml"), "required");
+        test(new URL("http://tests.xproc.org/tests/required/directory-list-002.xml"), "required");
     }
 
     @Test
@@ -456,7 +425,7 @@ public class XProcTestSuiteTest extends AbstractXProcTest
     @Test
     public void required_err_c0012_001() throws Exception
     {
-        testDirectoryList(new URL("http://tests.xproc.org/tests/required/err-c0012-001.xml"), "required");
+        test(new URL("http://tests.xproc.org/tests/required/err-c0012-001.xml"), "required");
     }
 
     @Test
@@ -480,7 +449,7 @@ public class XProcTestSuiteTest extends AbstractXProcTest
     @Test
     public void required_err_c0017_001() throws Exception
     {
-        testDirectoryList(new URL("http://tests.xproc.org/tests/required/err-c0017-001.xml"), "required");
+        test(new URL("http://tests.xproc.org/tests/required/err-c0017-001.xml"), "required");
     }
 
     @Test
