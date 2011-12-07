@@ -165,6 +165,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
+    public void required_choose_008() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/choose-008.xml"), "required");
+    }
+
+    @Test
     public void required_compare_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/compare-001.xml"), "required");
@@ -210,6 +216,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_count_003() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/count-003.xml"), "required");
+    }
+
+    @Test
+    public void required_count_004() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/count-004.xml"), "required");
     }
 
     @Test
@@ -351,6 +363,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
+    public void required_delete_005() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/delete-005.xml"), "required");
+    }
+
+    @Test
     public void required_directory_list_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/directory-list-001.xml"), "required");
@@ -366,6 +384,18 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_document_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/document-001.xml"), "required");
+    }
+
+    @Test
+    public void required_ebv_001() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/ebv-001.xml"), "required");
+    }
+
+    @Test
+    public void required_ebv_002() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/ebv-002.xml"), "required");
     }
 
     @Test
@@ -735,6 +765,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
+    public void required_err_d0007_004() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/err-d0007-004.xml"), "required");
+    }
+
+    @Test
     public void required_err_d0008_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/err-d0008-001.xml"), "required");
@@ -930,6 +966,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_err_d0023_008() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/err-d0023-008.xml"), "required");
+    }
+
+    @Test
+    public void required_err_d0023_009() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/err-d0023-009.xml"), "required");
     }
 
     @Test
@@ -1272,12 +1314,6 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_err_s0004_004() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/err-s0004-004.xml"), "required");
-    }
-
-    @Test
-    public void required_err_s0004_005() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/required/err-s0004-005.xml"), "required");
     }
 
     @Test
@@ -2073,6 +2109,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
+    public void required_for_each_012() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/for-each-012.xml"), "required");
+    }
+
+    @Test
     public void required_group_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/group-001.xml"), "required");
@@ -2082,6 +2124,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_group_002() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/group-002.xml"), "required");
+    }
+
+    @Test
+    public void required_group_003() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/group-003.xml"), "required");
     }
 
     @Test
@@ -2256,6 +2304,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_import_010() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/import-010.xml"), "required");
+    }
+
+    @Test
+    public void required_import_011() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/import-011.xml"), "required");
     }
 
     @Test
@@ -2454,6 +2508,18 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_labelelements_009() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/labelelements-009.xml"), "required");
+    }
+
+    @Test
+    public void required_labelelements_010() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/labelelements-010.xml"), "required");
+    }
+
+    @Test
+    public void required_labelelements_011() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/labelelements-011.xml"), "required");
     }
 
     @Test
@@ -2685,6 +2751,30 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
+    public void required_namespaces_007() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/namespaces-007.xml"), "required");
+    }
+
+    @Test
+    public void required_namespaces_008() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/namespaces-008.xml"), "required");
+    }
+
+    @Test
+    public void required_namespaces_009() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/namespaces-009.xml"), "required");
+    }
+
+    @Test
+    public void required_namespaces_010() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/namespaces-010.xml"), "required");
+    }
+
+    @Test
     public void required_nested_pipeline_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/nested-pipeline-001.xml"), "required");
@@ -2778,6 +2868,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void required_param_004() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/param-004.xml"), "required");
+    }
+
+    @Test
+    public void required_param_005() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/param-005.xml"), "required");
     }
 
     @Test
@@ -3219,6 +3315,12 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
+    public void required_variable_007() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/required/variable-007.xml"), "required");
+    }
+
+    @Test
     public void required_version_available_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/required/version-available-001.xml"), "required");
@@ -3525,96 +3627,6 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     }
 
     @Test
-    public void optional_document_template_001() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-001.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_002() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-002.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_003() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-003.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_004() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-004.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_005() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-005.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_006() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-006.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_007() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-007.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_008() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-008.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_009() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-009.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_010() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-010.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_011() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-011.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_012() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-012.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_013() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-013.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_014() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-014.xml"), "optional");
-    }
-
-    @Test
-    public void optional_document_template_015() throws Exception
-    {
-        test(new URL("http://tests.xproc.org/tests/optional/document-template-015.xml"), "optional");
-    }
-
-    @Test
     public void optional_err_c0033_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/optional/err-c0033-001.xml"), "optional");
@@ -3918,6 +3930,114 @@ public class XProcTestSuiteTest extends AbstractXProcTestSuiteTest
     public void optional_psvi_required_001() throws Exception
     {
         test(new URL("http://tests.xproc.org/tests/optional/psvi-required-001.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_001() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-001.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_002() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-002.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_003() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-003.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_004() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-004.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_005() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-005.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_006() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-006.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_007() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-007.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_008() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-008.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_009() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-009.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_010() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-010.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_011() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-011.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_012() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-012.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_013() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-013.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_014() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-014.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_015() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-015.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_016() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-016.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_017() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-017.xml"), "optional");
+    }
+
+    @Test
+    public void optional_template_018() throws Exception
+    {
+        test(new URL("http://tests.xproc.org/tests/optional/template-018.xml"), "optional");
     }
 
     @Test
