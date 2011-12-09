@@ -17,6 +17,7 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -75,7 +76,20 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         }
 
         final String argSeparator = input.getOptionValue(XProcOptions.ARG_SEPARATOR, " ");
-        final Iterable<String> args = TcStrings.split(input.getOptionValue(XProcOptions.ARGS), argSeparator);
+        final Iterable<String> rawArgs = TcStrings.split(input.getOptionValue(XProcOptions.ARGS), argSeparator);
+        final Iterable<String> args = Iterables.transform(rawArgs, new Function<String, String>()
+        {
+            @Override
+            public String apply(final String arg)
+            {
+                if (pathSeparator != null)
+                {
+                    return arg.replace(pathSeparator, File.separator);
+                }
+
+                return arg;
+            }
+        });
         final String cwd = input.getOptionValue(XProcOptions.CWD);
 
         final List<XdmNode> inputDocuments = ImmutableList.copyOf(input.readNodes(XProcPorts.SOURCE));
@@ -97,7 +111,7 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final List<String> commandLine = Lists.newArrayList();
         commandLine.add(command);
         Iterables.addAll(commandLine, Iterables.filter(args, StringPredicates.isNotEmpty()));
-        LOG.trace("commandLine = {}", commandLine);
+        LOG.trace("  commandLine = {}", commandLine);
         final ProcessBuilder processBuilder = new ProcessBuilder(commandLine.toArray(new String[0]));
         processBuilder.redirectErrorStream(false);
         if (cwd != null)
