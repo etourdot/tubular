@@ -136,9 +136,9 @@ public abstract class AbstractXProcTest extends AbstractTest
 
     private void test(final XProcTestCase test, final PipelineProcessor pipelineProcessor)
     {
-        log.info("== parse pipeline {} ==", test.url());
+        log.info(">>>> parse pipeline: {}", test.url());
         final Pipeline pipeline = pipelineProcessor.buildPipeline(test.getPipeline().asSource());
-        log.info("== pipeline parsed ==");
+        log.info("<<<< parse pipeline");
         final RunnablePipeline runnablePipeline = pipeline.load();
 
         // Set inputs
@@ -172,16 +172,16 @@ public abstract class AbstractXProcTest extends AbstractTest
             }
         }
 
-        log.info("== run pipeline ==");
+        log.info(">>>> run pipeline");
         final PipelineResult result = runnablePipeline.run();
-        log.info("== pipeline run ==");
+        log.info("<<<< run pipeline");
 
         PipelineResult compareResult = null;
         if (test.getComparePipeline() != null)
         {
-            log.info("== parse compare pipeline ==");
+            log.info(">>>> parse compare pipeline");
             final Pipeline comparePipeline = pipelineProcessor.buildPipeline(test.getComparePipeline().asSource());
-            log.info("== compare pipeline parsed ==");
+            log.info("<<<< parse compare pipeline");
             final RunnablePipeline compareRunnablePipeline = comparePipeline.load();
             for (final String port : test.getOutputs().keySet())
             {
