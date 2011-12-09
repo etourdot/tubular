@@ -95,6 +95,36 @@
 
   <!-- ===================================================================== -->
 
+  <pluginRepositories>
+
+    <pluginRepository>
+      <id>releases.trancecode.org</id>
+      <name>TranceCode repository for release artifacts</name>
+      <url>http://maven.trancecode.org/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>snapshots.trancecode.org</id>
+      <name>TranceCode repository for snapshot artifacts</name>
+      <url>http://maven.trancecode.org/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+
+  </pluginRepositories>
+
+  <!-- ===================================================================== -->
+
   <distributionManagement>
 
     <repository>
