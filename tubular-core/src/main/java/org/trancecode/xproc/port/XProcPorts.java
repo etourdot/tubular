@@ -28,12 +28,13 @@ public final class XProcPorts
 {
     public static final String ALTERNATE = "alternate";
     public static final String CURRENT = "current";
+    public static final String ERROR = "error";
     public static final String ERRORS = "errors";
     public static final String EXIT_STATUS = "exit-status";
     public static final String ITERATION_SOURCE = "iteration-source";
     public static final String PARAMETERS = "parameters";
     public static final String MATCHED = "matched";
-    public static final String NOT_MATCHED = "not-matched";    
+    public static final String NOT_MATCHED = "not-matched";
     public static final String QUERY = "query";
     public static final String REPLACEMENT = "replacement";
     public static final String RESULT = "result";
