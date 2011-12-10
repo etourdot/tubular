@@ -25,11 +25,9 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmAtomicValue;
-import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.EnvironmentPort;
@@ -124,32 +122,7 @@ public final class ChooseStepProcessor extends AbstractCompoundStepProcessor imp
             LOG.trace("test = {}", test);
             final XdmValue result = resultEnvironment.evaluateXPath(test);
             LOG.trace("result = {}", result);
-
-            if (result.size() == 0)
-            {
-                return false;
-            }
-
-            if (result.size() > 1)
-            {
-                return true;
-            }
-
-            final XdmItem resultNode = result.iterator().next();
-            if (resultNode.isAtomicValue())
-            {
-                try
-                {
-                    return ((XdmAtomicValue) resultNode).getBooleanValue();
-                }
-                catch (final SaxonApiException e)
-                {
-                    // TODO error handling
-                    throw new IllegalStateException(e);
-                }
-            }
-
-            return true;
+            return Saxon.isTrue(result);
         }
     }
 
