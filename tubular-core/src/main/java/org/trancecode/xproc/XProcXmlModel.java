@@ -47,13 +47,15 @@ public final class XProcXmlModel
     public static final class Elements
     {
         public static final QName CHOOSE = xprocNamespace().newSaxonQName("choose");
-        public static final QName C_DATA = xprocStepNamespace().newSaxonQName("data");                
-        public static final QName DATA = xprocNamespace().newSaxonQName("data");        
+        public static final QName C_DATA = xprocStepNamespace().newSaxonQName("data");
+        public static final QName DATA = xprocNamespace().newSaxonQName("data");
         public static final QName DECLARE_STEP = xprocNamespace().newSaxonQName("declare-step");
         public static final QName DIRECTORY = xprocStepNamespace().newSaxonQName("directory");
         public static final QName DOCUMENT = xprocNamespace().newSaxonQName("document");
         public static final QName DOCUMENTATION = xprocNamespace().newSaxonQName("documentation");
         public static final QName EMPTY = xprocNamespace().newSaxonQName("empty");
+        public static final QName ERROR = xprocStepNamespace().newSaxonQName("error");
+        public static final QName ERRORS = xprocStepNamespace().newSaxonQName("errors");
         public static final QName FILE = xprocStepNamespace().newSaxonQName("file");
         public static final QName FOR_EACH = xprocNamespace().newSaxonQName("for-each");
         public static final QName IMPORT = xprocNamespace().newSaxonQName("import");
