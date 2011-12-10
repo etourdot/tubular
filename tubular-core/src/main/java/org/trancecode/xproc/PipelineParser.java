@@ -41,8 +41,12 @@ import javax.xml.transform.TransformerException;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
+import net.sf.saxon.s9api.XdmValue;
+import org.trancecode.collection.TcIterables;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
@@ -265,6 +269,27 @@ public final class PipelineParser
         {
             LOG.trace("{@method} element = {} ; step = {}", node.getNodeName(), step);
 
+            final String useWhen = TcIterables.getFirstNonNull(node.getAttributeValue(Attributes.USE_WHEN),
+                    node.getAttributeValue(Attributes.P_USE_WHEN));
+            if (useWhen != null)
+            {
+                LOG.trace("  use-when = {}", useWhen);
+                try
+                {
+                    final XPathCompiler xpathCompiler = context.getProcessor().newXPathCompiler();
+                    final XPathSelector selector = xpathCompiler.compile(useWhen).load();
+                    final XdmValue result = selector.evaluate();
+                    if (!Saxon.isTrue(result))
+                    {
+                        return step;
+                    }
+                }
+                catch (final SaxonApiException e)
+                {
+                    throw new PipelineException(e, "error while evaluating XPath query: %s" + useWhen);
+                }
+            }
+
             if (node.getNodeName().equals(Elements.IMPORT))
             {
                 parseImport(node);
@@ -351,6 +376,7 @@ public final class PipelineParser
             if (name.getNamespaceURI().isEmpty()
                     && !name.equals(Attributes.NAME)
                     && !name.equals(Attributes.TYPE)
+                    && !name.equals(Attributes.USE_WHEN)
                     && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType()) || XProcSteps.HASH
                             .equals(step.getType())))
             {
