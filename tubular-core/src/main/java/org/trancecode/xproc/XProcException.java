@@ -20,14 +20,13 @@
 package org.trancecode.xproc;
 
 import net.sf.saxon.s9api.QName;
-import org.trancecode.base.BaseException;
 import org.trancecode.xml.Location;
 import org.trancecode.xml.Namespace;
 
 /**
  * @author Herve Quiroz
  */
-public final class XProcException extends BaseException
+public final class XProcException extends PipelineException
 {
     private static final long serialVersionUID = 4809656109440340746L;
 
@@ -103,6 +102,7 @@ public final class XProcException extends BaseException
         return code;
     }
 
+    @Override
     public Location getLocation()
     {
         return location;
