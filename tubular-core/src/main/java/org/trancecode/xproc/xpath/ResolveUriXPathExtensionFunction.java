@@ -18,6 +18,7 @@
 package org.trancecode.xproc.xpath;
 
 import java.net.URISyntaxException;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.ExtensionFunctionCall;
@@ -101,10 +102,10 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                             LOG.trace("resolvedUri = {}", resolvedUri);
                             return SingletonIterator.makeIterator(new AnyURIValue(resolvedUri));
                         }
-                        catch (URISyntaxException e)
+                        catch (final URISyntaxException e)
                         {
+                            return null;
                         }
-                        return null;
                     }
                 };
             }
