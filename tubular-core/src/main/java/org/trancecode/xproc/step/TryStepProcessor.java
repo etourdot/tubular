@@ -19,12 +19,18 @@
  */
 package org.trancecode.xproc.step;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
+import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XProcException;
+import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.XProcXmlModel;
+import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * @author Herve Quiroz
@@ -58,13 +64,39 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor implem
             final Environment resultEnvironment = groupStep.run(environment);
             return buildResultEnvironment(groupStep, resultEnvironment);
         }
-        catch (final XProcException e)
+        catch (final PipelineException e)
         {
             final Step catchStep = step.getSubpipeline().get(1);
             assert catchStep.getType().equals(XProcSteps.CATCH);
-            final Environment resultEnvironment = catchStep.run(environment);
+            final XdmNode errorDocument = newErrorDocument(environment, e.getMessage());
+            final Port errorPortdeclaration = Port
+                    .newInputPort(catchStep.getName(), XProcPorts.ERROR, step.getLocation()).setPrimary(false)
+                    .setSequence(false).setPortBindings(new InlinePortBinding(errorDocument, catchStep.getLocation()));
+            final EnvironmentPort errorPort = EnvironmentPort.newEnvironmentPort(errorPortdeclaration, environment);
+            final Environment catchEnvironment = environment.addPorts(errorPort);
+            final Environment resultEnvironment = catchStep.run(catchEnvironment);
             return buildResultEnvironment(catchStep, resultEnvironment);
         }
+    }
+
+    private static XdmNode newErrorDocument(final Environment environment, final Object... errors)
+    {
+        final Processor processor = environment.getPipelineContext().getProcessor();
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
+        builder.startDocument();
+        builder.startElement(XProcXmlModel.Elements.ERRORS);
+
+        for (final Object error : errors)
+        {
+            builder.startElement(XProcXmlModel.Elements.ERRORS);
+            builder.text(error.toString());
+            builder.endElement();
+        }
+
+        builder.endElement();
+        builder.endDocument();
+
+        return builder.getNode();
     }
 
     private Environment buildResultEnvironment(final Step step, final Environment environment)
