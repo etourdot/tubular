@@ -138,6 +138,8 @@ public final class XProcXmlModel
         public static final QName STATUS_ONLY = new QName("status-only");
         public static final QName STATUS = new QName("status");
         public static final QName BOUNDARY = new QName("boundary");
+        public static final QName USE_WHEN = new QName("use-when");
+        public static final QName P_USE_WHEN = xprocNamespace().newSaxonQName("use-when");
         public static final QName USERNAME = new QName("username");
         public static final QName PASSWORD = new QName("password");
         public static final QName AUTH_METHOD = new QName("auth-method");
