@@ -30,10 +30,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.Result;
+import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
 
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.lib.OutputURIResolver;
+import net.sf.saxon.s9api.MessageListener;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -179,12 +181,33 @@ public final class XsltStepProcessor extends AbstractStepProcessor
             transformer.setParameter(parameter.getKey(), new XdmAtomicValue(parameter.getValue()));
         }
 
+        final StringBuilder terminateMessage = new StringBuilder();
+        transformer.setMessageListener(new MessageListener()
+        {
+            @Override
+            public void message(final XdmNode content, final boolean terminate, final SourceLocator locator)
+            {
+                if (terminate)
+                {
+                    LOG.trace("terminateMessage = {}", content);
+                    terminateMessage.append(content.toString());
+                }
+
+                System.err.println(content);
+            }
+        });
+
         try
         {
             transformer.transform();
         }
         catch (final SaxonApiException e)
         {
+            if (terminateMessage.length() > 0)
+            {
+                throw new PipelineException(terminateMessage.toString());
+            }
+
             // TODO XProcException?
             throw new PipelineException(e);
         }
