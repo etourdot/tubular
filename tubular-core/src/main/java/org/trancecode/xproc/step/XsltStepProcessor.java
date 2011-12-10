@@ -193,6 +193,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
                     terminateMessage.append(content.toString());
                 }
 
+                // TODO use a message log
                 System.err.println(content);
             }
         });
