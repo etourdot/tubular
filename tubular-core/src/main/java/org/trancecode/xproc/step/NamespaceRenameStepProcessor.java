@@ -20,11 +20,12 @@
 package org.trancecode.xproc.step;
 
 import java.util.EnumSet;
+
 import javax.xml.XMLConstants;
+
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.lang.StringUtils;
-import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.CopyingSaxonProcessorDelegate;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonLocation;
@@ -36,9 +37,10 @@ import org.trancecode.xproc.variable.XProcOptions;
 
 /**
  * {@code p:namespace-rename}.
- *
+ * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.namespace-rename">p:namespace-rename</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.namespace-rename">p:namespace-rename</a>
  */
 public class NamespaceRenameStepProcessor extends AbstractStepProcessor
 {
@@ -59,10 +61,10 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
         final String from = input.getOptionValue(XProcOptions.FROM);
         final String to = input.getOptionValue(XProcOptions.TO);
         final String apply_to = input.getOptionValue(XProcOptions.APPLY_TO, APPLY_TO_ALL);
-        if (StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, from) ||
-                StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, to) ||
-            StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, from) ||
-                StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, to))
+        if (StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, from)
+                || StringUtils.equalsIgnoreCase(XMLConstants.XML_NS_URI, to)
+                || StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, from)
+                || StringUtils.equalsIgnoreCase(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, to))
         {
             throw XProcExceptions.xc0014(sourceDocument);
         }
@@ -88,7 +90,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         }
                         else if (StringUtils.isNotBlank(from))
                         {
-                            newNodeTo = node.getNodeName();                            
+                            newNodeTo = node.getNodeName();
                         }
                         else
                         {
@@ -125,8 +127,8 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                             newNodeTo = Steps.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
                                     .getLocalName(), SaxonLocation.of(node), node);
                         }
-                        else if (StringUtils.isNotBlank(from) ||
-                                 StringUtils.isNotBlank(node.getNodeName().getNamespaceURI()))
+                        else if (StringUtils.isNotBlank(from)
+                                || StringUtils.isNotBlank(node.getNodeName().getNamespaceURI()))
                         {
                             newNodeTo = node.getNodeName();
                         }
