@@ -78,7 +78,7 @@ public class PipelineException extends BaseException
     public PipelineException(final Throwable cause, final String message, final Object... args)
     {
         super(buildVerboseMessage(message, cause, args), cause);
-
+        initCause(cause);
         location = null;
     }
 
@@ -106,5 +106,15 @@ public class PipelineException extends BaseException
     public Location getLocation()
     {
         return location;
+    }
+
+    public PipelineException getOriginalPipelineException()
+    {
+        if (getCause() instanceof PipelineException)
+        {
+            return ((PipelineException) getCause()).getOriginalPipelineException();
+        }
+
+        return this;
     }
 }
