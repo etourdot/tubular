@@ -37,6 +37,7 @@ import org.trancecode.xml.HasLocation;
 import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
+import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.XProcException;
 import org.trancecode.xproc.event.AfterExecuteStepEvent;
 import org.trancecode.xproc.event.BeforeExecuteStepEvent;
@@ -87,7 +88,7 @@ public abstract class AbstractStepProcessor implements StepProcessor
         }
         catch (final Exception e)
         {
-            throw new IllegalStateException(String.format("Error while executing step %s", step.getName()), e);
+            throw new PipelineException(e, "Error while executing step %s", step.getName());
         }
     }
 
