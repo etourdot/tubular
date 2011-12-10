@@ -95,11 +95,12 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                         {
                             base = arguments[1].next().getStringValue();
                         }
+                        LOG.trace("{@method} href = {} ; base = {}", href, base);
                         final String resolvedUri;
                         try
                         {
                             resolvedUri = ResolveURI.makeAbsolute(relative, base).toASCIIString();
-                            LOG.trace("resolvedUri = {}", resolvedUri);
+                            LOG.trace("  resolvedUri = {}", resolvedUri);
                             return SingletonIterator.makeIterator(new AnyURIValue(resolvedUri));
                         }
                         catch (final URISyntaxException e)
