@@ -68,7 +68,7 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor implem
         {
             final Step catchStep = step.getSubpipeline().get(1);
             assert catchStep.getType().equals(XProcSteps.CATCH);
-            final XdmNode errorDocument = newErrorDocument(environment, e.getMessage());
+            final XdmNode errorDocument = newErrorDocument(environment, e.getOriginalPipelineException().getMessage());
             final Port errorPortdeclaration = Port
                     .newInputPort(catchStep.getName(), XProcPorts.ERROR, step.getLocation()).setPrimary(false)
                     .setSequence(false).setPortBindings(new InlinePortBinding(errorDocument, catchStep.getLocation()));
@@ -88,7 +88,7 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor implem
 
         for (final Object error : errors)
         {
-            builder.startElement(XProcXmlModel.Elements.ERRORS);
+            builder.startElement(XProcXmlModel.Elements.ERROR);
             builder.text(error.toString());
             builder.endElement();
         }
