@@ -40,7 +40,8 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
     public ExtensionFunctionDefinition getExtensionFunctionDefinition()
     {
         return new ExtensionFunctionDefinition()
-        {private static final long serialVersionUID = 6144192979555615389L;
+        {
+            private static final long serialVersionUID = 6144192979555615389L;
 
             @Override
             public StructuredQName getFunctionQName()
@@ -76,7 +77,8 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
             public ExtensionFunctionCall makeCallExpression()
             {
                 return new ExtensionFunctionCall()
-                {private static final long serialVersionUID = 4367717306903282740L;
+                {
+                    private static final long serialVersionUID = 4367717306903282740L;
 
                     @Override
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)

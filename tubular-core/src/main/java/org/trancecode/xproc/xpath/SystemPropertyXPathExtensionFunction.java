@@ -134,7 +134,8 @@ public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExt
                             {
                                 if ("FONS0004".equals(((XPathException) e.getCause()).getErrorCodeLocalPart()))
                                 {
-                                    throw XProcExceptions.xd0015(Environment.getCurrentEnvironment().getPipeline().getLocation());
+                                    throw XProcExceptions.xd0015(Environment.getCurrentEnvironment().getPipeline()
+                                            .getLocation());
                                 }
                             }
                             else

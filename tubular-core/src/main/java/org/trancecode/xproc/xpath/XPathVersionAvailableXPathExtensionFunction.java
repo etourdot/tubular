@@ -84,7 +84,8 @@ public final class XPathVersionAvailableXPathExtensionFunction extends AbstractX
                     {
                         final double version = ((DoubleValue) arguments[0].next()).getDoubleValue();
                         LOG.trace("version = {}", version);
-                        return SingletonIterator.makeIterator((version == 1.0 || version == 2.0) ? BooleanValue.TRUE : BooleanValue.FALSE);
+                        return SingletonIterator.makeIterator((version == 1.0 || version == 2.0) ? BooleanValue.TRUE
+                                : BooleanValue.FALSE);
                     }
                 };
             }
