@@ -70,7 +70,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
         Steps.getUri(namespaceOption);
         final String contentTypeOption = input.getOptionValue(XProcOptions.CONTENT_TYPE, MediaTypes.MEDIA_XML);
         final String encodingOption = input.getOptionValue(XProcOptions.ENCODING, null);
-        if (encodingOption!=null && !Steps.ENCODING_BASE64.equals(encodingOption))
+        if (encodingOption != null && !Steps.ENCODING_BASE64.equals(encodingOption))
         {
             throw XProcExceptions.xc0052(SaxonLocation.of(sourceDocument));
         }

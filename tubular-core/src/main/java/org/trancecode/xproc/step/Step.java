@@ -667,8 +667,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
         {
             for (final PortBinding portBinding : inputPort.getPortBindings())
             {
-                if (portBinding instanceof DocumentPortBinding ||
-                    portBinding instanceof DataPortBinding)
+                if (portBinding instanceof DocumentPortBinding || portBinding instanceof DataPortBinding)
                 {
                     return true;
                 }

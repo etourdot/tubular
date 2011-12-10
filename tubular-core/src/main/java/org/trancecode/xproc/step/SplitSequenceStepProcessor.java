@@ -49,7 +49,8 @@ import org.trancecode.xproc.variable.XProcOptions;
  * {@code p:split-sequence}.
  * 
  * @author Emmanuel Tourdot
- * @see <a href="http://www.w3.org/TR/xproc/#c.split-sequence">p:split-sequence</a>
+ * @see <a
+ *      href="http://www.w3.org/TR/xproc/#c.split-sequence">p:split-sequence</a>
  */
 @ExternalResources(read = false, write = false)
 public final class SplitSequenceStepProcessor extends AbstractStepProcessor
@@ -123,7 +124,7 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
                 {
                     output.writeNodes(XProcPorts.MATCHED, new XdmNode(doc));
                 }
-                else 
+                else
                 {
                     output.writeNodes(XProcPorts.NOT_MATCHED, new XdmNode(doc));
                 }

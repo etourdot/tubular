@@ -100,8 +100,8 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         final RequestParser parser = new RequestParser(serializationOptions);
         final XProcHttpRequest xProcRequest = parser.parseRequest(request);
         final URI uri = xProcRequest.getHttpRequest().getURI();
-        if (uri.getScheme()!=null && !StringUtils.equals("file",uri.getScheme()) &&
-            !StringUtils.equals("http",uri.getScheme()))
+        if (uri.getScheme() != null && !StringUtils.equals("file", uri.getScheme())
+                && !StringUtils.equals("http", uri.getScheme()))
         {
             throw XProcExceptions.xd0012(input.getLocation(), uri.toASCIIString());
         }

@@ -54,7 +54,7 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
     private final String overrideContentType;
 
     public HttpResponseHandler(final Processor processor, final boolean detailed, final boolean statusOnly,
-                               @Nullable final String overrideContentType)
+            @Nullable final String overrideContentType)
     {
         this.processor = processor;
         this.detailed = detailed;
@@ -155,16 +155,18 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         {
             throw XProcExceptions.xc0030();
         }
-        if (StringUtils.equalsIgnoreCase(overrideMimeType.toString(),contentMimeType.toString()))
+        if (StringUtils.equalsIgnoreCase(overrideMimeType.toString(), contentMimeType.toString()))
         {
             return contentMimeType;
         }
-        if (("multipart".equals(contentMimeType.getPrimaryType()) && !"multipart".equals(overrideMimeType.getPrimaryType())) ||
-            ("multipart".equals(overrideMimeType.getPrimaryType()) && !"multipart".equals(contentMimeType.getPrimaryType())) ||
-            (contentMimeType.getSubType().contains("xml") || "text".equals(contentMimeType.getPrimaryType()) &&
-                "image".equals(overrideMimeType.getPrimaryType())) ||
-            ("image".equals(contentMimeType.getPrimaryType()) && (overrideMimeType.getSubType().contains("xml") ||
-                "text".equals(overrideMimeType.getPrimaryType()))))
+        if (("multipart".equals(contentMimeType.getPrimaryType()) && !"multipart".equals(overrideMimeType
+                .getPrimaryType()))
+                || ("multipart".equals(overrideMimeType.getPrimaryType()) && !"multipart".equals(contentMimeType
+                        .getPrimaryType()))
+                || (contentMimeType.getSubType().contains("xml") || "text".equals(contentMimeType.getPrimaryType())
+                        && "image".equals(overrideMimeType.getPrimaryType()))
+                || ("image".equals(contentMimeType.getPrimaryType()) && (overrideMimeType.getSubType().contains("xml") || "text"
+                        .equals(overrideMimeType.getPrimaryType()))))
         {
             throw XProcExceptions.xc0030();
         }
@@ -209,7 +211,8 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
             {
                 builder.attribute(XProcXmlModel.Attributes.ENCODING, Steps.ENCODING_BASE64);
                 builder.startContent();
-                final String b64 = Base64.encodeBytes(IOUtils.toByteArray(part.getEntity().getContent()), Base64.DO_BREAK_LINES);
+                final String b64 = Base64.encodeBytes(IOUtils.toByteArray(part.getEntity().getContent()),
+                        Base64.DO_BREAK_LINES);
                 final Iterable<String> splitter = Splitter.on("\r\n").split(b64);
                 for (final String split : splitter)
                 {
@@ -222,8 +225,8 @@ class HttpResponseHandler implements ResponseHandler<XProcHttpResponse>
         return ImmutableList.of(builder.getNode());
     }
 
-    private Iterable<XdmNode> constructMultipart(final ContentType contentMimeType,
-            final String contentType, final BodypartResponseParser parser) throws IOException
+    private Iterable<XdmNode> constructMultipart(final ContentType contentMimeType, final String contentType,
+            final BodypartResponseParser parser) throws IOException
     {
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();

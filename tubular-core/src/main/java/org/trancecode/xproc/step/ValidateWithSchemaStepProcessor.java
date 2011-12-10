@@ -55,10 +55,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
 {
     private static final Logger LOG = Logger.getLogger(ValidateWithSchemaStepProcessor.class);
-    private static final String EXTERNAL_SCHEMALOCATION =
-            "http://apache.org/xml/properties/schema/external-schemaLocation";
-    private static final String EXTERNAL_NONAMESPACESCHEMALOCATION =
-            "http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation";
+    private static final String EXTERNAL_SCHEMALOCATION = "http://apache.org/xml/properties/schema/external-schemaLocation";
+    private static final String EXTERNAL_NONAMESPACESCHEMALOCATION = "http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation";
     private static final String DEFAULT_PARSER_NAME = "org.apache.xerces.parsers.SAXParser";
 
     @Override
@@ -84,8 +82,8 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
             final StringReader reader = new StringReader(getXmlDocument(sourceDoc));
             final InputSource source = new InputSource(reader);
             source.setSystemId(sourceDoc.getBaseURI().toASCIIString());
-            final BuildingContentHandler handler = input.getPipelineContext().getProcessor().newDocumentBuilder().
-                    newBuildingContentHandler();
+            final BuildingContentHandler handler = input.getPipelineContext().getProcessor().newDocumentBuilder()
+                    .newBuildingContentHandler();
             final SAXResult result = new SAXResult(handler);
             final SAXSource saxSource = new SAXSource(source);
             final XMLReader xmlReader = XMLReaderFactory.createXMLReader(DEFAULT_PARSER_NAME);
@@ -123,13 +121,14 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
     }
 
     private boolean validate(final SAXSource saxSource, final SAXSource saxSchema, final SAXResult result,
-                             final boolean useLocalHints, final boolean tryNamespaces)
+            final boolean useLocalHints, final boolean tryNamespaces)
     {
         try
         {
             final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            //factory.setProperty(EXTERNAL_SCHEMALOCATION, useLocalHints);
-            //factory.setProperty(EXTERNAL_NONAMESPACESCHEMALOCATION, tryNamespaces);
+            // factory.setProperty(EXTERNAL_SCHEMALOCATION, useLocalHints);
+            // factory.setProperty(EXTERNAL_NONAMESPACESCHEMALOCATION,
+            // tryNamespaces);
             final Schema schema = factory.newSchema(saxSchema);
             final Validator validator = schema.newValidator();
             validator.validate(saxSource, result);

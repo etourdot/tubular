@@ -52,8 +52,8 @@ public final class LoadStepProcessor extends AbstractStepProcessor
         assert href != null;
         LOG.trace("href = {}", href);
         final URI uri = URI.create(href);
-        if (uri.getScheme()!=null && !StringUtils.equals("file",uri.getScheme()) &&
-            !StringUtils.equals("http",uri.getScheme()))
+        if (uri.getScheme() != null && !StringUtils.equals("file", uri.getScheme())
+                && !StringUtils.equals("http", uri.getScheme()))
         {
             throw XProcExceptions.xd0012(input.getLocation(), href);
         }

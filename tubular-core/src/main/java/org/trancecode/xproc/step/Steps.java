@@ -114,7 +114,7 @@ public final class Steps
         if (input.getStep().hasOptionDeclared(XProcOptions.METHOD))
         {
             final QName method = new QName(input.getOptionValue(XProcOptions.METHOD,
-                defaultOptions.get(XProcOptions.METHOD)));
+                    defaultOptions.get(XProcOptions.METHOD)));
             builder.put(XProcOptions.METHOD, method);
             if (METHOD_XML.equals(method.getLocalName()) || METHOD_HTML.equals(method.getLocalName()))
             {

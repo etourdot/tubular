@@ -296,8 +296,8 @@ class RequestParser
         final StringBody body;
         try
         {
-            body = new StringBody(contentString, contentType.toString(), Steps.getCharset(
-                    contentType.getParameter("charset")));
+            body = new StringBody(contentString, contentType.toString(), Steps.getCharset(contentType
+                    .getParameter("charset")));
         }
         catch (final UnsupportedEncodingException e)
         {
@@ -432,25 +432,17 @@ class RequestParser
     }
 
     /*
-    private HttpContext parseContext(final AuthPolicy policy)
-    {
-        final HttpHost httpHost = request.getHttpHost();
-        final AuthCache authCache = new BasicAuthCache();
-        if (AuthPolicy.BASIC.equalsIgnoreCase(policy.toString()))
-        {
-            final BasicScheme basicAuth = new BasicScheme();
-            authCache.put(httpHost, basicAuth);
-        }
-        else
-        {
-            final DigestScheme digestAuth = new DigestScheme();
-            authCache.put(httpHost, digestAuth);
-        }
-        final BasicHttpContext localContext = new BasicHttpContext();
-        localContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
-        return localContext;
-    }
-    */
+     * private HttpContext parseContext(final AuthPolicy policy) { final
+     * HttpHost httpHost = request.getHttpHost(); final AuthCache authCache =
+     * new BasicAuthCache(); if
+     * (AuthPolicy.BASIC.equalsIgnoreCase(policy.toString())) { final
+     * BasicScheme basicAuth = new BasicScheme(); authCache.put(httpHost,
+     * basicAuth); } else { final DigestScheme digestAuth = new DigestScheme();
+     * authCache.put(httpHost, digestAuth); } final BasicHttpContext
+     * localContext = new BasicHttpContext();
+     * localContext.setAttribute(ClientContext.AUTH_CACHE, authCache); return
+     * localContext; }
+     */
 
     private HttpRequestBase constructMethod(final String method, final URI hrefUri)
     {
