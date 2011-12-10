@@ -95,7 +95,7 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                         {
                             base = arguments[1].next().getStringValue();
                         }
-                        LOG.trace("{@method} href = {} ; base = {}", href, base);
+                        LOG.trace("{@method} relative = {} ; base = {}", relative, base);
                         final String resolvedUri;
                         try
                         {
