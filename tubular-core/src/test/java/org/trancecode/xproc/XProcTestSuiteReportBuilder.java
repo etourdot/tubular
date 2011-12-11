@@ -36,6 +36,7 @@ import org.trancecode.TcAssert.XdmNodeCompareAssertionError;
 import org.trancecode.io.Files;
 import org.trancecode.lang.TcStrings;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonQNames;
 import org.trancecode.xproc.XProcTestReportXmlModel.Attributes;
 import org.trancecode.xproc.XProcTestReportXmlModel.Elements;
 import org.trancecode.xproc.api.XProcException;
@@ -61,7 +62,7 @@ public final class XProcTestSuiteReportBuilder
         public boolean failed()
         {
             return (error != null && !(error instanceof XProcException && ((XProcException) error).getName().equals(
-                    test.getError())))
+                    SaxonQNames.asXmlQName(test.getError()))))
                     || (error == null && test.getError() != null);
         }
     }
