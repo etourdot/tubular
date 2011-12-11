@@ -38,7 +38,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.PipelineContext;
 import org.trancecode.xproc.PipelineException;
-import org.trancecode.xproc.XProcException;
+import org.trancecode.xproc.api.XProcException;
 import org.trancecode.xproc.event.AfterExecuteStepEvent;
 import org.trancecode.xproc.event.BeforeExecuteStepEvent;
 

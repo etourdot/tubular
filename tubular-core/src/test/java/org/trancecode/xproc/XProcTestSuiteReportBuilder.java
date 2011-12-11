@@ -21,10 +21,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -36,6 +38,7 @@ import org.trancecode.lang.TcStrings;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.XProcTestReportXmlModel.Attributes;
 import org.trancecode.xproc.XProcTestReportXmlModel.Elements;
+import org.trancecode.xproc.api.XProcException;
 
 /**
  * @author Herve Quiroz
@@ -57,9 +60,9 @@ public final class XProcTestSuiteReportBuilder
 
         public boolean failed()
         {
-            return (error != null
-                    && !(error instanceof XProcException && ((XProcException) error).getName().equals(test.getError()))) ||
-                   (error == null && test.getError() != null);
+            return (error != null && !(error instanceof XProcException && ((XProcException) error).getName().equals(
+                    test.getError())))
+                    || (error == null && test.getError() != null);
         }
     }
 
@@ -154,14 +157,12 @@ public final class XProcTestSuiteReportBuilder
                 builder.text(result.test.getTitle());
                 builder.endElement();
 
-                final String resultErrorCode = result.error == null ?
-                                                    null :
-                                                    result.error instanceof XProcException ?
-                                                        ((XProcException) result.error).getName().toString() :
-                                                        result.error.getClass().getSimpleName();
+                final String resultErrorCode = result.error == null ? null
+                        : result.error instanceof XProcException ? ((XProcException) result.error).getName().toString()
+                                : result.error.getClass().getSimpleName();
                 final String expectedErrorCode = TcStrings.toString(result.test.getError());
-                if ((resultErrorCode != null || expectedErrorCode != null) &&
-                     !StringUtils.equalsIgnoreCase(resultErrorCode, expectedErrorCode))
+                if ((resultErrorCode != null || expectedErrorCode != null)
+                        && !StringUtils.equalsIgnoreCase(resultErrorCode, expectedErrorCode))
                 {
                     builder.startElement(Elements.ERROR);
 

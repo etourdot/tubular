@@ -54,6 +54,7 @@ import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xml.saxon.SaxonNamespaces;
+import org.trancecode.xproc.api.XProcException;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;

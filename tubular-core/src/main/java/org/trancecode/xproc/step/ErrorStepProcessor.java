@@ -21,8 +21,10 @@ package org.trancecode.xproc.step;
 
 import net.sf.saxon.s9api.QName;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.XProcException;
+import org.trancecode.xml.saxon.SaxonQNames;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.api.XProcException;
+import org.trancecode.xproc.api.XProcException.Type;
 import org.trancecode.xproc.variable.XProcOptions;
 
 /**
@@ -71,7 +73,7 @@ public final class ErrorStepProcessor extends AbstractStepProcessor
 
         // TODO write some element to the output port
 
-        throw new XProcException(errorCode, XProcException.Type.DYNAMIC, input.getStep().getLocation(), input.getStep()
-                .getName());
+        throw new XProcException(SaxonQNames.asXmlQName(errorCode), Type.DYNAMIC, Integer.parseInt(code), input
+                .getStep().getLocation(), input.getStep().getName());
     }
 }

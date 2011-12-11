@@ -44,6 +44,7 @@ import org.testng.annotations.BeforeClass;
 import org.trancecode.AbstractTest;
 import org.trancecode.TcAssert;
 import org.trancecode.io.Uris;
+import org.trancecode.xproc.api.XProcException;
 
 /**
  * @author Herve Quiroz

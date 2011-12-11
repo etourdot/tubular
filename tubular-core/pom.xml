@@ -73,6 +73,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.trancecode.xproc.jaxproc</groupId>
+      <artifactId>jaxproc-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>fop</artifactId>
     </dependency>

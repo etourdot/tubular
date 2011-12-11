@@ -36,7 +36,7 @@ import org.trancecode.xml.Location;
 import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.XProcException;
+import org.trancecode.xproc.api.XProcException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
 import org.trancecode.xproc.binding.EnvironmentPortBinding;
