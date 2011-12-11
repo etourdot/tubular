@@ -48,7 +48,6 @@ import java.util.Map;
  */
 public class XProcTestParser
 {
-
     private static final Logger LOG = Logger.getLogger(XProcTestParser.class);
 
     private final Processor processor;
@@ -316,7 +315,6 @@ public class XProcTestParser
 
     private XdmNode loadExternalDocument(final String href, final XdmNode node)
     {
-
         final DocumentBuilder builder = processor.newDocumentBuilder();
         final URI uri = node.getBaseURI().resolve(href);
         final SAXSource source = new SAXSource(new InputSource(uri.toString()));

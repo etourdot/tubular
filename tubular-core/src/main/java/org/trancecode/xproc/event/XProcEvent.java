@@ -24,5 +24,4 @@ import org.trancecode.event.Event;
  */
 public interface XProcEvent extends Event
 {
-
 }

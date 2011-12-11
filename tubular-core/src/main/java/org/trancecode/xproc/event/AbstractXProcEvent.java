@@ -22,5 +22,4 @@ package org.trancecode.xproc.event;
  */
 abstract class AbstractXProcEvent implements XProcEvent
 {
-
 }
