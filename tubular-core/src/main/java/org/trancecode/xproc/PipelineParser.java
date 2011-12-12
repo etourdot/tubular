@@ -54,6 +54,7 @@ import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcXmlModel.Attributes;
 import org.trancecode.xproc.XProcXmlModel.Elements;
+import org.trancecode.xproc.api.PipelineException;
 import org.trancecode.xproc.binding.DataPortBinding;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.EmptyPortBinding;

@@ -21,14 +21,17 @@ package org.trancecode.xproc.step;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Closeables;
+
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.Map;
+
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
+
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
@@ -64,9 +67,9 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonLocation;
-import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.XProcXmlModel;
+import org.trancecode.xproc.api.PipelineException;
 
 /**
  * User: Emmanuel Tourdot Date: 18 feb. 2011 Time: 06:35:39

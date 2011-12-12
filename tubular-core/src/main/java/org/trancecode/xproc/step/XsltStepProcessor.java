@@ -45,8 +45,8 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltTransformer;
 import org.trancecode.io.Uris;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.PipelineException;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.api.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 

@@ -25,8 +25,9 @@ import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.Environment;
-import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.PipelineExceptions;
 import org.trancecode.xproc.XProcXmlModel;
+import org.trancecode.xproc.api.PipelineException;
 import org.trancecode.xproc.binding.InlinePortBinding;
 import org.trancecode.xproc.port.EnvironmentPort;
 import org.trancecode.xproc.port.Port;
@@ -68,7 +69,8 @@ public final class TryStepProcessor extends AbstractCompoundStepProcessor implem
         {
             final Step catchStep = step.getSubpipeline().get(1);
             assert catchStep.getType().equals(XProcSteps.CATCH);
-            final XdmNode errorDocument = newErrorDocument(environment, e.getOriginalPipelineException().getMessage());
+            final XdmNode errorDocument = newErrorDocument(environment, PipelineExceptions
+                    .getOriginalPipelineException(e).getMessage());
             final Port errorPortdeclaration = Port
                     .newInputPort(catchStep.getName(), XProcPorts.ERROR, step.getLocation()).setPrimary(false)
                     .setSequence(false).setPortBindings(new InlinePortBinding(errorDocument, catchStep.getLocation()));

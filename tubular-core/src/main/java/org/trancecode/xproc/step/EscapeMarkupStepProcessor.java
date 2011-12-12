@@ -33,7 +33,7 @@ import org.trancecode.io.MediaTypes;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
-import org.trancecode.xproc.PipelineException;
+import org.trancecode.xproc.api.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
 
