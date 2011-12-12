@@ -158,6 +158,7 @@
     <module>trancecode-util</module>
     <module>tubular-cli</module>
     <module>tubular-core</module>
+    <module>tubular-osgi-bundle</module>
     <module>xml-catalog</module>
   </modules>
 
@@ -286,6 +287,12 @@
         <artifactId>tubular-core</artifactId>
         <classifier>tests</classifier>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.trancecode</groupId>
+        <artifactId>tubular-osgi-bundle</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
       </dependency>
 
       <dependency>

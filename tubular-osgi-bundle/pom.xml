@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.trancecode</groupId>
+    <artifactId>tubular</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tubular-osgi-bundle</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  <description>OSGi bundle for Tubular</description>
+
+  <!-- ===================================================================== -->
+
+  <properties>
+
+    <osgi.bundle.activator>CHANGE_THIS</osgi.bundle.activator>
+    <osgi.bundle.doc-url>http://code.google.com/p/tubular/</osgi.bundle.doc-url>
+    <osgi.bundle.ignore-package>sub.misc</osgi.bundle.ignore-package>
+    <osgi.bundle.import-package>org.trancecode.xproc.service,javax.annotation,javax.security.auth.x500,javax.xml.namespace,org.osgi.framework;version="[1.6,2)"</osgi.bundle.import-package>
+    <osgi.bundle.export-package />
+    <osgi.bundle.vendor>trancecode</osgi.bundle.vendor>
+
+  </properties>
+
+  <!-- ===================================================================== -->
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>4.3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>4.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.trancecode.xproc.jaxproc</groupId>
+      <artifactId>jaxproc-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.trancecode</groupId>
+      <artifactId>tubular-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.trancecode.logging</groupId>
+      <artifactId>tc-logging-log4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <!-- ===================================================================== -->
+
+  <profiles>
+
+    <profile>
+      <id>osgi-bundle</id>
+
+      <activation>
+        <property>
+          <name>eclipse.launcher.name</name>
+          <value>!Eclipse</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>maven-version</id>
+                <goals>
+                  <goal>maven-version</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>build-osgi-bundle</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+
+                    <tempfile property="osgi.bundle.version.temp.file" destdir="${project.build.directory}"
+                      suffix=".properties" />
+                    <echo message="osgi.bundle.version=${project.version}" file="${osgi.bundle.version.temp.file}" />
+                    <replace file="${osgi.bundle.version.temp.file}" token="-SNAPSHOT" value=".SNAPSHOT" />
+                    <property file="${osgi.bundle.version.temp.file}" />
+                    <echo message="osgi.bundle.version=${osgi.bundle.version}" />
+
+                    <mkdir dir="${project.build.directory}/dependencies" />
+
+                    <fileset id="dependencies.list" dir="${project.build.directory}/dependencies" includes="*.jar" />
+
+                    <pathconvert property="dependencies.list" refid="dependencies.list" pathsep="," dirsep="/">
+                      <map from="${project.build.directory}" to="META-INF" />
+                    </pathconvert>
+
+                    <echo message="${dependencies.list}" />
+
+                    <copy todir="${project.build.directory}/dependencies" verbose="true">
+                      <fileset dir="${project.build.directory}" includes="${project.artifactId}-${project.version}.jar" />
+                    </copy>
+
+                    <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-osgi-bundle.jar"
+                      index="true" level="9">
+                      <zipfileset dir="${project.build.directory}/dependencies" prefix="META-INF/dependencies" />
+                      <manifest>
+                        <attribute name="Bundle-Activator" value="${osgi.bundle.activator}" />
+                        <attribute name="Bundle-ClassPath"
+                          value=".,${dependencies.list},META-INF/dependencies/${project.artifactId}-${project.version}.${project.packaging}" />
+                        <attribute name="Bundle-Description" value="${project.description}" />
+                        <attribute name="Bundle-DocURL" value="${osgi.bundle.doc-url}" />
+                        <attribute name="Bundle-ManifestVersion" value="2" />
+                        <attribute name="Bundle-Name" value="${project.artifactId}" />
+                        <attribute name="Bundle-SymbolicName" value="${project.groupId}.${project.artifactId}" />
+                        <attribute name="Bundle-Vendor" value="${osgi.bundle.vendor}" />
+                        <attribute name="Bundle-Version" value="${osgi.bundle.version}" />
+                        <attribute name="Created-By" value="Apache Maven ${maven.version}" />
+                        <attribute name="Embed-Dependency" value="*;scope=compile|runtime;inline=false" />
+                        <attribute name="Embed-Directory" value="META-INF/dependencies" />
+                        <attribute name="Embed-StripGroup" value="true" />
+                        <attribute name="Embed-Transitive" value="true" />
+                        <attribute name="Ignore-Package" value="${osgi.bundle.ignore-package}" />
+                        <attribute name="Import-Package" value="${osgi.bundle.import-package}" />
+                        <attribute name="Export-Package" value="${osgi.bundle.export-package}" />
+                      </manifest>
+                    </jar>
+
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+
+    </profile>
+
+  </profiles>
+
+  <!-- ===================================================================== -->
+
+</project>
