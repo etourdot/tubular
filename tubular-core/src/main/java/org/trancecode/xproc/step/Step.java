@@ -26,10 +26,12 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,6 +43,7 @@ import org.trancecode.api.ReturnsNullable;
 import org.trancecode.collection.TcIterables;
 import org.trancecode.collection.TcLists;
 import org.trancecode.collection.TcMaps;
+import org.trancecode.collection.TcSets;
 import org.trancecode.lang.TcObjects;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.AbstractHasLocation;
@@ -706,6 +709,11 @@ public final class Step extends AbstractHasLocation implements StepContainer
         Step lastWriteStep = null;
         Step defaultReadblePortStep = null;
         final Map<String, Step> subpipelineStepByName = Maps.newHashMap();
+        for (final Step step : steps)
+        {
+            subpipelineStepByName.put(step.getName(), step);
+        }
+
         final Map<Step, Iterable<Step>> dependencies = Maps.newHashMap();
         for (final Step step : steps)
         {
@@ -774,7 +782,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
             {
                 defaultReadblePortStep = step;
             }
-            subpipelineStepByName.put(step.getName(), step);
         }
 
         return dependencies;
@@ -849,5 +856,30 @@ public final class Step extends AbstractHasLocation implements StepContainer
                 return log.port.equals(port);
             }
         });
+    }
+
+    private void checkCycleDependencies(final Step childStep, final Collection<Step> dependingSteps)
+    {
+        LOG.trace("{@method} childStep = {} ; dependingSteps = {}", childStep, dependingSteps);
+        final Collection<Step> newDependingSteps = TcSets.immutableSet(dependingSteps, childStep);
+        for (final Step dependencyStep : getSubpipelineStepDependencies().get(childStep))
+        {
+            if (newDependingSteps.contains(dependencyStep))
+            {
+                throw XProcExceptions.xs0001(childStep);
+            }
+
+            checkCycleDependencies(dependencyStep, newDependingSteps);
+        }
+    }
+
+    public void checkCyclicDependencies()
+    {
+        LOG.trace("{@method} step = {} ; subpipeline = {}", this, getSubpipeline());
+        final Collection<Step> empty = ImmutableSet.of();
+        for (final Step childStep : getSubpipeline())
+        {
+            checkCycleDependencies(childStep, empty);
+        }
     }
 }
