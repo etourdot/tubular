@@ -157,6 +157,14 @@ public final class XProcExceptions
                 "It is a dynamic error to specify a new namespace or prefix if the lexical value of the specified name contains a colon (or if no wrapper is explicitly specified).");
     }
 
+    public static XProcException xs0001(final Step step)
+    {
+        return newXProcException(Type.STATIC, 1, step.getLocation(),
+                "It is a static error if there are any loops in the connections between steps: "
+                        + "no step can be connected to itself nor can there be any sequence of "
+                        + "connections through other steps that leads back to itself.");
+    }
+
     public static XProcException xs0004(final Variable option)
     {
         return newXProcException(
