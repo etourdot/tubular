@@ -172,6 +172,12 @@ public final class XProcExceptions
                         + "it is a static error if two steps with the same name appear in the same scope.");
     }
 
+    public static XProcException xs0003(final Step step, final String portName)
+    {
+        return newXProcException(Type.STATIC, 3, step.getLocation(), "In step %s, input port %s is not connected",
+                step, portName);
+    }
+
     public static XProcException xs0004(final Variable option)
     {
         return newXProcException(

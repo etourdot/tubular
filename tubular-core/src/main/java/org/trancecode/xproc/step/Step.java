@@ -905,9 +905,28 @@ public final class Step extends AbstractHasLocation implements StepContainer
         }
     }
 
-    public void check()
+    /**
+     * {@code err:XS0003}.
+     */
+    private void checkInputPorts()
+    {
+        for (final Port inputPort : getInputPorts())
+        {
+            if (!isPrimary(inputPort) && inputPort.getPortBindings().isEmpty())
+            {
+                throw XProcExceptions.xs0003(this, inputPort.getPortName());
+            }
+        }
+    }
+
+    public void checkDeclaredStep()
     {
         checkCyclicDependencies();
         checkStepNames();
+    }
+
+    public void checkInstanceStep()
+    {
+        checkInputPorts();
     }
 }

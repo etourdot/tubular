@@ -249,7 +249,7 @@ public final class PipelineParser
 
         step = parseStepChildNodes(stepNode, step);
 
-        step.check();
+        step.checkDeclaredStep();
 
         declareStep(step);
         return step;
@@ -731,6 +731,8 @@ public final class PipelineParser
             LOG.trace("  add implicit output port: {}", port);
             step = step.declarePort(port);
         }
+
+        step.checkInstanceStep();
 
         return step;
     }
