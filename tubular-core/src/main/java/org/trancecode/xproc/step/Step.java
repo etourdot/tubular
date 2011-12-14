@@ -916,6 +916,61 @@ public final class Step extends AbstractHasLocation implements StepContainer
         }
     }
 
+    private Iterable<PortBinding> getInputPortBindings()
+    {
+        return Iterables.concat(Iterables.transform(getInputPorts(true), PortFunctions.getPortBindings()));
+    }
+
+    /**
+     * {@code err:XS0005}.
+     */
+    private void checkOutputPorts()
+    {
+        for (final Port outputPort : getOutputPorts())
+        {
+            if (outputPort.getPortBindings().isEmpty())
+            {
+                final boolean connected = Iterables.any(getDescendantSteps(), new Predicate<Step>()
+                {
+                    @Override
+                    public boolean apply(final Step step)
+                    {
+                        return Iterables.any(step.getInputPortBindings(), new Predicate<PortBinding>()
+                        {
+                            @Override
+                            public boolean apply(final PortBinding portBinding)
+                            {
+                                if (portBinding instanceof PipePortBinding)
+                                {
+                                    final PipePortBinding pipe = (PipePortBinding) portBinding;
+                                    return pipe.getPortReference().equals(outputPort.getPortReference());
+                                }
+
+                                return false;
+                            }
+                        });
+                    }
+                });
+                if (!connected)
+                {
+                    throw XProcExceptions.xs0005(this, outputPort.getPortName());
+                }
+            }
+        }
+    }
+
+    private Iterable<Step> getDescendantSteps()
+    {
+        return Iterables.concat(Iterables.transform(getSubpipeline(), new Function<Step, Iterable<Step>>()
+        {
+            @Override
+            public Iterable<Step> apply(final Step step)
+            {
+                return Iterables.concat(ImmutableList.of(step), step.getDescendantSteps());
+            }
+        }));
+    }
+
     public void checkDeclaredStep()
     {
         checkCyclicDependencies();
@@ -925,5 +980,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
     public void checkInstanceStep()
     {
         checkInputPorts();
+        checkOutputPorts();
     }
 }

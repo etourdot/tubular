@@ -185,6 +185,12 @@ public final class XProcExceptions
                         + "or variable in the same environment.");
     }
 
+    public static XProcException xs0005(final Step step, final String portName)
+    {
+        return newXProcException(Type.STATIC, 5, step.getLocation(), "In step %s, output port %s is not connected",
+                step, portName);
+    }
+
     public static XProcException xs0018(final Variable option)
     {
         return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
