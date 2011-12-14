@@ -57,6 +57,7 @@ import org.trancecode.xproc.binding.DataPortBinding;
 import org.trancecode.xproc.binding.DocumentPortBinding;
 import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
+import org.trancecode.xproc.binding.PortBindingPredicates;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.PortFunctions;
 import org.trancecode.xproc.port.PortPredicates;
@@ -911,6 +912,16 @@ public final class Step extends AbstractHasLocation implements StepContainer
         {
             if (!isPrimary(inputPort) && inputPort.getPortBindings().isEmpty())
             {
+                if (inputPort.getPortName().equals("xpath-context"))
+                {
+                    continue;
+                }
+
+                if (getType().equals(XProcSteps.FOR_EACH) && inputPort.getPortName().equals("current"))
+                {
+                    continue;
+                }
+
                 throw XProcExceptions.xs0003(this, inputPort.getPortName());
             }
         }
@@ -921,39 +932,64 @@ public final class Step extends AbstractHasLocation implements StepContainer
         return Iterables.concat(Iterables.transform(getInputPorts(true), PortFunctions.getPortBindings()));
     }
 
+    private Iterable<PortBinding> getOutputPortBindings()
+    {
+        return Iterables.concat(Iterables.transform(getOutputPorts(), PortFunctions.getPortBindings()));
+    }
+
     /**
      * {@code err:XS0005}.
      */
     private void checkOutputPorts()
     {
-        for (final Port outputPort : getOutputPorts())
+        for (int i = 0; i < getSubpipeline().size(); i++)
         {
-            if (outputPort.getPortBindings().isEmpty())
+            final Step childStep = getSubpipeline().get(i);
+            for (final Port outputPort : childStep.getOutputPorts())
             {
-                final boolean connected = Iterables.any(getDescendantSteps(), new Predicate<Step>()
+                if (outputPort.getPortBindings().isEmpty())
                 {
-                    @Override
-                    public boolean apply(final Step step)
+                    final boolean explicitlyConnected = Iterables.any(getDescendantSteps(), new Predicate<Step>()
                     {
-                        return Iterables.any(step.getInputPortBindings(), new Predicate<PortBinding>()
+                        @Override
+                        public boolean apply(final Step step)
                         {
-                            @Override
-                            public boolean apply(final PortBinding portBinding)
+                            return Iterables.any(step.getInputPortBindings(),
+                                    PortBindingPredicates.isConnectedTo(outputPort.getPortReference()));
+                        }
+                    });
+                    if (!explicitlyConnected)
+                    {
+                        // Step is the latest from subpipeline
+                        if (i == getSubpipeline().size() - 1)
+                        {
+                            // The parent step has a primary output port
+                            // implicitly bound to this output port
+                            if (childStep.isPrimary(outputPort) && getPrimaryOutputPort() != null
+                                    && getPrimaryOutputPort().getPortBindings().isEmpty())
                             {
-                                if (portBinding instanceof PipePortBinding)
-                                {
-                                    final PipePortBinding pipe = (PipePortBinding) portBinding;
-                                    return pipe.getPortReference().equals(outputPort.getPortReference());
-                                }
-
-                                return false;
+                                continue;
                             }
-                        });
+
+                            // The parent step has an output port
+                            // explicitly bound to this output port
+                            if (Iterables.any(getOutputPortBindings(),
+                                    PortBindingPredicates.isConnectedTo(outputPort.getPortReference())))
+                            {
+                                continue;
+                            }
+                        }
+
+                        // Next step has unbound primary input port
+                        if (i < getSubpipeline().size() - 1
+                                && getSubpipeline().get(i + 1).getPrimaryInputPort() != null
+                                && getSubpipeline().get(i + 1).getPrimaryInputPort().getPortBindings().isEmpty())
+                        {
+                            continue;
+                        }
+
+                        throw XProcExceptions.xs0005(childStep, outputPort.getPortName());
                     }
-                });
-                if (!connected)
-                {
-                    throw XProcExceptions.xs0005(this, outputPort.getPortName());
                 }
             }
         }
@@ -975,11 +1011,11 @@ public final class Step extends AbstractHasLocation implements StepContainer
     {
         checkCyclicDependencies();
         checkStepNames();
+        checkOutputPorts();
     }
 
     public void checkInstanceStep()
     {
         checkInputPorts();
-        checkOutputPorts();
     }
 }
