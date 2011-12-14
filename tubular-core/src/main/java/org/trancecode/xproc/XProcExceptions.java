@@ -180,11 +180,9 @@ public final class XProcExceptions
 
     public static XProcException xs0004(final Variable option)
     {
-        return newXProcException(
-                Type.STATIC,
-                4,
-                option.getLocation(),
-                "It is a static error if an option or variable declaration duplicates the name of any other option or variable in the same environment.");
+        return newXProcException(Type.STATIC, 4, option.getLocation(),
+                "It is a static error if an option or variable declaration duplicates the name of any other option "
+                        + "or variable in the same environment.");
     }
 
     public static XProcException xs0018(final Variable option)
