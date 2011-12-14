@@ -20,6 +20,7 @@
 package org.trancecode.xproc.port;
 
 import com.google.common.base.Function;
+import org.trancecode.xproc.binding.PortBinding;
 
 /**
  * {@link Function} implementations related to {@link Port}.
@@ -62,6 +63,22 @@ public final class PortFunctions
         public PortReference apply(final HasPortReference port)
         {
             return port.getPortReference();
+        }
+    }
+
+    public static Function<Port, Iterable<PortBinding>> getPortBindings()
+    {
+        return GetPortBindingsFunction.INSTANCE;
+    }
+
+    private static final class GetPortBindingsFunction implements Function<Port, Iterable<PortBinding>>
+    {
+        public static final GetPortBindingsFunction INSTANCE = new GetPortBindingsFunction();
+
+        @Override
+        public Iterable<PortBinding> apply(final Port port)
+        {
+            return port.getPortBindings();
         }
     }
 }
