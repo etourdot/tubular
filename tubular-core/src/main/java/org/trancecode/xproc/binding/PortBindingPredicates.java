@@ -18,7 +18,7 @@
 package org.trancecode.xproc.binding;
 
 import com.google.common.base.Predicate;
-import org.trancecode.xproc.model.PortReference;
+import org.trancecode.xproc.port.PortReference;
 
 /**
  * {@link Predicate} implementations related to {@link PortBinding}.
