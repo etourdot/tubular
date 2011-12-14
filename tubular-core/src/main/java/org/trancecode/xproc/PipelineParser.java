@@ -249,7 +249,7 @@ public final class PipelineParser
 
         step = parseStepChildNodes(stepNode, step);
 
-        step.checkCyclicDependencies();
+        step.check();
 
         declareStep(step);
         return step;

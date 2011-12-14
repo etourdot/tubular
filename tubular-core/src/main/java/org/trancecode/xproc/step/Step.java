@@ -873,6 +873,9 @@ public final class Step extends AbstractHasLocation implements StepContainer
         }
     }
 
+    /**
+     * {@code err:XS0001}.
+     */
     public void checkCyclicDependencies()
     {
         LOG.trace("{@method} step = {} ; subpipeline = {}", this, getSubpipeline());
@@ -881,5 +884,10 @@ public final class Step extends AbstractHasLocation implements StepContainer
         {
             checkCycleDependencies(childStep, empty);
         }
+    }
+
+    public void check()
+    {
+        checkCyclicDependencies();
     }
 }
