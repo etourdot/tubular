@@ -165,6 +165,13 @@ public final class XProcExceptions
                         + "connections through other steps that leads back to itself.");
     }
 
+    public static XProcException xs0002(final Step step)
+    {
+        return newXProcException(Type.STATIC, 2, step.getLocation(),
+                "All steps in the same scope must have unique names: "
+                        + "it is a static error if two steps with the same name appear in the same scope.");
+    }
+
     public static XProcException xs0004(final Variable option)
     {
         return newXProcException(

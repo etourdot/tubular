@@ -30,11 +30,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
@@ -876,7 +878,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     /**
      * {@code err:XS0001}.
      */
-    public void checkCyclicDependencies()
+    private void checkCyclicDependencies()
     {
         LOG.trace("{@method} step = {} ; subpipeline = {}", this, getSubpipeline());
         final Collection<Step> empty = ImmutableSet.of();
@@ -886,8 +888,26 @@ public final class Step extends AbstractHasLocation implements StepContainer
         }
     }
 
+    /**
+     * {@code err:XS0002}.
+     */
+    private void checkStepNames()
+    {
+        final Set<String> stepNames = Sets.newHashSet();
+        for (final Step childStep : getSubpipeline())
+        {
+            if (stepNames.contains(childStep.getName()))
+            {
+                throw XProcExceptions.xs0002(childStep);
+            }
+
+            stepNames.add(childStep.getName());
+        }
+    }
+
     public void check()
     {
         checkCyclicDependencies();
+        checkStepNames();
     }
 }
