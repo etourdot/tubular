@@ -229,9 +229,6 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public Step declareVariable(final Variable variable)
     {
-        // assert !variables.containsKey(variable.getName()) : "step = " + name
-        // + " ; variable = " + variable.getName()
-        // + " ; variables = " + variables;
         if (variables.containsKey(variable.getName()))
         {
             throw XProcExceptions.xs0004(variable);
