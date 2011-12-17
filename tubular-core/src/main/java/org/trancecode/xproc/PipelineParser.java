@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -63,6 +64,7 @@ import org.trancecode.xproc.binding.PipePortBinding;
 import org.trancecode.xproc.binding.PortBinding;
 import org.trancecode.xproc.port.Port;
 import org.trancecode.xproc.port.Port.Type;
+import org.trancecode.xproc.port.PortFunctions;
 import org.trancecode.xproc.port.PortReference;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.step.PipelineStepProcessor;
@@ -688,6 +690,57 @@ public final class PipelineParser
         return Sets.union(library.getStepTypes(), localLibrary.keySet());
     }
 
+    private static final Collection<QName> STEPS_WITH_IMPLICIT_INPUT_PORT = ImmutableSet.of(XProcSteps.CHOOSE,
+            XProcSteps.WHEN, XProcSteps.OTHERWISE);
+    private static final Collection<QName> STEPS_WITH_IMPLICIT_OUTPUT_PORT = ImmutableSet.of(XProcSteps.CHOOSE,
+            XProcSteps.WHEN, XProcSteps.OTHERWISE);
+
+    private static Step addImplicitInputPort(final Step step)
+    {
+        LOG.trace("{@method} step = {}", step);
+        if (STEPS_WITH_IMPLICIT_INPUT_PORT.contains(step.getType()))
+        {
+            final Iterable<Port> inputPorts = Iterables.filter(
+                    step.getInputPorts(false),
+                    Predicates.not(Predicates.compose(Predicates.equalTo(XProcPorts.XPATH_CONTEXT),
+                            PortFunctions.getPortName())));
+            if (Iterables.isEmpty(inputPorts))
+            {
+                final Port port = Port.newInputPort(step.getName(), XProcPorts.SOURCE, step.getLocation()).setPrimary(
+                        true);
+                LOG.trace("  add implicit input port: {}", port);
+                return step.declarePort(port);
+            }
+        }
+
+        return step;
+    }
+
+    private static Step addImplicitOutputPort(final Step step)
+    {
+        LOG.trace("{@method} step = {}", step);
+        if (STEPS_WITH_IMPLICIT_OUTPUT_PORT.contains(step.getType()))
+        {
+            if (Iterables.isEmpty(step.getOutputPorts()))
+            {
+                final Port port = Port.newOutputPort(step.getName(), XProcPorts.RESULT, step.getLocation()).setPrimary(
+                        true);
+                LOG.trace("  add implicit output port: {}", port);
+                return step.declarePort(port);
+            }
+        }
+
+        return step;
+    }
+
+    private static Step addImplicitPorts(final Step step)
+    {
+        Step result = step;
+        result = addImplicitInputPort(result);
+        result = addImplicitOutputPort(result);
+        return result;
+    }
+
     private Step parseInstanceStep(final XdmNode node)
     {
         final String name = getStepName(node);
@@ -732,6 +785,7 @@ public final class PipelineParser
             step = step.declarePort(port);
         }
 
+        step = addImplicitPorts(step);
         step.checkInstanceStep();
 
         return step;
