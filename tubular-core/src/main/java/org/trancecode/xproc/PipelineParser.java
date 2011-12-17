@@ -690,10 +690,10 @@ public final class PipelineParser
         return Sets.union(library.getStepTypes(), localLibrary.keySet());
     }
 
-    private static final Collection<QName> STEPS_WITH_IMPLICIT_INPUT_PORT = ImmutableSet.of(XProcSteps.CHOOSE,
-            XProcSteps.WHEN, XProcSteps.OTHERWISE);
-    private static final Collection<QName> STEPS_WITH_IMPLICIT_OUTPUT_PORT = ImmutableSet.of(XProcSteps.CHOOSE,
-            XProcSteps.WHEN, XProcSteps.OTHERWISE);
+    private static final Collection<QName> STEPS_WITH_IMPLICIT_INPUT_PORT = ImmutableSet.of(XProcSteps.WHEN,
+            XProcSteps.OTHERWISE);
+    private static final Collection<QName> STEPS_WITH_IMPLICIT_OUTPUT_PORT = ImmutableSet.of(XProcSteps.WHEN,
+            XProcSteps.OTHERWISE, XProcSteps.VIEWPORT);
 
     private static Step addImplicitInputPort(final Step step)
     {
@@ -717,6 +717,16 @@ public final class PipelineParser
 
     private static Step addImplicitOutputPort(final Step step)
     {
+        if (step.getType().equals(XProcSteps.CHOOSE))
+        {
+            Step result = step;
+            for (final Port port : step.getSubpipeline().get(0).getOutputPorts())
+            {
+                result = result.declarePort(port.setStepName(step.getName()));
+            }
+            return result;
+        }
+
         if (STEPS_WITH_IMPLICIT_OUTPUT_PORT.contains(step.getType()))
         {
             if (Iterables.isEmpty(step.getOutputPorts()))
@@ -756,14 +766,6 @@ public final class PipelineParser
         {
             final Port port = Port.newOutputPort(step.getName(), XProcPorts.RESULT, getLocation(node))
                     .setSequence(true);
-            LOG.trace("  add implicit output port: {}", port);
-            step = step.declarePort(port);
-        }
-
-        if (step.getType().equals(XProcSteps.VIEWPORT) && Iterables.isEmpty(step.getOutputPorts()))
-        {
-            final Port port = Port.newOutputPort(step.getName(), XProcPorts.RESULT, getLocation(node)).setSequence(
-                    false);
             LOG.trace("  add implicit output port: {}", port);
             step = step.declarePort(port);
         }
