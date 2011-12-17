@@ -697,7 +697,6 @@ public final class PipelineParser
 
     private static Step addImplicitInputPort(final Step step)
     {
-        LOG.trace("{@method} step = {}", step);
         if (STEPS_WITH_IMPLICIT_INPUT_PORT.contains(step.getType()))
         {
             final Iterable<Port> inputPorts = Iterables.filter(
@@ -718,7 +717,6 @@ public final class PipelineParser
 
     private static Step addImplicitOutputPort(final Step step)
     {
-        LOG.trace("{@method} step = {}", step);
         if (STEPS_WITH_IMPLICIT_OUTPUT_PORT.contains(step.getType()))
         {
             if (Iterables.isEmpty(step.getOutputPorts()))
