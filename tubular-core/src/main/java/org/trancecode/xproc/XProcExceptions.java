@@ -191,6 +191,12 @@ public final class XProcExceptions
                 step, portName);
     }
 
+    public static XProcException xs0007(final Step step)
+    {
+        return newXProcException(Type.STATIC, 7, step.getLocation(),
+                "Two subpipelines in p:choose step %s declare different outputs", step);
+    }
+
     public static XProcException xs0018(final Variable option)
     {
         return newXProcException(Type.STATIC, 18, option.getLocation(), "Option %s is required and is missing a value",
