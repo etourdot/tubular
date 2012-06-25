@@ -11,6 +11,7 @@ org.trancecode.xproc.step.FilterStepProcessor
 org.trancecode.xproc.step.HashStepProcessor
 org.trancecode.xproc.step.HttpRequestStepProcessor
 org.trancecode.xproc.step.IdentityStepProcessor
+org.trancecode.xproc.step.InScopeNamesStepProcessor
 org.trancecode.xproc.step.InsertStepProcessor
 org.trancecode.xproc.step.LabelElementsStepProcessor
 org.trancecode.xproc.step.LoadStepProcessor

@@ -94,6 +94,7 @@ public final class XProcSteps
     // Optional steps
     public static final QName EXEC = XProcXmlModel.xprocNamespace().newSaxonQName("exec");
     public static final QName HASH = XProcXmlModel.xprocNamespace().newSaxonQName("hash");
+    public static final QName IN_SCOPE_NAMES = XProcXmlModel.xprocNamespace().newSaxonQName("in-scope-names");
     public static final QName UUID = XProcXmlModel.xprocNamespace().newSaxonQName("uuid");
     public static final QName VALIDATE_WITH_RELANXNG = XProcXmlModel.xprocNamespace().newSaxonQName(
             "validate-with-relax-ng");
@@ -106,9 +107,9 @@ public final class XProcSteps
     public static final QName XQUERY = XProcXmlModel.xprocNamespace().newSaxonQName("xquery");
     public static final QName XSL_FORMATTER = XProcXmlModel.xprocNamespace().newSaxonQName("xsl-formatter");
 
-    public static final Set<QName> OPTIONAL_STEPS = ImmutableSet.of(EXEC, HASH, UUID, VALIDATE_WITH_RELANXNG,
-            VALIDATE_WITH_SCHEMA, VALIDATE_WITH_SCHEMATRON, WWW_FORM_URL_DECODE, WWW_FORM_URL_ENCODE, XQUERY,
-            XSL_FORMATTER);
+    public static final Set<QName> OPTIONAL_STEPS = ImmutableSet.of(EXEC, HASH, IN_SCOPE_NAMES, UUID,
+            VALIDATE_WITH_RELANXNG, VALIDATE_WITH_SCHEMA, VALIDATE_WITH_SCHEMATRON, WWW_FORM_URL_DECODE,
+            WWW_FORM_URL_ENCODE, XQUERY, XSL_FORMATTER);
 
     public static final Set<QName> ALL_STEPS = ImmutableSet.copyOf(Iterables.concat(CORE_STEPS, REQUIRED_STEPS,
             OPTIONAL_STEPS));
