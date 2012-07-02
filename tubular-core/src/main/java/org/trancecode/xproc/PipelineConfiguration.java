@@ -63,7 +63,7 @@ import org.trancecode.xproc.xpath.XPathExtensionFunction;
  */
 public final class PipelineConfiguration extends AbstractPipelineContext
 {
-    private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/xproc-1.0.xpl";
+    private static final String RESOURCE_PATH_XPROC_LIBRARY_1_0 = "/org/trancecode/xproc/tubular.xpl";
     private static final Map<QName, StepProcessor> DEFAULT_STEP_PROCESSORS = getDefaultStepProcessors();
     private static final Map<QName, Step> CORE_LIBRARY = getCoreLibrary();
     private static final Iterable<XPathExtensionFunction> EXTENSION_FUNCTIONS = ImmutableList.copyOf(ServiceLoader
