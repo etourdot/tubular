@@ -572,6 +572,16 @@ public final class Environment
         return inheritedVariables.get(name);
     }
 
+    public final Map<QName, String> getLocalVariables()
+    {
+        return localVariables;
+    }
+
+    public final Map<QName, String> getInheritedVariables()
+    {
+        return inheritedVariables;
+    }
+
     public Environment setDefaultReadablePort(final EnvironmentPort defaultReadablePort)
     {
         assert defaultReadablePort == null || ports.containsValue(defaultReadablePort) : defaultReadablePort

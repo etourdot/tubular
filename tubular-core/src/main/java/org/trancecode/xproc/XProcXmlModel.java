@@ -61,6 +61,7 @@ public final class XProcXmlModel
         public static final QName IMPORT = xprocNamespace().newSaxonQName("import");
         public static final QName INLINE = xprocNamespace().newSaxonQName("inline");
         public static final QName INPUT = xprocNamespace().newSaxonQName("input");
+        public static final QName IN_SCOPE_NAMES = xprocStepNamespace().newSaxonQName("in-scope-names");
         public static final QName ITERATION_SOURCE = xprocNamespace().newSaxonQName("iteration-source");
         public static final QName LIBRARY = xprocNamespace().newSaxonQName("library");
         public static final QName LINE = xprocStepNamespace().newSaxonQName("line");
@@ -115,6 +116,7 @@ public final class XProcXmlModel
         public static final QName HREF = new QName("href");
         public static final QName KIND = new QName("kind");
         public static final QName NAME = new QName("name");
+        public static final QName NAMESPACE = new QName("namespace");
         public static final QName PORT = new QName("port");
         public static final QName PRIMARY = new QName("primary");
         public static final QName REQUIRED = new QName("required");

@@ -22,8 +22,12 @@ package org.trancecode.xproc.step;
 import java.util.Map;
 
 import net.sf.saxon.s9api.QName;
+import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
-import org.trancecode.xproc.variable.Variable;
+import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xproc.Environment;
+import org.trancecode.xproc.XProcXmlModel;
+import org.trancecode.xproc.port.XProcPorts;
 
 /**
  * {@code p:in-scope-names}.
@@ -46,13 +50,36 @@ public final class InScopeNamesStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        /*
-         * Todo: get in scopes options; get in scopes variables; create
-         * parameters with these options and variables; create a param-set with
-         * these parameters; output the param-set
-         */
-        final Step stepInput = input.getStep();
-        final Map<QName, Variable> variables = stepInput.getVariables();
-        LOG.trace("available variables = {}", variables);
+        final Environment environment = Environment.getCurrentEnvironment();
+        assert environment != null;
+
+        final Map<QName, String> localVariables = environment.getLocalVariables();
+        final Map<QName, String> inheritedVariables = environment.getInheritedVariables();
+        final Map<QName, String> allVariables = TcMaps.merge(inheritedVariables, localVariables);
+
+        LOG.trace("available variables = {}", allVariables);
+
+        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
+                .getUnderlyingConfiguration());
+        builder.startDocument();
+        builder.startElement(XProcXmlModel.Elements.PARAM_SET);
+
+        for (final Map.Entry<QName, String> entry : allVariables.entrySet())
+        {
+            LOG.trace("adding item {} to param-set", entry);
+
+            builder.startElement(XProcXmlModel.Elements.PARAM);
+            builder.attribute(XProcXmlModel.Attributes.NAME, entry.getKey().getLocalName());
+            builder.attribute(XProcXmlModel.Attributes.VALUE, entry.getValue());
+            builder.attribute(XProcXmlModel.Attributes.NAMESPACE, entry.getKey().getNamespaceURI());
+            builder.endElement();
+        }
+
+        builder.endElement();
+        builder.endDocument();
+
+        LOG.trace("built node = {}", builder.getNode());
+
+        output.writeNodes(XProcPorts.RESULT, builder.getNode());
     }
 }
