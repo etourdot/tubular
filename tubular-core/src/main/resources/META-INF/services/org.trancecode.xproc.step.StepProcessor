@@ -26,6 +26,7 @@ org.trancecode.xproc.step.SinkStepProcessor
 org.trancecode.xproc.step.SplitSequenceStepProcessor
 org.trancecode.xproc.step.StoreStepProcessor
 org.trancecode.xproc.step.StringReplaceStepProcessor
+org.trancecode.xproc.step.TemplateStepProcessor
 org.trancecode.xproc.step.UnEscapeMarkupStepProcessor
 org.trancecode.xproc.step.UnWrapStepProcessor
 org.trancecode.xproc.step.UuidStepProcessor

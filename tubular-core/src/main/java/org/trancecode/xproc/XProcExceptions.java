@@ -492,6 +492,15 @@ public final class XProcExceptions
                 "the exit code (%d) is greater than the failure threshold (%s)", exitCode, failureThreshold);
     }
 
+    public static XProcException xc0067(final Location location)
+    {
+        return newXProcException(
+                Type.STEP,
+                67,
+                location,
+                "It is a dynamic error to encounter a single closing curly brace “}” that is not immediately followed by another closing curly brace.");
+    }
+
     private static XProcException newXProcException(final Type type, final int code, final Location location,
             final String message, final Object... parameters)
     {
