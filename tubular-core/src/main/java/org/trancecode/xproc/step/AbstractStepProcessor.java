@@ -214,6 +214,16 @@ public abstract class AbstractStepProcessor implements StepProcessor
         {
             return environment.evaluateXPath(select, xpathContextNode);
         }
+
+        /**
+         * Evaluates an XPath query with the specified node as a context and the
+         * given parameters as variables
+         */
+        public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode,
+                final Map<QName, String> additionalParameters)
+        {
+            return environment.evaluateXPath(select, xpathContextNode, additionalParameters);
+        }
     }
 
     /**
