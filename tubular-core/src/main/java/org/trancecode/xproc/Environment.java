@@ -752,11 +752,15 @@ public final class Environment
         LOG.trace("{@method} select = {}", select);
 
         // TODO slow
-        Map<QName, String> variables = TcMaps.merge(inheritedVariables, localVariables);
-
+        final Map<QName, String> temporaryVariables = TcMaps.merge(inheritedVariables, localVariables);
+        Map<QName, String> variables = null;
         if (additionalParameters != null)
         {
-            variables = TcMaps.merge(variables, additionalParameters);
+            variables = TcMaps.merge(temporaryVariables, additionalParameters);
+        }
+        else
+        {
+        	variables = temporaryVariables;
         }
 
         try
@@ -772,7 +776,6 @@ public final class Environment
                 if (variableEntry.getValue() != null)
                 {
                     xpathCompiler.declareVariable(variableEntry.getKey());
-                    LOG.trace("declare var for XPath context :{}", variableEntry.getKey());
                 }
             }
 
@@ -780,8 +783,6 @@ public final class Environment
                     .uri());
             xpathCompiler.declareNamespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel
                     .xprocStepNamespace().uri());
-
-            LOG.trace("decl prfx:{}", XProcXmlModel.xprocStepNamespace().prefix());
 
             final XPathSelector selector = xpathCompiler.compile(select).load();
             setCurrentXPathContext(xpathContextNode);
