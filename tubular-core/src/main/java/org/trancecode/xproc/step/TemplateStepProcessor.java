@@ -19,17 +19,23 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+
+import java.util.Map;
+
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
-import net.sf.saxon.s9api.XdmSequenceIterator;
 import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.Saxon;
+import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
+import org.trancecode.xml.saxon.SaxonPredicates;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 
@@ -60,33 +66,60 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
         LOG.trace("p:template execution");
 
         final XdmNode templateNode = input.readNode(XProcPorts.TEMPLATE);
-        final XdmNode sourceNode = input.readNode(XProcPorts.SOURCE);
+        final Iterable<XdmNode> sourceNodeList = input.readNodes(XProcPorts.SOURCE);
+        XdmNode sourceNode = null;
+        assert Iterables.size(sourceNodeList) <= 1;
+
+        if (Iterables.size(sourceNodeList) == 1)
+        {
+            sourceNode = Iterables.getOnlyElement(sourceNodeList);
+        }
+
+        // unused
+        /*
+         * LOG.trace("source count:{}", Iterables.size(sourceNodeList)); if
+         * (Iterables.size(sourceNodeList) > 1) { throw
+         * XProcExceptions.xc0067(input.getLocation()); }
+         */
+
+        final Map<QName, String> parameters = input.getParameters(XProcPorts.PARAMETERS);
         final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
                 .getUnderlyingConfiguration());
         final Processor processor = input.getPipelineContext().getProcessor();
+
         builder.startDocument();
-        processNode(templateNode, sourceNode, Axis.DESCENDANT_OR_SELF, input, builder, processor);
+        processNode(templateNode, sourceNode, Axis.DESCENDANT, input, builder, processor, parameters);
         builder.endDocument();
-        LOG.trace("build result:{}", builder.getNode());
+
         output.writeNodes(XProcPorts.RESULT, builder.getNode());
         LOG.trace("end of p:template");
     }
 
-    private XdmNode deepNodeCopy(final XdmNode sourceNode, final SaxonBuilder builder, final Processor processor)
+    private void insertXmlFragment(final String raw, final SaxonBuilder builder, final Processor processor)
     {
-        final String stringRepresentation = sourceNode.toString();
-        final XdmNode rebuiltNode = Saxon.parse(stringRepresentation, processor);
-        return rebuiltNode;
+        final String toBeParsed = "<wrapperElement>" + raw + "</wrapperElement>";
+        final XdmNode parsedNode = Saxon.parse(toBeParsed, processor);
+        final XdmNode rootNode = Iterables.getOnlyElement(SaxonAxis.childNodes(parsedNode));
+
+        // Re-ask for subnodes as the first childNodes() call will give the
+        // wrapperElement element
+        final Iterable<XdmNode> subNodesList = SaxonAxis.childNodes(rootNode);
+        final Iterable<XdmNode> filteredSubNodesList = Iterables.filter(subNodesList,
+                Predicates.not(SaxonPredicates.isIgnorableWhitespace()));
+
+        builder.nodes(filteredSubNodesList);
     }
 
     private void processNode(final XdmNode templateNode, final XdmNode sourceNode, final Axis axis,
-            final StepInput input, final SaxonBuilder builder, final Processor processor)
+            final StepInput input, final SaxonBuilder builder, final Processor processor,
+            final Map<QName, String> parameters)
     {
-        final XdmSequenceIterator iterator = templateNode.axisIterator(axis);
+        final Iterable<XdmNode> fullNodesList = Iterables.filter(SaxonAxis.axis(templateNode, axis), XdmNode.class);
+        final Iterable<XdmNode> filteredNodesList = Iterables.filter(fullNodesList,
+                Predicates.not(SaxonPredicates.isIgnorableWhitespace()));
 
-        while (iterator.hasNext())
+        for (final XdmItem currentItem : filteredNodesList)
         {
-            final XdmItem currentItem = iterator.next();
             assert currentItem.isAtomicValue() == false;
 
             final XdmNode itemAsNode = (XdmNode) currentItem;
@@ -97,12 +130,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
             {
                 final String nodeValue = itemAsNode.getStringValue();
                 final QName nodeName = itemAsNode.getNodeName();
-
-                LOG.trace("to be processed ({}): {}", nodeKind, itemAsNode);
-                LOG.trace("string value: {}", nodeValue);
-
-                final String evaluatedString = evaluateString(nodeValue, sourceNode, input, nodeKind);
-                LOG.trace("evaluated string: '{}'", evaluatedString);
+                final String evaluatedString = evaluateString(nodeValue, sourceNode, input, nodeKind, parameters);
 
                 switch (nodeKind)
                 {
@@ -116,39 +144,20 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                         builder.processingInstruction(nodeName.toString(), evaluatedString);
                         break;
                     case TEXT:
-                        if (evaluatedString.trim().length() > 0)
-                        {
-                            try
-                            {
-                                LOG.trace("text node to be inserted in tree:\n{}",
-                                        Saxon.parse(evaluatedString, processor));
-                                builder.nodes(Saxon.parse(evaluatedString, processor));
-                            }
-                            catch (final Exception e)
-                            {
-                                LOG.trace("text node to be inserted in tree:\n{}", evaluatedString);
-                                builder.raw(evaluatedString);
-                            }
-                        }
-                        else
-                        {
-                            LOG.trace("text node to be inserted in tree:\n{}", evaluatedString);
-                            builder.text(evaluatedString);
-                        }
+                        insertXmlFragment(evaluatedString, builder, processor);
                         break;
                     default:
                         LOG.error("unhandled node kind in switch");
                 }
-
             }
             else
             {
                 if (nodeKind == XdmNodeKind.ELEMENT)
                 {
-                    LOG.trace("to be processed as subtree ({}): {}", nodeKind, itemAsNode);
                     builder.startElement(itemAsNode.getNodeName());
-                    processNode(itemAsNode, sourceNode, Axis.ATTRIBUTE, input, builder, processor);
-                    // builder.endElement();
+                    processNode(itemAsNode, sourceNode, Axis.ATTRIBUTE, input, builder, processor, parameters);
+                    // let elements be implicitely closed after the deepest node
+                    // has been reached
                 }
                 else
                 {
@@ -159,7 +168,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
     }
 
     private String evaluateString(final String stringToEvaluate, final XdmNode source, final StepInput input,
-            final XdmNodeKind nodeKind)
+            final XdmNodeKind nodeKind, final Map<QName, String> parameters)
     {
         Mode mode = Mode.REGULAR;
         String remainingCharacters = stringToEvaluate;
@@ -213,8 +222,13 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                         throw XProcExceptions.xc0067(input.getLocation());
 
                     case '}':
-                        final XdmValue value = input.evaluateXPath(expression, source);
+                        final XdmValue value = input.evaluateXPath(expression, source, parameters);
 
+                        // In an attribute value, processing instruction, or
+                        // comment, the string value of the XPath expression is
+                        // used. In text content, an expression that selects
+                        // nodes will cause those nodes to be copied into the
+                        // template document.
                         if (nodeKind == XdmNodeKind.TEXT)
                         {
                             result = result.concat(value.toString());
@@ -224,11 +238,6 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                             result = result.concat(value.itemAt(0).getStringValue());
                         }
 
-                        LOG.trace("result of xpath eval:{} ({} items)", value.itemAt(0).getStringValue(), value.size());
-                        LOG.trace("xpath res:{}", value);
-                        LOG.trace("source tree:{}", source);
-                        LOG.trace("resulting res:{}", result);
-                        LOG.trace("remaining str:{}", remainingCharacters);
                         mode = Mode.REGULAR;
                         break;
 
