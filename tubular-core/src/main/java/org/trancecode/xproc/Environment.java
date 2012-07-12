@@ -572,12 +572,12 @@ public final class Environment
         return inheritedVariables.get(name);
     }
 
-    public final Map<QName, String> getLocalVariables()
+    public Map<QName, String> getLocalVariables()
     {
         return localVariables;
     }
 
-    public final Map<QName, String> getInheritedVariables()
+    public Map<QName, String> getInheritedVariables()
     {
         return inheritedVariables;
     }
@@ -742,11 +742,22 @@ public final class Environment
 
     public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode)
     {
+        return evaluateXPath(select, xpathContextNode, null);
+    }
+
+    public XdmValue evaluateXPath(final String select, final XdmNode xpathContextNode,
+            final Map<QName, String> additionalParameters)
+    {
         assert select != null;
         LOG.trace("{@method} select = {}", select);
 
         // TODO slow
-        final Map<QName, String> variables = TcMaps.merge(inheritedVariables, localVariables);
+        Map<QName, String> variables = TcMaps.merge(inheritedVariables, localVariables);
+
+        if (additionalParameters != null)
+        {
+            variables = TcMaps.merge(variables, additionalParameters);
+        }
 
         try
         {
@@ -761,6 +772,7 @@ public final class Environment
                 if (variableEntry.getValue() != null)
                 {
                     xpathCompiler.declareVariable(variableEntry.getKey());
+                    LOG.trace("declare var for XPath context :{}", variableEntry.getKey());
                 }
             }
 
@@ -769,9 +781,14 @@ public final class Environment
             xpathCompiler.declareNamespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel
                     .xprocStepNamespace().uri());
 
+            LOG.trace("decl prfx:{}", XProcXmlModel.xprocStepNamespace().prefix());
+
             final XPathSelector selector = xpathCompiler.compile(select).load();
             setCurrentXPathContext(xpathContextNode);
-            selector.setContextItem(xpathContextNode);
+            if (xpathContextNode != null)
+            {
+                selector.setContextItem(xpathContextNode);
+            }
 
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
             {
