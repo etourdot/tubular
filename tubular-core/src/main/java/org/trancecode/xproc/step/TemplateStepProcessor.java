@@ -118,7 +118,8 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
 
         for (final XdmItem currentItem : filteredNodesList)
         {
-            assert currentItem.isAtomicValue() == false;
+            final boolean itemIsAtomicValue = currentItem.isAtomicValue();
+            assert itemIsAtomicValue == false;
 
             final XdmNode itemAsNode = (XdmNode) currentItem;
             final XdmNodeKind nodeKind = itemAsNode.getNodeKind();
@@ -145,7 +146,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                         insertXmlFragment(evaluatedString, builder, processor);
                         break;
                     default:
-                        LOG.error("unhandled node kind in switch");
+                        LOG.error("unhandled node kind");
                 }
             }
             else
