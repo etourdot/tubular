@@ -24,7 +24,6 @@ import com.google.common.collect.Iterables;
 
 import java.util.Map;
 
-import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmItem;
@@ -83,15 +82,15 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
          */
 
         final Map<QName, String> parameters = input.getParameters(XProcPorts.PARAMETERS);
-        final SaxonBuilder builder = new SaxonBuilder(input.getPipelineContext().getProcessor()
-                .getUnderlyingConfiguration());
         final Processor processor = input.getPipelineContext().getProcessor();
+        final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
 
         builder.startDocument();
-        processNode(templateNode, sourceNode, Axis.DESCENDANT, input, builder, processor, parameters);
+        processNode(templateNode, sourceNode, input, builder, processor, parameters);
         builder.endDocument();
 
         output.writeNodes(XProcPorts.RESULT, builder.getNode());
+        LOG.trace("built result:\n{}", builder.getNode());
         LOG.trace("end of p:template");
     }
 
@@ -110,11 +109,10 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
         builder.nodes(filteredSubNodesList);
     }
 
-    private void processNode(final XdmNode templateNode, final XdmNode sourceNode, final Axis axis,
-            final StepInput input, final SaxonBuilder builder, final Processor processor,
-            final Map<QName, String> parameters)
+    private void processNode(final XdmNode templateNode, final XdmNode sourceNode, final StepInput input,
+            final SaxonBuilder builder, final Processor processor, final Map<QName, String> parameters)
     {
-        final Iterable<XdmNode> fullNodesList = Iterables.filter(SaxonAxis.axis(templateNode, axis), XdmNode.class);
+        final Iterable<XdmNode> fullNodesList = Iterables.filter(SaxonAxis.childNodes(templateNode), XdmNode.class);
         final Iterable<XdmNode> filteredNodesList = Iterables.filter(fullNodesList,
                 Predicates.not(SaxonPredicates.isIgnorableWhitespace()));
 
@@ -155,9 +153,8 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                 if (nodeKind == XdmNodeKind.ELEMENT)
                 {
                     builder.startElement(itemAsNode.getNodeName());
-                    processNode(itemAsNode, sourceNode, Axis.ATTRIBUTE, input, builder, processor, parameters);
-                    // let elements be implicitely closed after the deepest node
-                    // has been reached
+                    processNode(itemAsNode, sourceNode, input, builder, processor, parameters);
+                    builder.endElement();
                 }
                 else
                 {
