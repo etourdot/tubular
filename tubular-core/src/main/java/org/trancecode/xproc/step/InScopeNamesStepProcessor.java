@@ -22,6 +22,7 @@ package org.trancecode.xproc.step;
 import java.util.Map;
 
 import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XdmNode;
 import org.trancecode.collection.TcMaps;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonBuilder;
@@ -78,8 +79,8 @@ public final class InScopeNamesStepProcessor extends AbstractStepProcessor
         builder.endElement();
         builder.endDocument();
 
-        LOG.trace("built node = {}", builder.getNode());
-
-        output.writeNodes(XProcPorts.RESULT, builder.getNode());
+        final XdmNode resultNode = builder.getNode();
+        LOG.trace("built node = {}", resultNode);
+        output.writeNodes(XProcPorts.RESULT, resultNode);
     }
 }
