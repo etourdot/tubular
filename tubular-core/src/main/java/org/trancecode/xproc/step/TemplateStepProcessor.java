@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
@@ -36,6 +37,7 @@ import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonPredicates;
 import org.trancecode.xproc.XProcExceptions;
+import org.trancecode.xproc.api.PipelineException;
 import org.trancecode.xproc.port.XProcPorts;
 
 /**
@@ -62,16 +64,21 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
     @Override
     protected void execute(final StepInput input, final StepOutput output)
     {
-        LOG.trace("p:template execution");
+        LOG.trace("start of step");
 
         final XdmNode templateNode = input.readNode(XProcPorts.TEMPLATE);
         final Iterable<XdmNode> sourceNodeList = input.readNodes(XProcPorts.SOURCE);
-        XdmNode sourceNode = null;
+        final XdmNode sourceNode;
+
         assert Iterables.size(sourceNodeList) <= 1;
 
         if (Iterables.size(sourceNodeList) == 1)
         {
             sourceNode = Iterables.getOnlyElement(sourceNodeList);
+        }
+        else
+        {
+            sourceNode = null;
         }
 
         // unused
@@ -89,9 +96,10 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
         processNode(templateNode, sourceNode, input, builder, processor, parameters);
         builder.endDocument();
 
-        output.writeNodes(XProcPorts.RESULT, builder.getNode());
-        LOG.trace("built result:\n{}", builder.getNode());
-        LOG.trace("end of p:template");
+        final XdmNode resultNode = builder.getNode();
+        output.writeNodes(XProcPorts.RESULT, resultNode);
+        LOG.trace("built result:\n{}", resultNode);
+        LOG.trace("end of step");
     }
 
     private void insertXmlFragment(final String raw, final SaxonBuilder builder, final Processor processor)
@@ -118,8 +126,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
 
         for (final XdmItem currentItem : filteredNodesList)
         {
-            final boolean itemIsAtomicValue = currentItem.isAtomicValue();
-            assert itemIsAtomicValue == false;
+            assert !currentItem.isAtomicValue();
 
             final XdmNode itemAsNode = (XdmNode) currentItem;
             final XdmNodeKind nodeKind = itemAsNode.getNodeKind();
@@ -136,17 +143,17 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                     case ATTRIBUTE:
                         builder.attribute(nodeName, evaluatedString);
                         break;
+                    case TEXT:
+                        insertXmlFragment(evaluatedString, builder, processor);
+                        break;
                     case COMMENT:
                         builder.comment(evaluatedString);
                         break;
                     case PROCESSING_INSTRUCTION:
                         builder.processingInstruction(nodeName.toString(), evaluatedString);
                         break;
-                    case TEXT:
-                        insertXmlFragment(evaluatedString, builder, processor);
-                        break;
                     default:
-                        LOG.error("unhandled node kind");
+                        throw new PipelineException("unhandled node kind");
                 }
             }
             else
@@ -159,7 +166,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                 }
                 else
                 {
-                    LOG.error("unhandled node kind");
+                    throw new PipelineException("unhandled node kind");
                 }
             }
         }
@@ -168,6 +175,10 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
     private String evaluateString(final String stringToEvaluate, final XdmNode source, final StepInput input,
             final XdmNodeKind nodeKind, final Map<QName, String> parameters)
     {
+        Preconditions.checkNotNull(stringToEvaluate);
+        assert input != null;
+        assert nodeKind != null;
+
         Mode mode = Mode.REGULAR;
         String remainingCharacters = stringToEvaluate;
         String expression = "";
@@ -221,6 +232,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
 
                     case '}':
                         final XdmValue value = input.evaluateXPath(expression, source, parameters);
+                        assert value.size() == 1;
 
                         // In an attribute value, processing instruction, or
                         // comment, the string value of the XPath expression is
