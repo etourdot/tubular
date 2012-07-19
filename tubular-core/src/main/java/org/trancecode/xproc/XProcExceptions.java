@@ -366,6 +366,15 @@ public final class XProcExceptions
                 position);
     }
 
+    public static XProcException xc0026(final Location location)
+    {
+        return newXProcException(
+                Type.STEP,
+                26,
+                location,
+                "It is a dynamic error if any XPath expression makes reference to the context node, size, or position when the context item is undefined.");
+    }
+
     public static XProcException xc0027(final Location location)
     {
         return newXProcException(Type.STEP, 27, location,
