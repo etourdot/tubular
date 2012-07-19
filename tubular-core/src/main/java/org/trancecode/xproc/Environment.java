@@ -760,7 +760,7 @@ public final class Environment
         }
         else
         {
-        	variables = temporaryVariables;
+            variables = temporaryVariables;
         }
 
         try
@@ -804,7 +804,18 @@ public final class Environment
         }
         catch (final Exception e)
         {
-            throw new IllegalStateException("error while evaluating XPath query: " + select, e);
+            final String exceptionMessage = e.getMessage();
+
+            if (exceptionMessage.contains("context item is undefined"))
+            {
+                // Keep the original exception message to allow correct
+                // exception handling
+                throw new IllegalStateException(exceptionMessage, e);
+            }
+            else
+            {
+                throw new IllegalStateException("error while evaluating XPath query: " + select, e);
+            }
         }
     }
 
