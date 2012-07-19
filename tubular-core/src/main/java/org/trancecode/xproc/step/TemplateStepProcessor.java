@@ -19,7 +19,6 @@
  */
 package org.trancecode.xproc.step;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
@@ -65,11 +64,15 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
     protected void execute(final StepInput input, final StepOutput output)
     {
         LOG.trace("start of step");
+        assert input != null;
+        assert output != null;
 
         final XdmNode templateNode = input.readNode(XProcPorts.TEMPLATE);
         final Iterable<XdmNode> sourceNodeList = input.readNodes(XProcPorts.SOURCE);
         final XdmNode sourceNode;
 
+        assert templateNode != null;
+        assert sourceNodeList != null;
         assert Iterables.size(sourceNodeList) <= 1;
 
         if (Iterables.size(sourceNodeList) == 1)
@@ -104,6 +107,9 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
 
     private void insertXmlFragment(final String raw, final SaxonBuilder builder, final Processor processor)
     {
+        assert builder != null;
+        assert processor != null;
+
         final String toBeParsed = "<wrapperElement>" + raw + "</wrapperElement>";
         final XdmNode parsedNode = Saxon.parse(toBeParsed, processor);
         final XdmNode rootNode = Iterables.getOnlyElement(SaxonAxis.childNodes(parsedNode));
@@ -120,6 +126,11 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
     private void processNode(final XdmNode templateNode, final XdmNode sourceNode, final StepInput input,
             final SaxonBuilder builder, final Processor processor, final Map<QName, String> parameters)
     {
+        assert templateNode != null;
+        assert input != null;
+        assert builder != null;
+        assert processor != null;
+
         final Iterable<XdmNode> fullNodesList = Iterables.filter(SaxonAxis.childNodes(templateNode), XdmNode.class);
         final Iterable<XdmNode> filteredNodesList = Iterables.filter(fullNodesList,
                 Predicates.not(SaxonPredicates.isIgnorableWhitespace()));
@@ -175,7 +186,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
     private String evaluateString(final String stringToEvaluate, final XdmNode source, final StepInput input,
             final XdmNodeKind nodeKind, final Map<QName, String> parameters)
     {
-        Preconditions.checkNotNull(stringToEvaluate);
+        assert stringToEvaluate != null;
         assert input != null;
         assert nodeKind != null;
 
