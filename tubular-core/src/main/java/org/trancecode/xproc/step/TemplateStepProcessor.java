@@ -231,24 +231,42 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                         throw XProcExceptions.xc0067(input.getLocation());
 
                     case '}':
-                        final XdmValue value = input.evaluateXPath(expression, source, parameters);
-                        assert value.size() == 1;
+                        final XdmValue value;
 
-                        // In an attribute value, processing instruction, or
-                        // comment, the string value of the XPath expression is
-                        // used. In text content, an expression that selects
-                        // nodes will cause those nodes to be copied into the
-                        // template document.
-                        if (nodeKind == XdmNodeKind.TEXT)
+                        try
                         {
-                            result = result.concat(value.toString());
-                        }
-                        else
-                        {
-                            result = result.concat(value.itemAt(0).getStringValue());
-                        }
+                            value = input.evaluateXPath(expression, source, parameters);
+                            assert value.size() == 1;
 
-                        mode = Mode.REGULAR;
+                            // In an attribute value, processing instruction, or
+                            // comment, the string value of the XPath expression
+                            // is used. In text content, an expression that
+                            // selects nodes will cause those nodes to be copied
+                            // into the template document.
+                            if (nodeKind == XdmNodeKind.TEXT)
+                            {
+                                result = result.concat(value.toString());
+                            }
+                            else
+                            {
+                                result = result.concat(value.itemAt(0).getStringValue());
+                            }
+
+                            mode = Mode.REGULAR;
+                        }
+                        catch (final Exception e)
+                        {
+                            final String exceptionMessage = e.getMessage();
+
+                            if (exceptionMessage.contains("context item is undefined"))
+                            {
+                                throw XProcExceptions.xc0026(input.getLocation());
+                            }
+                            else
+                            {
+                                throw new PipelineException(e);
+                            }
+                        }
                         break;
 
                     case '\'':
