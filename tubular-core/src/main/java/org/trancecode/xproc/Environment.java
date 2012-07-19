@@ -753,7 +753,8 @@ public final class Environment
 
         // TODO slow
         final Map<QName, String> temporaryVariables = TcMaps.merge(inheritedVariables, localVariables);
-        Map<QName, String> variables = null;
+        final Map<QName, String> variables;
+
         if (additionalParameters != null)
         {
             variables = TcMaps.merge(temporaryVariables, additionalParameters);
