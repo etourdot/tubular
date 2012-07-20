@@ -31,7 +31,6 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import net.sf.saxon.s9api.XdmValue;
 import org.trancecode.logging.Logger;
-import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xml.saxon.SaxonPredicates;
@@ -105,24 +104,6 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
         LOG.trace("end of step");
     }
 
-    private void insertXmlFragment(final String raw, final SaxonBuilder builder, final Processor processor)
-    {
-        assert builder != null;
-        assert processor != null;
-
-        final String toBeParsed = "<wrapperElement>" + raw + "</wrapperElement>";
-        final XdmNode parsedNode = Saxon.parse(toBeParsed, processor);
-        final XdmNode rootNode = Iterables.getOnlyElement(SaxonAxis.childNodes(parsedNode));
-
-        // Re-ask for subnodes as the first childNodes() call will give the
-        // wrapperElement element
-        final Iterable<XdmNode> subNodesList = SaxonAxis.childNodes(rootNode);
-        final Iterable<XdmNode> filteredSubNodesList = Iterables.filter(subNodesList,
-                Predicates.not(SaxonPredicates.isIgnorableWhitespace()));
-
-        builder.nodes(filteredSubNodesList);
-    }
-
     private void processNode(final XdmNode templateNode, final XdmNode sourceNode, final StepInput input,
             final SaxonBuilder builder, final Processor processor, final Map<QName, String> parameters)
     {
@@ -155,7 +136,7 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
                         builder.attribute(nodeName, evaluatedString);
                         break;
                     case TEXT:
-                        insertXmlFragment(evaluatedString, builder, processor);
+                        builder.raw(evaluatedString, processor);
                         break;
                     case COMMENT:
                         builder.comment(evaluatedString);
