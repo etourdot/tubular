@@ -19,6 +19,8 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 import java.net.URL;
 import java.util.List;
@@ -40,7 +42,7 @@ public class XProcTestCase
     private final XdmNode description;
     private final boolean ignoreWhitespace;
     private final XdmNode pipeline;
-    private final Map<String, List<XdmNode>> inputs;
+    private final Multimap<String, List<XdmNode>> inputs;
     private final Map<QName, String> options;
     private final Map<String, Map<QName, String>> parameters;
     private final QName error;
@@ -48,7 +50,7 @@ public class XProcTestCase
     private final XdmNode comparePipeline;
 
     public XProcTestCase(final URL url, final String testSuite, final String title, final XdmNode description,
-            final boolean ignoreWhitespace, final XdmNode pipeline, final Map<String, List<XdmNode>> inputs,
+            final boolean ignoreWhitespace, final XdmNode pipeline, final Multimap<String, List<XdmNode>> inputs,
             final Map<QName, String> options, final Map<String, Map<QName, String>> parameters, final QName error,
             final Map<String, List<XdmNode>> outputs, final XdmNode comparePipeline)
     {
@@ -58,7 +60,7 @@ public class XProcTestCase
         this.description = description;
         this.ignoreWhitespace = ignoreWhitespace;
         this.pipeline = pipeline;
-        this.inputs = ImmutableMap.copyOf(inputs);
+        this.inputs = ImmutableMultimap.copyOf(inputs);
         this.options = ImmutableMap.copyOf(options);
         this.parameters = ImmutableMap.copyOf(parameters);
         this.error = error;
@@ -96,7 +98,7 @@ public class XProcTestCase
         return this.pipeline;
     }
 
-    public Map<String, List<XdmNode>> getInputs()
+    public Multimap<String, List<XdmNode>> getInputs()
     {
         return this.inputs;
     }

@@ -19,9 +19,11 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import java.net.URI;
 import java.net.URL;
@@ -66,7 +68,7 @@ public class XProcTestParser
     private XdmNode description;
     private boolean ignoreWhitespace = true;
     private XdmNode pipeline;
-    private final Map<String, List<XdmNode>> inputs = Maps.newHashMap();
+    private final Multimap<String, List<XdmNode>> inputs = HashMultimap.create();
     private final Map<QName, String> options = Maps.newHashMap();
     private final Map<String, Map<QName, String>> parameters = Maps.newHashMap();
     private QName error;
