@@ -68,27 +68,24 @@ public final class TemplateStepProcessor extends AbstractStepProcessor
 
         final XdmNode templateNode = input.readNode(XProcPorts.TEMPLATE);
         final Iterable<XdmNode> sourceNodeList = input.readNodes(XProcPorts.SOURCE);
+        final int sourcesCount = Iterables.size(sourceNodeList);
         final XdmNode sourceNode;
 
         assert templateNode != null;
         assert sourceNodeList != null;
-        assert Iterables.size(sourceNodeList) <= 1;
 
-        if (Iterables.size(sourceNodeList) == 1)
+        if (sourcesCount == 1)
         {
             sourceNode = Iterables.getOnlyElement(sourceNodeList);
+        }
+        else if (sourcesCount > 1)
+        {
+            throw XProcExceptions.xc0068(input.getLocation());
         }
         else
         {
             sourceNode = null;
         }
-
-        // unused
-        /*
-         * LOG.trace("source count:{}", Iterables.size(sourceNodeList)); if
-         * (Iterables.size(sourceNodeList) > 1) { throw
-         * XProcExceptions.xc0067(input.getLocation()); }
-         */
 
         final Map<QName, String> parameters = input.getParameters(XProcPorts.PARAMETERS);
         final Processor processor = input.getPipelineContext().getProcessor();
