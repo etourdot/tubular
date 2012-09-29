@@ -20,7 +20,6 @@
     <module>trancecode-util</module>
     <module>tubular-cli</module>
     <module>tubular-core</module>
-    <module>tubular-osgi-bundle</module>
     <module>tubular-parent</module>
     <module>xml-catalog</module>
   </modules>
