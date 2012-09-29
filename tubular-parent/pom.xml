@@ -259,13 +259,6 @@
 
   <build>
 
-    <extensions>
-      <extension>
-        <groupId>org.cyclopsgroup</groupId>
-        <artifactId>awss3-maven-wagon</artifactId>
-      </extension>
-    </extensions>
-
     <pluginManagement>
       <plugins>
 
@@ -307,7 +300,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.4</version>
+          <version>2.5.1</version>
         </plugin>
 
         <plugin>
@@ -394,7 +387,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.4</version>
         <executions>
           <execution>
             <phase>site</phase>
