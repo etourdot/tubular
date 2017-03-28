@@ -22,9 +22,7 @@ package org.trancecode.xproc.step;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import net.sf.saxon.om.FocusTrackingIterator;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
@@ -36,7 +34,7 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.sxpath.XPathDynamicContext;
 import net.sf.saxon.sxpath.XPathExpression;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.NodeListIterator;
+import net.sf.saxon.tree.iter.ListIterator;
 import net.sf.saxon.value.BooleanValue;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.Saxon;
@@ -44,6 +42,10 @@ import org.trancecode.xml.saxon.SaxonNamespaces;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.XProcOptions;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * {@code p:split-sequence}.
@@ -92,7 +94,7 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
                 xpathCompiler.declareNamespace(namespace.getKey(), namespace.getValue());
             }
             final XPathExecutable xpathExecutable = xpathCompiler.compile(test);
-            final NodeListIterator nodeIterator = new NodeListIterator(docs);
+            final ListIterator nodeIterator = new ListIterator(docs);
             final AtomicBoolean reached = new AtomicBoolean(false);
             while (nodeIterator.hasNext())
             {
@@ -101,7 +103,7 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
                 final AtomicBoolean pass = new AtomicBoolean(false);
                 final XPathExpression xpathExpression = xpathExecutable.getUnderlyingExpression();
                 final XPathDynamicContext xpathDynamicContext = xpathExpression.createDynamicContext(doc);
-                xpathDynamicContext.getXPathContextObject().setCurrentIterator(nodeIterator);
+                xpathDynamicContext.getXPathContextObject().setCurrentIterator(new FocusTrackingIterator(nodeIterator));
                 final List<Item> results = xpathExpression.evaluate(xpathDynamicContext);
                 if (results.isEmpty())
                 {

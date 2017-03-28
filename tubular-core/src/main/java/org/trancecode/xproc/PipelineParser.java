@@ -562,7 +562,8 @@ public final class PipelineParser
             final String wrapperPrefix = portBindingNode.getAttributeValue(XProcOptions.WRAPPER_PREFIX);
             final String wrapperNamespace = portBindingNode.getAttributeValue(XProcOptions.WRAPPER_NAMESPACE);
             final String contentType = portBindingNode.getAttributeValue(XProcOptions.CONTENT_TYPE);
-            return new DataPortBinding(href, wrapper, wrapperPrefix, wrapperNamespace, contentType, portBindingNode);
+            return new DataPortBinding(href, wrapper, wrapperPrefix, wrapperNamespace, contentType, portBindingNode,
+              context.getProcessor());
         }
 
         if (portBindingNode.getNodeName().equals(Elements.DOCUMENT))

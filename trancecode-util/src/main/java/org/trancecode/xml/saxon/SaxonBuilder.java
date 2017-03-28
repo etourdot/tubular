@@ -24,17 +24,32 @@ import com.google.common.collect.Iterables;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.event.Receiver;
+import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.event.TreeReceiver;
+import net.sf.saxon.om.FingerprintedQName;
 import net.sf.saxon.om.NamePool;
+import net.sf.saxon.om.NamespaceBinding;
+import net.sf.saxon.om.NoNamespaceName;
 import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.NamespaceIterator;
+import net.sf.saxon.tree.NamespaceNode;
+import net.sf.saxon.tree.linked.AttributeImpl;
+import net.sf.saxon.tree.linked.CommentImpl;
+import net.sf.saxon.tree.linked.ElementImpl;
+import net.sf.saxon.tree.linked.ProcInstImpl;
+import net.sf.saxon.tree.linked.TextImpl;
+import net.sf.saxon.tree.util.NamespaceIterator;
+import net.sf.saxon.type.AnyType;
+import net.sf.saxon.type.BuiltInAtomicType;
+
+//import net.sf.saxon.tree.iter.NamespaceIterator;
+import java.util.Iterator;
 
 /**
  * A builder to create new XdmNode documents using a push API. It provides a
@@ -115,8 +130,9 @@ public class SaxonBuilder
     {
         try
         {
-            final int nameCode = namePool.allocate(qname.getPrefix(), qname.getNamespaceURI(), qname.getLocalName());
-            receiver.startElement(nameCode, StandardNames.XS_UNTYPED, -1, 0);
+            ElementImpl element = new ElementImpl();
+            element.setNodeName(new FingerprintedQName(qname.getStructuredQName(), namePool));
+            receiver.startElement(element.getNodeName(), AnyType.getInstance(), element, 0);
         }
         catch (final XPathException e)
         {
@@ -139,10 +155,10 @@ public class SaxonBuilder
         try
         {
             startElement(qname);
-            final int[] inscopeNsCodes = NamespaceIterator.getInScopeNamespaceCodes(nsContext.getUnderlyingNode());
-            for (final int nsCode : inscopeNsCodes)
-            {
-                receiver.namespace(nsCode, 0);
+            final Iterator<NamespaceBinding> inscopeNsCodes = NamespaceIterator.iterateNamespaces(nsContext.getUnderlyingNode());
+            while (inscopeNsCodes.hasNext()) {
+                NamespaceBinding namespaceBinding = inscopeNsCodes.next();
+                receiver.namespace(namespaceBinding, 0);
             }
         }
         catch (final XPathException e)
@@ -195,8 +211,9 @@ public class SaxonBuilder
     {
         try
         {
-            final int nameCode = namePool.allocate(qname.getPrefix(), qname.getNamespaceURI(), qname.getLocalName());
-            receiver.attribute(nameCode, StandardNames.XS_UNTYPED_ATOMIC, value, 0, 0);
+            AttributeImpl attributeNode = new AttributeImpl(null, 0);
+            receiver.attribute(new FingerprintedQName(qname.getPrefix(), qname.getNamespaceURI(), qname.getLocalName()),
+              BuiltInAtomicType.UNTYPED_ATOMIC, value, attributeNode, 0);
         }
         catch (final XPathException e)
         {
@@ -214,7 +231,8 @@ public class SaxonBuilder
     {
         try
         {
-            receiver.comment(comment, 0, 0);
+            CommentImpl commentNode = new CommentImpl(comment);
+            receiver.comment(comment, commentNode, 0);
         }
         catch (final XPathException e)
         {
@@ -234,8 +252,7 @@ public class SaxonBuilder
     {
         try
         {
-            final int nsCode = namePool.allocateNamespaceCode((prefix != null) ? prefix : "", uri);
-            receiver.namespace(nsCode, 0);
+            receiver.namespace(NamespaceBinding.makeNamespaceBinding((prefix != null) ? prefix : "", uri), 0);
         }
         catch (final XPathException e)
         {
@@ -260,7 +277,7 @@ public class SaxonBuilder
         {
             for (final XdmNode node : nodes)
             {
-                receiver.append(node.getUnderlyingNode(), 0, NodeInfo.LOCAL_NAMESPACES);
+                receiver.append(node.getUnderlyingNode(), node.getUnderlyingNode().saveLocation(), NodeInfo.LOCAL_NAMESPACES);
             }
         }
         catch (final XPathException e)
@@ -281,7 +298,8 @@ public class SaxonBuilder
     {
         try
         {
-            receiver.processingInstruction(name, data, 0, 0);
+            ProcInstImpl procInst = new ProcInstImpl(name, data);
+            receiver.processingInstruction(name, data, procInst, 0);
         }
         catch (final XPathException e)
         {
@@ -299,7 +317,8 @@ public class SaxonBuilder
     {
         try
         {
-            receiver.characters(text, 0, 0);
+            TextImpl textNode = new TextImpl(text);
+            receiver.characters(text, textNode, 0);
         }
         catch (final XPathException e)
         {

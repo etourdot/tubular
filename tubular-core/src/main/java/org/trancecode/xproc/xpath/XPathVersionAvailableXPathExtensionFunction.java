@@ -20,6 +20,7 @@ package org.trancecode.xproc.xpath;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -78,7 +79,7 @@ public final class XPathVersionAvailableXPathExtensionFunction extends AbstractX
                 {
                     private static final long serialVersionUID = -1349293887849720884L;
 
-                    @Override
+                    /*@Override
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
                             throws XPathException
                     {
@@ -86,6 +87,13 @@ public final class XPathVersionAvailableXPathExtensionFunction extends AbstractX
                         LOG.trace("version = {}", version);
                         return SingletonIterator.makeIterator((version == 1.0 || version == 2.0) ? BooleanValue.TRUE
                                 : BooleanValue.FALSE);
+                    }*/
+
+                    @Override
+                    public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
+                        final double version = ((DoubleValue) sequences[0]).getDoubleValue();
+                        LOG.trace("version = {}", version);
+                        return (version == 1.0 || version == 2.0) ? BooleanValue.TRUE : BooleanValue.FALSE;
                     }
                 };
             }

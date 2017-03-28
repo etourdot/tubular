@@ -173,17 +173,17 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         final File stderrFile = stderr.get();
         process.destroy();
 
+        final Processor processor = input.getPipelineContext().getProcessor();
         output.writeNodes(XProcPorts.RESULT,
-                parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode()));
+                parseOutput(stdoutFile, resultIsXml, wrapResultLines, input.getStep().getNode(), processor));
         output.writeNodes(XProcPorts.ERRORS,
-                parseOutput(stderrFile, errorsIsXml, wrapErrorLines, input.getStep().getNode()));
+                parseOutput(stderrFile, errorsIsXml, wrapErrorLines, input.getStep().getNode(), processor));
         output.writeNodes(XProcPorts.EXIT_STATUS, input.newResultElement(Integer.toString(exitCode)));
     }
 
     private static XdmNode parseOutput(final File file, final boolean outputIsXml, final boolean wrapLines,
-            final XdmNode namespaceContext) throws Exception
+            final XdmNode namespaceContext, final Processor processor) throws Exception
     {
-        final Processor processor = namespaceContext.getProcessor();
         final SaxonBuilder builder = new SaxonBuilder(processor.getUnderlyingConfiguration());
         builder.startDocument();
         builder.startElement(XProcXmlModel.Elements.RESULT, namespaceContext);

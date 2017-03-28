@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
@@ -71,8 +72,10 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
         final String groupAdjacent = input.getOptionValue(XProcOptions.GROUP_ADJACENT);
 
+        final Processor processor = input.getPipelineContext().getProcessor();
+
         final QName newName = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
-                .getStep().getLocation(), input.getStep().getNode());
+                .getStep().getLocation(), input.getStep().getNode(), processor);
         wrapAdjacent.set(null);
 
         final SaxonProcessorDelegate wrapDelegate = new AbstractSaxonProcessorDelegate()
@@ -80,7 +83,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             @Override
             public void comment(final XdmNode node, final SaxonBuilder builder)
             {
-                doStartWrap(groupAdjacent, newName, node, builder);
+                doStartWrap(groupAdjacent, newName, node, builder, processor);
                 builder.comment(node.getStringValue());
                 doEndWrap(groupAdjacent, builder);
             }
@@ -88,7 +91,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             @Override
             public void processingInstruction(final XdmNode node, final SaxonBuilder builder)
             {
-                doStartWrap(groupAdjacent, newName, node, builder);
+                doStartWrap(groupAdjacent, newName, node, builder, processor);
                 builder.processingInstruction(node.getNodeName().getLocalName(), node.getStringValue());
                 doEndWrap(groupAdjacent, builder);
             }
@@ -113,7 +116,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             @Override
             public EnumSet<NextSteps> startElement(final XdmNode node, final SaxonBuilder builder)
             {
-                doStartWrap(groupAdjacent, newName, node, builder);
+                doStartWrap(groupAdjacent, newName, node, builder, processor);
                 builder.startElement(node.getNodeName(), node);
                 return EnumSet.of(NextSteps.PROCESS_ATTRIBUTES, NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
             }
@@ -128,7 +131,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             @Override
             public void text(final XdmNode node, final SaxonBuilder builder)
             {
-                doStartWrap(groupAdjacent, newName, node, builder);
+                doStartWrap(groupAdjacent, newName, node, builder, processor);
                 builder.text(node.getStringValue());
                 doEndWrap(groupAdjacent, builder);
             }
@@ -154,7 +157,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
     }
 
     private void doStartWrap(final String groupAdjacent, final QName newName, final XdmNode node,
-            final SaxonBuilder builder)
+            final SaxonBuilder builder, final Processor processor)
     {
         if (groupAdjacent == null)
         {
@@ -165,12 +168,12 @@ public final class WrapStepProcessor extends AbstractStepProcessor
             if (wrapAdjacent.get() == null)
             {
                 builder.startElement(newName);
-                wrapAdjacent.set(getGroupAdjacent(groupAdjacent, node));
+                wrapAdjacent.set(getGroupAdjacent(groupAdjacent, node, processor));
             }
             else
             {
                 final XdmItem itemGroup = wrapAdjacent.get();
-                final XdmItem currItem = getGroupAdjacent(groupAdjacent, node);
+                final XdmItem currItem = getGroupAdjacent(groupAdjacent, node, processor);
                 if (!itemGroup.getStringValue().equals(currItem.getStringValue()))
                 {
                     builder.endElement();
@@ -196,11 +199,11 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         }
     }
 
-    private XdmItem getGroupAdjacent(final String groupAdjacent, final XdmNode node)
+    private XdmItem getGroupAdjacent(final String groupAdjacent, final XdmNode node, final Processor processor)
     {
         try
         {
-            final XPathCompiler xPathCompiler = node.getProcessor().newXPathCompiler();
+            final XPathCompiler xPathCompiler = processor.newXPathCompiler();
             final XPathSelector xPathSelector = xPathCompiler.compile(groupAdjacent).load();
             xPathSelector.setContextItem(node);
             return xPathSelector.evaluateSingle();

@@ -72,7 +72,8 @@ public final class EscapeMarkupStepProcessor extends AbstractStepProcessor
 
         final XdmNode root = SaxonAxis.childElement(node);
         final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-        final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions);
+        final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions,
+          input.getPipelineContext().getProcessor());
 
         try
         {

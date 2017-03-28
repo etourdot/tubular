@@ -20,6 +20,7 @@ package org.trancecode.xproc.xpath;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.QName;
@@ -27,6 +28,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcXmlModel;
@@ -86,7 +88,7 @@ public final class ValueAvailableXPathExtensionFunction extends AbstractXPathExt
                 {
                     private static final long serialVersionUID = -3880313176590813975L;
 
-                    @Override
+                    /*@Override
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
                             throws XPathException
                     {
@@ -95,6 +97,15 @@ public final class ValueAvailableXPathExtensionFunction extends AbstractXPathExt
                         final boolean available = Environment.getCurrentEnvironment().getVariable(name) != null;
                         LOG.trace("  available = {}", available);
                         return SingletonIterator.makeIterator(BooleanValue.get(available));
+                    }*/
+
+                    @Override
+                    public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
+                        final QName name = resolveQName(((StringValue) sequences[0]).getStringValue());
+                        LOG.trace("{@method} name = {}", name);
+                        final boolean available = Environment.getCurrentEnvironment().getVariable(name) != null;
+                        LOG.trace("  available = {}", available);
+                        return BooleanValue.get(available);
                     }
                 };
             }

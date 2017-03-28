@@ -33,6 +33,7 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 
 import net.sf.saxon.s9api.Axis;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmItem;
@@ -86,7 +87,7 @@ class RequestParser
         this.serializationOptions = serializationOptions;
     }
 
-    public XProcHttpRequest parseRequest(final XdmNode requestNode)
+    public XProcHttpRequest parseRequest(final XdmNode requestNode, final Processor processor)
     {
         final String method = requestNode.getAttributeValue(XProcXmlModel.Attributes.METHOD);
         if (Strings.isNullOrEmpty(method))
@@ -94,10 +95,10 @@ class RequestParser
             throw XProcExceptions.xc0006(requestNode);
         }
         request.setHeaders(parseHeaders(requestNode));
-        request.setEntity(parseMultipart(requestNode));
+        request.setEntity(parseMultipart(requestNode, processor));
         if (!request.hasEntity())
         {
-            request.setEntity(parseBody(requestNode));
+            request.setEntity(parseBody(requestNode, processor));
         }
         if (request.hasEntity())
         {
@@ -177,7 +178,7 @@ class RequestParser
         return group;
     }
 
-    private MultipartEntity parseMultipart(final XdmNode requestNode)
+    private MultipartEntity parseMultipart(final XdmNode requestNode, final Processor processor)
     {
         final XdmNode child = SaxonAxis.childElement(requestNode, XProcXmlModel.Elements.MULTIPART);
         if (child != null)
@@ -203,7 +204,7 @@ class RequestParser
             final Iterable<XdmNode> bodies = SaxonAxis.childElements(child, XProcXmlModel.Elements.BODY);
             for (final XdmNode body : bodies)
             {
-                final FormBodyPart contentBody = getContentBody(body);
+                final FormBodyPart contentBody = getContentBody(body, processor);
                 if (contentBody != null)
                 {
                     reqEntity.addPart(contentBody);
@@ -215,7 +216,8 @@ class RequestParser
         return null;
     }
 
-    private String getContentString(final XdmNode node, final ContentType contentType, final String encoding)
+    private String getContentString(final XdmNode node, final ContentType contentType, final String encoding,
+                                    final Processor processor)
     {
         if (!StringUtils.isEmpty(encoding) && !StringUtils.equalsIgnoreCase(encoding, Steps.ENCODING_BASE64))
         {
@@ -265,11 +267,11 @@ class RequestParser
         if (StringUtils.equalsIgnoreCase("xml", contentType.getSubType()))
         {
             final ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
-            final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions);
+            final Serializer serializer = Steps.getSerializer(targetOutputStream, serializationOptions, processor);
             serializer.setOutputProperty(Serializer.Property.MEDIA_TYPE, contentType.toString());
             try
             {
-                node.getProcessor().writeXdmValue(SaxonAxis.childElement(node), serializer);
+                processor.writeXdmValue(SaxonAxis.childElement(node), serializer);
             }
             catch (final Exception e)
             {
@@ -290,12 +292,12 @@ class RequestParser
         return contentBuilder.toString();
     }
 
-    private FormBodyPart getContentBody(final XdmNode node)
+    private FormBodyPart getContentBody(final XdmNode node, final Processor processor)
     {
         final String contentTypeAtt = node.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
         final String encoding = node.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
         final ContentType contentType = Steps.getContentType(contentTypeAtt, node);
-        final String contentString = getContentString(node, contentType, encoding);
+        final String contentString = getContentString(node, contentType, encoding, processor);
         final StringBody body;
         try
         {
@@ -389,7 +391,7 @@ class RequestParser
         }
     }
 
-    private StringEntity parseBody(final XdmNode node)
+    private StringEntity parseBody(final XdmNode node, final Processor processor)
     {
         final XdmNode body = SaxonAxis.childElement(node, XProcXmlModel.Elements.BODY);
         if (body != null)
@@ -397,7 +399,7 @@ class RequestParser
             final String contentTypeAtt = body.getAttributeValue(XProcXmlModel.Attributes.CONTENT_TYPE);
             final String encoding = body.getAttributeValue(XProcXmlModel.Attributes.ENCODING);
             final ContentType contentType = Steps.getContentType(contentTypeAtt, body);
-            final String contentString = getContentString(body, contentType, encoding);
+            final String contentString = getContentString(body, contentType, encoding, processor);
             try
             {
                 return new StringEntity(contentString, contentType.toString(), Steps.getCharset(

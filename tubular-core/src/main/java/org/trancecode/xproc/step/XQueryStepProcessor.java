@@ -24,12 +24,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-
-import java.util.Iterator;
-import java.util.Map;
-
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.lib.CollectionURIResolver;
+import net.sf.saxon.lib.CollectionFinder;
+import net.sf.saxon.lib.ResourceCollection;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.s9api.Processor;
@@ -41,13 +38,16 @@ import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.NodeListIterator;
+import net.sf.saxon.tree.iter.ListIterator;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcExceptions;
 import org.trancecode.xproc.port.XProcPorts;
 import org.trancecode.xproc.variable.Variable;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * {@code p:xquery}.
@@ -74,10 +74,10 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         LOG.trace("query = {}", queryNode.getStringValue());
 
         final Processor processor = input.getPipelineContext().getProcessor();
-        final CollectionURIResolver oldCollResolver = processor.getUnderlyingConfiguration().getCollectionURIResolver();
+        final CollectionFinder oldCollResolver = processor.getUnderlyingConfiguration().getCollectionFinder();
         final XQCollectionResolver collResolver = new XQCollectionResolver(oldCollResolver);
         collResolver.addToCollection(sourcesDoc);
-        processor.getUnderlyingConfiguration().setCollectionURIResolver(collResolver);
+        processor.getUnderlyingConfiguration().setCollectionFinder(collResolver);
         final XQueryCompiler xQueryCompiler = processor.newXQueryCompiler();
         try
         {
@@ -105,7 +105,7 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         }
         finally
         {
-            processor.getUnderlyingConfiguration().setCollectionURIResolver(oldCollResolver);
+            processor.getUnderlyingConfiguration().setCollectionFinder(oldCollResolver);
         }
     }
 
@@ -135,14 +135,14 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         return builder.build();
     }
 
-    private final class XQCollectionResolver implements CollectionURIResolver
+    private final class XQCollectionResolver implements CollectionFinder
     {
         private static final long serialVersionUID = -482974065657067566L;
 
-        private final CollectionURIResolver oldCollResolver;
+        private final CollectionFinder oldCollResolver;
         private final Builder<Item> collectionBuilder;
 
-        private XQCollectionResolver(final CollectionURIResolver oldCollResolver)
+        private XQCollectionResolver(final CollectionFinder oldCollResolver)
         {
             this.oldCollResolver = oldCollResolver;
             collectionBuilder = ImmutableList.builder();
@@ -157,14 +157,12 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
         }
 
         @Override
-        public SequenceIterator resolve(final String href, final String base, final XPathContext context)
-                throws XPathException
-        {
-            if (Strings.isNullOrEmpty(href))
+        public ResourceCollection findCollection(XPathContext xPathContext, String href) throws XPathException {
+            /*if (Strings.isNullOrEmpty(href))
             {
-                return new NodeListIterator(collectionBuilder.build());
-            }
-            return oldCollResolver.resolve(href, base, context);
+                return new ListIterator(collectionBuilder.build());
+            }*/
+            return oldCollResolver.findCollection(xPathContext, href);
         }
     }
 }

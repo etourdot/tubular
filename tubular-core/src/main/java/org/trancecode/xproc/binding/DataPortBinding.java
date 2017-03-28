@@ -34,6 +34,7 @@ import java.nio.charset.Charset;
 import javax.mail.internet.ContentType;
 
 import net.iharder.Base64;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.io.IOUtils;
@@ -58,7 +59,8 @@ public class DataPortBinding extends AbstractPortBinding
     private final ContentType contentType;
 
     public DataPortBinding(final String href, final String wrapperName, final String wrapperPrefix,
-            final String wrapperNamespace, final String contentType, final XdmNode node)
+                           final String wrapperNamespace, final String contentType, final XdmNode node,
+                           final Processor processor)
     {
         super(SaxonLocation.of(node));
         this.href = Preconditions.checkNotNull(href);
@@ -69,7 +71,7 @@ public class DataPortBinding extends AbstractPortBinding
         else
         {
             this.wrapper = Steps
-                    .getNewNamespace(wrapperPrefix, wrapperNamespace, wrapperName, this.getLocation(), node);
+                    .getNewNamespace(wrapperPrefix, wrapperNamespace, wrapperName, this.getLocation(), node, processor);
         }
         this.node = node;
         if (Strings.isNullOrEmpty(contentType))

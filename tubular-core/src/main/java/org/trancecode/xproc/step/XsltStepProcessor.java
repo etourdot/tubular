@@ -135,6 +135,7 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         {
             final Map<URI, XdmDestination> destinations = Maps.newHashMap();
 
+            @Override
             public void close(final Result result) throws TransformerException
             {
                 final URI uri = URI.create(result.getSystemId());
@@ -144,6 +145,12 @@ public final class XsltStepProcessor extends AbstractStepProcessor
                 secondaryPortNodes.add(xdmResult.getXdmNode());
             }
 
+            @Override
+            public OutputURIResolver newInstance() {
+                return this;
+            }
+
+            @Override
             public Result resolve(final String href, final String base) throws TransformerException
             {
                 final URI uri = Uris.resolve(href, base);

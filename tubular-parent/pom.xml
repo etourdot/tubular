@@ -74,7 +74,7 @@
     <org.trancecode.logging.tc-logging.version>0.2.0</org.trancecode.logging.tc-logging.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <test.quiet>true</test.quiet>
-    <saxon9.version>9.3.0.4</saxon9.version>
+    <saxon9.version>9.7.0-15</saxon9.version>
     <surefire.vm.args />
 
   </properties>
@@ -138,7 +138,7 @@
 
       <dependency>
         <groupId>net.sf.saxon</groupId>
-        <artifactId>saxon-he</artifactId>
+        <artifactId>Saxon-HE</artifactId>
         <version>${saxon9.version}</version>
       </dependency>
 
@@ -170,6 +170,12 @@
         <groupId>org.etourdot</groupId>
         <artifactId>xinclude</artifactId>
         <version>0.2.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-he</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

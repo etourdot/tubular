@@ -20,6 +20,7 @@ package org.trancecode.xproc.xpath;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
@@ -85,11 +86,16 @@ public final class IterationSizeXPathExtensionFunction extends AbstractXPathExte
                 {
                     private static final long serialVersionUID = -8363336682570398286L;
 
-                    @Override
+                    /*@Override
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
                             throws XPathException
                     {
                         return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(ITERATION_SIZE.get()));
+                    }*/
+
+                    @Override
+                    public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
+                        return Int64Value.makeIntegerValue(ITERATION_SIZE.get());
                     }
                 };
             }

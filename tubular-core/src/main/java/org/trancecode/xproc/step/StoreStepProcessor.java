@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.Serializer.Property;
@@ -112,7 +113,8 @@ public final class StoreStepProcessor extends AbstractStepProcessor
             throw XProcExceptions.xc0050(input.getLocation());
         }
 
-        final Serializer serializer = new Serializer();
+        final Processor processor = input.getPipelineContext().getProcessor();
+        final Serializer serializer = processor.newSerializer();
         serializer.setOutputStream(targetOutputStream);
         if (doctypePublicId != null)
         {

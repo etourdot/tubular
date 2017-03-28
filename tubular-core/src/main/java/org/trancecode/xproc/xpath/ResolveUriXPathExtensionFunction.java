@@ -23,12 +23,14 @@ import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.value.AnyURIValue;
 import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 import org.trancecode.logging.Logger;
 import org.trancecode.xproc.Environment;
 import org.trancecode.xproc.XProcXmlModel;
@@ -81,7 +83,7 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                 {
                     private static final long serialVersionUID = 4367717306903282740L;
 
-                    @Override
+                    /*@Override
                     public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
                             throws XPathException
                     {
@@ -102,6 +104,32 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                             resolvedUri = ResolveURI.makeAbsolute(relative, base).toASCIIString();
                             LOG.trace("  resolvedUri = {}", resolvedUri);
                             return SingletonIterator.makeIterator(new AnyURIValue(resolvedUri));
+                        }
+                        catch (final URISyntaxException e)
+                        {
+                            return null;
+                        }
+                    }*/
+
+                    @Override
+                    public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
+                        final String relative = ((StringValue) sequences[0]).getStringValue();
+                        final String base;
+                        if (sequences.length == 1)
+                        {
+                            base = Environment.getCurrentXPathContext().getBaseURI().toASCIIString();
+                        }
+                        else
+                        {
+                            base = ((StringValue) sequences[1]).getStringValue();
+                        }
+                        LOG.trace("{@method} relative = {} ; base = {}", relative, base);
+                        final String resolvedUri;
+                        try
+                        {
+                            resolvedUri = ResolveURI.makeAbsolute(relative, base).toASCIIString();
+                            LOG.trace("  resolvedUri = {}", resolvedUri);
+                            return new AnyURIValue(resolvedUri);
                         }
                         catch (final URISyntaxException e)
                         {

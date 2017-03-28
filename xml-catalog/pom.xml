@@ -64,7 +64,7 @@
 
     <dependency>
       <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-he</artifactId>
+      <artifactId>Saxon-HE</artifactId>
       <version>${saxon9.version}</version>
     </dependency>
 

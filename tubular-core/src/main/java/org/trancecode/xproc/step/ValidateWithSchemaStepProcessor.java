@@ -30,6 +30,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import net.sf.saxon.s9api.BuildingContentHandler;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -79,7 +80,8 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
         boolean valid = false;
         try
         {
-            final StringReader reader = new StringReader(getXmlDocument(sourceDoc));
+            final Processor processor = input.getPipelineContext().getProcessor();
+            final StringReader reader = new StringReader(getXmlDocument(sourceDoc, processor));
             final InputSource source = new InputSource(reader);
             source.setSystemId(sourceDoc.getBaseURI().toASCIIString());
             final BuildingContentHandler handler = input.getPipelineContext().getProcessor().newDocumentBuilder()
@@ -92,7 +94,7 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
             if (Iterables.size(shemas) > 0)
             {
                 final XdmNode schema = shemas.iterator().next();
-                final StringReader stringSchema = new StringReader(getXmlDocument(schema));
+                final StringReader stringSchema = new StringReader(getXmlDocument(schema, processor));
                 sourceSchema.setCharacterStream(stringSchema);
                 sourceSchema.setSystemId(schema.getBaseURI().toASCIIString());
             }
@@ -140,11 +142,11 @@ public final class ValidateWithSchemaStepProcessor extends AbstractStepProcessor
         }
     }
 
-    private static String getXmlDocument(final XdmNode node) throws SaxonApiException
+    private static String getXmlDocument(final XdmNode node, final Processor processor) throws SaxonApiException
     {
-        final Serializer serializer = new Serializer();
+        final Serializer serializer = processor.newSerializer();
 
-        final XQueryCompiler xqcomp = node.getProcessor().newXQueryCompiler();
+        final XQueryCompiler xqcomp = processor.newXQueryCompiler();
         final XQueryEvaluator xqeval = xqcomp.compile(".").load();
         xqeval.setContextItem(node);
 

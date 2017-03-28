@@ -24,6 +24,7 @@ import com.google.common.base.Function;
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
@@ -87,7 +88,8 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
             {
                 try
                 {
-                    final XPathCompiler xPathCompiler = element.getProcessor().newXPathCompiler();
+                    final Processor processor = input.getPipelineContext().getProcessor();
+                    final XPathCompiler xPathCompiler = processor.newXPathCompiler();
                     xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel
                             .xprocNamespace().uri());
                     xPathCompiler.declareVariable(INDEX);

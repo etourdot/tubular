@@ -40,6 +40,7 @@ import javax.xml.transform.stream.StreamResult;
 import net.iharder.Base64;
 import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.lib.OutputURIResolver;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
@@ -149,9 +150,10 @@ public final class Steps
         return builder.build();
     }
 
-    public static Serializer getSerializer(final OutputStream stream, final Map<QName, Object> options)
+    public static Serializer getSerializer(final OutputStream stream, final Map<QName, Object> options,
+                                           final Processor processor)
     {
-        final Serializer serializer = new Serializer();
+        final Serializer serializer = processor.newSerializer();
         serializer.setOutputStream(stream);
         if (options.containsKey(XProcOptions.DOCTYPE_PUBLIC))
         {
@@ -210,7 +212,7 @@ public final class Steps
     }
 
     public static QName getNewNamespace(final String newPrefix, final String newNamespace, final String newName,
-            final Location location, final XdmNode node)
+            final Location location, final XdmNode node, final Processor processor)
     {
         if (newPrefix != null)
         {
@@ -236,7 +238,7 @@ public final class Steps
         }
         else
         {
-            final String prefix = (newPrefix == null) ? node.getProcessor().getUnderlyingConfiguration().getNamePool()
+            final String prefix = (newPrefix == null) ? processor.getUnderlyingConfiguration().getNamePool()
                     .suggestPrefixForURI(newNamespace) : newPrefix;
             return new QName((prefix == null) ? "" : prefix, newNamespace, newName);
         }
