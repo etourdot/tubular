@@ -38,14 +38,7 @@ public final class TaskExecutors
 {
     public static TaskExecutor forExecutorService(final ExecutorService executor)
     {
-        return new TaskExecutor()
-        {
-            @Override
-            public <T> Future<T> submit(final Callable<T> task)
-            {
-                return executor.submit(task);
-            }
-        };
+        return executor::submit;
     }
 
     /**

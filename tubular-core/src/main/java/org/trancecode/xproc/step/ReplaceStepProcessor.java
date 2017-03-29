@@ -120,14 +120,7 @@ public final class ReplaceStepProcessor extends AbstractStepProcessor
         };
 
         final SaxonProcessorDelegate replaceWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS,
-                replaceDelegate, SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xc0023(node, NODE_KINDS);
-                    }
-                }));
+                replaceDelegate, SaxonProcessorDelegates.error(node -> XProcExceptions.xc0023(node, NODE_KINDS)));
 
         final SaxonProcessor replaceProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input

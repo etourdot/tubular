@@ -79,9 +79,9 @@ public final class Environment
     private static final QName ELEMENT_PARAM = XProcXmlModel.xprocStepNamespace().newSaxonQName("param");
     private static final QName ELEMENT_RESULT = XProcXmlModel.xprocStepNamespace().newSaxonQName("result");
 
-    private static final ThreadLocal<Environment> CURRENT_ENVIRONMENT = new ThreadLocal<Environment>();
-    private static final ThreadLocal<XdmNode> CURRENT_XPATH_CONTEXT = new ThreadLocal<XdmNode>();
-    private static final ThreadLocal<XdmNode> CURRENT_NAMESPACE_CONTEXT = new ThreadLocal<XdmNode>();
+    private static final ThreadLocal<Environment> CURRENT_ENVIRONMENT = new ThreadLocal<>();
+    private static final ThreadLocal<XdmNode> CURRENT_XPATH_CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<XdmNode> CURRENT_NAMESPACE_CONTEXT = new ThreadLocal<>();
 
     private final EnvironmentPort defaultReadablePort;
     private final Map<QName, String> inheritedVariables;
@@ -867,36 +867,28 @@ public final class Environment
             {
                 final XPathSelector paramsSelector = xpathCompiler.compile("//.[@name]").load();
                 paramsSelector.setContextItem(parameterNode);
-                final Iterator<XdmItem> iteratorParams = paramsSelector.iterator();
-                while (iteratorParams.hasNext())
-                {
-                    final XdmNode item = (XdmNode) iteratorParams.next();
-                    final Iterable<XdmNode> attributes = SaxonAxis.attributes(item);
-                    final Iterator<XdmNode> iterator = attributes.iterator();
-                    while (iterator.hasNext())
-                    {
-                        final XdmNode attribute = iterator.next();
-                        final QName attName = attribute.getNodeName();
-                        if (!ATTRIBUTE_NAME.equals(attName) && !ATTRIBUTE_NAMESPACE.equals(attName)
-                                && !ATTRIBUTE_VALUE.equals(attName))
-                        {
-                            throw XProcExceptions.xd0014(item);
-                        }
-                    }
-                    final String name = item.getAttributeValue(ATTRIBUTE_NAME);
-                    final String namespace = item.getAttributeValue(ATTRIBUTE_NAMESPACE);
-                    if (!StringUtils.isEmpty(namespace) && name.contains(":"))
-                    {
-                        final QName aNode = new QName(StringUtils.substringAfter(name, ":"), item);
-                        if (!namespace.equals(aNode.getNamespaceURI()))
-                        {
-                            throw XProcExceptions.xd0025(SaxonLocation.of(item));
-                        }
-                    }
-                    final String value = item.getAttributeValue(ATTRIBUTE_VALUE);
-                    // TODO name should be real QName
-                    parameters.put(new QName(namespace, name), value);
+              for (XdmItem aParamsSelector : paramsSelector) {
+                final XdmNode item = (XdmNode) aParamsSelector;
+                final Iterable<XdmNode> attributes = SaxonAxis.attributes(item);
+                for (XdmNode attribute : attributes) {
+                  final QName attName = attribute.getNodeName();
+                  if (!ATTRIBUTE_NAME.equals(attName) && !ATTRIBUTE_NAMESPACE.equals(attName)
+                    && !ATTRIBUTE_VALUE.equals(attName)) {
+                    throw XProcExceptions.xd0014(item);
+                  }
                 }
+                final String name = item.getAttributeValue(ATTRIBUTE_NAME);
+                final String namespace = item.getAttributeValue(ATTRIBUTE_NAMESPACE);
+                if (!StringUtils.isEmpty(namespace) && name.contains(":")) {
+                  final QName aNode = new QName(StringUtils.substringAfter(name, ":"), item);
+                  if (!namespace.equals(aNode.getNamespaceURI())) {
+                    throw XProcExceptions.xd0025(SaxonLocation.of(item));
+                  }
+                }
+                final String value = item.getAttributeValue(ATTRIBUTE_VALUE);
+                // TODO name should be real QName
+                parameters.put(new QName(namespace, name), value);
+              }
             }
             catch (final SaxonApiException e)
             {
@@ -942,13 +934,6 @@ public final class Environment
 
     public Iterable<EnvironmentPort> getOutputPorts()
     {
-        return Iterables.filter(ports.values(), new Predicate<EnvironmentPort>()
-        {
-            @Override
-            public boolean apply(final EnvironmentPort port)
-            {
-                return port.getDeclaredPort().isOutput();
-            }
-        });
+        return Iterables.filter(ports.values(), port -> port.getDeclaredPort().isOutput());
     }
 }

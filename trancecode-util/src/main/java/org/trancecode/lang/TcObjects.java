@@ -110,27 +110,13 @@ public final class TcObjects
     {
         Preconditions.checkNotNull(properties);
 
-        return TcSuppliers.memoize(new Supplier<Integer>()
-        {
-            @Override
-            public Integer get()
-            {
-                return TcObjects.hashCode(properties);
-            }
-        });
+        return TcSuppliers.memoize(() -> hashCode(properties));
     }
 
     public static Supplier<String> immutableObjectToString(final String format, final Object... args)
     {
         Preconditions.checkNotNull(format);
 
-        return TcSuppliers.memoize(new Supplier<String>()
-        {
-            @Override
-            public String get()
-            {
-                return String.format(format, args);
-            }
-        });
+        return TcSuppliers.memoize(() -> String.format(format, args));
     }
 }

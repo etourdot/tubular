@@ -59,18 +59,13 @@ public final class TcIterablesTest extends AbstractTest
     @Test
     public void getDescendants()
     {
-        final Function<String, Iterable<String>> split = new Function<String, Iterable<String>>()
-        {
-            @Override
-            public Iterable<String> apply(final String string)
+        final Function<String, Iterable<String>> split = string -> {
+            if (string.length() == 1)
             {
-                if (string.length() == 1)
-                {
-                    return ImmutableList.of();
-                }
-
-                return ImmutableList.of(string.substring(0, 1), string.substring(1));
+                return ImmutableList.of();
             }
+
+            return ImmutableList.of(string.substring(0, 1), string.substring(1));
         };
 
         AssertJUnit.assertEquals(ImmutableList.of("a", "bcd"), ImmutableList.copyOf(split.apply("abcd")));

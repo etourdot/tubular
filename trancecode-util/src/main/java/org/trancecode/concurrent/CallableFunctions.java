@@ -41,7 +41,7 @@ public final class CallableFunctions
 
     private static final class CallFunction<T> implements Function<Callable<T>, T>
     {
-        private static final CallFunction<Object> INSTANCE = new CallFunction<Object>();
+        private static final CallFunction<Object> INSTANCE = new CallFunction<>();
 
         @Override
         public T apply(final Callable<T> callable)
@@ -59,45 +59,17 @@ public final class CallableFunctions
 
     public static <F, T> Function<F, Callable<T>> apply(final Function<? super F, ? extends T> function)
     {
-        return new Function<F, Callable<T>>()
-        {
-            @Override
-            public Callable<T> apply(final F from)
-            {
-                return new Callable<T>()
-                {
-                    @Override
-                    public T call() throws Exception
-                    {
-                        return function.apply(from);
-                    }
-                };
-            }
-        };
+        return from -> () -> function.apply(from);
     }
 
     public static <T> Function<Callable<T>, Future<T>> submit(final ExecutorService executor)
     {
-        return new Function<Callable<T>, Future<T>>()
-        {
-            @Override
-            public Future<T> apply(final Callable<T> task)
-            {
-                return executor.submit(task);
-            }
-        };
+        return executor::submit;
     }
 
     public static <T> Function<Callable<T>, Future<T>> submit(final TaskExecutor executor)
     {
-        return new Function<Callable<T>, Future<T>>()
-        {
-            @Override
-            public Future<T> apply(final Callable<T> task)
-            {
-                return executor.submit(task);
-            }
-        };
+        return executor::submit;
     }
 
     private CallableFunctions()

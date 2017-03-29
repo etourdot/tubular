@@ -212,10 +212,7 @@ public class BodypartResponseParser
             }
             while (true);
         }
-        catch (IOException e)
-        {
-        }
-        catch (ParseException e)
+        catch (IOException | ParseException e)
         {
         }
     }

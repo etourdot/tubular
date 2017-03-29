@@ -355,11 +355,7 @@ class RequestParser
                             buffer.append("; charset=utf-8");
                         }
                     }
-                    catch (final ParseException e)
-                    {
-                        throw XProcExceptions.xc0020(node);
-                    }
-                    catch (final IllegalCharsetNameException e)
+                    catch (final ParseException | IllegalCharsetNameException e)
                     {
                         throw XProcExceptions.xc0020(node);
                     }

@@ -68,47 +68,42 @@ public abstract class AbstractCompoundStepProcessor implements StepProcessor
         LOG.trace("  parametersPort = {}", parametersPort);
 
         final Map<Step, Iterable<Step>> stepDependencies = Step.getSubpipelineStepDependencies(steps);
-        final Map<Step, Future<Environment>> stepResults = new ConcurrentHashMap<Step, Future<Environment>>();
+        final Map<Step, Future<Environment>> stepResults = new ConcurrentHashMap<>();
         final List<Future<Environment>> results = Lists.newArrayList();
-        final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
+        final AtomicReference<Throwable> error = new AtomicReference<>();
         for (final Step step : steps)
         {
             final Future<Environment> result = environment.getPipelineContext().getExecutor()
-                    .submit(new Callable<Environment>()
-                    {
-                        @Override
-                        public Environment call() throws Exception
+                    .submit(() -> {
+                        // shortcut in case an error was reported by another
+                        // task
+                        if (error.get() != null)
                         {
-                            // shortcut in case an error was reported by another
-                            // task
-                            if (error.get() != null)
-                            {
-                                throw new IllegalStateException(error.get());
-                            }
-
-                            Environment inputEnvironment = initialEnvironment;
-                            for (final Step dependency : stepDependencies.get(step))
-                            {
-                                try
-                                {
-                                    final Environment dependencyResult = stepResults.get(dependency).get();
-                                    inputEnvironment = inputEnvironment.addPorts(dependencyResult.getOutputPorts());
-                                    inputEnvironment = inputEnvironment.setDefaultReadablePort(dependencyResult
-                                            .getDefaultReadablePort());
-                                    inputEnvironment = inputEnvironment.setDefaultParametersPort(parametersPort);
-                                    inputEnvironment = inputEnvironment.setXPathContextPort(dependencyResult
-                                            .getXPathContextPort());
-                                }
-                                catch (final ExecutionException e)
-                                {
-                                    throw Throwables.propagate(e.getCause());
-                                }
-                            }
-
-                            Environment.setCurrentNamespaceContext(step.getNode());
-                            inputEnvironment.setCurrentEnvironment();
-                            return step.run(inputEnvironment);
+                            throw new IllegalStateException(error.get());
                         }
+
+                        Environment inputEnvironment = initialEnvironment;
+                        for (final Step dependency : stepDependencies.get(step))
+                        {
+                            try
+                            {
+                                final Environment dependencyResult = stepResults.get(dependency).get();
+                                inputEnvironment = inputEnvironment.addPorts(dependencyResult.getOutputPorts());
+                                inputEnvironment = inputEnvironment.setDefaultReadablePort(dependencyResult
+                                        .getDefaultReadablePort());
+                                inputEnvironment = inputEnvironment.setDefaultParametersPort(parametersPort);
+                                inputEnvironment = inputEnvironment.setXPathContextPort(dependencyResult
+                                        .getXPathContextPort());
+                            }
+                            catch (final ExecutionException e)
+                            {
+                                throw Throwables.propagate(e.getCause());
+                            }
+                        }
+
+                        Environment.setCurrentNamespaceContext(step.getNode());
+                        inputEnvironment.setCurrentEnvironment();
+                        return step.run(inputEnvironment);
                     });
             stepResults.put(step, result);
             results.add(result);

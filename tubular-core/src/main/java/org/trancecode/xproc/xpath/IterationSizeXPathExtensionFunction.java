@@ -34,7 +34,7 @@ import org.trancecode.xproc.XProcXmlModel;
 public final class IterationSizeXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
     private static final Logger LOG = Logger.getLogger(IterationSizeXPathExtensionFunction.class);
-    private static final ThreadLocal<Integer> ITERATION_SIZE = new ThreadLocal<Integer>();
+    private static final ThreadLocal<Integer> ITERATION_SIZE = new ThreadLocal<>();
 
     static
     {

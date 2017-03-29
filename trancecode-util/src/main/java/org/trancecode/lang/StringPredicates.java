@@ -37,27 +37,13 @@ public final class StringPredicates
      */
     public static Predicate<String> endsWith(final String suffix)
     {
-        return new Predicate<String>()
-        {
-            @Override
-            public boolean apply(final String string)
-            {
-                return string.endsWith(suffix);
-            }
-        };
+        return string -> string.endsWith(suffix);
     }
 
     public static Predicate<String> isEmpty()
     {
         // TODO singleton
-        return new Predicate<String>()
-        {
-            @Override
-            public boolean apply(final String string)
-            {
-                return string.isEmpty();
-            }
-        };
+        return String::isEmpty;
     }
 
     public static Predicate<String> isNotEmpty()
@@ -68,13 +54,6 @@ public final class StringPredicates
 
     public static Predicate<String> isContainedBy(final String string)
     {
-        return new Predicate<String>()
-        {
-            @Override
-            public boolean apply(final String fragment)
-            {
-                return string.contains(fragment);
-            }
-        };
+        return string::contains;
     }
 }

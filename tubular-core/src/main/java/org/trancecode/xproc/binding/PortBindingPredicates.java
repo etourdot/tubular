@@ -34,19 +34,14 @@ public final class PortBindingPredicates
 
     public static Predicate<PortBinding> isConnectedTo(final PortReference portReference)
     {
-        return new Predicate<PortBinding>()
-        {
-            @Override
-            public boolean apply(final PortBinding portBinding)
+        return portBinding -> {
+            if (portBinding instanceof PipePortBinding)
             {
-                if (portBinding instanceof PipePortBinding)
-                {
-                    final PipePortBinding pipe = (PipePortBinding) portBinding;
-                    return pipe.getPortReference().equals(portReference);
-                }
-
-                return false;
+                final PipePortBinding pipe = (PipePortBinding) portBinding;
+                return pipe.getPortReference().equals(portReference);
             }
+
+            return false;
         };
     }
 }

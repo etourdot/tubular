@@ -103,7 +103,7 @@ public final class Steps
             if (cDataSection != null)
             {
                 final Iterable<String> sections = Splitter.on(" ").omitEmptyStrings().split(cDataSection);
-                final ImmutableList.Builder<QName> cDataBuilder = new ImmutableList.Builder<QName>();
+                final ImmutableList.Builder<QName> cDataBuilder = new ImmutableList.Builder<>();
                 for (final String section : sections)
                 {
                     cDataBuilder.add(new QName(section));
@@ -249,12 +249,7 @@ public final class Steps
         try
         {
             return new String(Base64.decode(content.getBytes(charset)), charset);
-        }
-        catch (final UnsupportedEncodingException uee)
-        {
-            throw XProcExceptions.xc0010(null);
-        }
-        catch (final IOException ioe)
+        } catch (final IOException ioe)
         {
             throw XProcExceptions.xc0010(null);
         }

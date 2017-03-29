@@ -110,14 +110,7 @@ public final class PipelineConfiguration extends AbstractPipelineContext
     {
         final Map<QName, StepProcessor> processors = Maps.newHashMap();
         final Map<QName, StepProcessor> availableProcessors = Maps.uniqueIndex(ServiceLoader.load(StepProcessor.class),
-                new Function<StepProcessor, QName>()
-                {
-                    @Override
-                    public QName apply(final StepProcessor stepProcessor)
-                    {
-                        return stepProcessor.getStepType();
-                    }
-                });
+          stepProcessor -> stepProcessor.getStepType());
         processors.putAll(availableProcessors);
         for (final QName stepType : Iterables.concat(XProcSteps.REQUIRED_STEPS, XProcSteps.OPTIONAL_STEPS))
         {

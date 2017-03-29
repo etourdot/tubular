@@ -118,21 +118,9 @@ public final class TcAssert
                 XMLAssert.assertXMLEqual(expectedDoc, actualDoc);
             }
         }
-        catch (final AssertionFailedError afe)
+        catch (final AssertionFailedError | IOException | SAXException | SaxonApiException afe)
         {
             throw new XdmNodeCompareAssertionError(expected, actual, afe);
-        }
-        catch (final SaxonApiException e)
-        {
-            throw new XdmNodeCompareAssertionError(expected, actual, e);
-        }
-        catch (final SAXException e)
-        {
-            throw new XdmNodeCompareAssertionError(expected, actual, e);
-        }
-        catch (final IOException e)
-        {
-            throw new XdmNodeCompareAssertionError(expected, actual, e);
         }
     }
 

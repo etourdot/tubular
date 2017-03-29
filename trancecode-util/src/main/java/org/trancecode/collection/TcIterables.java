@@ -144,14 +144,7 @@ public final class TcIterables
      */
     public static <T> Iterable<T> concurrentModifiable(final List<T> sequence)
     {
-        return new Iterable<T>()
-        {
-            @Override
-            public Iterator<T> iterator()
-            {
-                return TcIterators.concurrentModifiable(sequence);
-            }
-        };
+        return () -> TcIterators.concurrentModifiable(sequence);
     }
 
     /**
@@ -167,14 +160,7 @@ public final class TcIterables
         Preconditions.checkNotNull(elements);
         Preconditions.checkNotNull(predicate);
 
-        return new Iterable<T>()
-        {
-            @Override
-            public Iterator<T> iterator()
-            {
-                return TcIterators.until(elements.iterator(), predicate);
-            }
-        };
+        return () -> TcIterators.until(elements.iterator(), predicate);
     }
 
     /**
@@ -184,14 +170,7 @@ public final class TcIterables
      */
     public static <T> Iterable<T> removeAll(final BlockingQueue<T> fromQueue)
     {
-        return new Iterable<T>()
-        {
-            @Override
-            public Iterator<T> iterator()
-            {
-                return TcIterators.removeAll(fromQueue);
-            }
-        };
+        return () -> TcIterators.removeAll(fromQueue);
     }
 
     /**

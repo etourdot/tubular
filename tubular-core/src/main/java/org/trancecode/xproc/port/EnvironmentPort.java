@@ -61,14 +61,7 @@ public final class EnvironmentPort implements HasPortReference
         LOG.trace("portBindings = {}", declaredPort.getPortBindings());
 
         final List<EnvironmentPortBinding> portBindings = ImmutableList.copyOf(Iterables.transform(
-                declaredPort.getPortBindings(), new Function<PortBinding, EnvironmentPortBinding>()
-                {
-                    @Override
-                    public EnvironmentPortBinding apply(final PortBinding portBinding)
-                    {
-                        return portBinding.newEnvironmentPortBinding(environment);
-                    }
-                }));
+                declaredPort.getPortBindings(), portBinding -> portBinding.newEnvironmentPortBinding(environment)));
 
         final String declaredPortSelect = declaredPort.getSelect();
         LOG.trace("declaredPortSelect = {}", declaredPortSelect);
@@ -125,14 +118,7 @@ public final class EnvironmentPort implements HasPortReference
     private Iterable<XdmNode> readRawNodes()
     {
         return Iterables.concat(Iterables.transform(portBindings,
-                new Function<EnvironmentPortBinding, Iterable<XdmNode>>()
-                {
-                    @Override
-                    public Iterable<XdmNode> apply(final EnvironmentPortBinding portBinding)
-                    {
-                        return portBinding.readNodes();
-                    }
-                }));
+          portBinding -> portBinding.readNodes()));
     }
 
     private Iterable<XdmNode> select(final Iterable<XdmNode> nodes)
@@ -144,21 +130,16 @@ public final class EnvironmentPort implements HasPortReference
             return nodes;
         }
 
-        return Iterables.concat(Iterables.transform(nodes, new Function<XdmNode, Iterable<XdmNode>>()
-        {
-            @Override
-            public Iterable<XdmNode> apply(final XdmNode node)
+        return Iterables.concat(Iterables.transform(nodes, node -> {
+            try
             {
-                try
-                {
-                    final XPathSelector selector = select.load();
-                    selector.setContextItem(node);
-                    return Iterables.filter(selector.evaluate(), XdmNode.class);
-                }
-                catch (final SaxonApiException e)
-                {
-                    throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(), e.getMessage());
-                }
+                final XPathSelector selector = select.load();
+                selector.setContextItem(node);
+                return Iterables.filter(selector.evaluate(), XdmNode.class);
+            }
+            catch (final SaxonApiException e)
+            {
+                throw XProcExceptions.xd0023(declaredPort.getLocation(), declaredPort.getSelect(), e.getMessage());
             }
         }));
     }

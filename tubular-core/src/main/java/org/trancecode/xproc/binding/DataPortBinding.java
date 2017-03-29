@@ -185,12 +185,7 @@ public class DataPortBinding extends AbstractPortBinding
                 builder.startContent();
                 builder.text(Base64.encodeBytes(IOUtils.toByteArray(stream), Base64.DO_BREAK_LINES));
             }
-        }
-        catch (final MalformedURLException mue)
-        {
-            throw XProcExceptions.xd0029(this.getLocation());
-        }
-        catch (final IOException ioe)
+        } catch (final IOException ioe)
         {
             throw XProcExceptions.xd0029(this.getLocation());
         }

@@ -147,15 +147,7 @@ public final class UuidStepProcessor extends AbstractStepProcessor
                     throw XProcExceptions.xc0060(inputStep.getLocation());
             }
         }
-        catch (final NumberFormatException e)
-        {
-            throw XProcExceptions.xc0060(inputStep.getLocation());
-        }
-        catch (final NoSuchAlgorithmException e)
-        {
-            throw XProcExceptions.xc0060(inputStep.getLocation());
-        }
-        catch (final NoSuchProviderException e)
+        catch (final NumberFormatException | NoSuchProviderException | NoSuchAlgorithmException e)
         {
             throw XProcExceptions.xc0060(inputStep.getLocation());
         }

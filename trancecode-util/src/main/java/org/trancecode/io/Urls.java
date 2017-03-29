@@ -35,14 +35,7 @@ public final class Urls
     {
         Preconditions.checkNotNull(url);
 
-        return new InputSupplier<InputStream>()
-        {
-            @Override
-            public InputStream getInput() throws IOException
-            {
-                return url.openStream();
-            }
-        };
+        return url::openStream;
     }
 
     private Urls()

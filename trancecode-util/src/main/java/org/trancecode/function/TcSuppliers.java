@@ -41,7 +41,7 @@ public final class TcSuppliers
 
     public static <F, T> Supplier<T> fromFunction(final Function<F, T> function, final F argument)
     {
-        return new FunctionSupplier<F, T>(function, argument);
+        return new FunctionSupplier<>(function, argument);
     }
 
     private static class FunctionSupplier<F, T> implements Supplier<T>
@@ -64,14 +64,7 @@ public final class TcSuppliers
 
     public static <T> Supplier<T> singleton(final T value)
     {
-        return new Supplier<T>()
-        {
-            @Override
-            public T get()
-            {
-                return value;
-            }
-        };
+        return () -> value;
     }
 
     public static <T> Supplier<T> memoize(final Supplier<T> supplier)
@@ -102,15 +95,10 @@ public final class TcSuppliers
     {
         Preconditions.checkNotNull(map);
         Preconditions.checkNotNull(key);
-        return new Supplier<T>()
-        {
-            @Override
-            public T get()
-            {
-                @SuppressWarnings("unchecked")
-                final T value = (T) map.get(key);
-                return value;
-            }
+        return () -> {
+            @SuppressWarnings("unchecked")
+            final T value = (T) map.get(key);
+            return value;
         };
     }
 }

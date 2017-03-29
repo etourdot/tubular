@@ -76,14 +76,7 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
         final boolean initialOnly = Boolean.parseBoolean(input.getOptionValue(XProcOptions.INITIAL_ONLY, "false"));
 
         // Transform element's node to document's node needed by xpath test
-        final Function<XdmNode, NodeInfo> eltToDoc = new Function<XdmNode, NodeInfo>()
-        {
-            @Override
-            public NodeInfo apply(final XdmNode node)
-            {
-                return Saxon.asDocumentNode(node, processor).getUnderlyingNode();
-            }
-        };
+        final Function<XdmNode, NodeInfo> eltToDoc = node -> Saxon.asDocumentNode(node, processor).getUnderlyingNode();
         final List<NodeInfo> docs = ImmutableList.copyOf(Iterables.transform(nodes, eltToDoc));
 
         try
@@ -133,13 +126,9 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
                 }
             }
         }
-        catch (final XPathException xpe)
+        catch (final XPathException | SaxonApiException xpe)
         {
             throw XProcExceptions.xd0023(input.getLocation(), test, xpe.getMessage());
-        }
-        catch (final SaxonApiException sae)
-        {
-            throw XProcExceptions.xd0023(input.getLocation(), test, sae.getMessage());
         }
     }
 }

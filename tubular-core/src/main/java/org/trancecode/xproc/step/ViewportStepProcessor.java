@@ -156,14 +156,7 @@ public final class ViewportStepProcessor extends AbstractCompoundStepProcessor i
         };
         final SaxonProcessorDelegate runSubpipelineForElements = SaxonProcessorDelegates.forNodeKinds(
                 ImmutableSet.of(XdmNodeKind.DOCUMENT, XdmNodeKind.ELEMENT), runSubpipeline,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xd0010(node);
-                    }
-                }));
+                SaxonProcessorDelegates.error(node -> XProcExceptions.xd0010(node)));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(environment.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(environment.getPipelineContext().getProcessor(), match,

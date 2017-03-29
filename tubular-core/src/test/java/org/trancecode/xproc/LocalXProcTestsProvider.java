@@ -54,14 +54,7 @@ public class LocalXProcTestsProvider
             final String testDirPath = System.getProperty(TEST_DIR_PROPERTY);
             final String nameFilter = System.getProperty(TEST_FILTER_PROPERTY);
             final File testDir = new File(testDirPath + "/" + method.getName());
-            for (final File file : testDir.listFiles(new FilenameFilter()
-            {
-                @Override
-                public boolean accept(final File dir, final String name)
-                {
-                    return name.endsWith(".xml") && (nameFilter == null || name.contains(nameFilter));
-                }
-            }))
+            for (final File file : testDir.listFiles((dir, name) -> name.endsWith(".xml") && (nameFilter == null || name.contains(nameFilter))))
             {
                 urls.add(new URL[] { file.toURI().toURL() });
             }

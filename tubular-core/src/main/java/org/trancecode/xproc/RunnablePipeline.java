@@ -97,14 +97,7 @@ public final class RunnablePipeline implements Supplier<PipelineResult>
 
     public void bindSourcePortToResources(final String portName, final Iterable<URI> inputResources)
     {
-        final Iterable<Source> sources = Iterables.transform(inputResources, new Function<URI, Source>()
-        {
-            @Override
-            public Source apply(final URI resource)
-            {
-                return UriResolvers.resolve(context.getUriResolver(), resource, pipeline.getNode().getBaseURI());
-            }
-        });
+        final Iterable<Source> sources = Iterables.transform(inputResources, resource -> UriResolvers.resolve(context.getUriResolver(), resource, pipeline.getNode().getBaseURI()));
         bindSourcePort(portName, sources);
     }
 
@@ -115,14 +108,7 @@ public final class RunnablePipeline implements Supplier<PipelineResult>
 
     public void bindSourcePortToFiles(final String portName, final Iterable<File> inputFiles)
     {
-        final Iterable<Source> sources = Iterables.transform(inputFiles, new Function<File, Source>()
-        {
-            @Override
-            public Source apply(final File file)
-            {
-                return new StreamSource(file);
-            }
-        });
+        final Iterable<Source> sources = Iterables.transform(inputFiles, file -> new StreamSource(file));
         bindSourcePort(portName, sources);
     }
 

@@ -76,16 +76,11 @@ public final class XslFormatterStepProcessor extends AbstractStepProcessor
             final String contentType = input.getOptionValue(XProcOptions.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
             final FopFactory fopFactory = FopFactory.newInstance();
             final Fop fop = fopFactory.newFop(contentType, resultOutputStream);
-            fop.getUserAgent().setURIResolver(new URIResolver()
-            {
-                @Override
-                public Source resolve(final String href, final String base) throws TransformerException
-                {
-                    final URI uri = Uris.resolve(href, base);
-                    final InputStream inputStream = input.getPipelineContext().getInputResolver()
-                            .resolveInputStream(href, base);
-                    return new StreamSource(inputStream, uri.toString());
-                }
+            fop.getUserAgent().setURIResolver((href1, base) -> {
+                final URI uri = Uris.resolve(href1, base);
+                final InputStream inputStream = input.getPipelineContext().getInputResolver()
+                        .resolveInputStream(href1, base);
+                return new StreamSource(inputStream, uri.toString());
             });
             fop.getUserAgent().setBaseURL(source.getBaseURI().toString());
 

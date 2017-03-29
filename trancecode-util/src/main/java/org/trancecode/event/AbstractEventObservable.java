@@ -48,22 +48,12 @@ public abstract class AbstractEventObservable<T extends Event> implements EventD
         void notificationFailure(EventObserver<?> observer, Event event, Throwable error);
     }
 
-    private static NotificationFailurePolicy FAIL = new NotificationFailurePolicy()
-    {
-        @Override
-        public void notificationFailure(final EventObserver<?> observer, final Event event, final Throwable error)
-        {
-            throw Throwables.propagate(error);
-        }
+    private static NotificationFailurePolicy FAIL = (observer, event, error) -> {
+        throw Throwables.propagate(error);
     };
 
-    private static NotificationFailurePolicy IGNORE = new NotificationFailurePolicy()
-    {
-        @Override
-        public void notificationFailure(final EventObserver<?> observer, final Event event, final Throwable error)
-        {
-            // Ignore
-        }
+    private static NotificationFailurePolicy IGNORE = (observer, event, error) -> {
+        // Ignore
     };
 
     public static final NotificationFailurePolicy alwaysFail()
@@ -110,29 +100,17 @@ public abstract class AbstractEventObservable<T extends Event> implements EventD
     public void notify(final T event)
     {
         final Iterable<Callable<Object>> notificationTasks = Iterables.transform(observers,
-                new Function<EventObserver<T>, Callable<Object>>()
-                {
-                    @Override
-                    public Callable<Object> apply(final EventObserver<T> observer)
-                    {
-                        return new Callable<Object>()
-                        {
-                            @Override
-                            public Void call()
-                            {
-                                try
-                                {
-                                    observer.notify(event);
-                                }
-                                catch (final Throwable error)
-                                {
-                                    notificationFailurePolicy.notificationFailure(observer, event, error);
-                                }
-                                return null;
-                            }
-                        };
-                    }
-                });
+          observer -> () -> {
+              try
+              {
+                  observer.notify(event);
+              }
+              catch (final Throwable error)
+              {
+                  notificationFailurePolicy.notificationFailure(observer, event, error);
+              }
+              return null;
+          });
         final Iterable<Future<Object>> results = TcFutures.submit(executor, notificationTasks);
         if (blockingNotification)
         {

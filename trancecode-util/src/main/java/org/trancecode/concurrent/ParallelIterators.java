@@ -97,59 +97,37 @@ public final class ParallelIterators
         final Function<F, Callable<T>> applyFunction = CallableFunctions.apply(function);
         final Iterator<Callable<T>> callables = Iterators.transform(fromIterable, applyFunction);
 
-        final AtomicReference<Future<?>> submitTask = new AtomicReference<Future<?>>();
+        final AtomicReference<Future<?>> submitTask = new AtomicReference<>();
 
-        final BlockingQueue<Future<T>> futures = new ArrayBlockingQueue<Future<T>>(
-                MAXIMUM_NUMBER_OF_ELEMENTS_IN_ADVANCE);
-        final Function<Callable<T>, Future<T>> submitFunction = new Function<Callable<T>, Future<T>>()
-        {
-            @Override
-            public Future<T> apply(final Callable<T> task)
+        final BlockingQueue<Future<T>> futures = new ArrayBlockingQueue<>(
+          MAXIMUM_NUMBER_OF_ELEMENTS_IN_ADVANCE);
+        final Function<Callable<T>, Future<T>> submitFunction = task -> executor.submit(() -> {
+            try
             {
-                return executor.submit(new Callable<T>()
+                return task.call();
+            }
+            catch (final Exception e)
+            {
+                final Future<?> taskToCancel = submitTask.get();
+                if (taskToCancel != null)
                 {
-                    @Override
-                    public T call() throws Exception
-                    {
-                        try
-                        {
-                            return task.call();
-                        }
-                        catch (final Exception e)
-                        {
-                            final Future<?> taskToCancel = submitTask.get();
-                            if (taskToCancel != null)
-                            {
-                                taskToCancel.cancel(true);
-                                final Future<T> last = last();
-                                futures.add(last);
-                            }
-                            throw e;
-                        }
-                    }
-                });
+                    taskToCancel.cancel(true);
+                    final Future<T> last = last();
+                    futures.add(last);
+                }
+                throw e;
             }
-        };
+        });
 
-        submitTask.set(executor.submit(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Iterators.addAll(futures, Iterators.transform(callables, submitFunction));
-                final Future<T> last = last();
-                futures.add(last);
-            }
+        submitTask.set(executor.submit(() -> {
+            Iterators.addAll(futures, Iterators.transform(callables, submitFunction));
+            final Future<T> last = last();
+            futures.add(last);
         }));
 
-        return TcIterators.handleErrors(getUntilLast(TcIterators.removeAll(futures)), new Function<Throwable, Void>()
-        {
-            @Override
-            public Void apply(final Throwable error)
-            {
-                TcFutures.cancel(futures);
-                return null;
-            }
+        return TcIterators.handleErrors(getUntilLast(TcIterators.removeAll(futures)), error -> {
+            TcFutures.cancel(futures);
+            return null;
         });
     }
 
@@ -167,14 +145,7 @@ public final class ParallelIterators
     public static <T> Iterator<T> filter(final Iterator<T> unfiltered, final Predicate<? super T> predicate,
             final ExecutorService executor)
     {
-        final Function<? super T, Entry<T, Boolean>> evaluateFunction = new Function<T, Entry<T, Boolean>>()
-        {
-            @Override
-            public Entry<T, Boolean> apply(final T element)
-            {
-                return Maps.immutableEntry(element, predicate.apply(element));
-            }
-        };
+        final Function<? super T, Entry<T, Boolean>> evaluateFunction = (Function<T, Entry<T, Boolean>>) element -> Maps.immutableEntry(element, predicate.apply(element));
 
         final Iterator<Entry<T, Boolean>> unfilteredWithPredicateEvaluated = transform(unfiltered, evaluateFunction,
                 executor);

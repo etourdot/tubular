@@ -84,14 +84,7 @@ public final class UnWrapStepProcessor extends AbstractStepProcessor
 
         final SaxonProcessorDelegate unWrapWithError = SaxonProcessorDelegates.forNodeKinds(
                 ImmutableSet.of(XdmNodeKind.ELEMENT), unWrapDelegate,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xc0023(node, XdmNodeKind.ELEMENT);
-                    }
-                }));
+                SaxonProcessorDelegates.error(node -> XProcExceptions.xc0023(node, XdmNodeKind.ELEMENT)));
 
         final SaxonProcessor unWrapProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input

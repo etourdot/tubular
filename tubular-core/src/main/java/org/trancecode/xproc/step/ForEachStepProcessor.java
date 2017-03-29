@@ -85,36 +85,31 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
         {
             final int iterationPosition = i + 1;
             final XdmNode inputNode = inputNodes.get(i);
-            tasks.add(new Callable<Environment>()
-            {
-                @Override
-                public Environment call()
-                {
-                    LOG.trace("iteration {}/{}: {}", iterationPosition, iterationSize, inputNode);
+            tasks.add(() -> {
+                LOG.trace("iteration {}/{}: {}", iterationPosition, iterationSize, inputNode);
 
-                    final int oldIterationPosition = IterationPositionXPathExtensionFunction
-                            .setIterationPosition(iterationPosition);
-                    final int oldIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
-                    try
-                    {
-                        final EnvironmentPort iterationPort = EnvironmentPort.newEnvironmentPort(
-                                newIterationPort(step, inputNode), environment);
-                        Environment iterationEnvironment = environment.newChildStepEnvironment();
-                        iterationEnvironment = iterationEnvironment.addPorts(iterationPort);
-                        iterationEnvironment = iterationEnvironment.setDefaultReadablePort(iterationPort);
-                        iterationEnvironment = iterationEnvironment.setXPathContextPort(iterationPort);
-                        iterationEnvironment = iterationEnvironment.setupVariables(step);
-                        iterationEnvironment.setCurrentEnvironment();
-                        Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
-                        resultEnvironment = stepEnvironment.setupOutputPorts(step, resultEnvironment);
-                        Steps.writeLogs(step, resultEnvironment);
-                        return resultEnvironment;
-                    }
-                    finally
-                    {
-                        IterationPositionXPathExtensionFunction.setIterationPosition(oldIterationPosition);
-                        IterationSizeXPathExtensionFunction.setIterationSize(oldIterationSize);
-                    }
+                final int oldIterationPosition = IterationPositionXPathExtensionFunction
+                        .setIterationPosition(iterationPosition);
+                final int oldIterationSize = IterationSizeXPathExtensionFunction.setIterationSize(iterationSize);
+                try
+                {
+                    final EnvironmentPort iterationPort = EnvironmentPort.newEnvironmentPort(
+                            newIterationPort(step, inputNode), environment);
+                    Environment iterationEnvironment = environment.newChildStepEnvironment();
+                    iterationEnvironment = iterationEnvironment.addPorts(iterationPort);
+                    iterationEnvironment = iterationEnvironment.setDefaultReadablePort(iterationPort);
+                    iterationEnvironment = iterationEnvironment.setXPathContextPort(iterationPort);
+                    iterationEnvironment = iterationEnvironment.setupVariables(step);
+                    iterationEnvironment.setCurrentEnvironment();
+                    Environment resultEnvironment = runSteps(step.getSubpipeline(), iterationEnvironment);
+                    resultEnvironment = stepEnvironment.setupOutputPorts(step, resultEnvironment);
+                    Steps.writeLogs(step, resultEnvironment);
+                    return resultEnvironment;
+                }
+                finally
+                {
+                    IterationPositionXPathExtensionFunction.setIterationPosition(oldIterationPosition);
+                    IterationSizeXPathExtensionFunction.setIterationSize(oldIterationSize);
                 }
             });
         }
@@ -147,14 +142,7 @@ public final class ForEachStepProcessor extends AbstractCompoundStepProcessor im
                     stepEnvironment));
 
             final Iterable<XdmNode> resultNodes = ImmutableList.copyOf(Iterables.concat(Iterables.transform(
-                    iterationResultEnvironments, new Function<Environment, Iterable<XdmNode>>()
-                    {
-                        @Override
-                        public Iterable<XdmNode> apply(final Environment environment)
-                        {
-                            return environment.readNodes(outputPort.getPortReference());
-                        }
-                    })));
+                    iterationResultEnvironments, environment1 -> environment1.readNodes(outputPort.getPortReference()))));
             LOG.trace("     resultNodes = {size}", resultNodes);
             resultEnvironment = resultEnvironment.writeNodes(outputPort.getPortReference(), resultNodes);
         }

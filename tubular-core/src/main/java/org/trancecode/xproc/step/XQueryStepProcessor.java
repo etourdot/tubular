@@ -88,12 +88,8 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
             {
                 xQueryEvaluator.setExternalVariable(param.getKey(), new XdmAtomicValue(param.getValue()));
             }
-            final Iterator<XdmItem> iterator = xQueryEvaluator.iterator();
-            while (iterator.hasNext())
-            {
-                final XdmItem item = iterator.next();
-                if (item.isAtomicValue())
-                {
+            for (XdmItem item : xQueryEvaluator) {
+                if (item.isAtomicValue()) {
                     throw XProcExceptions.xc0057(SaxonLocation.of(queryNode));
                 }
                 output.writeNodes(XProcPorts.RESULT, (XdmNode) item);
@@ -111,7 +107,7 @@ public final class XQueryStepProcessor extends AbstractStepProcessor
 
     private Map<QName, String> getParameters(final StepInput input)
     {
-        final ImmutableMap.Builder<QName, String> builder = new ImmutableMap.Builder<QName, String>();
+        final ImmutableMap.Builder<QName, String> builder = new ImmutableMap.Builder<>();
         final Map<QName, Variable> stepParams = Environment.getCurrentEnvironment().getPipeline().getParameters();
         for (final Map.Entry<QName, Variable> entry : stepParams.entrySet())
         {

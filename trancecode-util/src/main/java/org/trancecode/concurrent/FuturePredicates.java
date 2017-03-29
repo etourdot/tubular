@@ -40,7 +40,7 @@ public final class FuturePredicates
 
     private static final class IsCancelledPredicate<T> implements Predicate<Future<T>>
     {
-        private static final IsCancelledPredicate<?> INSTANCE = new IsCancelledPredicate<Object>();
+        private static final IsCancelledPredicate<?> INSTANCE = new IsCancelledPredicate<>();
 
         @Override
         public boolean apply(final Future<T> task)
@@ -61,7 +61,7 @@ public final class FuturePredicates
 
     private static final class IsDonePredicate<T> implements Predicate<Future<T>>
     {
-        private static final IsDonePredicate<?> INSTANCE = new IsDonePredicate<Object>();
+        private static final IsDonePredicate<?> INSTANCE = new IsDonePredicate<>();
 
         @Override
         public boolean apply(final Future<T> task)

@@ -50,7 +50,7 @@ public final class TcPredicates
 
     public static <T> Predicate<T> isContainedBy(final Collection<T> collection)
     {
-        return new IsContainedByPredicate<T>(collection);
+        return new IsContainedByPredicate<>(collection);
     }
 
     private static class IsContainedByPredicate<T> implements Predicate<T>
@@ -71,7 +71,7 @@ public final class TcPredicates
 
     public static <T> Predicate<T> asPredicate(final Function<T, Boolean> function)
     {
-        return new FunctionAsPredicate<T>(function);
+        return new FunctionAsPredicate<>(function);
     }
 
     private static class FunctionAsPredicate<T> implements Predicate<T>
@@ -93,7 +93,7 @@ public final class TcPredicates
 
     public static <T> Predicate<T> identicalTo(final T target)
     {
-        return new IdenticalToPredicate<T>(target);
+        return new IdenticalToPredicate<>(target);
     }
 
     private static final class IdenticalToPredicate<T> implements Predicate<T>

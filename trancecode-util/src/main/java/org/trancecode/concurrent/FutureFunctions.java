@@ -42,7 +42,7 @@ public final class FutureFunctions
 
     private static final class GetFunction<T> implements Function<Future<T>, T>
     {
-        private static final GetFunction<Object> INSTANCE = new GetFunction<Object>();
+        private static final GetFunction<Object> INSTANCE = new GetFunction<>();
 
         @Override
         public T apply(final Future<T> future)

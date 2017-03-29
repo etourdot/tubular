@@ -41,7 +41,7 @@ public final class MapFunctions
 
     private static final class GetKeyFunction<K, V> implements Function<Entry<K, V>, K>
     {
-        private static final GetKeyFunction<?, ?> INSTANCE = new GetKeyFunction<Object, Object>();
+        private static final GetKeyFunction<?, ?> INSTANCE = new GetKeyFunction<>();
 
         @Override
         public K apply(final Entry<K, V> entry)
@@ -62,7 +62,7 @@ public final class MapFunctions
 
     private static final class GetValueFunction<K, V> implements Function<Entry<K, V>, V>
     {
-        private static final GetValueFunction<?, ?> INSTANCE = new GetValueFunction<Object, Object>();
+        private static final GetValueFunction<?, ?> INSTANCE = new GetValueFunction<>();
 
         @Override
         public V apply(final Entry<K, V> entry)

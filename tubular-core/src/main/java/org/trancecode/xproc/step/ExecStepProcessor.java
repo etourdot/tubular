@@ -77,18 +77,13 @@ public final class ExecStepProcessor extends AbstractStepProcessor
 
         final String argSeparator = input.getOptionValue(XProcOptions.ARG_SEPARATOR, " ");
         final Iterable<String> rawArgs = TcStrings.split(input.getOptionValue(XProcOptions.ARGS), argSeparator);
-        final Iterable<String> args = Iterables.transform(rawArgs, new Function<String, String>()
-        {
-            @Override
-            public String apply(final String arg)
+        final Iterable<String> args = Iterables.transform(rawArgs, arg -> {
+            if (pathSeparator != null)
             {
-                if (pathSeparator != null)
-                {
-                    return arg.replace(pathSeparator, File.separator);
-                }
-
-                return arg;
+                return arg.replace(pathSeparator, File.separator);
             }
+
+            return arg;
         });
         final String cwd = input.getOptionValue(XProcOptions.CWD);
 
@@ -132,23 +127,18 @@ public final class ExecStepProcessor extends AbstractStepProcessor
                 inputContent = SaxonAxis.childElement(inputDocuments.get(0)).getStringValue();
             }
 
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
+            new Thread(() -> {
+                try
                 {
-                    try
-                    {
-                        IOUtils.write(inputContent, process.getOutputStream());
-                    }
-                    catch (final IOException e)
-                    {
-                        throw new IllegalStateException(e);
-                    }
-                    finally
-                    {
-                        Closeables.closeQuietly(process.getOutputStream());
-                    }
+                    IOUtils.write(inputContent, process.getOutputStream());
+                }
+                catch (final IOException e)
+                {
+                    throw new IllegalStateException(e);
+                }
+                finally
+                {
+                    Closeables.closeQuietly(process.getOutputStream());
                 }
             }).start();
         }

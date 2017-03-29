@@ -34,7 +34,7 @@ import org.trancecode.xproc.XProcXmlModel;
 public final class IterationPositionXPathExtensionFunction extends AbstractXPathExtensionFunction
 {
     private static final Logger LOG = Logger.getLogger(IterationPositionXPathExtensionFunction.class);
-    private static final ThreadLocal<Integer> ITERATION_POSITION = new ThreadLocal<Integer>();
+    private static final ThreadLocal<Integer> ITERATION_POSITION = new ThreadLocal<>();
 
     static
     {

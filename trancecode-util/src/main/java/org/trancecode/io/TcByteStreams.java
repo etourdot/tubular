@@ -61,23 +61,11 @@ public final class TcByteStreams
     public static Supplier<File> copyToTempFile(final InputStream in)
     {
         final File file = Files.createTempFile(TcByteStreams.class);
-        final Thread thread = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                TcByteStreams.copy(in, Files.newFileOutputStream(file), true);
-            }
-        });
+        final Thread thread = new Thread(() -> TcByteStreams.copy(in, Files.newFileOutputStream(file), true));
         thread.start();
-        return new Supplier<File>()
-        {
-            @Override
-            public File get()
-            {
-                TcThreads.join(thread);
-                return file;
-            }
+        return () -> {
+            TcThreads.join(thread);
+            return file;
         };
     }
 

@@ -37,7 +37,7 @@ import org.trancecode.xproc.api.PipelineResult;
 public final class TubularPipeline extends Pipeline
 {
     private final RunnablePipeline pipeline;
-    private final Map<String, Result> outputPortBindings = new HashMap<String, Result>();
+    private final Map<String, Result> outputPortBindings = new HashMap<>();
 
     TubularPipeline(final RunnablePipeline pipeline)
     {

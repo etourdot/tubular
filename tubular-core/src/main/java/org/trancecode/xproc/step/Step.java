@@ -77,13 +77,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     private static final List<Step> EMPTY_STEP_LIST = ImmutableList.of();
     private static final Iterable<Log> EMPTY_LOG_LIST = ImmutableList.of();
 
-    private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = new Predicate<Port>()
-    {
-        public boolean apply(final Port port)
-        {
-            return isXPathContextPort(port);
-        }
-    };
+    private final Predicate<Port> PREDICATE_IS_XPATH_CONTEXT_PORT = port -> isXPathContextPort(port);
 
     private final Map<QName, Variable> parameters;
     private final Map<QName, Variable> variables;
@@ -816,14 +810,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
     public Iterable<Step> getAllSteps()
     {
         return Iterables.concat(ImmutableList.of(this),
-                Iterables.concat(Iterables.transform(getSubpipeline(), new Function<Step, Iterable<Step>>()
-                {
-                    @Override
-                    public Iterable<Step> apply(final Step step)
-                    {
-                        return step.getAllSteps();
-                    }
-                })));
+                Iterables.concat(Iterables.transform(getSubpipeline(), step -> step.getAllSteps())));
     }
 
     @Override
@@ -848,14 +835,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     public boolean hasLogDeclaredForPort(final String port)
     {
-        return Iterables.any(logs, new Predicate<Log>()
-        {
-            @Override
-            public boolean apply(final Log log)
-            {
-                return log.port.equals(port);
-            }
-        });
+        return Iterables.any(logs, log -> log.port.equals(port));
     }
 
     private void checkCycleDependencies(final Step childStep, final Collection<Step> dependingSteps)
@@ -948,15 +928,8 @@ public final class Step extends AbstractHasLocation implements StepContainer
             final Port outputPort = childStep.getPrimaryOutputPort();
             if (outputPort != null && outputPort.getPortBindings().isEmpty())
             {
-                final boolean explicitlyConnected = Iterables.any(getDescendantSteps(), new Predicate<Step>()
-                {
-                    @Override
-                    public boolean apply(final Step step)
-                    {
-                        return Iterables.any(step.getInputPortBindings(),
-                                PortBindingPredicates.isConnectedTo(outputPort.getPortReference()));
-                    }
-                });
+                final boolean explicitlyConnected = Iterables.any(getDescendantSteps(), step -> Iterables.any(step.getInputPortBindings(),
+                        PortBindingPredicates.isConnectedTo(outputPort.getPortReference())));
                 if (explicitlyConnected)
                 {
                     continue;
@@ -993,14 +966,7 @@ public final class Step extends AbstractHasLocation implements StepContainer
 
     private Iterable<Step> getDescendantSteps()
     {
-        return Iterables.concat(Iterables.transform(getSubpipeline(), new Function<Step, Iterable<Step>>()
-        {
-            @Override
-            public Iterable<Step> apply(final Step step)
-            {
-                return Iterables.concat(ImmutableList.of(step), step.getDescendantSteps());
-            }
-        }));
+        return Iterables.concat(Iterables.transform(getSubpipeline(), step -> Iterables.concat(ImmutableList.of(step), step.getDescendantSteps())));
     }
 
     public void checkDeclaredStep()

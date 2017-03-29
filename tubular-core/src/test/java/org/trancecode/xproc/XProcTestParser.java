@@ -228,7 +228,7 @@ public class XProcTestParser
                 LOG.trace("Parameter: [{}] {}={}", port, name, value);
                 final String newPort = (port != null) ? port : "";
                 final Map<QName, String> portParams = (parameters.containsKey(newPort)) ? parameters.get(newPort)
-                        : new HashMap<QName, String>();
+                        : new HashMap<>();
                 portParams.put(new QName(name, node), value);
                 parameters.put(newPort, portParams);
             }

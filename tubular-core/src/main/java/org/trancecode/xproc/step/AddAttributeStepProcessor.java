@@ -138,14 +138,7 @@ public final class AddAttributeStepProcessor extends AbstractStepProcessor
         };
         final SaxonProcessorDelegate addAttributeForElements = SaxonProcessorDelegates.forNodeKinds(
                 ImmutableSet.of(XdmNodeKind.ELEMENT), addAttribute,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xc0023(node, XdmNodeKind.ELEMENT);
-                    }
-                }));
+                SaxonProcessorDelegates.error(node -> XProcExceptions.xc0023(node, XdmNodeKind.ELEMENT)));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input

@@ -51,14 +51,7 @@ public final class SaxonAxis
 
     public static Iterable<XdmItem> axis(final XdmNode node, final Axis axis)
     {
-        return new Iterable<XdmItem>()
-        {
-            @Override
-            public Iterator<XdmItem> iterator()
-            {
-                return node.axisIterator(axis);
-            }
-        };
+        return () -> node.axisIterator(axis);
     }
 
     public static XdmNode childElement(final XdmNode node)

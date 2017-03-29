@@ -469,14 +469,7 @@ public final class PipelineParser
     private Iterable<PortBinding> parsePortBindings(final XdmNode portNode)
     {
         return Iterables.transform(SaxonAxis.childElements(portNode, Elements.ELEMENTS_PORT_BINDINGS),
-                new Function<XdmNode, PortBinding>()
-                {
-                    @Override
-                    public PortBinding apply(final XdmNode node)
-                    {
-                        return parsePortBinding(node);
-                    }
-                });
+          node -> parsePortBinding(node));
     }
 
     private void unsupportedElement(final XdmNode node)

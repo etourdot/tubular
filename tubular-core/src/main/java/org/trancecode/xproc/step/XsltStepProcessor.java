@@ -192,20 +192,15 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         }
 
         final StringBuilder terminateMessage = new StringBuilder();
-        transformer.setMessageListener(new MessageListener()
-        {
-            @Override
-            public void message(final XdmNode content, final boolean terminate, final SourceLocator locator)
+        transformer.setMessageListener((content, terminate, locator) -> {
+            if (terminate)
             {
-                if (terminate)
-                {
-                    LOG.trace("terminateMessage = {}", content);
-                    terminateMessage.append(content.toString());
-                }
-
-                // TODO use a message log
-                System.err.println(content);
+                LOG.trace("terminateMessage = {}", content);
+                terminateMessage.append(content.toString());
             }
+
+            // TODO use a message log
+            System.err.println(content);
         });
 
         try

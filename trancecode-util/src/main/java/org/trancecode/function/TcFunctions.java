@@ -41,7 +41,7 @@ public final class TcFunctions
 
     public static <F, T> Function<Function<F, T>, T> applyTo(final F argument)
     {
-        return new ApplyToFunction<F, T>(argument);
+        return new ApplyToFunction<>(argument);
     }
 
     private static class ApplyToFunction<F, T> implements Function<Function<F, T>, T>
@@ -65,7 +65,7 @@ public final class TcFunctions
      */
     public static <F, T> Function<F, T> memoize(final Function<F, T> function)
     {
-        return new MemoizeFunction<F, T>(function);
+        return new MemoizeFunction<>(function);
     }
 
     private static final class MemoizeFunction<F, T> implements Function<F, T>
@@ -87,7 +87,7 @@ public final class TcFunctions
     public static <F, T> Function<F, T> conditional(final Predicate<F> predicate, final Function<? super F, T> ifTrue,
             final Function<? super F, T> ifFalse)
     {
-        return new ConditionalFunction<F, T>(predicate, ifTrue, ifFalse);
+        return new ConditionalFunction<>(predicate, ifTrue, ifFalse);
     }
 
     private static final class ConditionalFunction<F, T> implements Function<F, T>
@@ -119,7 +119,7 @@ public final class TcFunctions
 
     public static <T> Function<T, Iterable<T>> toIterable(final Class<T> elementClass)
     {
-        return new ToIterableFunction<T>();
+        return new ToIterableFunction<>();
     }
 
     private static final class ToIterableFunction<T> implements Function<T, Iterable<T>>
@@ -133,7 +133,7 @@ public final class TcFunctions
 
     public static <T> Function<T, Boolean> asFunction(final Predicate<T> predicate)
     {
-        return new PredicateAsFunction<T>(predicate);
+        return new PredicateAsFunction<>(predicate);
     }
 
     private static final class PredicateAsFunction<T> implements Function<T, Boolean>

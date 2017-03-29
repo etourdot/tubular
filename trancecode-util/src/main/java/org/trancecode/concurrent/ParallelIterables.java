@@ -38,14 +38,7 @@ public final class ParallelIterables
     public static <F, T> Iterable<T> transform(final Iterable<F> fromIterable,
             final Function<? super F, ? extends T> function, final ExecutorService executor)
     {
-        return new Iterable<T>()
-        {
-            @Override
-            public Iterator<T> iterator()
-            {
-                return ParallelIterators.transform(fromIterable.iterator(), function, executor);
-            }
-        };
+        return () -> ParallelIterators.transform(fromIterable.iterator(), function, executor);
     }
 
     /**
@@ -54,14 +47,7 @@ public final class ParallelIterables
     public static <T> Iterable<T> filter(final Iterable<T> unfiltered, final Predicate<? super T> predicate,
             final ExecutorService executor)
     {
-        return new Iterable<T>()
-        {
-            @Override
-            public Iterator<T> iterator()
-            {
-                return ParallelIterators.filter(unfiltered.iterator(), predicate, executor);
-            }
-        };
+        return () -> ParallelIterators.filter(unfiltered.iterator(), predicate, executor);
     }
 
     public static <T> Iterable<T> get(final Iterable<Future<T>> futures)

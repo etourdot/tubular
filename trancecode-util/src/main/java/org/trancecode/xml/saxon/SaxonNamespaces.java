@@ -38,31 +38,19 @@ public final class SaxonNamespaces
 {
     public static Iterable<String> prefixes(final XdmNode node)
     {
-        return new Iterable<String>()
-        {
-            @Override
-            public Iterator<String> iterator()
-            {
-                final InscopeNamespaceResolver namespaceResolver = new InscopeNamespaceResolver(
-                        node.getUnderlyingNode());
-                @SuppressWarnings("unchecked")
-                final Iterator<String> prefixes = namespaceResolver.iteratePrefixes();
-                return prefixes;
-            }
+        return () -> {
+            final InscopeNamespaceResolver namespaceResolver = new InscopeNamespaceResolver(
+                    node.getUnderlyingNode());
+            @SuppressWarnings("unchecked")
+            final Iterator<String> prefixes = namespaceResolver.iteratePrefixes();
+            return prefixes;
         };
     }
 
     public static Iterable<Entry<String, String>> namespaceSequence(final XdmNode node)
     {
         final InscopeNamespaceResolver namespaceResolver = new InscopeNamespaceResolver(node.getUnderlyingNode());
-        return Iterables.transform(prefixes(node), new Function<String, Entry<String, String>>()
-        {
-            @Override
-            public Entry<String, String> apply(final String prefix)
-            {
-                return Maps.immutableEntry(prefix, namespaceResolver.getURIForPrefix(prefix, true));
-            }
-        });
+        return Iterables.transform(prefixes(node), prefix -> Maps.immutableEntry(prefix, namespaceResolver.getURIForPrefix(prefix, true)));
     }
 
     public static Map<String, String> namespaceMap(final XdmNode node)

@@ -150,14 +150,7 @@ public final class RenameStepProcessor extends AbstractStepProcessor
 
         // The renaming process itself
         final SaxonProcessorDelegate renameWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS, rename,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xc0023(node, NODE_KINDS);
-                    }
-                }));
+                SaxonProcessorDelegates.error(node -> XProcExceptions.xc0023(node, NODE_KINDS)));
 
         final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input

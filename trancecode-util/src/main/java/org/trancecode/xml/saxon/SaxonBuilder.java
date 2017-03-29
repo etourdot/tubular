@@ -80,11 +80,7 @@ public class SaxonBuilder
             namePool = configuration.getNamePool();
             receiver.open();
         }
-        catch (final SaxonApiException e)
-        {
-            throw new IllegalStateException(e);
-        }
-        catch (final XPathException e)
+        catch (final SaxonApiException | XPathException e)
         {
             throw new IllegalStateException(e);
         }

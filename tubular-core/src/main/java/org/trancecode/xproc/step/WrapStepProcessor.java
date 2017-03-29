@@ -54,7 +54,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
 {
     private static final Set<XdmNodeKind> NODE_KINDS = ImmutableSet.of(XdmNodeKind.DOCUMENT, XdmNodeKind.ELEMENT,
             XdmNodeKind.TEXT, XdmNodeKind.PROCESSING_INSTRUCTION, XdmNodeKind.COMMENT);
-    private final AtomicReference<XdmItem> wrapAdjacent = new AtomicReference<XdmItem>(null);
+    private final AtomicReference<XdmItem> wrapAdjacent = new AtomicReference<>(null);
 
     @Override
     public QName getStepType()
@@ -138,14 +138,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         };
 
         final SaxonProcessorDelegate wrapWithError = SaxonProcessorDelegates.forNodeKinds(NODE_KINDS, wrapDelegate,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xc0023(node, NODE_KINDS);
-                    }
-                }));
+                SaxonProcessorDelegates.error(node -> XProcExceptions.xc0023(node, NODE_KINDS)));
 
         final SaxonProcessor wrapProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input

@@ -47,25 +47,20 @@ public final class TcStrings
         Preconditions.checkNotNull(string);
         TcPreconditions.checkNotEmpty(separatorSequence);
 
-        return new Iterable<String>()
-        {
-            @Override
-            public Iterator<String> iterator()
+        return () -> {
+            if (string.isEmpty())
             {
-                if (string.isEmpty())
-                {
-                    return Iterators.singletonIterator(string);
-                }
-
-                final int index = string.indexOf(separatorSequence);
-                if (index < 0)
-                {
-                    return Iterators.singletonIterator(string);
-                }
-
-                final String after = string.substring(index + separatorSequence.length());
-                return TcIterables.prepend(split(after, separatorSequence), string.substring(0, index)).iterator();
+                return Iterators.singletonIterator(string);
             }
+
+            final int index = string.indexOf(separatorSequence);
+            if (index < 0)
+            {
+                return Iterators.singletonIterator(string);
+            }
+
+            final String after = string.substring(index + separatorSequence.length());
+            return TcIterables.prepend(split(after, separatorSequence), string.substring(0, index)).iterator();
         };
     }
 

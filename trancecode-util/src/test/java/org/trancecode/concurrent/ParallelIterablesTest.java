@@ -106,19 +106,14 @@ public final class ParallelIterablesTest extends AbstractTest
         final List<String> strings = buildInputList(MANY_ELEMENTS);
         final AtomicInteger count = new AtomicInteger();
         final RuntimeException expectedError = new IllegalStateException();
-        final Function<String, String> function = new Function<String, String>()
-        {
-            @Override
-            public String apply(final String string)
+        final Function<String, String> function = string -> {
+            if (count.get() == limit)
             {
-                if (count.get() == limit)
-                {
-                    throw expectedError;
-                }
-
-                count.incrementAndGet();
-                return string;
+                throw expectedError;
             }
+
+            count.incrementAndGet();
+            return string;
         };
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();

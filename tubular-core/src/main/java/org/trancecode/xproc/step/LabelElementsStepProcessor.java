@@ -132,14 +132,7 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
 
         final SaxonProcessorDelegate labelElementsWithError = SaxonProcessorDelegates.forNodeKinds(
                 EnumSet.of(XdmNodeKind.ELEMENT), labelElementsDelegate,
-                SaxonProcessorDelegates.error(new Function<XdmNode, XProcException>()
-                {
-                    @Override
-                    public XProcException apply(final XdmNode node)
-                    {
-                        return XProcExceptions.xc0023(node, EnumSet.of(XdmNodeKind.ELEMENT));
-                    }
-                }));
+                SaxonProcessorDelegates.error(node -> XProcExceptions.xc0023(node, EnumSet.of(XdmNodeKind.ELEMENT))));
 
         final SaxonProcessor labelElementsProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
                 SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input

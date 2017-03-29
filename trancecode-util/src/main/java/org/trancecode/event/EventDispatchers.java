@@ -49,19 +49,19 @@ public final class EventDispatchers
 
     public static <T extends Event> EventDispatcher<T> newEventDispatcher()
     {
-        return new InternalEventDispatcher<T>();
+        return new InternalEventDispatcher<>();
     }
 
     public static <T extends Event> EventDispatcher<T> newEventDispatcher(
             final NotificationFailurePolicy notificationFailurePolicy)
     {
-        return new InternalEventDispatcher<T>(notificationFailurePolicy);
+        return new InternalEventDispatcher<>(notificationFailurePolicy);
     }
 
     public static <T extends Event> EventObservable<T> newEventDispatcher(final boolean blockingNotification,
             final TaskExecutor executor, final NotificationFailurePolicy notificationFailurePolicy)
     {
-        return new InternalEventDispatcher<T>(blockingNotification, executor, notificationFailurePolicy);
+        return new InternalEventDispatcher<>(blockingNotification, executor, notificationFailurePolicy);
     }
 
     private EventDispatchers()
