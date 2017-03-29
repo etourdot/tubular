@@ -282,6 +282,7 @@ public final class PipelineParser
                 try
                 {
                     final XPathCompiler xpathCompiler = context.getProcessor().newXPathCompiler();
+                    xpathCompiler.setSchemaAware(true);
                     final XPathSelector selector = xpathCompiler.compile(useWhen).load();
                     final XdmValue result = selector.evaluate();
                     if (!Saxon.isTrue(result))

@@ -89,6 +89,7 @@ public final class SplitSequenceStepProcessor extends AbstractStepProcessor
         try
         {
             final XPathCompiler xpathCompiler = processor.newXPathCompiler();
+            xpathCompiler.setSchemaAware(true);
             for (Map.Entry<String, String> namespace : SaxonNamespaces.namespaceSequence(input.getStep().getNode()))
             {
                 xpathCompiler.declareNamespace(namespace.getKey(), namespace.getValue());

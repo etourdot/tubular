@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList.Builder;
 
 import java.util.Iterator;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -58,8 +59,10 @@ public final class PackStepProcessor extends AbstractStepProcessor
 
         final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
+        final Processor processor = input.getPipelineContext().getProcessor();
+
         final QName wrapperQName = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
-                .getStep().getLocation(), input.getStep().getNode());
+                .getStep().getLocation(), input.getStep().getNode(), processor);
 
         final Iterator<XdmNode> srcIterator = sourceDoc.iterator();
         final Iterator<XdmNode> altIterator = alternateDoc.iterator();

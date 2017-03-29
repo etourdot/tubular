@@ -98,7 +98,9 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         LOG.trace("  serializationOptions = {}", serializationOptions);
 
         final RequestParser parser = new RequestParser(serializationOptions);
-        final XProcHttpRequest xProcRequest = parser.parseRequest(request);
+        final Processor processor = input.getPipelineContext().getProcessor();
+
+        final XProcHttpRequest xProcRequest = parser.parseRequest(request, processor);
         final URI uri = xProcRequest.getHttpRequest().getURI();
         if (uri.getScheme() != null && !StringUtils.equals("file", uri.getScheme())
                 && !StringUtils.equals("http", uri.getScheme()))
@@ -110,7 +112,6 @@ public final class HttpRequestStepProcessor extends AbstractStepProcessor
         final HttpClient httpClient = prepareHttpClient(xProcRequest, localContext);
         try
         {
-            final Processor processor = input.getPipelineContext().getProcessor();
             final ResponseHandler<XProcHttpResponse> responseHandler = new HttpResponseHandler(processor,
                     xProcRequest.isDetailled(), xProcRequest.isStatusOnly(), xProcRequest.getOverrideContentType());
             final XProcHttpResponse response = httpClient.execute(xProcRequest.getHttpRequest(), responseHandler,

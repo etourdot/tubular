@@ -87,6 +87,7 @@ public class SaxonPatternMatcher implements Predicate<XdmNode>
         Preconditions.checkNotNull(pattern);
 
         final XPathCompiler xpathCompiler = processor.newXPathCompiler();
+        xpathCompiler.setSchemaAware(true);
         if (namespaceContext != null)
         {
             for (final Entry<String, String> namespace : SaxonNamespaces.namespaceSequence(namespaceContext))

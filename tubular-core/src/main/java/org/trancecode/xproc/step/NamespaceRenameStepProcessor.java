@@ -23,6 +23,7 @@ import java.util.EnumSet;
 
 import javax.xml.XMLConstants;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import org.apache.commons.lang.StringUtils;
@@ -68,6 +69,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
         {
             throw XProcExceptions.xc0014(sourceDocument);
         }
+        final Processor processor = input.getPipelineContext().getProcessor();
 
         final SaxonProcessorDelegate nsRename = new CopyingSaxonProcessorDelegate()
         {
@@ -86,7 +88,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         if (node.getNodeName().getNamespaceURI().equals(from))
                         {
                             newNodeTo = Steps.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
-                                    .getLocalName(), SaxonLocation.of(node), node);
+                                    .getLocalName(), SaxonLocation.of(node), node, processor);
                         }
                         else if (StringUtils.isNotBlank(from))
                         {
@@ -95,7 +97,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         else
                         {
                             newNodeTo = Steps.getNewNamespace("", to, node.getNodeName().getLocalName(),
-                                    SaxonLocation.of(node), node);
+                                    SaxonLocation.of(node), node, processor);
                         }
                     }
                     else
@@ -125,7 +127,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         if (node.getNodeName().getNamespaceURI().equals(from))
                         {
                             newNodeTo = Steps.getNewNamespace(node.getNodeName().getPrefix(), to, node.getNodeName()
-                                    .getLocalName(), SaxonLocation.of(node), node);
+                                    .getLocalName(), SaxonLocation.of(node), node, processor);
                         }
                         else if (StringUtils.isNotBlank(from)
                                 || StringUtils.isNotBlank(node.getNodeName().getNamespaceURI()))
@@ -135,7 +137,7 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
                         else
                         {
                             newNodeTo = Steps.getNewNamespace(null, to, node.getNodeName().getLocalName(),
-                                    SaxonLocation.of(node), node);
+                                    SaxonLocation.of(node), node, processor);
                         }
                     }
                     else
@@ -158,9 +160,9 @@ public class NamespaceRenameStepProcessor extends AbstractStepProcessor
             }
         };
 
-        final SaxonProcessor processor = new SaxonProcessor(input.getPipelineContext().getProcessor(), nsRename);
+        final SaxonProcessor saxonProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(), nsRename);
 
-        final XdmNode result = processor.apply(sourceDocument);
+        final XdmNode result = saxonProcessor.apply(sourceDocument);
         output.writeNodes(XProcPorts.RESULT, result);
     }
 }

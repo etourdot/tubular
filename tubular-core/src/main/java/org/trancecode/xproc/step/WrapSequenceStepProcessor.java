@@ -17,6 +17,7 @@
  */
 package org.trancecode.xproc.step;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import org.trancecode.xml.saxon.SaxonBuilder;
 import org.trancecode.xproc.port.XProcPorts;
@@ -47,8 +48,9 @@ public final class WrapSequenceStepProcessor extends AbstractStepProcessor
         final String wrapperLocalName = input.getOptionValue(XProcOptions.WRAPPER);
         final String wrapperPrefix = input.getOptionValue(XProcOptions.WRAPPER_PREFIX, null);
         final String wrapperNamespaceUri = input.getOptionValue(XProcOptions.WRAPPER_NAMESPACE, null);
+        final Processor processor = input.getPipelineContext().getProcessor();
         final QName wrapper = Steps.getNewNamespace(wrapperPrefix, wrapperNamespaceUri, wrapperLocalName, input
-                .getStep().getLocation(), input.getStep().getNode());
+                .getStep().getLocation(), input.getStep().getNode(), processor);
         // TODO handle 'group-adjacent' option
 
         builder.startDocument();

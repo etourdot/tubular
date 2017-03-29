@@ -21,6 +21,7 @@ package org.trancecode.xproc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -420,6 +421,7 @@ public final class Environment
         try
         {
             final XPathCompiler xpathCompiler = processor.newXPathCompiler();
+            xpathCompiler.setSchemaAware(true);
             for (final Map.Entry<QName, String> variableEntry : variables.entrySet())
             {
                 if (variableEntry.getValue() != null)
@@ -767,8 +769,9 @@ public final class Environment
         try
         {
             final XPathCompiler xpathCompiler = configuration.getProcessor().newXPathCompiler();
+            xpathCompiler.setSchemaAware(true);
             final String pipelineSystemId = getPipeline().getLocation().getSystemId();
-            if (pipelineSystemId != null)
+            if (!Strings.isNullOrEmpty(pipelineSystemId))
             {
                 xpathCompiler.setBaseURI(URI.create(pipelineSystemId));
             }
@@ -859,6 +862,7 @@ public final class Environment
         for (final XdmNode parameterNode : readNodes(portReference))
         {
             final XPathCompiler xpathCompiler = getPipelineContext().getProcessor().newXPathCompiler();
+            xpathCompiler.setSchemaAware(true);
             try
             {
                 final XPathSelector paramsSelector = xpathCompiler.compile("//.[@name]").load();

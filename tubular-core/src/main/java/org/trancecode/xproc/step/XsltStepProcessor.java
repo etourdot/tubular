@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,7 +127,9 @@ public final class XsltStepProcessor extends AbstractStepProcessor
 
         // TODO transformer.setMessageListener();
         final XdmDestination result = new XdmDestination();
-        result.setBaseURI(outputBaseUri);
+        if (!outputBaseUri.toString().isEmpty()) {
+            result.setBaseURI(outputBaseUri);
+        }
         transformer.setDestination(result);
         transformer.getUnderlyingController().setBaseOutputURI(outputBaseUri.toString());
 

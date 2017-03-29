@@ -34,6 +34,6 @@ public final class TcSetsTest extends AbstractTest
     public void immutableSet()
     {
         Assert.assertEquals(ImmutableSet.of(1, 2, 3, 4, 5),
-                TcSets.immutableSet(ImmutableSet.of(1, 2, 3), ImmutableSet.of(3, 4, 5)));
+                TcSets.immutableSet(ImmutableSet.of(1, 2, 3), java.util.Optional.ofNullable(ImmutableSet.of(3, 4, 5))));
     }
 }

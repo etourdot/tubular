@@ -296,8 +296,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.1</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.8</source>
+            <target>1.8</target>
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
           </configuration>
@@ -330,7 +330,7 @@
             <links>
               <link>http://java.sun.com/javase/6/docs/api/</link>
             </links>
-            <source>1.6</source>
+            <source>1.8</source>
             <failOnError>false</failOnError>
           </configuration>
         </plugin>

@@ -78,6 +78,7 @@ public final class EnvironmentPort implements HasPortReference
             try
             {
                 final XPathCompiler xpathCompiler = environment.getPipelineContext().getProcessor().newXPathCompiler();
+                xpathCompiler.setSchemaAware(true);
                 xpathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel.xprocNamespace()
                         .uri());
                 xpathCompiler.declareNamespace(XProcXmlModel.xprocStepNamespace().prefix(), XProcXmlModel

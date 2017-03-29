@@ -139,16 +139,18 @@ public final class TcAssert
     private static String getXmlDocument(final XdmNode saxonNode) throws SaxonApiException
     {
         final Processor processor = (Processor) saxonNode.getUnderlyingNode().getConfiguration().getProcessor();
-        final Serializer serializer = new Serializer();
+        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        final Serializer serializer = processor.newSerializer(stream);
+        processor.writeXdmValue(saxonNode, serializer);
 
-        final XQueryCompiler xqcomp = processor.newXQueryCompiler();
+        /*final XQueryCompiler xqcomp = processor.newXQueryCompiler();
         final XQueryEvaluator xqeval = xqcomp.compile(".").load();
         xqeval.setContextItem(saxonNode);
 
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         serializer.setOutputStream(stream);
         xqeval.setDestination(serializer);
-        xqeval.run();
+        xqeval.run();*/
 
         try
         {
@@ -158,6 +160,7 @@ public final class TcAssert
         {
             throw new IllegalStateException(uee);
         }
+
     }
 
     public static void assertSetEquals(final Iterable<?> actual, final Iterable<?> expected)

@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.EnumSet;
 import java.util.Set;
 
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -73,9 +74,9 @@ public final class RenameStepProcessor extends AbstractStepProcessor
         LOG.trace("match = {}", match);
         assert newNameOption != null;
         LOG.trace("new_name = {}", newNameOption);
-
+        final Processor processor = input.getPipelineContext().getProcessor();
         final QName newName = Steps.getNewNamespace(newPrefixOption, newNamespaceOption, newNameOption, input.getStep()
-                .getLocation(), input.getStep().getNode());
+                .getLocation(), input.getStep().getNode(), processor);
         final SaxonProcessorDelegate rename = new AbstractSaxonProcessorDelegate()
         {
             @Override

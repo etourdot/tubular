@@ -72,9 +72,10 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
         final String attributeOption = input.getOptionValue(XProcOptions.ATTRIBUTE, ATTRIBUTE_DEFAULT_VALUE);
         final String attributePrefixOption = input.getOptionValue(XProcOptions.ATTRIBUTE_PREFIX, null);
         final String attributeNamespaceOption = input.getOptionValue(XProcOptions.ATTRIBUTE_NAMESPACE, null);
+        final Processor processor = input.getPipelineContext().getProcessor();
 
         final QName attributeQName = Steps.getNewNamespace(attributePrefixOption, attributeNamespaceOption,
-                attributeOption, input.getStep().getLocation(), input.getStep().getNode());
+                attributeOption, input.getStep().getLocation(), input.getStep().getNode(), processor);
 
         final String labelOption = input.getOptionValue(XProcOptions.LABEL, "concat(\"_\",$p:index)");
         final String match = input.getOptionValue(XProcOptions.MATCH, "*");
@@ -90,6 +91,7 @@ public final class LabelElementsStepProcessor extends AbstractStepProcessor
                 {
                     final Processor processor = input.getPipelineContext().getProcessor();
                     final XPathCompiler xPathCompiler = processor.newXPathCompiler();
+                    xPathCompiler.setSchemaAware(true);
                     xPathCompiler.declareNamespace(XProcXmlModel.xprocNamespace().prefix(), XProcXmlModel
                             .xprocNamespace().uri());
                     xPathCompiler.declareVariable(INDEX);

@@ -24,18 +24,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-
-import java.net.URI;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -46,7 +34,22 @@ import org.trancecode.xml.saxon.Saxon;
 import org.trancecode.xml.saxon.SaxonAxis;
 import org.trancecode.xml.saxon.SaxonPredicates;
 import org.trancecode.xproc.api.PipelineException;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Parses a {http://xproc.org/ns/testsuite}test element into an
@@ -87,8 +90,22 @@ public class XProcTestParser
     {
         try
         {
+            DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+            dfactory.setNamespaceAware(true);
+            javax.xml.parsers.DocumentBuilder docBuilder;
+            try {
+                docBuilder = dfactory.newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                throw new SaxonApiException(e);
+            }
+            Document doc;
+            try {
+                doc = docBuilder.parse(new InputSource(url.toString()));
+            } catch (SAXException | IOException e) {
+                throw new SaxonApiException(e);
+            }
             final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
-            final XdmNode pipelineDocument = documentBuilder.build(source);
+            final XdmNode pipelineDocument = documentBuilder.wrap(doc);
             final XdmNode rootNode = SaxonAxis.childElement(pipelineDocument);
             parseTest(rootNode);
         }

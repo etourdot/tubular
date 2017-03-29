@@ -204,6 +204,7 @@ public final class WrapStepProcessor extends AbstractStepProcessor
         try
         {
             final XPathCompiler xPathCompiler = processor.newXPathCompiler();
+            xPathCompiler.setSchemaAware(true);
             final XPathSelector xPathSelector = xPathCompiler.compile(groupAdjacent).load();
             xPathSelector.setContextItem(node);
             return xPathSelector.evaluateSingle();
