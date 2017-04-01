@@ -95,6 +95,10 @@ public final class UuidStepProcessor extends AbstractStepProcessor
             }
 
             @Override
+            public void endElement(XdmNode node, SaxonBuilder builder) {
+            }
+
+            @Override
             public void text(final XdmNode node, final SaxonBuilder builder)
             {
                 replace(node, builder);

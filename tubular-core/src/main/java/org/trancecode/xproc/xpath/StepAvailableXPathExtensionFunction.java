@@ -84,36 +84,10 @@ public final class StepAvailableXPathExtensionFunction extends AbstractXPathExte
                 {
                     private static final long serialVersionUID = -8363336682570398286L;
 
-                    /*@Override
-                    public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                            throws XPathException
-                    {
-                        Preconditions.checkArgument(arguments.length == 1);
-                        final String stepName = arguments[0].next().getStringValue();
-                        final QName stepQName = resolveQName(stepName);
-                        LOG.trace("{@method} step-name = {}", stepQName);
-                        LOG.trace("  availables steps = {}", Environment.getCurrentEnvironment().getPipelineContext()
-                                .getPipelineLibrary().getStepTypes());
-                        final boolean available;
-                        if (Environment.getCurrentEnvironment().getPipelineContext().getPipelineLibrary()
-                                .getStepTypes().contains(stepQName))
-                        {
-                            final Step step = Environment.getCurrentEnvironment().getPipelineContext()
-                                    .getPipelineLibrary().newStep(stepQName);
-                            available = !step.isCompoundStep() || !step.getSubpipeline().isEmpty();
-                        }
-                        else
-                        {
-                            available = false;
-                        }
-                        LOG.trace("  available = {}", available);
-                        return SingletonIterator.makeIterator(BooleanValue.get(available));
-                    }*/
-
                     @Override
                     public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
                         Preconditions.checkArgument(sequences.length == 1);
-                        final String stepName = ((StringValue) sequences[0]).getStringValue();
+                        final String stepName = ((StringValue) sequences[0].iterate().next()).getStringValue();
                         final QName stepQName = resolveQName(stepName);
                         LOG.trace("{@method} step-name = {}", stepQName);
                         LOG.trace("  availables steps = {}", Environment.getCurrentEnvironment().getPipelineContext()

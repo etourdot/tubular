@@ -384,7 +384,7 @@ public final class PipelineParser
                     && !name.equals(Attributes.TYPE)
                     && !name.equals(Attributes.USE_WHEN)
                     && (!name.equals(Attributes.VERSION) || XProcSteps.XSLT.equals(step.getType()) || XProcSteps.HASH
-                            .equals(step.getType())))
+                            .equals(step.getType()) || XProcSteps.UUID.equals(step.getType())))
             {
                 if (!step.hasOptionDeclared(name))
                 {

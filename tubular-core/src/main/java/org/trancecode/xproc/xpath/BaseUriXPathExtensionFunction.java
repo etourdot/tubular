@@ -80,25 +80,6 @@ public final class BaseUriXPathExtensionFunction extends AbstractXPathExtensionF
                 {
                     private static final long serialVersionUID = -5219886632773617494L;
 
-                    /*@Override
-                    public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                            throws XPathException
-                    {
-                        final NodeInfo nodeInfo;
-                        if (arguments.length == 0)
-                        {
-                            nodeInfo = (NodeInfo) context.getContextItem();
-                        }
-                        else
-                        {
-                            nodeInfo = (NodeInfo) arguments[0].next();
-                        }
-                        final String baseUri = TcStrings.toString(nodeInfo.getBaseURI());
-                        LOG.trace("baseUri = {}", baseUri);
-
-                        return SingletonIterator.makeIterator(new AnyURIValue(baseUri));
-                    }*/
-
                     @Override
                     public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
                         final NodeInfo nodeInfo;
@@ -108,7 +89,7 @@ public final class BaseUriXPathExtensionFunction extends AbstractXPathExtensionF
                         }
                         else
                         {
-                            nodeInfo = (NodeInfo) sequences[0];
+                            nodeInfo = (NodeInfo) sequences[0].iterate().next();
                         }
                         final String baseUri = TcStrings.toString(nodeInfo.getBaseURI());
                         LOG.trace("baseUri = {}", baseUri);

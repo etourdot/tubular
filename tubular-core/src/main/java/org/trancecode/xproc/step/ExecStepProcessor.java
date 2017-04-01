@@ -26,6 +26,9 @@ import com.google.common.io.Closeables;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import net.sf.saxon.s9api.Processor;
@@ -111,9 +114,18 @@ public final class ExecStepProcessor extends AbstractStepProcessor
         processBuilder.redirectErrorStream(false);
         if (cwd != null)
         {
+            final Path newDirectory = Paths.get(cwd);
+            if (!Files.isDirectory(newDirectory)) {
+                throw XProcExceptions.xc0034(input.getLocation());
+            }
             processBuilder.directory(new File(cwd));
         }
-        final Process process = processBuilder.start();
+        final Process process;
+        try {
+            process = processBuilder.start();
+        } catch (IOException e) {
+            throw XProcExceptions.xc0033(input.getLocation());
+        }
 
         if (!inputDocuments.isEmpty())
         {

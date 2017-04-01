@@ -24,32 +24,30 @@ import com.google.common.collect.Iterables;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.event.Receiver;
-import net.sf.saxon.event.ReceiverOptions;
 import net.sf.saxon.event.TreeReceiver;
 import net.sf.saxon.om.FingerprintedQName;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NamespaceBinding;
-import net.sf.saxon.om.NoNamespaceName;
 import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmDestination;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.NamespaceNode;
 import net.sf.saxon.tree.linked.AttributeImpl;
 import net.sf.saxon.tree.linked.CommentImpl;
 import net.sf.saxon.tree.linked.ElementImpl;
 import net.sf.saxon.tree.linked.ProcInstImpl;
 import net.sf.saxon.tree.linked.TextImpl;
 import net.sf.saxon.tree.util.NamespaceIterator;
-import net.sf.saxon.type.AnyType;
 import net.sf.saxon.type.BuiltInAtomicType;
+import net.sf.saxon.type.BuiltInType;
+
+import java.util.Iterator;
 
 //import net.sf.saxon.tree.iter.NamespaceIterator;
-import java.util.Iterator;
 
 /**
  * A builder to create new XdmNode documents using a push API. It provides a
@@ -128,7 +126,8 @@ public class SaxonBuilder
         {
             ElementImpl element = new ElementImpl();
             element.setNodeName(new FingerprintedQName(qname.getStructuredQName(), namePool));
-            receiver.startElement(element.getNodeName(), AnyType.getInstance(), element, 0);
+            receiver.startElement(element.getNodeName(), BuiltInType.getSchemaType(StandardNames.XS_UNTYPED),
+              element, 0);
         }
         catch (final XPathException e)
         {
@@ -210,6 +209,7 @@ public class SaxonBuilder
             AttributeImpl attributeNode = new AttributeImpl(null, 0);
             receiver.attribute(new FingerprintedQName(qname.getPrefix(), qname.getNamespaceURI(), qname.getLocalName()),
               BuiltInAtomicType.UNTYPED_ATOMIC, value, attributeNode, 0);
+
         }
         catch (final XPathException e)
         {

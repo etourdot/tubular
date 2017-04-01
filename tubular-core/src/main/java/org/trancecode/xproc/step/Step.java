@@ -959,6 +959,13 @@ public final class Step extends AbstractHasLocation implements StepContainer
                     continue;
                 }
 
+                // Next step is a choose step
+                if (i < getSubpipeline().size() - 1 && getSubpipeline().get(i + 1).getType() == XProcSteps.CHOOSE)
+                {
+                    continue;
+                }
+
+                // TODO: xs0005 is not manage very well !
                 throw XProcExceptions.xs0005(childStep, outputPort.getPortName());
             }
         }

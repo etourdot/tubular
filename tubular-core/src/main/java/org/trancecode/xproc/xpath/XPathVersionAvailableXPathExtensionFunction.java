@@ -79,19 +79,9 @@ public final class XPathVersionAvailableXPathExtensionFunction extends AbstractX
                 {
                     private static final long serialVersionUID = -1349293887849720884L;
 
-                    /*@Override
-                    public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                            throws XPathException
-                    {
-                        final double version = ((DoubleValue) arguments[0].next()).getDoubleValue();
-                        LOG.trace("version = {}", version);
-                        return SingletonIterator.makeIterator((version == 1.0 || version == 2.0) ? BooleanValue.TRUE
-                                : BooleanValue.FALSE);
-                    }*/
-
                     @Override
                     public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
-                        final double version = ((DoubleValue) sequences[0]).getDoubleValue();
+                        final double version = ((DoubleValue) sequences[0].iterate().next()).getDoubleValue();
                         LOG.trace("version = {}", version);
                         return (version == 1.0 || version == 2.0) ? BooleanValue.TRUE : BooleanValue.FALSE;
                     }

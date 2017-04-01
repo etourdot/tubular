@@ -106,54 +106,12 @@ public final class SystemPropertyXPathExtensionFunction extends AbstractXPathExt
                 {
                     private static final long serialVersionUID = -8363336682570398286L;
 
-                    /*@Override
-                    public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                            throws XPathException
-                    {
-                        Preconditions.checkArgument(arguments.length == 1);
-                        try
-                        {
-                            final QName property = resolveQName(arguments[0].next().getStringValue());
-                            final String value;
-                            if (property.equals(PROPERTY_EPISODE))
-                            {
-                                value = Environment.getCurrentEnvironment().getPipelineContext().getEpisode().getId();
-                            }
-                            else if (PROPERTIES.containsKey(property))
-                            {
-                                value = PROPERTIES.get(property);
-                            }
-                            else
-                            {
-                                value = "";
-                            }
-                            LOG.trace("{} = {}", property, value);
-                            return SingletonIterator.makeIterator(StringValue.makeStringValue(value));
-                        }
-                        catch (final IllegalArgumentException e)
-                        {
-                            if (e.getCause() instanceof XPathException)
-                            {
-                                if ("FONS0004".equals(((XPathException) e.getCause()).getErrorCodeLocalPart()))
-                                {
-                                    throw XProcExceptions.xd0015(Environment.getCurrentEnvironment().getPipeline()
-                                            .getLocation());
-                                }
-                            }
-                            else
-                            {
-                                e.printStackTrace();
-                            }
-                        }
-                        return EmptyIterator.getInstance();
-                    }*/
-
                     @Override
                     public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
                         Preconditions.checkArgument(sequences.length == 1);
                         try
                         {
-                            final QName property = resolveQName(((StringValue) sequences[0]).getStringValue());
+                            final QName property = resolveQName(((StringValue) sequences[0].iterate().next()).getStringValue());
                             final String value;
                             if (property.equals(PROPERTY_EPISODE))
                             {

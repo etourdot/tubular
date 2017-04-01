@@ -399,6 +399,18 @@ public final class XProcExceptions
                 "It is a dynamic error if the override-content-type value cannot be used (e.g. text/plain to override image/png).");
     }
 
+    public static XProcException xc0033(final Location location)
+    {
+        return newXProcException(Type.STEP, 33, null,
+          "It is a dynamic error if the command cannot be run.");
+    }
+
+    public static XProcException xc0034(final Location location)
+    {
+        return newXProcException(Type.STEP, 34, null,
+          "It is a dynamic error if the current working directory cannot be changed to the value of the cwd option.");
+    }
+
     public static XProcException xc0035(final Location location)
     {
         return newXProcException(Type.STEP, 35, location,

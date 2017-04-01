@@ -19,6 +19,7 @@
  */
 package org.trancecode.xproc.step;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.EnumSet;
 import javax.mail.internet.ContentType;
@@ -94,8 +95,13 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 {
                     if (XdmNodeKind.ELEMENT.equals(aNode.getNodeKind()))
                     {
-                        final String unEscapeContent = getUnEscapeContent(aNode.getStringValue(), encodingOption,
-                                contentType, charset);
+                        final String unEscapeContent;
+                        try {
+                            unEscapeContent = getUnEscapeContent(aNode.getStringValue(), encodingOption,
+                                    contentType, charset);
+                        } catch (IOException e) {
+                            throw XProcExceptions.xc0010(aNode);
+                        }
                         builder.startElement(aNode.getNodeName(), aNode);
                         for (final XdmNode attribute : SaxonAxis.attributes(aNode))
                         {
@@ -138,8 +144,13 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
                 @Override
                 public void text(final XdmNode node, final SaxonBuilder builder)
                 {
-                    final String unEscapeContent = getUnEscapeContent(node.getStringValue(), encodingOption,
-                            contentType, charset);
+                    final String unEscapeContent;
+                    try {
+                        unEscapeContent = getUnEscapeContent(node.getStringValue(), encodingOption,
+                                contentType, charset);
+                    } catch (IOException e) {
+                        throw XProcExceptions.xc0010(node);
+                    }
                     if (MediaTypes.MEDIA_TYPE_HTML.equals(contentType.getBaseType()))
                     {
                         writeHtmlNodes(unEscapeContent, namespaceOption, input.getPipelineContext().getProcessor(),
@@ -219,8 +230,7 @@ public final class UnEscapeMarkupStepProcessor extends AbstractStepProcessor
     }
 
     private static String getUnEscapeContent(final String content, final String encoding,
-            final ContentType contentType, final String charset)
-    {
+            final ContentType contentType, final String charset) throws IOException {
         if (Steps.ENCODING_BASE64.equals(encoding))
         {
             return Steps.getBase64Content(content, charset);

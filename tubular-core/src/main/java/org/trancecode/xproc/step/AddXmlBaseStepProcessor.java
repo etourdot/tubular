@@ -23,6 +23,7 @@ import java.util.EnumSet;
 
 import javax.xml.XMLConstants;
 
+import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
@@ -60,7 +61,7 @@ public final class AddXmlBaseStepProcessor extends AbstractStepProcessor
         final XdmNode sourceDoc = input.readNode(XProcPorts.SOURCE);
         final boolean allOption = Boolean.valueOf(input.getOptionValue(XProcOptions.ALL, "false"));
         final boolean relativeOption = Boolean.valueOf(input.getOptionValue(XProcOptions.RELATIVE, "true"));
-        final QName xmlBase = new QName(XMLConstants.XML_NS_URI, "base");
+        final QName xmlBase = new QName("xml",XMLConstants.XML_NS_URI, "base");
 
         if (allOption && relativeOption)
         {
@@ -101,6 +102,7 @@ public final class AddXmlBaseStepProcessor extends AbstractStepProcessor
                         }
                     }
                 }
+
                 return EnumSet.of(NextSteps.PROCESS_CHILDREN, NextSteps.START_CONTENT);
             }
         };

@@ -244,15 +244,8 @@ public final class Steps
         }
     }
 
-    public static String getBase64Content(final String content, final String charset)
-    {
-        try
-        {
-            return new String(Base64.decode(content.getBytes(charset)), charset);
-        } catch (final IOException ioe)
-        {
-            throw XProcExceptions.xc0010(null);
-        }
+    public static String getBase64Content(final String content, final String charset) throws IOException {
+        return new String(Base64.decode(content.getBytes(charset)), charset);
     }
 
     public static ContentType getContentType(final String mimeType, final XdmNode node)

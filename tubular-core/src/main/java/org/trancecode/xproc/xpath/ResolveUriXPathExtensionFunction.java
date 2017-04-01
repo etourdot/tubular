@@ -83,37 +83,10 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                 {
                     private static final long serialVersionUID = 4367717306903282740L;
 
-                    /*@Override
-                    public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                            throws XPathException
-                    {
-                        final String relative = arguments[0].next().getStringValue();
-                        final String base;
-                        if (arguments.length == 1)
-                        {
-                            base = Environment.getCurrentXPathContext().getBaseURI().toASCIIString();
-                        }
-                        else
-                        {
-                            base = arguments[1].next().getStringValue();
-                        }
-                        LOG.trace("{@method} relative = {} ; base = {}", relative, base);
-                        final String resolvedUri;
-                        try
-                        {
-                            resolvedUri = ResolveURI.makeAbsolute(relative, base).toASCIIString();
-                            LOG.trace("  resolvedUri = {}", resolvedUri);
-                            return SingletonIterator.makeIterator(new AnyURIValue(resolvedUri));
-                        }
-                        catch (final URISyntaxException e)
-                        {
-                            return null;
-                        }
-                    }*/
-
                     @Override
                     public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
-                        final String relative = ((StringValue) sequences[0]).getStringValue();
+                        SequenceIterator sequenceIterator = sequences[0].iterate();
+                        final String relative = ((StringValue) sequenceIterator.next()).getStringValue();
                         final String base;
                         if (sequences.length == 1)
                         {
@@ -121,7 +94,8 @@ public final class ResolveUriXPathExtensionFunction extends AbstractXPathExtensi
                         }
                         else
                         {
-                            base = ((StringValue) sequences[1]).getStringValue();
+                            sequenceIterator = sequences[1].iterate();
+                            base = ((StringValue) sequenceIterator.next()).getStringValue();
                         }
                         LOG.trace("{@method} relative = {} ; base = {}", relative, base);
                         final String resolvedUri;

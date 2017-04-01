@@ -86,13 +86,6 @@ public final class IterationSizeXPathExtensionFunction extends AbstractXPathExte
                 {
                     private static final long serialVersionUID = -8363336682570398286L;
 
-                    /*@Override
-                    public SequenceIterator call(final SequenceIterator[] arguments, final XPathContext context)
-                            throws XPathException
-                    {
-                        return SingletonIterator.makeIterator(Int64Value.makeIntegerValue(ITERATION_SIZE.get()));
-                    }*/
-
                     @Override
                     public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
                         return Int64Value.makeIntegerValue(ITERATION_SIZE.get());

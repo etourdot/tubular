@@ -45,6 +45,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -106,6 +107,11 @@ public class XProcTestParser
             }
             final DocumentBuilder documentBuilder = processor.newDocumentBuilder();
             final XdmNode pipelineDocument = documentBuilder.wrap(doc);
+            try {
+                pipelineDocument.getUnderlyingNode().setSystemId(url.toURI().toString());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
             final XdmNode rootNode = SaxonAxis.childElement(pipelineDocument);
             parseTest(rootNode);
         }
