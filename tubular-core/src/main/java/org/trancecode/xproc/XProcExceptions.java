@@ -471,6 +471,12 @@ public final class XProcExceptions
                 "It is a dynamic error if the assert-valid option is true and the input document is not valid.");
     }
 
+    public static XProcException xc0056(final Location location)
+    {
+        return newXProcException(Type.STEP, 56, location,
+          "It is a dynamic error if the specified initial mode or named template cannot be applied to the specified stylesheet.");
+    }
+
     public static XProcException xc0057(final Location location)
     {
         return newXProcException(

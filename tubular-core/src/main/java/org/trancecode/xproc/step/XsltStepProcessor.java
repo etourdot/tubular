@@ -181,7 +181,11 @@ public final class XsltStepProcessor extends AbstractStepProcessor
         if (initialMode != null)
         {
             // FIXME does not handle namespaces
-            transformer.setInitialMode(new QName(initialMode));
+            try {
+                transformer.setInitialMode(new QName(initialMode));
+            } catch (IllegalArgumentException e) {
+                throw XProcExceptions.xc0056(input.getLocation());
+            }
         }
 
         final Map<QName, String> parameters = input.getParameters(XProcPorts.PARAMETERS);
