@@ -469,7 +469,7 @@ public final class PipelineParser
     private Iterable<PortBinding> parsePortBindings(final XdmNode portNode)
     {
         return Iterables.transform(SaxonAxis.childElements(portNode, Elements.ELEMENTS_PORT_BINDINGS),
-          node -> parsePortBinding(node));
+          this::parsePortBinding);
     }
 
     private void unsupportedElement(final XdmNode node)
@@ -582,6 +582,10 @@ public final class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
         Variable option = Variable.newOption(name, getLocation(node));
 
+        if (XProcXmlModel.xprocNamespace().uri().equals(option.getName().getNamespaceURI())) {
+            throw XProcExceptions.xs0028(option);
+        }
+
         final String select = node.getAttributeValue(Attributes.SELECT);
         LOG.trace("name = {} ; select = {}", name, select);
         option = option.setSelect(select);
@@ -622,6 +626,11 @@ public final class PipelineParser
         final QName name = new QName(node.getAttributeValue(Attributes.NAME), node);
         final String select = node.getAttributeValue(Attributes.SELECT);
         Variable variable = Variable.newVariable(name);
+
+        if (XProcXmlModel.xprocNamespace().uri().equals(variable.getName().getNamespaceURI())) {
+            throw XProcExceptions.xs0028(variable);
+        }
+
         variable = variable.setLocation(getLocation(node));
         variable = variable.setSelect(select);
         variable = variable.setRequired(true);

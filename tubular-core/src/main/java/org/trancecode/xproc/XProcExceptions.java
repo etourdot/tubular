@@ -84,6 +84,12 @@ public final class XProcExceptions
                 "It is a dynamic error if a document sequence appears where a document to be used as the context node is expected.");
     }
 
+    public static XProcException xd0009(final Location location)
+    {
+        return newXProcException(Type.DYNAMIC, 9, location,
+          "It is a dynamic error if the element attribute on p:namespaces is specified and it does not identify a single element node.");
+    }
+
     public static XProcException xd0010(final XdmNode node)
     {
         return newXProcException(Type.DYNAMIC, 10, SaxonLocation.of(node),
@@ -211,6 +217,16 @@ public final class XProcExceptions
                 location,
                 "It is a static error if the port specified on the p:log is not the name of an output port on the step in which it appears or if more than one p:log element is applied to the same port ; step = %s ; port = %s",
                 step.getName(), port);
+    }
+
+    public static XProcException xs0028(final Variable option)
+    {
+        return newXProcException(
+                Type.STATIC,
+                28,
+                option.getLocation(),
+                "It is a static error to declare option or variable %s in the XProc namespace.",
+                option.getName());
     }
 
     public static XProcException xs0031(final Location location, final QName optionName, final QName stepType)
