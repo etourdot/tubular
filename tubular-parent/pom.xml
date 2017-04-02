@@ -77,6 +77,8 @@
     <saxon9.version>9.7.0-15</saxon9.version>
     <surefire.vm.args />
 
+    <fop.version>2.1</fop.version>
+    <xinclude.version>1.0.1</xinclude.version>
   </properties>
 
   <dependencyManagement>
@@ -110,6 +112,12 @@
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>2.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.5</version>
       </dependency>
 
       <dependency>
@@ -157,7 +165,7 @@
       <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>fop</artifactId>
-        <version>1.0</version>
+        <version>${fop.version}</version>
       </dependency>
 
       <dependency>
@@ -169,13 +177,7 @@
       <dependency>
         <groupId>org.etourdot</groupId>
         <artifactId>xinclude</artifactId>
-        <version>0.2.0</version>
-        <exclusions>
-          <exclusion>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-he</artifactId>
-          </exclusion>
-        </exclusions>
+        <version>${xinclude.version}</version>
       </dependency>
 
       <dependency>

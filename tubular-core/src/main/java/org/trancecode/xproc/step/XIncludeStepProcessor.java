@@ -26,7 +26,8 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XdmNode;
-import org.etourdot.xinclude.XIncProcEngine;
+import org.etourdot.xincproc.xinclude.XIncProcConfiguration;
+import org.etourdot.xincproc.xinclude.XIncProcEngine;
 import org.trancecode.logging.Logger;
 import org.trancecode.xml.saxon.SaxonLocation;
 import org.trancecode.xproc.XProcExceptions;
@@ -61,9 +62,9 @@ public final class XIncludeStepProcessor extends AbstractStepProcessor
         LOG.trace("xmlLang = {}", xmlLang);
 
         final Processor processor = input.getPipelineContext().getProcessor();
-        final XIncProcEngine engine = new XIncProcEngine(processor);
-        engine.getConfiguration().setBaseUrisFixup(xmlBase);
-        engine.getConfiguration().setLanguageFixup(xmlLang);
+        final XIncProcEngine engine = XIncProcEngine.getUnderlyingConfiguration().newXIncProcEngine();
+        engine.getConfiguration().setConfigurationProperty(XIncProcConfiguration.ALLOW_FIXUP_BASE_URIS, xmlBase);
+        engine.getConfiguration().setConfigurationProperty(XIncProcConfiguration.ALLOW_FIXUP_LANGUAGE, xmlLang);
         try
         {
             final ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
