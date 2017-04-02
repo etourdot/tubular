@@ -70,11 +70,15 @@ public final class DeleteStepProcessor extends AbstractStepProcessor
                 super.attribute(node, builder);
             }
         };
-        final SaxonProcessor matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
-                SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
-                        .getStep().getNode(), delete, new CopyingSaxonProcessorDelegate()));
-
-        final XdmNode result = matchProcessor.apply(source);
-        output.writeNodes(XProcPorts.RESULT, result);
+        final SaxonProcessor matchProcessor;
+        try {
+            matchProcessor = new SaxonProcessor(input.getPipelineContext().getProcessor(),
+                    SaxonProcessorDelegates.forXsltMatchPattern(input.getPipelineContext().getProcessor(), match, input
+                            .getStep().getNode(), delete, new CopyingSaxonProcessorDelegate()));
+            final XdmNode result = matchProcessor.apply(source);
+            output.writeNodes(XProcPorts.RESULT, result);
+        } catch (IllegalArgumentException e) {
+            throw XProcExceptions.xc0062(input.getLocation(), input.getStep().getNode());
+        }
     }
 }
